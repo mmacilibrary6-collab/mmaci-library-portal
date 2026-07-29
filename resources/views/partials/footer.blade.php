@@ -149,7 +149,9 @@
 
                 <div class="social-icons mt-4">
 
-                    <a href="#"
+                    <a href="https://www.facebook.com/MMACILibrary"
+                       target="_blank"
+                       rel="noopener noreferrer"
                        aria-label="Facebook">
                         <i class="bi bi-facebook"></i>
                     </a>
@@ -159,7 +161,9 @@
                         <i class="bi bi-envelope-fill"></i>
                     </a>
 
-                    <a href="#"
+                    <a href="https://mmacibutuan.edu.ph/"
+                       target="_blank"
+                       rel="noopener noreferrer"
                        aria-label="Website">
                         <i class="bi bi-globe"></i>
                     </a>
