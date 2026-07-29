@@ -19,7 +19,7 @@ return new class extends Migration
                     $table->time('start_time')->nullable();
                     $table->time('end_time')->nullable();
                     $table->string('location')->nullable();
-                    $table->string('image')->nullable();
+                    $table->longText('image')->nullable();
                     $table->enum('status', ['draft', 'published', 'cancelled'])->default('published');
                     $table->timestamps();
                 });
@@ -31,7 +31,7 @@ return new class extends Migration
                 'start_time' => fn (Blueprint $table) => $table->time('start_time')->nullable(),
                 'end_time' => fn (Blueprint $table) => $table->time('end_time')->nullable(),
                 'location' => fn (Blueprint $table) => $table->string('location')->nullable(),
-                'image' => fn (Blueprint $table) => $table->string('image')->nullable(),
+                'image' => fn (Blueprint $table) => $table->longText('image')->nullable(),
                 'status' => fn (Blueprint $table) => $table->string('status')->nullable(),
             ]
         );
@@ -135,7 +135,7 @@ return new class extends Migration
                     $table->id();
                     $table->string('title');
                     $table->text('description')->nullable();
-                    $table->string('image');
+                    $table->longText('image')->nullable();
                     $table->unsignedInteger('sort_order')->default(0);
                     $table->boolean('is_active')->default(true);
                     $table->date('event_date')->nullable();
@@ -148,7 +148,7 @@ return new class extends Migration
             [
                 'title' => fn (Blueprint $table) => $table->string('title')->nullable(),
                 'description' => fn (Blueprint $table) => $table->text('description')->nullable(),
-                'image' => fn (Blueprint $table) => $table->string('image')->nullable(),
+                'image' => fn (Blueprint $table) => $table->longText('image')->nullable(),
                 'sort_order' => fn (Blueprint $table) => $table->unsignedInteger('sort_order')->default(0),
                 'is_active' => fn (Blueprint $table) => $table->boolean('is_active')->default(true),
                 'event_date' => fn (Blueprint $table) => $table->date('event_date')->nullable(),

@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\NewArrival;
-use App\Support\MediaStorage;
+use App\Support\DatabaseMedia;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -108,13 +108,6 @@ class NewArrivalController extends Controller
 
         $newArrival->update($data);
 
-        if (
-            $request->hasFile('image_file') &&
-            $this->isLocalImage($oldImage)
-        ) {
-            MediaStorage::delete($oldImage);
-        }
-
         return redirect()
             ->route('admin.new-arrivals.index')
             ->with(
@@ -126,10 +119,6 @@ class NewArrivalController extends Controller
     public function destroy(
         NewArrival $newArrival
     ): RedirectResponse {
-        if ($this->isLocalImage($newArrival->image)) {
-            MediaStorage::delete($newArrival->image);
-        }
-
         $newArrival->delete();
 
         return redirect()
@@ -282,20 +271,13 @@ class NewArrivalController extends Controller
          * An uploaded image takes priority over an external URL.
          */
         if ($request->hasFile('image_file')) {
-            $data['image'] = $request
-                ->file('image_file')
-                ->store('new-arrivals', config('filesystems.media_disk', 'public'));
+            $data['image'] = DatabaseMedia::store(
+                $request->file('image_file')
+            );
         } elseif (filled($validated['image_url'] ?? null)) {
             $data['image'] = trim(
                 $validated['image_url']
             );
-
-            if (
-                $newArrival &&
-                $this->isLocalImage($newArrival->image)
-            ) {
-                MediaStorage::delete($newArrival->image);
-            }
         } elseif (!$newArrival) {
             $data['image'] = null;
         }
@@ -310,6 +292,7 @@ class NewArrivalController extends Controller
         }
 
         return !str_starts_with($image, 'http://') &&
-            !str_starts_with($image, 'https://');
+            !str_starts_with($image, 'https://') &&
+            !str_starts_with($image, 'data:');
     }
 }

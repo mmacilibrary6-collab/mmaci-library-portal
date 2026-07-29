@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Gallery;
-use App\Support\MediaStorage;
+use App\Support\DatabaseMedia;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -81,9 +81,9 @@ class GalleryController extends Controller
         $imagePath = null;
 
         if ($request->hasFile('image')) {
-            $imagePath = $request
-                ->file('image')
-                ->store('gallery', config('filesystems.media_disk', 'public'));
+            $imagePath = DatabaseMedia::store(
+                $request->file('image')
+            );
         }
 
         Gallery::create([
@@ -132,13 +132,9 @@ class GalleryController extends Controller
         ];
 
         if ($request->hasFile('image')) {
-            $oldImage = $gallery->image;
-
-            $data['image'] = $request
-                ->file('image')
-                ->store('gallery', config('filesystems.media_disk', 'public'));
-
-            MediaStorage::delete($oldImage);
+            $data['image'] = DatabaseMedia::store(
+                $request->file('image')
+            );
         }
 
         $gallery->update($data);
@@ -179,7 +175,7 @@ class GalleryController extends Controller
 
         foreach ($request->file('images', []) as $imageFile) {
             $gallery->images()->create([
-                'image' => $imageFile->store('gallery', config('filesystems.media_disk', 'public')),
+                'image' => DatabaseMedia::store($imageFile),
             ]);
         }
 
@@ -194,12 +190,6 @@ class GalleryController extends Controller
     public function destroy(
         Gallery $gallery
     ): RedirectResponse {
-        foreach ($gallery->images as $galleryImage) {
-            MediaStorage::delete($galleryImage->image);
-        }
-
-        MediaStorage::delete($gallery->image);
-
         $gallery->delete();
 
         return redirect()

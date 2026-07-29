@@ -26,6 +26,10 @@ class MediaStorage
             return $fallback;
         }
 
+        if (Str::startsWith($path, 'data:')) {
+            return $path;
+        }
+
         if (Str::startsWith($path, ['http://', 'https://'])) {
             return $path;
         }

@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\OpenAccessResource;
-use App\Support\MediaStorage;
+use App\Support\DatabaseMedia;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -83,12 +83,9 @@ class OpenAccessResourceController extends Controller
         $imagePath = null;
 
         if ($request->hasFile('image_file')) {
-            $imagePath = $request
-                ->file('image_file')
-                ->store(
-                    'open-access-resources',
-                    config('filesystems.media_disk', 'public')
-                );
+            $imagePath = DatabaseMedia::store(
+                $request->file('image_file')
+            );
         } elseif (
             filled($validated['image_url'] ?? null)
         ) {
@@ -176,30 +173,16 @@ class OpenAccessResourceController extends Controller
         ];
 
         if ($request->hasFile('image_file')) {
-            $oldImage = $openAccessResource->image;
-
             $data['image'] = $request
                 ->file('image_file')
-                ->store(
-                    'open-access-resources',
-                    config('filesystems.media_disk', 'public')
-                );
-
-            MediaStorage::delete($oldImage);
+                ? DatabaseMedia::store($request->file('image_file'))
+                : null;
         } elseif (
             filled($validated['image_url'] ?? null)
         ) {
-            $oldImage = $openAccessResource->image;
-
             $data['image'] = trim(
                 $validated['image_url']
             );
-
-            if (
-                $oldImage !== $data['image']
-            ) {
-                MediaStorage::delete($oldImage);
-            }
         }
 
         $openAccessResource->update($data);
@@ -217,8 +200,6 @@ class OpenAccessResourceController extends Controller
     public function destroy(
         OpenAccessResource $openAccessResource
     ): RedirectResponse {
-        MediaStorage::delete($openAccessResource->image);
-
         $openAccessResource->delete();
 
         return redirect()

@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\EbookProgram;
-use App\Support\MediaStorage;
+use App\Support\DatabaseMedia;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
@@ -103,7 +103,7 @@ class EbookProgramController extends Controller
             $data['image'] !== $oldImage &&
             $this->isUploadedImage($oldImage)
         ) {
-            MediaStorage::delete($oldImage);
+            //
         }
 
         return redirect()
@@ -134,7 +134,7 @@ class EbookProgramController extends Controller
         }
 
         if ($this->isUploadedImage($ebookProgram->image)) {
-            MediaStorage::delete($ebookProgram->image);
+            //
         }
 
         $ebookProgram->delete();
@@ -244,9 +244,9 @@ class EbookProgramController extends Controller
          * an external image URL.
          */
         if ($request->hasFile('image_file')) {
-            $data['image'] = $request
-                ->file('image_file')
-                ->store('programs', config('filesystems.media_disk', 'public'));
+            $data['image'] = DatabaseMedia::store(
+                $request->file('image_file')
+            );
         } elseif (filled($validated['image_url'] ?? null)) {
             $data['image'] = trim(
                 $validated['image_url']
@@ -268,6 +268,7 @@ class EbookProgramController extends Controller
         }
 
         return !str_starts_with($image, 'http://') &&
-            !str_starts_with($image, 'https://');
+            !str_starts_with($image, 'https://') &&
+            !str_starts_with($image, 'data:');
     }
 }
