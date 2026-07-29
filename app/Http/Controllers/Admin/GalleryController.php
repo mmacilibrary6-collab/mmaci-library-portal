@@ -143,7 +143,7 @@ class GalleryController extends Controller
                 !str_starts_with($oldImage, 'https://')
             ) {
                 Storage::disk('public')
-                    ->delete($oldImage);
+                    ->delete($this->normalizeLocalImagePath($oldImage));
             }
         }
 
@@ -175,7 +175,9 @@ class GalleryController extends Controller
             )
         ) {
             Storage::disk('public')
-                ->delete($gallery->image);
+                ->delete(
+                    $this->normalizeLocalImagePath($gallery->image)
+                );
         }
 
         $gallery->delete();
@@ -254,5 +256,16 @@ class GalleryController extends Controller
             'sort_order.min' =>
                 'The sort order cannot be negative.',
         ];
+    }
+
+    private function normalizeLocalImagePath(?string $image): string
+    {
+        $image = trim((string) $image);
+
+        if (str_starts_with($image, 'storage/')) {
+            $image = substr($image, 8);
+        }
+
+        return ltrim($image, '/');
     }
 }

@@ -327,6 +327,19 @@ class OpenAccessResourceController extends Controller
             return;
         }
 
-        Storage::disk('public')->delete($image);
+        Storage::disk('public')->delete(
+            $this->normalizeLocalImagePath($image)
+        );
+    }
+
+    private function normalizeLocalImagePath(?string $image): string
+    {
+        $image = trim((string) $image);
+
+        if (str_starts_with($image, 'storage/')) {
+            $image = substr($image, 8);
+        }
+
+        return ltrim($image, '/');
     }
 }

@@ -64,7 +64,7 @@ class Gallery extends Model
         $image = ltrim($image, '/');
 
         return Storage::disk('public')->exists($image)
-            ? Storage::disk('public')->url($image)
+            ? route('public.media', ['path' => $image])
             : asset('images/readingarea.jpg');
     }
 }

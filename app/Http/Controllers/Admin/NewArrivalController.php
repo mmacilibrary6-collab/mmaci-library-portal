@@ -112,7 +112,9 @@ class NewArrivalController extends Controller
             $request->hasFile('image_file') &&
             $this->isLocalImage($oldImage)
         ) {
-            Storage::disk('public')->delete($oldImage);
+            Storage::disk('public')->delete(
+                $this->normalizeLocalImagePath($oldImage)
+            );
         }
 
         return redirect()
@@ -128,7 +130,7 @@ class NewArrivalController extends Controller
     ): RedirectResponse {
         if ($this->isLocalImage($newArrival->image)) {
             Storage::disk('public')->delete(
-                $newArrival->image
+                $this->normalizeLocalImagePath($newArrival->image)
             );
         }
 
@@ -315,5 +317,16 @@ class NewArrivalController extends Controller
 
         return !str_starts_with($image, 'http://') &&
             !str_starts_with($image, 'https://');
+    }
+
+    private function normalizeLocalImagePath(?string $image): string
+    {
+        $image = trim((string) $image);
+
+        if (str_starts_with($image, 'storage/')) {
+            $image = substr($image, 8);
+        }
+
+        return ltrim($image, '/');
     }
 }

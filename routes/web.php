@@ -14,6 +14,7 @@ use App\Http\Controllers\CollectionController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\MoreController;
 use App\Http\Controllers\ServiceController;
+use Illuminate\Support\Facades\Storage;
 
 /*
 |--------------------------------------------------------------------------
@@ -39,6 +40,16 @@ use App\Http\Controllers\Admin\VisitingUserController;
 
 Route::get('/', [HomeController::class, 'index'])
     ->name('home');
+
+Route::get('/media/{path}', function (string $path) {
+    $path = ltrim($path, '/');
+
+    abort_unless(Storage::disk('public')->exists($path), 404);
+
+    return response()->file(Storage::disk('public')->path($path));
+})
+    ->where('path', '.*')
+    ->name('public.media');
 
 Route::get('/about', [AboutController::class, 'index'])
     ->name('about');
