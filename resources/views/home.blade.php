@@ -442,11 +442,10 @@
                 <div class="col-lg-7">
                     <div class="library-map-wrapper">
                         <iframe
-                            src="https://maps.google.com/maps?q=8.9556933,125.5405096&z=17&output=embed"
+                            src="https://www.openstreetmap.org/export/embed.html?bbox=125.5345096%2C8.9496933%2C125.5465096%2C8.9616933&layer=mapnik&marker=8.9556933%2C125.5405096"
                             class="library-map"
                             loading="lazy"
                             allowfullscreen
-                            referrerpolicy="no-referrer-when-downgrade"
                             title="MMACI Library Services Office location">
                         </iframe>
                     </div>
