@@ -140,7 +140,7 @@
                 <div class="stat-content">
 
                     <span class="stat-label">
-                        E-Books
+                        E-Book Programs
                     </span>
 
                     <h2 class="stat-number">

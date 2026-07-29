@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\CalendarEvent;
+use App\Models\EbookProgram;
 use App\Models\NewArrival;
 use App\Models\Gallery;
 
@@ -24,7 +25,7 @@ class DashboardController extends Controller
 
         $totalBooks = NewArrival::where('resource_type', 'printed')->count();
 
-        $totalEbooks = NewArrival::where('resource_type', 'ebook')->count();
+        $totalEbooks = EbookProgram::count();
 
         $totalGallery = Gallery::count();
 
