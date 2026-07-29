@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Schema;
 
 class CalendarEvent extends Model
 {
@@ -33,6 +34,12 @@ class CalendarEvent extends Model
 
     public function scopePublished($query)
     {
+        $table = $query->getModel()->getTable();
+
+        if (! Schema::hasColumn($table, 'status')) {
+            return $query;
+        }
+
         return $query->where('status', 'published');
     }
 

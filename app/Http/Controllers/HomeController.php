@@ -5,17 +5,29 @@ namespace App\Http\Controllers;
 use App\Models\CalendarEvent;
 use App\Models\NewArrival;
 use Illuminate\View\View;
+use Illuminate\Support\Facades\Schema;
 
 class HomeController extends Controller
 {
     public function index(): View
     {
-        $events = CalendarEvent::query()
-            ->where('status', 'published')
-            ->whereDate('event_date', '>=', today())
-            ->orderBy('event_date')
-            ->orderBy('start_time')
-            ->get();
+        $eventsQuery = CalendarEvent::query();
+        $eventTable = $eventsQuery->getModel()->getTable();
+
+        if (Schema::hasColumn($eventTable, 'status')) {
+            $eventsQuery->where('status', 'published');
+        }
+
+        if (Schema::hasColumn($eventTable, 'event_date')) {
+            $eventsQuery->whereDate('event_date', '>=', today())
+                ->orderBy('event_date');
+        }
+
+        if (Schema::hasColumn($eventTable, 'start_time')) {
+            $eventsQuery->orderBy('start_time');
+        }
+
+        $events = $eventsQuery->get();
 
         $arrivals = NewArrival::query()
             ->where('resource_type', 'printed')

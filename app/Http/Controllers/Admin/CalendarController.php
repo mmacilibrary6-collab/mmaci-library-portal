@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\CalendarEvent;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Schema;
 
 class CalendarController extends Controller
 {
@@ -14,6 +15,7 @@ class CalendarController extends Controller
     public function index(Request $request)
     {
         $query = CalendarEvent::query();
+        $table = $query->getModel()->getTable();
 
         /*
         |--------------------------------------------------------------------------
@@ -38,7 +40,7 @@ class CalendarController extends Controller
         |--------------------------------------------------------------------------
         */
 
-        if ($request->filled('status')) {
+        if ($request->filled('status') && Schema::hasColumn($table, 'status')) {
             $query->where('status', $request->input('status'));
         }
 
@@ -110,7 +112,11 @@ class CalendarController extends Controller
             ],
         ]);
 
-        CalendarEvent::create($validated);
+        $event = new CalendarEvent();
+        $columns = Schema::getColumnListing($event->getTable());
+        $payload = array_intersect_key($validated, array_flip($columns));
+
+        CalendarEvent::create($payload);
 
         return redirect()
             ->route('admin.calendar.index')
@@ -172,7 +178,10 @@ class CalendarController extends Controller
             ],
         ]);
 
-        $calendar->update($validated);
+        $columns = Schema::getColumnListing($calendar->getTable());
+        $payload = array_intersect_key($validated, array_flip($columns));
+
+        $calendar->update($payload);
 
         return redirect()
             ->route('admin.calendar.index')
