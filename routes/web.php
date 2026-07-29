@@ -262,6 +262,11 @@ Route::prefix('admin')
             GalleryController::class
         )->except(['show']);
 
+        Route::post(
+            'gallery/{gallery}/images',
+            [GalleryController::class, 'storeImage']
+        )->name('gallery.images.store');
+
         /*
         |--------------------------------------------------------------------------
         | E-Book Program Management

@@ -44,11 +44,11 @@
                 <strong>{{ $galleries->count() }}</strong>
                 <span>
                     {{ \Illuminate\Support\Str::plural(
-                        'published gallery image',
+                        'published gallery folder',
                         $galleries->count()
                     ) }}
                 </span>
-                <small>Select an image to view it in full size.</small>
+                <small>Select a folder to view its slideshow.</small>
             </div>
         </div>
     </div>
@@ -64,31 +64,31 @@
                     tabindex="0"
                     aria-label="View {{ $gallery->title }}"
                     style="--reveal-delay: {{ min($loop->index * 70, 350) }}ms"
-                    data-gallery-image="{{ $gallery->image_url }}"
-                    data-gallery-title="{{ $gallery->title }}">
+                    data-gallery-title="{{ $gallery->title }}"
+                    data-gallery-images='@js($gallery->images->isNotEmpty() ? $gallery->images->map(fn ($image) => $image->image_url)->values() : [$gallery->cover_image_url])'>
 
                     <div class="gallery-image">
                         <img
-                            src="{{ $gallery->image_url }}"
+                            src="{{ $gallery->cover_image_url }}"
                             alt="{{ $gallery->title }}"
                             loading="lazy"
                             onerror="this.onerror=null;this.src='{{ asset('images/readingarea.jpg') }}';">
                         <div class="gallery-overlay">
-                            <span>MMACI Library</span>
+                            <span>{{ $gallery->images->count() }} photos</span>
                             <h3>{{ $gallery->title }}</h3>
                             <span class="view-image">
                                 <i class="bi bi-arrows-fullscreen" aria-hidden="true"></i>
-                                View image
+                                View slideshow
                             </span>
                         </div>
                     </div>
                 </article>
             @empty
                 <div class="gallery-empty">
-                    <h3>Gallery images are coming soon</h3>
+                    <h3>Gallery folders are coming soon</h3>
                     <p>
                         Library programs, events, and activities will appear
-                        here once images become available.
+                        here once folders and images become available.
                     </p>
                 </div>
             @endforelse
@@ -114,11 +114,18 @@
 
             <div class="gallery-modal-image">
                 <img src="" id="galleryModalImage" alt="Gallery preview">
+                <button type="button" class="gallery-modal-nav gallery-modal-prev" id="galleryModalPrev" aria-label="Previous image">
+                    <i class="bi bi-chevron-left"></i>
+                </button>
+                <button type="button" class="gallery-modal-nav gallery-modal-next" id="galleryModalNext" aria-label="Next image">
+                    <i class="bi bi-chevron-right"></i>
+                </button>
             </div>
 
             <div class="gallery-modal-caption">
                 <span>MMACI Library Gallery</span>
                 <h2 id="galleryPreviewModalLabel"></h2>
+                <div id="galleryModalCounter" class="gallery-modal-counter"></div>
             </div>
         </div>
     </div>
@@ -479,6 +486,7 @@
 }
 
 .gallery-modal-image {
+    position: relative;
     display: grid;
     place-items: center;
     min-height: 320px;
@@ -491,6 +499,29 @@
     max-height: 72vh;
     display: block;
     object-fit: contain;
+}
+
+.gallery-modal-nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 42px;
+    height: 42px;
+    display: grid;
+    place-items: center;
+    color: #fff;
+    background: rgba(7, 31, 62, .55);
+    border: 0;
+    border-radius: 999px;
+}
+
+.gallery-modal-prev { left: 14px; }
+.gallery-modal-next { right: 14px; }
+
+.gallery-modal-counter {
+    margin-top: 6px;
+    color: rgba(255, 255, 255, .7);
+    font-size: 12px;
 }
 
 .gallery-modal-caption {
@@ -611,6 +642,12 @@ document.addEventListener('DOMContentLoaded', function () {
     const modalElement = document.getElementById('galleryPreviewModal');
     const modalImage = document.getElementById('galleryModalImage');
     const modalTitle = document.getElementById('galleryPreviewModalLabel');
+    const modalCounter = document.getElementById('galleryModalCounter');
+    const modalPrev = document.getElementById('galleryModalPrev');
+    const modalNext = document.getElementById('galleryModalNext');
+    let currentImages = [];
+    let currentIndex = 0;
+    let slideshowTimer = null;
 
     if ('IntersectionObserver' in window) {
         const revealObserver = new IntersectionObserver(
@@ -648,14 +685,37 @@ document.addEventListener('DOMContentLoaded', function () {
 
     const modal = bootstrap.Modal.getOrCreateInstance(modalElement);
 
+    function renderSlide(index) {
+        if (!currentImages.length) {
+            return;
+        }
+
+        currentIndex = (index + currentImages.length) % currentImages.length;
+        modalImage.src = currentImages[currentIndex];
+        modalCounter.textContent = `${currentIndex + 1} / ${currentImages.length}`;
+    }
+
     function openGalleryImage(card) {
-        const image = card.dataset.galleryImage;
+        currentImages = JSON.parse(card.dataset.galleryImages || '[]');
         const title = card.dataset.galleryTitle;
 
-        modalImage.src = image;
+        if (!currentImages.length) {
+            currentImages = ['{{ asset('images/readingarea.jpg') }}'];
+        }
+
         modalImage.alt = title;
         modalTitle.textContent = title;
+        renderSlide(0);
         modal.show();
+
+        window.clearInterval(slideshowTimer);
+        slideshowTimer = window.setInterval(function () {
+            renderSlide(currentIndex + 1);
+        }, 2800);
+    }
+
+    function moveSlide(direction) {
+        renderSlide(currentIndex + direction);
     }
 
     galleryCards.forEach(function (card) {
@@ -672,8 +732,20 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     modalElement.addEventListener('hidden.bs.modal', function () {
+        window.clearInterval(slideshowTimer);
         modalImage.src = '';
         modalTitle.textContent = '';
+        modalCounter.textContent = '';
+        currentImages = [];
+        currentIndex = 0;
+    });
+
+    modalPrev?.addEventListener('click', function () {
+        moveSlide(-1);
+    });
+
+    modalNext?.addEventListener('click', function () {
+        moveSlide(1);
     });
 });
 </script>

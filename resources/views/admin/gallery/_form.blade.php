@@ -16,28 +16,22 @@
 
 <div class="gallery-form">
 
-    {{-- Basic information --}}
     <section class="gallery-form-section">
-
         <div class="gallery-section-heading">
-
             <span class="gallery-section-icon">
-                <i class="bi bi-card-image"></i>
+                <i class="bi bi-folder2-open"></i>
             </span>
 
             <div>
-                <h5>Gallery Information</h5>
-                <p>Enter the title and display order of the gallery image.</p>
+                <h5>Gallery Folder</h5>
+                <p>Create a folder title that groups uploaded images together.</p>
             </div>
-
         </div>
 
         <div class="row g-4">
-
             <div class="col-12">
-
                 <label for="title" class="form-label">
-                    Gallery Title <span>*</span>
+                    Folder Name <span>*</span>
                 </label>
 
                 <input
@@ -51,37 +45,31 @@
                     required>
 
                 @error('title')
-                    <div class="invalid-feedback">
-                        {{ $message }}
-                    </div>
+                    <div class="invalid-feedback">{{ $message }}</div>
                 @enderror
-
             </div>
-
         </div>
-
     </section>
 
-    {{-- Image upload --}}
     <section class="gallery-form-section">
-
         <div class="gallery-section-heading">
-
             <span class="gallery-section-icon">
                 <i class="bi bi-cloud-arrow-up-fill"></i>
             </span>
 
             <div>
-                <h5>Gallery Image</h5>
-                <p>Upload the image that will appear in the public gallery.</p>
+                <h5>{{ $isEditing ? 'Folder Cover Image' : 'Folder Cover Image (Optional)' }}</h5>
+                <p>
+                    {{ $isEditing
+                        ? 'Update the cover image shown in the admin and public gallery.'
+                        : 'Add a cover image now, or leave it blank and upload photos later.'
+                    }}
+                </p>
             </div>
-
         </div>
 
         <div class="row g-4 align-items-stretch">
-
             <div class="col-lg-6">
-
                 <label
                     for="image"
                     class="gallery-upload-area @error('image') upload-error @enderror">
@@ -90,8 +78,7 @@
                         type="file"
                         name="image"
                         id="image"
-                        accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp"
-                        {{ $isEditing ? '' : 'required' }}>
+                        accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp">
 
                     <span class="upload-icon">
                         <i class="bi bi-cloud-arrow-up"></i>
@@ -99,8 +86,8 @@
 
                     <strong>
                         {{ $isEditing
-                            ? 'Choose a replacement image'
-                            : 'Choose a gallery image'
+                            ? 'Choose a replacement cover image'
+                            : 'Choose an optional cover image'
                         }}
                     </strong>
 
@@ -111,46 +98,32 @@
                     <span class="upload-requirements">
                         JPG, PNG or WEBP · Maximum 5 MB
                     </span>
-
                 </label>
 
                 <div id="selectedFileName" class="selected-file-name">
-
                     <i class="bi bi-file-earmark-image"></i>
-
                     <span>
                         {{ $isEditing
-                            ? 'Leave empty to retain the current image.'
-                            : 'No image selected.'
+                            ? 'Leave empty to keep the current cover image.'
+                            : 'No cover image selected yet.'
                         }}
                     </span>
-
                 </div>
 
                 @error('image')
-                    <div class="gallery-error-message">
-                        {{ $message }}
-                    </div>
+                    <div class="gallery-error-message">{{ $message }}</div>
                 @enderror
-
             </div>
 
             <div class="col-lg-6">
-
                 <div class="preview-label-row">
-
-                    <label class="form-label mb-0">
-                        Image Preview
-                    </label>
-
+                    <label class="form-label mb-0">Cover Preview</label>
                     <span id="previewStatus" class="preview-status">
-                        {{ $isEditing ? 'Current image' : 'Default preview' }}
+                        {{ $isEditing ? 'Current cover' : 'Default preview' }}
                     </span>
-
                 </div>
 
                 <div class="gallery-image-preview">
-
                     <img
                         src="{{ $currentImage }}"
                         id="galleryImagePreview"
@@ -161,51 +134,121 @@
                         <i class="bi bi-eye-fill"></i>
                         Live Preview
                     </div>
-
                 </div>
-
             </div>
-
         </div>
-
     </section>
 
-    {{-- Visibility --}}
     <section class="gallery-form-section">
-
         <div class="gallery-section-heading">
+            <span class="gallery-section-icon">
+                <i class="bi bi-images"></i>
+            </span>
 
+            <div>
+                <h5>{{ $isEditing ? 'Add Images to This Folder' : 'Upload Images After Saving' }}</h5>
+                <p>
+                    {{ $isEditing
+                        ? 'Upload one or more photos that will appear in the public slideshow.'
+                        : 'Save the folder first, then upload slideshow photos from the edit screen.'
+                    }}
+                </p>
+            </div>
+        </div>
+
+        @if ($isEditing)
+            <div class="row g-4 align-items-start">
+                <div class="col-lg-6">
+                    <label for="images" class="gallery-upload-area">
+                        <input
+                            type="file"
+                            name="images[]"
+                            id="images"
+                            accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp"
+                            multiple>
+
+                        <span class="upload-icon">
+                            <i class="bi bi-images"></i>
+                        </span>
+
+                        <strong>Add photos to this folder</strong>
+                        <span class="upload-description">Select one or more images</span>
+                        <span class="upload-requirements">JPG, PNG or WEBP · Multiple files allowed</span>
+                    </label>
+
+                    @error('images')
+                        <div class="gallery-error-message">{{ $message }}</div>
+                    @enderror
+                    @error('images.*')
+                        <div class="gallery-error-message">{{ $message }}</div>
+                    @enderror
+
+                    <button
+                        type="submit"
+                        formaction="{{ route('admin.gallery.images.store', $galleryItem) }}"
+                        formmethod="POST"
+                        class="btn btn-primary mt-3">
+                        Upload Selected Images
+                    </button>
+                </div>
+
+                <div class="col-lg-6">
+                    <div class="gallery-folder-image-list">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h6 class="mb-0">Current folder images</h6>
+                            <span class="badge bg-primary">{{ $galleryItem->images->count() }} photos</span>
+                        </div>
+
+                        <div class="row g-3">
+                            @forelse ($galleryItem->images as $galleryImage)
+                                <div class="col-6">
+                                    <div class="gallery-folder-thumb">
+                                        <img src="{{ $galleryImage->image_url }}" alt="Gallery photo">
+                                    </div>
+                                </div>
+                            @empty
+                                <div class="col-12">
+                                    <div class="text-muted small">
+                                        No images uploaded yet. Use the form on the left to add the first slideshow photos.
+                                    </div>
+                                </div>
+                            @endforelse
+                        </div>
+                    </div>
+                </div>
+            </div>
+        @else
+            <div class="field-help">
+                Images can be added after the folder is created.
+            </div>
+        @endif
+    </section>
+
+    <section class="gallery-form-section">
+        <div class="gallery-section-heading">
             <span class="gallery-section-icon">
                 <i class="bi bi-eye-fill"></i>
             </span>
 
             <div>
                 <h5>Visibility Settings</h5>
-                <p>Control whether this image is visible on the public website.</p>
+                <p>Control whether this folder is visible on the public website.</p>
             </div>
-
         </div>
 
         <input type="hidden" name="is_active" value="0">
 
         <label for="is_active" class="visibility-option">
-
             <span class="visibility-option-icon">
                 <i class="bi bi-globe2"></i>
             </span>
 
             <span class="visibility-option-content">
-
-                <strong>Display image publicly</strong>
-
-                <small>
-                    When enabled, visitors can see this image in the gallery.
-                </small>
-
+                <strong>Display folder publicly</strong>
+                <small>When enabled, visitors can see this folder in the gallery.</small>
             </span>
 
             <span class="form-check form-switch mb-0">
-
                 <input
                     type="checkbox"
                     name="is_active"
@@ -213,456 +256,40 @@
                     class="form-check-input"
                     value="1"
                     @checked($isActive === 1)>
-
             </span>
-
         </label>
-
     </section>
 
-    {{-- Actions --}}
     <div class="gallery-form-actions">
-
         <a
             href="{{ route('admin.gallery.index') }}"
             class="gallery-cancel-button">
-
             <i class="bi bi-x-lg"></i>
             Cancel
-
         </a>
 
         <button type="submit" class="gallery-submit-button">
-
             <i class="bi {{ $isEditing ? 'bi-check2-circle' : 'bi-plus-circle' }}"></i>
-
-            {{ $isEditing
-                ? 'Update Gallery Image'
-                : 'Save Gallery Image'
-            }}
-
+            {{ $isEditing ? 'Save Folder Changes' : 'Create Gallery Folder' }}
         </button>
-
     </div>
-
 </div>
 
 @push('styles')
 <style>
-    .gallery-form {
-        --gallery-navy: #0b2e59;
-        --gallery-blue: #184b8c;
-        --gallery-gold: #f4b400;
-        --gallery-border: #dde4ed;
+    .gallery-folder-thumb {
+        aspect-ratio: 1 / .72;
         overflow: hidden;
-        background: #fff;
-        border: 1px solid var(--gallery-border);
-        border-radius: 20px;
-        box-shadow: 0 14px 35px rgba(11, 46, 89, .08);
-    }
-
-    .gallery-form-section {
-        padding: 27px 30px;
-        border-bottom: 1px solid #edf0f5;
-    }
-
-    .gallery-section-heading {
-        display: flex;
-        align-items: center;
-        gap: 13px;
-        margin-bottom: 23px;
-    }
-
-    .gallery-section-icon {
-        width: 43px;
-        height: 43px;
-        flex: 0 0 43px;
-        display: grid;
-        place-items: center;
-        color: var(--gallery-navy);
-        background: rgba(244, 180, 0, .17);
         border-radius: 12px;
-        font-size: 18px;
+        background: #eef3f8;
+        border: 1px solid #dde4ed;
     }
 
-    .gallery-section-heading h5 {
-        margin: 0 0 3px;
-        color: var(--gallery-navy);
-        font-size: 15px;
-        font-weight: 800;
-    }
-
-    .gallery-section-heading p {
-        margin: 0;
-        color: #7a8595;
-        font-size: 11px;
-    }
-
-    .gallery-form .form-label {
-        margin-bottom: 8px;
-        color: #243b57;
-        font-size: 12px;
-        font-weight: 700;
-    }
-
-    .gallery-form .form-label > span {
-        color: #dc3545;
-    }
-
-    .gallery-form .form-control {
-        min-height: 47px;
-        padding: 10px 14px;
-        color: #243b57;
-        background: #fbfcfe;
-        border: 1px solid #dce3ec;
-        border-radius: 11px;
-        font-size: 12px;
-        box-shadow: none;
-        transition: .2s ease;
-    }
-
-    .gallery-form .form-control:focus {
-        background: #fff;
-        border-color: var(--gallery-blue);
-        box-shadow: 0 0 0 4px rgba(24, 75, 140, .09);
-    }
-
-    .field-help {
-        margin-top: 7px;
-        color: #8a94a3;
-        font-size: 10px;
-    }
-
-    .gallery-upload-area {
-        min-height: 242px;
-        padding: 25px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        flex-direction: column;
-        text-align: center;
-        cursor: pointer;
-        background: #f8fafd;
-        border: 2px dashed #ccd6e3;
-        border-radius: 16px;
-        transition: .2s ease;
-    }
-
-    .gallery-upload-area:hover {
-        background: #f3f7fc;
-        border-color: var(--gallery-blue);
-        transform: translateY(-2px);
-    }
-
-    .gallery-upload-area.upload-error {
-        background: #fff7f7;
-        border-color: #dc3545;
-    }
-
-    .gallery-upload-area input {
-        position: absolute;
-        width: 1px;
-        height: 1px;
-        overflow: hidden;
-        opacity: 0;
-        pointer-events: none;
-    }
-
-    .upload-icon {
-        width: 57px;
-        height: 57px;
-        margin-bottom: 13px;
-        display: grid;
-        place-items: center;
-        color: var(--gallery-navy);
-        background: #fff;
-        border: 1px solid #e1e7ef;
-        border-radius: 16px;
-        font-size: 25px;
-        box-shadow: 0 8px 20px rgba(11, 46, 89, .08);
-    }
-
-    .gallery-upload-area strong {
-        margin-bottom: 4px;
-        color: var(--gallery-navy);
-        font-size: 13px;
-    }
-
-    .upload-description {
-        margin-bottom: 11px;
-        color: #718096;
-        font-size: 11px;
-    }
-
-    .upload-requirements {
-        padding: 5px 10px;
-        color: #667386;
-        background: #eaf0f7;
-        border-radius: 999px;
-        font-size: 9px;
-        font-weight: 700;
-    }
-
-    .selected-file-name {
-        min-height: 38px;
-        margin-top: 9px;
-        padding: 8px 11px;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        color: #687587;
-        background: #f7f9fc;
-        border-radius: 9px;
-        font-size: 10px;
-    }
-
-    .selected-file-name i {
-        color: var(--gallery-blue);
-    }
-
-    .gallery-error-message {
-        margin-top: 7px;
-        color: #dc3545;
-        font-size: 10px;
-        font-weight: 600;
-    }
-
-    .preview-label-row {
-        margin-bottom: 8px;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 10px;
-    }
-
-    .preview-status {
-        padding: 4px 8px;
-        color: var(--gallery-blue);
-        background: #eaf1f9;
-        border-radius: 999px;
-        font-size: 9px;
-        font-weight: 700;
-    }
-
-    .gallery-image-preview {
-        position: relative;
-        height: 242px;
-        overflow: hidden;
-        background: #e9eef5;
-        border: 1px solid #d9e1eb;
-        border-radius: 16px;
-    }
-
-    .gallery-image-preview img {
+    .gallery-folder-thumb img {
         width: 100%;
         height: 100%;
         display: block;
         object-fit: cover;
     }
-
-    .preview-overlay {
-        position: absolute;
-        right: 12px;
-        bottom: 12px;
-        padding: 7px 10px;
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-        color: #fff;
-        background: rgba(11, 46, 89, .84);
-        border-radius: 8px;
-        font-size: 9px;
-        font-weight: 700;
-        backdrop-filter: blur(6px);
-    }
-
-    .visibility-option {
-        min-height: 79px;
-        padding: 15px 17px;
-        display: flex;
-        align-items: center;
-        gap: 13px;
-        cursor: pointer;
-        background: #f8fafd;
-        border: 1px solid #dfe6ef;
-        border-radius: 14px;
-        transition: .2s ease;
-    }
-
-    .visibility-option:hover {
-        background: #f3f7fc;
-        border-color: #bfcddd;
-    }
-
-    .visibility-option-icon {
-        width: 43px;
-        height: 43px;
-        flex: 0 0 43px;
-        display: grid;
-        place-items: center;
-        color: #198754;
-        background: #e5f6ed;
-        border-radius: 12px;
-        font-size: 18px;
-    }
-
-    .visibility-option-content {
-        flex: 1;
-        min-width: 0;
-    }
-
-    .visibility-option-content strong,
-    .visibility-option-content small {
-        display: block;
-    }
-
-    .visibility-option-content strong {
-        margin-bottom: 3px;
-        color: var(--gallery-navy);
-        font-size: 12px;
-    }
-
-    .visibility-option-content small {
-        color: #778396;
-        font-size: 10px;
-    }
-
-    .visibility-option .form-check-input {
-        width: 42px;
-        height: 22px;
-        margin: 0;
-        cursor: pointer;
-        border-color: #bbc5d1;
-        box-shadow: none;
-    }
-
-    .visibility-option .form-check-input:checked {
-        background-color: #198754;
-        border-color: #198754;
-    }
-
-    .gallery-form-actions {
-        padding: 20px 30px;
-        display: flex;
-        align-items: center;
-        justify-content: flex-end;
-        gap: 10px;
-        background: #fafbfd;
-    }
-
-    .gallery-cancel-button,
-    .gallery-submit-button {
-        min-height: 44px;
-        padding: 0 17px;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        gap: 8px;
-        border-radius: 10px;
-        font-size: 11px;
-        font-weight: 700;
-        text-decoration: none;
-        transition: .2s ease;
-    }
-
-    .gallery-cancel-button {
-        color: #5f6d7e;
-        background: #fff;
-        border: 1px solid #d7dee7;
-    }
-
-    .gallery-cancel-button:hover {
-        color: var(--gallery-navy);
-        border-color: #aab7c7;
-    }
-
-    .gallery-submit-button {
-        color: #fff;
-        background: var(--gallery-navy);
-        border: 1px solid var(--gallery-navy);
-        box-shadow: 0 8px 18px rgba(11, 46, 89, .16);
-    }
-
-    .gallery-submit-button:hover {
-        color: var(--gallery-navy);
-        background: var(--gallery-gold);
-        border-color: var(--gallery-gold);
-        transform: translateY(-1px);
-    }
-
-    @media (max-width: 767.98px) {
-        .gallery-form-section {
-            padding: 22px 18px;
-        }
-
-        .gallery-form-actions {
-            padding: 17px 18px;
-        }
-    }
-
-    @media (max-width: 575.98px) {
-        .gallery-form-actions {
-            flex-direction: column-reverse;
-        }
-
-        .gallery-cancel-button,
-        .gallery-submit-button {
-            width: 100%;
-        }
-
-        .visibility-option-content small {
-            display: none;
-        }
-    }
 </style>
 @endpush
-
-@push('scripts')
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const imageInput = document.getElementById('image');
-        const imagePreview = document.getElementById('galleryImagePreview');
-        const selectedFileName = document.querySelector('#selectedFileName span');
-        const previewStatus = document.getElementById('previewStatus');
-
-        if (!imageInput || !imagePreview) {
-            return;
-        }
-
-        imageInput.addEventListener('change', function () {
-            const file = this.files && this.files[0];
-
-            if (!file) {
-                return;
-            }
-
-            if (!file.type.startsWith('image/')) {
-                this.value = '';
-
-                if (selectedFileName) {
-                    selectedFileName.textContent = 'Please select a valid image.';
-                }
-
-                return;
-            }
-
-            if (selectedFileName) {
-                selectedFileName.textContent = file.name;
-            }
-
-            if (previewStatus) {
-                previewStatus.textContent = 'New image selected';
-            }
-
-            const reader = new FileReader();
-
-            reader.addEventListener('load', function (event) {
-                imagePreview.src = event.target.result;
-            });
-
-            reader.readAsDataURL(file);
-        });
-    });
-</script>
-@endpush
-

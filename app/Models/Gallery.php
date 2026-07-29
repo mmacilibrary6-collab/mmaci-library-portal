@@ -76,7 +76,7 @@ class Gallery extends Model
     public function getCoverImageUrlAttribute(): string
     {
         return $this->images->isNotEmpty()
-            ? $this->images->first()->image_url
+            ? $this->images->sortByDesc('created_at')->first()->image_url
             : $this->image_url;
     }
 }

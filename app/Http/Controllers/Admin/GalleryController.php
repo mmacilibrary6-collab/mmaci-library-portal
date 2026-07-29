@@ -23,6 +23,8 @@ class GalleryController extends Controller
         $status = $request->input('status');
 
         $galleries = Gallery::query()
+            ->withCount('images')
+            ->with(['images' => fn ($query) => $query->latest('created_at')])
             ->when(
                 $search !== '',
                 function ($query) use ($search) {
@@ -76,15 +78,17 @@ class GalleryController extends Controller
             $this->messages()
         );
 
-        $imagePath = $request
-            ->file('image')
-            ->store('gallery', 'public');
+        $imagePath = null;
+
+        if ($request->hasFile('image')) {
+            $imagePath = $request
+                ->file('image')
+                ->store('gallery', 'public');
+        }
 
         Gallery::create([
             'title' => trim($validated['title']),
             'image' => $imagePath,
-            'sort_order' =>
-                (int) ($validated['sort_order'] ?? 0),
             'is_active' =>
                 $request->boolean('is_active'),
         ]);
@@ -93,7 +97,7 @@ class GalleryController extends Controller
             ->route('admin.gallery.index')
             ->with(
                 'success',
-                'Gallery image added successfully.'
+                'Gallery folder added successfully.'
             );
     }
 
@@ -123,8 +127,6 @@ class GalleryController extends Controller
 
         $data = [
             'title' => trim($validated['title']),
-            'sort_order' =>
-                (int) ($validated['sort_order'] ?? 0),
             'is_active' =>
                 $request->boolean('is_active'),
         ];
@@ -152,8 +154,45 @@ class GalleryController extends Controller
             ->route('admin.gallery.index')
             ->with(
                 'success',
-                'Gallery image updated successfully.'
+                'Gallery folder updated successfully.'
             );
+    }
+
+    public function storeImage(
+        Request $request,
+        Gallery $gallery
+    ): RedirectResponse {
+        $validated = $request->validate([
+            'images' => ['required', 'array', 'min:1'],
+            'images.*' => [
+                'image',
+                'mimes:jpg,jpeg,png,webp',
+                'max:5120',
+            ],
+        ], [
+            'images.required' =>
+                'Please select at least one image.',
+            'images.array' =>
+                'Please select at least one image.',
+            'images.min' =>
+                'Please select at least one image.',
+            'images.*.image' =>
+                'Each uploaded file must be an image.',
+            'images.*.mimes' =>
+                'Images must be JPG, JPEG, PNG, or WEBP files.',
+            'images.*.max' =>
+                'Each image must not exceed 5 MB.',
+        ]);
+
+        foreach ($request->file('images', []) as $imageFile) {
+            $gallery->images()->create([
+                'image' => $imageFile->store('gallery', 'public'),
+            ]);
+        }
+
+        return redirect()
+            ->route('admin.gallery.edit', $gallery)
+            ->with('success', 'Gallery images added successfully.');
     }
 
     /**
@@ -162,16 +201,22 @@ class GalleryController extends Controller
     public function destroy(
         Gallery $gallery
     ): RedirectResponse {
+        foreach ($gallery->images as $galleryImage) {
+            if (
+                filled($galleryImage->image) &&
+                !str_starts_with($galleryImage->image, 'http://') &&
+                !str_starts_with($galleryImage->image, 'https://')
+            ) {
+                Storage::disk('public')->delete(
+                    $this->normalizeLocalImagePath($galleryImage->image)
+                );
+            }
+        }
+
         if (
             filled($gallery->image) &&
-            !str_starts_with(
-                $gallery->image,
-                'http://'
-            ) &&
-            !str_starts_with(
-                $gallery->image,
-                'https://'
-            )
+            !str_starts_with($gallery->image, 'http://') &&
+            !str_starts_with($gallery->image, 'https://')
         ) {
             Storage::disk('public')
                 ->delete(
@@ -185,7 +230,7 @@ class GalleryController extends Controller
             ->route('admin.gallery.index')
             ->with(
                 'success',
-                'Gallery image deleted successfully.'
+                'Gallery folder deleted successfully.'
             );
     }
 
@@ -210,11 +255,7 @@ class GalleryController extends Controller
                 'mimes:jpg,jpeg,png,webp',
                 'max:5120',
             ],
-
-            'is_active' => [
-                'nullable',
-                'boolean',
-            ],
+            'is_active' => ['nullable', 'boolean'],
         ];
     }
 

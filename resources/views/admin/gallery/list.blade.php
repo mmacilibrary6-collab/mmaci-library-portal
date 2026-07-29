@@ -35,7 +35,7 @@
             class="gallery-add-button">
 
             <i class="bi bi-plus-lg"></i>
-            Add Gallery Image
+            Add Gallery Folder
 
         </a>
 
@@ -135,7 +135,7 @@
 
             <div>
                 <h5>Gallery Images</h5>
-                <p>Manage public images and their display order.</p>
+                <p>Manage public folders and the photos inside each folder.</p>
             </div>
 
             <span class="gallery-result-count">
@@ -164,7 +164,7 @@
 
                             <span class="gallery-order-badge">
                                 <i class="bi bi-images"></i>
-                                {{ $gallery->images->count() }} photos
+                                {{ $gallery->images_count ?? $gallery->images->count() }} photos
                             </span>
 
                             @if ($gallery->is_active)
@@ -208,7 +208,7 @@
 
                             <span>
                                 <i class="bi bi-images"></i>
-                                {{ $gallery->images->count() }} photos
+                                {{ $gallery->images_count ?? $gallery->images->count() }} photos
                             </span>
 
                         </div>
@@ -228,7 +228,7 @@
                                 action="{{ route('admin.gallery.destroy', $gallery) }}"
                                 method="POST"
                                 class="gallery-delete-form"
-                                onsubmit="return confirm('Are you sure you want to permanently delete this gallery image?');">
+                                onsubmit="return confirm('Are you sure you want to permanently delete this gallery folder?');">
 
                                 @csrf
                                 @method('DELETE')
@@ -258,13 +258,13 @@
                         <i class="bi bi-images"></i>
                     </span>
 
-                    <h4>No gallery images found</h4>
+                    <h4>No gallery folders found</h4>
 
                     <p>
                         @if (request()->filled('search') || request()->filled('status'))
                             No images match your current filters.
                         @else
-                            Upload your first image to start building the public gallery.
+                            Upload your first folder to start building the public gallery.
                         @endif
                     </p>
 
@@ -286,7 +286,7 @@
                             class="gallery-empty-primary">
 
                             <i class="bi bi-plus-lg"></i>
-                            Add Gallery Image
+                            Add Gallery Folder
 
                         </a>
 
