@@ -41,14 +41,13 @@ use App\Http\Controllers\Admin\VisitingUserController;
 Route::get('/', [HomeController::class, 'index'])
     ->name('home');
 
-Route::get('/media/{path}', function (string $path) {
-    $path = ltrim($path, '/');
+Route::get('/media', function () {
+    $path = trim((string) request()->query('path', ''));
 
-    abort_unless(Storage::disk('public')->exists($path), 404);
+    abort_unless($path !== '' && Storage::disk('public')->exists($path), 404);
 
     return response()->file(Storage::disk('public')->path($path));
 })
-    ->where('path', '.*')
     ->name('public.media');
 
 Route::get('/about', [AboutController::class, 'index'])
