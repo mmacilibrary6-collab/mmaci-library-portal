@@ -17,9 +17,17 @@ class AuthController extends Controller
 
     private const LOGIN_DECAY_SECONDS = 60;
 
+    private const LOGIN_IP_MAX_ATTEMPTS = 20;
+
+    private const LOGIN_IP_DECAY_SECONDS = 300;
+
     private const RESET_MAX_ATTEMPTS = 3;
 
     private const RESET_DECAY_SECONDS = 900;
+
+    private const RESET_IP_MAX_ATTEMPTS = 8;
+
+    private const RESET_IP_DECAY_SECONDS = 900;
 
     /**
      * Display the administrator login page.
@@ -70,18 +78,19 @@ class AuthController extends Controller
             'password' => ['required'],
         ]);
 
-        $this->ensureIsNotRateLimited($request, 'login', self::LOGIN_MAX_ATTEMPTS);
+        $this->ensureLoginIsNotRateLimited($request);
 
         if (Auth::attempt($credentials, $request->boolean('remember'))) {
             $request->session()->regenerate();
-            $this->clearRateLimit($request, 'login');
+            $this->clearRateLimit($this->loginAccountKey($credentials['email']));
 
             return redirect()
                 ->intended(route('admin.dashboard'))
                 ->with('success', 'Welcome back!');
         }
 
-        $this->hitRateLimiter($request, 'login', self::LOGIN_DECAY_SECONDS);
+        $this->hitRateLimiter($this->loginAccountKey($credentials['email']), self::LOGIN_DECAY_SECONDS);
+        $this->hitRateLimiter($request, $this->loginIpKey($request), self::LOGIN_IP_DECAY_SECONDS);
 
         return back()
             ->withInput($request->only('email'))
@@ -97,8 +106,10 @@ class AuthController extends Controller
             'email' => ['required', 'email'],
         ]);
 
-        $this->ensureIsNotRateLimited($request, 'reset', self::RESET_MAX_ATTEMPTS);
-        $this->hitRateLimiter($request, 'reset', self::RESET_DECAY_SECONDS);
+        $this->ensureIsNotRateLimited($request, $this->resetAccountKey($validated['email']), self::RESET_MAX_ATTEMPTS);
+        $this->ensureIsNotRateLimited($request, $this->resetIpKey($request), self::RESET_IP_MAX_ATTEMPTS);
+        $this->hitRateLimiter($this->resetAccountKey($validated['email']), self::RESET_DECAY_SECONDS);
+        $this->hitRateLimiter($request, $this->resetIpKey($request), self::RESET_IP_DECAY_SECONDS);
 
         $status = Password::sendResetLink($validated);
 
@@ -156,10 +167,14 @@ class AuthController extends Controller
         return redirect()->route('home');
     }
 
-    private function ensureIsNotRateLimited(Request $request, string $scope, int $maxAttempts): void
+    private function ensureLoginIsNotRateLimited(Request $request): void
     {
-        $key = $this->throttleKey($request, $scope);
+        $this->ensureIsNotRateLimited($request, $this->loginAccountKey($request->input('email')), self::LOGIN_MAX_ATTEMPTS);
+        $this->ensureIsNotRateLimited($request, $this->loginIpKey($request), self::LOGIN_IP_MAX_ATTEMPTS);
+    }
 
+    private function ensureIsNotRateLimited(Request $request, string $key, int $maxAttempts): void
+    {
         if (RateLimiter::tooManyAttempts($key, $maxAttempts)) {
             $seconds = RateLimiter::availableIn($key);
 
@@ -169,18 +184,33 @@ class AuthController extends Controller
         }
     }
 
-    private function hitRateLimiter(Request $request, string $scope, int $decaySeconds): void
+    private function hitRateLimiter(Request $request, string $key, int $decaySeconds): void
     {
-        RateLimiter::hit($this->throttleKey($request, $scope), $decaySeconds);
+        RateLimiter::hit($key, $decaySeconds);
     }
 
-    private function clearRateLimit(Request $request, string $scope): void
+    private function clearRateLimit(Request $request, string $key): void
     {
-        RateLimiter::clear($this->throttleKey($request, $scope));
+        RateLimiter::clear($key);
     }
 
-    private function throttleKey(Request $request, string $scope): string
+    private function loginAccountKey(string $email): string
     {
-        return Str::lower($request->input('email')) . '|' . $request->ip() . '|' . $scope;
+        return 'login:account:' . Str::lower($email);
+    }
+
+    private function loginIpKey(Request $request): string
+    {
+        return 'login:ip:' . $request->ip();
+    }
+
+    private function resetAccountKey(string $email): string
+    {
+        return 'reset:account:' . Str::lower($email);
+    }
+
+    private function resetIpKey(Request $request): string
+    {
+        return 'reset:ip:' . $request->ip();
     }
 }
