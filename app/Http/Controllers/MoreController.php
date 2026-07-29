@@ -69,7 +69,6 @@ class MoreController extends Controller
     public function gallery(): View
     {
         $galleries = Gallery::query()
-            ->with('images')
             ->where('is_active', true)
             ->orderByDesc('created_at')
             ->get();

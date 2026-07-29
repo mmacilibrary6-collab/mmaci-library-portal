@@ -64,17 +64,21 @@
                     tabindex="0"
                     aria-label="View {{ $gallery->title }}"
                     style="--reveal-delay: {{ min($loop->index * 70, 350) }}ms"
-                    data-gallery-images='@json($gallery->images->isNotEmpty() ? $gallery->images->map->image_url->values() : [$gallery->cover_image_url])'
+                    data-gallery-image="{{ $gallery->image_url }}"
                     data-gallery-title="{{ $gallery->title }}">
 
                     <div class="gallery-image">
-                        <img src="{{ $gallery->cover_image_url }}" alt="{{ $gallery->title }}" loading="lazy">
+                        <img
+                            src="{{ $gallery->image_url }}"
+                            alt="{{ $gallery->title }}"
+                            loading="lazy"
+                            onerror="this.onerror=null;this.src='{{ asset('images/readingarea.jpg') }}';">
                         <div class="gallery-overlay">
                             <span>MMACI Library</span>
                             <h3>{{ $gallery->title }}</h3>
                             <span class="view-image">
-                                <i class="bi bi-play-circle" aria-hidden="true"></i>
-                                View slideshow
+                                <i class="bi bi-arrows-fullscreen" aria-hidden="true"></i>
+                                View image
                             </span>
                         </div>
                     </div>
@@ -108,7 +112,9 @@
                 aria-label="Close">
             </button>
 
-            <div class="gallery-modal-image" id="galleryModalImageWrap"></div>
+            <div class="gallery-modal-image">
+                <img src="" id="galleryModalImage" alt="Gallery preview">
+            </div>
 
             <div class="gallery-modal-caption">
                 <span>MMACI Library Gallery</span>
@@ -603,7 +609,7 @@
 document.addEventListener('DOMContentLoaded', function () {
     const galleryCards = document.querySelectorAll('.gallery-card');
     const modalElement = document.getElementById('galleryPreviewModal');
-    const modalImageWrap = document.getElementById('galleryModalImageWrap');
+    const modalImage = document.getElementById('galleryModalImage');
     const modalTitle = document.getElementById('galleryPreviewModalLabel');
 
     if ('IntersectionObserver' in window) {
@@ -633,7 +639,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     if (
         !modalElement ||
-        !modalImageWrap ||
+        !modalImage ||
         !modalTitle ||
         typeof bootstrap === 'undefined'
     ) {
@@ -643,20 +649,11 @@ document.addEventListener('DOMContentLoaded', function () {
     const modal = bootstrap.Modal.getOrCreateInstance(modalElement);
 
     function openGalleryImage(card) {
-        const images = JSON.parse(card.dataset.galleryImages || '[]');
+        const image = card.dataset.galleryImage;
         const title = card.dataset.galleryTitle;
 
-        modalImageWrap.innerHTML = `
-            <div id="galleryPreviewCarousel" class="carousel slide w-100 h-100" data-bs-ride="carousel">
-                <div class="carousel-inner">
-                    ${images.map((image, index) => `
-                        <div class="carousel-item ${index === 0 ? 'active' : ''}">
-                            <img src="${image}" class="d-block w-100" alt="${title}">
-                        </div>
-                    `).join('')}
-                </div>
-            </div>
-        `;
+        modalImage.src = image;
+        modalImage.alt = title;
         modalTitle.textContent = title;
         modal.show();
     }
@@ -675,7 +672,7 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     modalElement.addEventListener('hidden.bs.modal', function () {
-        modalImageWrap.innerHTML = '';
+        modalImage.src = '';
         modalTitle.textContent = '';
     });
 });

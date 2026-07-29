@@ -72,8 +72,8 @@
             </span>
 
             <div>
-                <h5>Gallery Photos</h5>
-                <p>Upload one or more photos for this folder.</p>
+                <h5>Gallery Image</h5>
+                <p>Upload the image that will appear in the public gallery.</p>
             </div>
 
         </div>
@@ -83,15 +83,14 @@
             <div class="col-lg-6">
 
                 <label
-                    for="images"
+                    for="image"
                     class="gallery-upload-area @error('image') upload-error @enderror">
 
                     <input
                         type="file"
-                        name="images[]"
-                        id="images"
+                        name="image"
+                        id="image"
                         accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp"
-                        multiple
                         {{ $isEditing ? '' : 'required' }}>
 
                     <span class="upload-icon">
@@ -99,7 +98,10 @@
                     </span>
 
                     <strong>
-                        {{ $isEditing ? 'Choose more photos' : 'Choose folder photos' }}
+                        {{ $isEditing
+                            ? 'Choose a replacement image'
+                            : 'Choose a gallery image'
+                        }}
                     </strong>
 
                     <span class="upload-description">
@@ -125,7 +127,7 @@
 
                 </div>
 
-                @error('images')
+                @error('image')
                     <div class="gallery-error-message">
                         {{ $message }}
                     </div>
@@ -194,10 +196,10 @@
 
             <span class="visibility-option-content">
 
-                <strong>Display folder publicly</strong>
+                <strong>Display image publicly</strong>
 
                 <small>
-                    When enabled, visitors can see this folder in the gallery.
+                    When enabled, visitors can see this image in the gallery.
                 </small>
 
             </span>
@@ -663,3 +665,4 @@
     });
 </script>
 @endpush
+
