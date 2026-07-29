@@ -152,9 +152,7 @@
 
                 <div class="preview-heading">
 
-                    <label class="form-label mb-0">
-                        Cover Preview
-                    </label>
+                    
 
                     <span id="coverPreviewStatus">
                         {{ $isEditing ? 'Current cover' : 'Default preview' }}
