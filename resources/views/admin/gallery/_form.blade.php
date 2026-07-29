@@ -94,7 +94,7 @@
 
         <div class="row g-4 align-items-stretch">
 
-            <div class="col-lg-6">
+            <div class="col-lg-6 gallery-pane-column">
 
                 <label
                     for="image"
@@ -148,7 +148,7 @@
 
             </div>
 
-            <div class="col-lg-6">
+            <div class="col-lg-6 gallery-pane-column">
 
                 <div class="preview-heading">
 
@@ -216,7 +216,7 @@
 
             <div class="row g-4">
 
-                <div class="col-lg-5">
+                <div class="col-lg-5 gallery-pane-column">
 
                     <label for="images" class="gallery-upload-area gallery-multiple-upload">
 
@@ -278,7 +278,7 @@
 
                 </div>
 
-                <div class="col-lg-7">
+                <div class="col-lg-7 gallery-pane-column">
 
                     <div class="current-folder-images">
 
@@ -500,6 +500,12 @@
         line-height: 1.6;
     }
 
+    .gallery-pane-column {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+
     .gallery-folder-form .form-label {
         margin-bottom: 8px;
         color: #243b57;
@@ -537,7 +543,7 @@
 
     .gallery-upload-area {
         position: relative;
-        min-height: 240px;
+        min-height: 248px;
         padding: 24px;
         display: flex;
         align-items: center;
@@ -607,8 +613,9 @@
     }
 
     .selected-file-row {
+        width: 100%;
         min-height: 39px;
-        margin-top: 9px;
+        margin-top: 0;
         padding: 8px 11px;
         display: flex;
         align-items: center;
@@ -632,7 +639,7 @@
     }
 
     .preview-heading {
-        margin-bottom: 8px;
+        margin-bottom: 0;
         display: flex;
         align-items: center;
         justify-content: space-between;
@@ -650,7 +657,8 @@
 
     .gallery-cover-preview {
         position: relative;
-        height: 240px;
+        min-height: 248px;
+        height: 100%;
         overflow: hidden;
         background: #e9eef5;
         border: 1px solid #d9e1eb;
@@ -710,7 +718,7 @@
     }
 
     .gallery-multiple-upload {
-        min-height: 225px;
+        min-height: 248px;
     }
 
     .upload-photos-button {
