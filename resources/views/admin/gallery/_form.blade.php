@@ -1035,6 +1035,121 @@
             width: 100%;
         }
     }
+
+    .gallery-cover-layout,
+    .gallery-folder-layout {
+        align-items: stretch;
+    }
+
+    .gallery-pane-column {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        min-height: 100%;
+    }
+
+    .gallery-pane-column > .gallery-upload-area,
+    .gallery-pane-column > .current-folder-images {
+        flex: 1;
+    }
+
+    .gallery-upload-area {
+        min-height: 100%;
+    }
+
+    .gallery-cover-preview {
+        min-height: 100%;
+    }
+
+    .gallery-multiple-upload {
+        min-height: 100%;
+    }
+
+    .selected-file-row {
+        min-height: 44px;
+        margin-top: 0;
+        padding: 10px 12px;
+        border-radius: 12px;
+        font-size: 11px;
+    }
+
+    .preview-heading {
+        margin-bottom: 0;
+    }
+
+    .gallery-upload-icon {
+        margin-bottom: 14px;
+    }
+
+    .gallery-upload-area strong {
+        font-size: 14px;
+    }
+
+    .upload-description {
+        margin-bottom: 12px;
+        font-size: 11px;
+    }
+
+    .upload-requirements {
+        padding: 6px 12px;
+        font-size: 10px;
+    }
+
+    .upload-photos-button {
+        min-height: 48px;
+        margin-top: 0;
+        border-radius: 12px;
+        font-size: 12px;
+    }
+
+    .current-folder-images {
+        min-height: 100%;
+        padding: 18px;
+        border-radius: 18px;
+    }
+
+    .current-images-heading h6 {
+        font-size: 13px;
+    }
+
+    .current-images-heading p {
+        font-size: 10px;
+    }
+
+    .current-images-heading > span {
+        padding: 6px 10px;
+        font-size: 10px;
+    }
+
+    .folder-image-grid {
+        gap: 10px;
+    }
+
+    .folder-image-item {
+        border-radius: 12px;
+    }
+
+    .folder-images-empty {
+        grid-column: 1 / -1;
+        min-height: 170px;
+        border-radius: 12px;
+    }
+
+    .photos-after-save {
+        width: 100%;
+        padding: 11px 14px;
+        border-radius: 14px;
+    }
+
+    .gallery-visibility-option {
+        min-height: 84px;
+        padding: 16px 18px;
+        border-radius: 16px;
+    }
+
+    .gallery-form-actions {
+        margin-top: 2px;
+    }
 </style>
 @endpush
 
