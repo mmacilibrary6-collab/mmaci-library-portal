@@ -1598,11 +1598,11 @@ body {
 .collection-hero .breadcrumb {
     display: inline-flex;
     justify-content: center;
-    padding: 10px 18px;
-    background: rgba(255, 255, 255, 0.09);
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    border-radius: 999px;
-    backdrop-filter: blur(12px);
+    padding: 0;
+    background: transparent;
+    border: 0;
+    border-radius: 0;
+    backdrop-filter: none;
 }
 
 .collection-hero .breadcrumb-item,
