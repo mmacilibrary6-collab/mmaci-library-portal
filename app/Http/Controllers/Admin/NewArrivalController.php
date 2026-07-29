@@ -61,6 +61,8 @@ class NewArrivalController extends Controller
 
     public function store(Request $request): RedirectResponse
     {
+        DatabaseMedia::ensureBlobColumns(['new_arrivals']);
+
         $validated = $request->validate(
             $this->validationRules(),
             $this->validationMessages()
@@ -93,6 +95,8 @@ class NewArrivalController extends Controller
         Request $request,
         NewArrival $newArrival
     ): RedirectResponse {
+        DatabaseMedia::ensureBlobColumns(['new_arrivals']);
+
         $validated = $request->validate(
             $this->validationRules(),
             $this->validationMessages()

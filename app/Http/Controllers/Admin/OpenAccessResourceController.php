@@ -75,6 +75,8 @@ class OpenAccessResourceController extends Controller
     public function store(
         Request $request
     ): RedirectResponse {
+        DatabaseMedia::ensureBlobColumns(['open_access_resources']);
+
         $validated = $request->validate(
             $this->rules(true),
             $this->messages()
@@ -143,6 +145,8 @@ class OpenAccessResourceController extends Controller
         Request $request,
         OpenAccessResource $openAccessResource
     ): RedirectResponse {
+        DatabaseMedia::ensureBlobColumns(['open_access_resources']);
+
         $validated = $request->validate(
             $this->rules(false),
             $this->messages()

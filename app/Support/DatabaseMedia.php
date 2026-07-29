@@ -3,6 +3,8 @@
 namespace App\Support;
 
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
 
 class DatabaseMedia
@@ -97,5 +99,16 @@ class DatabaseMedia
         return $webpContents !== false && $webpContents !== ''
             ? $webpContents
             : $contents;
+    }
+
+    public static function ensureBlobColumns(array $tableNames): void
+    {
+        foreach ($tableNames as $tableName) {
+            if (!Schema::hasTable($tableName) || !Schema::hasColumn($tableName, 'image')) {
+                continue;
+            }
+
+            DB::statement("ALTER TABLE `{$tableName}` MODIFY `image` LONGBLOB NULL");
+        }
     }
 }

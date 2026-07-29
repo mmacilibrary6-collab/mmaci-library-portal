@@ -73,6 +73,8 @@ class GalleryController extends Controller
     public function store(
         Request $request
     ): RedirectResponse {
+        DatabaseMedia::ensureBlobColumns(['galleries', 'gallery_images']);
+
         $validated = $request->validate(
             $this->rules(),
             $this->messages()
@@ -120,6 +122,8 @@ class GalleryController extends Controller
         Request $request,
         Gallery $gallery
     ): RedirectResponse {
+        DatabaseMedia::ensureBlobColumns(['galleries']);
+
         $validated = $request->validate(
             $this->rules(false),
             $this->messages()
@@ -151,6 +155,8 @@ class GalleryController extends Controller
         Request $request,
         Gallery $gallery
     ): RedirectResponse {
+        DatabaseMedia::ensureBlobColumns(['gallery_images']);
+
         $validated = $request->validate([
             'images' => ['required', 'array', 'min:1'],
             'images.*' => [

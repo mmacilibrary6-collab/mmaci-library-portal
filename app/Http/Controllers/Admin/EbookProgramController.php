@@ -55,6 +55,8 @@ class EbookProgramController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
+        DatabaseMedia::ensureBlobColumns(['ebook_programs']);
+
         $data = $this->validateAndPrepareProgram($request);
 
         EbookProgram::create($data);
@@ -85,6 +87,8 @@ class EbookProgramController extends Controller
         Request $request,
         EbookProgram $ebookProgram
     ): RedirectResponse {
+        DatabaseMedia::ensureBlobColumns(['ebook_programs']);
+
         $oldImage = $ebookProgram->image;
 
         $data = $this->validateAndPrepareProgram(
