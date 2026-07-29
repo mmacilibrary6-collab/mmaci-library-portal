@@ -414,13 +414,18 @@
 
 .ask-hero .breadcrumb-item,
 .ask-hero .breadcrumb-item.active {
-    color: rgba(255, 255, 255, 0.70);
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 13px;
 }
 
 .ask-hero .breadcrumb-item a {
-    color: var(--mmaci-yellow);
-    font-weight: 700;
+    color: #ffffff;
+    font-weight: 600;
     text-decoration: none;
+}
+
+.ask-hero .breadcrumb-item + .breadcrumb-item::before {
+    color: rgba(255, 255, 255, 0.36);
 }
 
 /* Shared */

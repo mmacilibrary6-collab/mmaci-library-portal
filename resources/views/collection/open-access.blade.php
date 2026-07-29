@@ -363,13 +363,18 @@
 
 .open-access-hero .breadcrumb-item,
 .open-access-hero .breadcrumb-item.active {
-    color: rgba(255, 255, 255, 0.7);
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 13px;
 }
 
 .open-access-hero .breadcrumb-item a {
-    color: var(--mmaci-yellow);
-    font-weight: 700;
+    color: #ffffff;
+    font-weight: 600;
     text-decoration: none;
+}
+
+.open-access-hero .breadcrumb-item + .breadcrumb-item::before {
+    color: rgba(255, 255, 255, 0.36);
 }
 
 .open-access-intro {

@@ -1607,12 +1607,18 @@ body {
 
 .collection-hero .breadcrumb-item,
 .collection-hero .breadcrumb-item.active {
-    font-size: 14px;
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 13px;
 }
 
 .collection-hero .breadcrumb-item a {
-    color: #ffd55a;
-    font-weight: 700;
+    color: #ffffff;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.collection-hero .breadcrumb-item + .breadcrumb-item::before {
+    color: rgba(255, 255, 255, 0.36);
 }
 
 .collection-introduction {
