@@ -17,7 +17,7 @@
                     <div class="text-center mb-4">
 
                         <img
-                            src="{{ asset('images/logo.png') }}"
+                            src="{{ asset('images/logomml.png') }}"
                             class="login-logo"
                             alt="MMACI Logo">
 
