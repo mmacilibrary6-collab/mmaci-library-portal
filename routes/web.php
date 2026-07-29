@@ -41,6 +41,9 @@ use App\Http\Controllers\Admin\VisitingUserController;
 Route::get('/', [HomeController::class, 'index'])
     ->name('home');
 
+Route::redirect('/mmaci', '/', 301);
+Route::redirect('/library', '/', 301);
+
 Route::get('/media', function () {
     $path = trim((string) request()->query('path', ''));
     $path = str_replace('\\', '/', $path);
