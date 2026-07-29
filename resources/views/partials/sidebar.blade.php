@@ -31,29 +31,6 @@
 
     </div>
 
-    {{-- Administrator --}}
-    <div class="sidebar-user">
-
-        <div class="user-avatar">
-
-            <i class="bi bi-person-fill"></i>
-
-        </div>
-
-        <div class="user-information">
-
-            <strong>
-                Super Administrator
-            </strong>
-
-            <small>
-                {{ Auth::user()?->email ?? 'admin@mmaci.edu.ph' }}
-            </small>
-
-        </div>
-
-    </div>
-
     {{-- Navigation --}}
     <nav class="sidebar-navigation">
 
