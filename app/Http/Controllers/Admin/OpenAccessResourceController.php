@@ -4,9 +4,9 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\OpenAccessResource;
+use App\Support\MediaStorage;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
 
 class OpenAccessResourceController extends Controller
@@ -87,7 +87,7 @@ class OpenAccessResourceController extends Controller
                 ->file('image_file')
                 ->store(
                     'open-access-resources',
-                    'public'
+                    config('filesystems.media_disk', 'public')
                 );
         } elseif (
             filled($validated['image_url'] ?? null)
@@ -182,10 +182,10 @@ class OpenAccessResourceController extends Controller
                 ->file('image_file')
                 ->store(
                     'open-access-resources',
-                    'public'
+                    config('filesystems.media_disk', 'public')
                 );
 
-            $this->deleteLocalImage($oldImage);
+            MediaStorage::delete($oldImage);
         } elseif (
             filled($validated['image_url'] ?? null)
         ) {
@@ -198,7 +198,7 @@ class OpenAccessResourceController extends Controller
             if (
                 $oldImage !== $data['image']
             ) {
-                $this->deleteLocalImage($oldImage);
+                MediaStorage::delete($oldImage);
             }
         }
 
@@ -217,9 +217,7 @@ class OpenAccessResourceController extends Controller
     public function destroy(
         OpenAccessResource $openAccessResource
     ): RedirectResponse {
-        $this->deleteLocalImage(
-            $openAccessResource->image
-        );
+        MediaStorage::delete($openAccessResource->image);
 
         $openAccessResource->delete();
 
@@ -313,33 +311,4 @@ class OpenAccessResourceController extends Controller
         ];
     }
 
-    private function deleteLocalImage(
-        ?string $image
-    ): void {
-        if (blank($image)) {
-            return;
-        }
-
-        if (
-            str_starts_with($image, 'http://') ||
-            str_starts_with($image, 'https://')
-        ) {
-            return;
-        }
-
-        Storage::disk('public')->delete(
-            $this->normalizeLocalImagePath($image)
-        );
-    }
-
-    private function normalizeLocalImagePath(?string $image): string
-    {
-        $image = trim((string) $image);
-
-        if (str_starts_with($image, 'storage/')) {
-            $image = substr($image, 8);
-        }
-
-        return ltrim($image, '/');
-    }
 }

@@ -4,9 +4,9 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Gallery;
+use App\Support\MediaStorage;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
 
 class GalleryController extends Controller
@@ -83,7 +83,7 @@ class GalleryController extends Controller
         if ($request->hasFile('image')) {
             $imagePath = $request
                 ->file('image')
-                ->store('gallery', 'public');
+                ->store('gallery', config('filesystems.media_disk', 'public'));
         }
 
         Gallery::create([
@@ -136,16 +136,9 @@ class GalleryController extends Controller
 
             $data['image'] = $request
                 ->file('image')
-                ->store('gallery', 'public');
+                ->store('gallery', config('filesystems.media_disk', 'public'));
 
-            if (
-                filled($oldImage) &&
-                !str_starts_with($oldImage, 'http://') &&
-                !str_starts_with($oldImage, 'https://')
-            ) {
-                Storage::disk('public')
-                    ->delete($this->normalizeLocalImagePath($oldImage));
-            }
+            MediaStorage::delete($oldImage);
         }
 
         $gallery->update($data);
@@ -186,7 +179,7 @@ class GalleryController extends Controller
 
         foreach ($request->file('images', []) as $imageFile) {
             $gallery->images()->create([
-                'image' => $imageFile->store('gallery', 'public'),
+                'image' => $imageFile->store('gallery', config('filesystems.media_disk', 'public')),
             ]);
         }
 
@@ -202,27 +195,10 @@ class GalleryController extends Controller
         Gallery $gallery
     ): RedirectResponse {
         foreach ($gallery->images as $galleryImage) {
-            if (
-                filled($galleryImage->image) &&
-                !str_starts_with($galleryImage->image, 'http://') &&
-                !str_starts_with($galleryImage->image, 'https://')
-            ) {
-                Storage::disk('public')->delete(
-                    $this->normalizeLocalImagePath($galleryImage->image)
-                );
-            }
+            MediaStorage::delete($galleryImage->image);
         }
 
-        if (
-            filled($gallery->image) &&
-            !str_starts_with($gallery->image, 'http://') &&
-            !str_starts_with($gallery->image, 'https://')
-        ) {
-            Storage::disk('public')
-                ->delete(
-                    $this->normalizeLocalImagePath($gallery->image)
-                );
-        }
+        MediaStorage::delete($gallery->image);
 
         $gallery->delete();
 
@@ -284,16 +260,4 @@ class GalleryController extends Controller
                 'The image must not exceed 5 MB.',
         ];
     }
-
-    private function normalizeLocalImagePath(?string $image): string
-    {
-        $image = trim((string) $image);
-
-        if (str_starts_with($image, 'storage/')) {
-            $image = substr($image, 8);
-        }
-
-        return ltrim($image, '/');
-    }
-
 }

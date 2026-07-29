@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Storage;
+use App\Support\MediaStorage;
 
 class OpenAccessResource extends Model
 {
@@ -43,24 +43,8 @@ class OpenAccessResource extends Model
             return asset('images/default-resource.png');
         }
 
-        $image = trim($this->image);
-        $image = str_replace('\\', '/', $image);
-
-        if (
-            str_starts_with($image, 'http://') ||
-            str_starts_with($image, 'https://')
-        ) {
-            return $image;
-        }
-
-        $image = str_starts_with($image, 'storage/')
-            ? substr($image, 8)
-            : $image;
-
-        $image = ltrim(str_replace('\\', '/', $image), '/');
-
-        return Storage::disk('public')->exists($image)
-            ? route('public.media', ['path' => $image])
+        return MediaStorage::exists($this->image)
+            ? MediaStorage::url($this->image, asset('images/default-resource.png'))
             : asset('images/default-resource.png');
     }
 }

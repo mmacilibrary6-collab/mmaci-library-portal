@@ -4,9 +4,9 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\NewArrival;
+use App\Support\MediaStorage;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
 
 class NewArrivalController extends Controller
@@ -112,9 +112,7 @@ class NewArrivalController extends Controller
             $request->hasFile('image_file') &&
             $this->isLocalImage($oldImage)
         ) {
-            Storage::disk('public')->delete(
-                $this->normalizeLocalImagePath($oldImage)
-            );
+            MediaStorage::delete($oldImage);
         }
 
         return redirect()
@@ -129,9 +127,7 @@ class NewArrivalController extends Controller
         NewArrival $newArrival
     ): RedirectResponse {
         if ($this->isLocalImage($newArrival->image)) {
-            Storage::disk('public')->delete(
-                $this->normalizeLocalImagePath($newArrival->image)
-            );
+            MediaStorage::delete($newArrival->image);
         }
 
         $newArrival->delete();
@@ -288,7 +284,7 @@ class NewArrivalController extends Controller
         if ($request->hasFile('image_file')) {
             $data['image'] = $request
                 ->file('image_file')
-                ->store('new-arrivals', 'public');
+                ->store('new-arrivals', config('filesystems.media_disk', 'public'));
         } elseif (filled($validated['image_url'] ?? null)) {
             $data['image'] = trim(
                 $validated['image_url']
@@ -298,9 +294,7 @@ class NewArrivalController extends Controller
                 $newArrival &&
                 $this->isLocalImage($newArrival->image)
             ) {
-                Storage::disk('public')->delete(
-                    $newArrival->image
-                );
+                MediaStorage::delete($newArrival->image);
             }
         } elseif (!$newArrival) {
             $data['image'] = null;
@@ -317,16 +311,5 @@ class NewArrivalController extends Controller
 
         return !str_starts_with($image, 'http://') &&
             !str_starts_with($image, 'https://');
-    }
-
-    private function normalizeLocalImagePath(?string $image): string
-    {
-        $image = trim((string) $image);
-
-        if (str_starts_with($image, 'storage/')) {
-            $image = substr($image, 8);
-        }
-
-        return ltrim($image, '/');
     }
 }

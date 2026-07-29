@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Support\Facades\Storage;
+use App\Support\MediaStorage;
 
 class Gallery extends Model
 {
@@ -53,24 +53,8 @@ class Gallery extends Model
             return asset('images/readingarea.jpg');
         }
 
-        $image = trim($this->image);
-        $image = str_replace('\\', '/', $image);
-
-        if (
-            str_starts_with($image, 'http://') ||
-            str_starts_with($image, 'https://')
-        ) {
-            return $image;
-        }
-
-        $image = str_starts_with($image, 'storage/')
-            ? substr($image, 8)
-            : $image;
-
-        $image = ltrim(str_replace('\\', '/', $image), '/');
-
-        return Storage::disk('public')->exists($image)
-            ? route('public.media', ['path' => $image])
+        return MediaStorage::exists($this->image)
+            ? MediaStorage::url($this->image, asset('images/readingarea.jpg'))
             : asset('images/readingarea.jpg');
     }
 

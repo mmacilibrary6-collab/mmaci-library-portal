@@ -4,9 +4,9 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\EbookProgram;
+use App\Support\MediaStorage;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 use Illuminate\View\View;
 
@@ -103,9 +103,7 @@ class EbookProgramController extends Controller
             $data['image'] !== $oldImage &&
             $this->isUploadedImage($oldImage)
         ) {
-            Storage::disk('public')->delete(
-                $this->normalizeLocalImagePath($oldImage)
-            );
+            MediaStorage::delete($oldImage);
         }
 
         return redirect()
@@ -136,11 +134,7 @@ class EbookProgramController extends Controller
         }
 
         if ($this->isUploadedImage($ebookProgram->image)) {
-            Storage::disk('public')->delete(
-                $this->normalizeLocalImagePath(
-                    $ebookProgram->image
-                )
-            );
+            MediaStorage::delete($ebookProgram->image);
         }
 
         $ebookProgram->delete();
@@ -252,7 +246,7 @@ class EbookProgramController extends Controller
         if ($request->hasFile('image_file')) {
             $data['image'] = $request
                 ->file('image_file')
-                ->store('programs', 'public');
+                ->store('programs', config('filesystems.media_disk', 'public'));
         } elseif (filled($validated['image_url'] ?? null)) {
             $data['image'] = trim(
                 $validated['image_url']
@@ -275,16 +269,5 @@ class EbookProgramController extends Controller
 
         return !str_starts_with($image, 'http://') &&
             !str_starts_with($image, 'https://');
-    }
-
-    private function normalizeLocalImagePath(?string $image): string
-    {
-        $image = trim((string) $image);
-
-        if (str_starts_with($image, 'storage/')) {
-            $image = substr($image, 8);
-        }
-
-        return ltrim($image, '/');
     }
 }
