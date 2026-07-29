@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
 
 class Gallery extends Model
 {
@@ -47,15 +48,23 @@ class Gallery extends Model
             return asset('images/readingarea.jpg');
         }
 
+        $image = trim($this->image);
+
         if (
-            str_starts_with($this->image, 'http://') ||
-            str_starts_with($this->image, 'https://')
+            str_starts_with($image, 'http://') ||
+            str_starts_with($image, 'https://')
         ) {
-            return $this->image;
+            return $image;
         }
 
-        return asset(
-            'storage/' . ltrim($this->image, '/')
-        );
+        $image = str_starts_with($image, 'storage/')
+            ? substr($image, 8)
+            : $image;
+
+        $image = ltrim($image, '/');
+
+        return Storage::disk('public')->exists($image)
+            ? Storage::disk('public')->url($image)
+            : asset('images/readingarea.jpg');
     }
 }

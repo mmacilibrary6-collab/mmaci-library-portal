@@ -628,21 +628,7 @@
                         @foreach ($arrivalItems as $arrival)
 
                             @php
-                                $storedCover = trim((string) $arrival->image);
-
-                                $arrivalCover = filled($storedCover)
-                                    ? (
-                                        \Illuminate\Support\Str::startsWith(
-                                            $storedCover,
-                                            ['http://', 'https://']
-                                        )
-                                            ? $storedCover
-                                            : asset(
-                                                'storage/' .
-                                                ltrim($storedCover, '/')
-                                            )
-                                    )
-                                    : asset('images/readingarea.jpg');
+                                $arrivalCover = $arrival->image_url;
 
                                 $arrivalDate = filled($arrival->arrival_date)
                                     ? \Illuminate\Support\Carbon::parse(

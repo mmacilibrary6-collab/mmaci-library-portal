@@ -116,9 +116,7 @@
                     <article class="arrival-card">
                         <div class="arrival-cover">
                             <img
-                                src="{{ !empty($book->image)
-                                    ? asset('storage/' . $book->image)
-                                    : asset('images/default-book.jpg') }}"
+                                src="{{ $book->image_url }}"
                                 alt="{{ $book->title }}"
                                 loading="lazy">
                         </div>

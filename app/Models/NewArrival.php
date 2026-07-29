@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 class NewArrival extends Model
@@ -52,12 +53,20 @@ class NewArrival extends Model
             return asset('images/readingarea.jpg');
         }
 
-        if (Str::startsWith($this->image, ['http://', 'https://'])) {
-            return $this->image;
+        $image = trim($this->image);
+
+        if (Str::startsWith($image, ['http://', 'https://'])) {
+            return $image;
         }
 
-        return asset(
-            'storage/' . ltrim($this->image, '/')
-        );
+        $image = Str::startsWith($image, 'storage/')
+            ? Str::after($image, 'storage/')
+            : $image;
+
+        $image = ltrim($image, '/');
+
+        return Storage::disk('public')->exists($image)
+            ? Storage::disk('public')->url($image)
+            : asset('images/readingarea.jpg');
     }
 }
