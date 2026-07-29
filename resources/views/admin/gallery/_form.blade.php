@@ -86,7 +86,7 @@
 
         <div class="gallery-cover-layout">
 
-            {{-- Upload --}}
+            {{-- Cover Upload --}}
             <div class="gallery-cover-column">
 
                 <label
@@ -139,40 +139,16 @@
 
             </div>
 
-            {{-- Preview --}}
+            {{-- Cover Image --}}
             <div class="gallery-cover-column">
-
-                <div class="gallery-preview-heading">
-
-                    <label class="form-label mb-0">
-                        Cover Preview
-                    </label>
-
-                    <span id="coverPreviewStatus">
-                        {{ $isEditing ? 'Current cover' : 'Default preview' }}
-                    </span>
-
-                </div>
 
                 <div class="gallery-cover-preview">
 
                     <img
                         src="{{ $currentImage }}"
                         id="galleryCoverPreview"
-                        alt="{{ $galleryItem?->title ?? 'Gallery folder cover' }}"
+                        alt="{{ $galleryItem?->title ?? 'Gallery folder image' }}"
                         onerror="this.onerror=null; this.src='{{ asset('images/readingarea.jpg') }}';">
-
-                    <div class="gallery-preview-shade"></div>
-
-                    <span class="gallery-folder-badge">
-                        <i class="bi bi-folder-fill"></i>
-                        Folder Cover
-                    </span>
-
-                    <span class="gallery-preview-badge">
-                        <i class="bi bi-eye-fill"></i>
-                        Preview
-                    </span>
 
                 </div>
 
@@ -211,7 +187,9 @@
                 {{-- Upload Photos --}}
                 <div class="gallery-photo-upload">
 
-                    <label for="images" class="gallery-drop-zone photo-drop-zone">
+                    <label
+                        for="images"
+                        class="gallery-drop-zone photo-drop-zone">
 
                         <input
                             type="file"
@@ -281,6 +259,7 @@
 
                         <span>
                             {{ $folderImages->count() }}
+
                             {{ \Illuminate\Support\Str::plural(
                                 'photo',
                                 $folderImages->count()
@@ -428,13 +407,15 @@
 @push('styles')
 <style>
     .gallery-folder-form {
-        --navy: #0b2e59;
-        --blue: #184b8c;
-        --gold: #f4b400;
+        --gallery-navy: #0b2e59;
+        --gallery-blue: #184b8c;
+        --gallery-gold: #f4b400;
         width: 100%;
         display: grid;
         gap: 16px;
     }
+
+    /* Form Cards */
 
     .gallery-form-card {
         width: 100%;
@@ -458,7 +439,7 @@
         flex: 0 0 43px;
         display: grid;
         place-items: center;
-        color: var(--navy);
+        color: var(--gallery-navy);
         background: rgba(244, 180, 0, .17);
         border-radius: 12px;
         font-size: 18px;
@@ -466,7 +447,7 @@
 
     .gallery-form-heading h5 {
         margin: 0 0 3px;
-        color: var(--navy);
+        color: var(--gallery-navy);
         font-size: 15px;
         font-weight: 800;
     }
@@ -477,6 +458,8 @@
         font-size: 11px;
         line-height: 1.5;
     }
+
+    /* Input */
 
     .gallery-folder-form .form-label {
         margin-bottom: 8px;
@@ -502,7 +485,7 @@
 
     .gallery-folder-form .form-control:focus {
         background: #fff;
-        border-color: var(--blue);
+        border-color: var(--gallery-blue);
         box-shadow: 0 0 0 4px rgba(24, 75, 140, .08);
     }
 
@@ -512,12 +495,12 @@
         font-size: 10px;
     }
 
-    /* Two-column cover layout */
+    /* Cover Layout */
 
     .gallery-cover-layout {
         width: 100%;
         display: grid;
-        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+        grid-template-columns: repeat(2, minmax(0, 1fr));
         gap: 20px;
         align-items: start;
     }
@@ -526,7 +509,7 @@
         min-width: 0;
     }
 
-    /* Upload areas */
+    /* Upload Area */
 
     .gallery-drop-zone {
         position: relative;
@@ -547,7 +530,7 @@
 
     .gallery-drop-zone:hover {
         background: #f1f6fb;
-        border-color: var(--blue);
+        border-color: var(--gallery-blue);
     }
 
     .gallery-drop-zone.has-error {
@@ -570,7 +553,7 @@
         margin-bottom: 12px;
         display: grid;
         place-items: center;
-        color: var(--navy);
+        color: var(--gallery-navy);
         background: #fff;
         border: 1px solid #e0e7ef;
         border-radius: 14px;
@@ -580,7 +563,7 @@
 
     .gallery-drop-zone strong {
         margin-bottom: 4px;
-        color: var(--navy);
+        color: var(--gallery-navy);
         font-size: 13px;
     }
 
@@ -616,7 +599,7 @@
 
     .gallery-selected-file i {
         flex-shrink: 0;
-        color: var(--blue);
+        color: var(--gallery-blue);
     }
 
     .gallery-selected-file span {
@@ -632,28 +615,9 @@
         font-weight: 600;
     }
 
-    /* Cover preview */
-
-    .gallery-preview-heading {
-        height: 27px;
-        margin-bottom: 8px;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 10px;
-    }
-
-    .gallery-preview-heading > span {
-        padding: 4px 8px;
-        color: var(--blue);
-        background: #e9f1f9;
-        border-radius: 999px;
-        font-size: 9px;
-        font-weight: 700;
-    }
+    /* Cover Image */
 
     .gallery-cover-preview {
-        position: relative;
         width: 100%;
         height: 245px;
         overflow: hidden;
@@ -668,46 +632,14 @@
         display: block;
         object-fit: cover;
         object-position: center;
+        transition: transform .35s ease;
     }
 
-    .gallery-preview-shade {
-        position: absolute;
-        inset: 0;
-        background: linear-gradient(
-            180deg,
-            rgba(11, 46, 89, .04),
-            rgba(11, 46, 89, .40)
-        );
+    .gallery-cover-preview:hover img {
+        transform: scale(1.035);
     }
 
-    .gallery-folder-badge,
-    .gallery-preview-badge {
-        position: absolute;
-        min-height: 28px;
-        padding: 0 9px;
-        display: inline-flex;
-        align-items: center;
-        gap: 5px;
-        border-radius: 999px;
-        font-size: 9px;
-        font-weight: 800;
-    }
-
-    .gallery-folder-badge {
-        top: 12px;
-        left: 12px;
-        color: var(--navy);
-        background: var(--gold);
-    }
-
-    .gallery-preview-badge {
-        right: 12px;
-        bottom: 12px;
-        color: #fff;
-        background: rgba(11, 46, 89, .82);
-    }
-
-    /* Photos layout */
+    /* Photos Layout */
 
     .gallery-photos-layout {
         width: 100%;
@@ -734,8 +666,8 @@
         justify-content: center;
         gap: 7px;
         color: #fff;
-        background: var(--blue);
-        border: 1px solid var(--blue);
+        background: var(--gallery-blue);
+        border: 1px solid var(--gallery-blue);
         border-radius: 10px;
         font-size: 11px;
         font-weight: 700;
@@ -743,9 +675,11 @@
     }
 
     .gallery-upload-button:hover {
-        background: var(--navy);
-        border-color: var(--navy);
+        background: var(--gallery-navy);
+        border-color: var(--gallery-navy);
     }
+
+    /* Current Photos */
 
     .gallery-current-photos {
         min-width: 0;
@@ -765,7 +699,7 @@
 
     .current-photos-heading h6 {
         margin: 0 0 2px;
-        color: var(--navy);
+        color: var(--gallery-navy);
         font-size: 12px;
         font-weight: 800;
     }
@@ -778,7 +712,7 @@
 
     .current-photos-heading > span {
         padding: 5px 9px;
-        color: var(--blue);
+        color: var(--gallery-blue);
         background: #e6eff9;
         border-radius: 999px;
         font-size: 9px;
@@ -806,6 +740,11 @@
         height: 100%;
         display: block;
         object-fit: cover;
+        transition: transform .3s ease;
+    }
+
+    .current-photo-item:hover img {
+        transform: scale(1.05);
     }
 
     .current-photos-empty {
@@ -830,7 +769,7 @@
 
     .current-photos-empty strong {
         margin-bottom: 3px;
-        color: var(--navy);
+        color: var(--gallery-navy);
         font-size: 12px;
     }
 
@@ -840,7 +779,7 @@
         font-size: 10px;
     }
 
-    /* Create-page information */
+    /* Create Information */
 
     .gallery-information-box {
         padding: 15px 17px;
@@ -859,7 +798,7 @@
         flex: 0 0 38px;
         display: grid;
         place-items: center;
-        color: var(--blue);
+        color: var(--gallery-blue);
         background: #dceaf8;
         border-radius: 10px;
     }
@@ -867,7 +806,7 @@
     .gallery-information-box strong {
         display: block;
         margin-bottom: 3px;
-        color: var(--navy);
+        color: var(--gallery-navy);
         font-size: 12px;
     }
 
@@ -915,7 +854,7 @@
 
     .gallery-visibility-text strong {
         margin-bottom: 3px;
-        color: var(--navy);
+        color: var(--gallery-navy);
         font-size: 12px;
     }
 
@@ -967,17 +906,22 @@
         border: 1px solid #d7dee7;
     }
 
+    .gallery-cancel-button:hover {
+        color: var(--gallery-navy);
+        border-color: #aab7c7;
+    }
+
     .gallery-save-button {
         color: #fff;
-        background: var(--navy);
-        border: 1px solid var(--navy);
+        background: var(--gallery-navy);
+        border: 1px solid var(--gallery-navy);
         box-shadow: 0 8px 18px rgba(11, 46, 89, .16);
     }
 
     .gallery-save-button:hover {
-        color: var(--navy);
-        background: var(--gold);
-        border-color: var(--gold);
+        color: var(--gallery-navy);
+        background: var(--gallery-gold);
+        border-color: var(--gallery-gold);
     }
 
     /* Responsive */
@@ -986,10 +930,6 @@
         .gallery-cover-layout,
         .gallery-photos-layout {
             grid-template-columns: 1fr;
-        }
-
-        .gallery-current-photos {
-            width: 100%;
         }
     }
 
@@ -1036,7 +976,6 @@
         const coverPreview = document.getElementById('galleryCoverPreview');
         const coverName = document.getElementById('selectedCoverName');
         const imageCount = document.getElementById('selectedImagesCount');
-        const previewStatus = document.getElementById('coverPreviewStatus');
 
         if (coverInput && coverPreview) {
             coverInput.addEventListener('change', function () {
@@ -1058,10 +997,6 @@
 
                 if (coverName) {
                     coverName.textContent = file.name;
-                }
-
-                if (previewStatus) {
-                    previewStatus.textContent = 'New cover selected';
                 }
 
                 const reader = new FileReader();
