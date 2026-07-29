@@ -24,7 +24,7 @@
                 <h2>Gallery Management</h2>
 
                 <p>
-                    Upload and manage images displayed in the public gallery.
+            Upload and manage gallery folders displayed in the public slideshow.
                 </p>
             </div>
 
@@ -140,10 +140,7 @@
 
             <span class="gallery-result-count">
                 {{ $galleries->total() }}
-                {{ \Illuminate\Support\Str::plural(
-                    'image',
-                    $galleries->total()
-                ) }}
+                {{ \Illuminate\Support\Str::plural('folder', $galleries->total()) }}
             </span>
 
         </div>
@@ -166,8 +163,8 @@
                         <div class="gallery-card-top">
 
                             <span class="gallery-order-badge">
-                                <i class="bi bi-list-ol"></i>
-                                {{ $gallery->sort_order }}
+                                <i class="bi bi-images"></i>
+                                {{ $gallery->images->count() }} photos
                             </span>
 
                             @if ($gallery->is_active)
@@ -210,8 +207,8 @@
                             </span>
 
                             <span>
-                                <i class="bi bi-sort-numeric-down"></i>
-                                Order {{ $gallery->sort_order }}
+                                <i class="bi bi-images"></i>
+                                {{ $gallery->images->count() }} photos
                             </span>
 
                         </div>

@@ -64,23 +64,17 @@
                     tabindex="0"
                     aria-label="View {{ $gallery->title }}"
                     style="--reveal-delay: {{ min($loop->index * 70, 350) }}ms"
-                    data-gallery-image="{{ $gallery->image_url }}"
+                    data-gallery-images='@json($gallery->images->isNotEmpty() ? $gallery->images->map->image_url->values() : [$gallery->cover_image_url])'
                     data-gallery-title="{{ $gallery->title }}">
 
                     <div class="gallery-image">
-                        <img
-                            src="{{ $gallery->image_url }}"
-                            alt="{{ $gallery->title }}"
-                            loading="lazy"
-                            onerror="this.onerror=null;this.src='{{ asset('images/readingarea.jpg') }}';">
-
+                        <img src="{{ $gallery->cover_image_url }}" alt="{{ $gallery->title }}" loading="lazy">
                         <div class="gallery-overlay">
                             <span>MMACI Library</span>
                             <h3>{{ $gallery->title }}</h3>
-
                             <span class="view-image">
-                                <i class="bi bi-arrows-fullscreen" aria-hidden="true"></i>
-                                View image
+                                <i class="bi bi-play-circle" aria-hidden="true"></i>
+                                View slideshow
                             </span>
                         </div>
                     </div>
@@ -114,9 +108,7 @@
                 aria-label="Close">
             </button>
 
-            <div class="gallery-modal-image">
-                <img src="" id="galleryModalImage" alt="Gallery preview">
-            </div>
+            <div class="gallery-modal-image" id="galleryModalImageWrap"></div>
 
             <div class="gallery-modal-caption">
                 <span>MMACI Library Gallery</span>
@@ -611,7 +603,7 @@
 document.addEventListener('DOMContentLoaded', function () {
     const galleryCards = document.querySelectorAll('.gallery-card');
     const modalElement = document.getElementById('galleryPreviewModal');
-    const modalImage = document.getElementById('galleryModalImage');
+    const modalImageWrap = document.getElementById('galleryModalImageWrap');
     const modalTitle = document.getElementById('galleryPreviewModalLabel');
 
     if ('IntersectionObserver' in window) {
@@ -641,7 +633,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     if (
         !modalElement ||
-        !modalImage ||
+        !modalImageWrap ||
         !modalTitle ||
         typeof bootstrap === 'undefined'
     ) {
@@ -651,11 +643,20 @@ document.addEventListener('DOMContentLoaded', function () {
     const modal = bootstrap.Modal.getOrCreateInstance(modalElement);
 
     function openGalleryImage(card) {
-        const image = card.dataset.galleryImage;
+        const images = JSON.parse(card.dataset.galleryImages || '[]');
         const title = card.dataset.galleryTitle;
 
-        modalImage.src = image;
-        modalImage.alt = title;
+        modalImageWrap.innerHTML = `
+            <div id="galleryPreviewCarousel" class="carousel slide w-100 h-100" data-bs-ride="carousel">
+                <div class="carousel-inner">
+                    ${images.map((image, index) => `
+                        <div class="carousel-item ${index === 0 ? 'active' : ''}">
+                            <img src="${image}" class="d-block w-100" alt="${title}">
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
+        `;
         modalTitle.textContent = title;
         modal.show();
     }
@@ -674,7 +675,7 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     modalElement.addEventListener('hidden.bs.modal', function () {
-        modalImage.src = '';
+        modalImageWrap.innerHTML = '';
         modalTitle.textContent = '';
     });
 });

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\GalleryImage;
 use App\Models\Gallery;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -23,6 +24,7 @@ class GalleryController extends Controller
         $status = $request->input('status');
 
         $galleries = Gallery::query()
+            ->with('images')
             ->when(
                 $search !== '',
                 function ($query) use ($search) {
@@ -47,7 +49,6 @@ class GalleryController extends Controller
                     false
                 )
             )
-            ->orderBy('sort_order')
             ->latest()
             ->paginate(12)
             ->withQueryString();
@@ -77,18 +78,16 @@ class GalleryController extends Controller
             $this->messages()
         );
 
-        $imagePath = $request
-            ->file('image')
-            ->store('gallery', 'public');
-
-        Gallery::create([
+        $gallery = Gallery::create([
             'title' => trim($validated['title']),
-            'image' => $imagePath,
-            'sort_order' =>
-                (int) ($validated['sort_order'] ?? 0),
             'is_active' =>
                 $request->boolean('is_active'),
         ]);
+
+        $this->storeGalleryImages(
+            $gallery,
+            $request->file('images', [])
+        );
 
         return redirect()
             ->route('admin.gallery.index')
@@ -124,30 +123,15 @@ class GalleryController extends Controller
 
         $data = [
             'title' => trim($validated['title']),
-            'sort_order' =>
-                (int) ($validated['sort_order'] ?? 0),
             'is_active' =>
                 $request->boolean('is_active'),
         ];
 
-        if ($request->hasFile('image')) {
-            $oldImage = $gallery->image;
-
-            $data['image'] = $request
-                ->file('image')
-                ->store('gallery', 'public');
-
-            if (
-                filled($oldImage) &&
-                !str_starts_with($oldImage, 'http://') &&
-                !str_starts_with($oldImage, 'https://')
-            ) {
-                Storage::disk('public')
-                    ->delete($this->normalizeLocalImagePath($oldImage));
-            }
-        }
-
         $gallery->update($data);
+        $this->storeGalleryImages(
+            $gallery,
+            $request->file('images', [])
+        );
 
         return redirect()
             ->route('admin.gallery.index')
@@ -164,20 +148,13 @@ class GalleryController extends Controller
         Gallery $gallery
     ): RedirectResponse {
         if (
-            filled($gallery->image) &&
-            !str_starts_with(
-                $gallery->image,
-                'http://'
-            ) &&
-            !str_starts_with(
-                $gallery->image,
-                'https://'
-            )
+            $gallery->images->isNotEmpty()
         ) {
-            Storage::disk('public')
-                ->delete(
-                    $this->normalizeLocalImagePath($gallery->image)
+            foreach ($gallery->images as $galleryImage) {
+                Storage::disk('public')->delete(
+                    $this->normalizeLocalImagePath($galleryImage->image)
                 );
+            }
         }
 
         $gallery->delete();
@@ -203,20 +180,15 @@ class GalleryController extends Controller
                 'max:255',
             ],
 
-            'image' => [
-                $imageRequired
-                    ? 'required'
-                    : 'nullable',
-                'image',
-                'mimes:jpg,jpeg,png,webp',
-                'max:5120',
+            'images' => [
+                $imageRequired ? 'required' : 'nullable',
+                'array',
             ],
 
-            'sort_order' => [
-                'nullable',
-                'integer',
-                'min:0',
-                'max:9999',
+            'images.*' => [
+                'image',
+                'mimes:jpg,jpeg,png,webp,gif',
+                'max:10240',
             ],
 
             'is_active' => [
@@ -238,23 +210,20 @@ class GalleryController extends Controller
             'title.max' =>
                 'The title must not exceed 255 characters.',
 
-            'image.required' =>
-                'Please select an image.',
+            'images.required' =>
+                'Please select at least one image.',
 
-            'image.image' =>
+            'images.array' =>
+                'The image upload is invalid.',
+
+            'images.*.image' =>
                 'The uploaded file must be an image.',
 
-            'image.mimes' =>
-                'The image must be a JPG, JPEG, PNG, or WEBP file.',
+            'images.*.mimes' =>
+                'Images must be JPG, JPEG, PNG, WEBP, or GIF files.',
 
-            'image.max' =>
-                'The image must not exceed 5 MB.',
-
-            'sort_order.integer' =>
-                'The sort order must be a number.',
-
-            'sort_order.min' =>
-                'The sort order cannot be negative.',
+            'images.*.max' =>
+                'Each image must not exceed 10 MB.',
         ];
     }
 
@@ -267,5 +236,18 @@ class GalleryController extends Controller
         }
 
         return ltrim($image, '/');
+    }
+
+    private function storeGalleryImages(Gallery $gallery, array $files): void
+    {
+        foreach ($files as $file) {
+            if (!$file) {
+                continue;
+            }
+
+            $gallery->images()->create([
+                'image' => $file->store('gallery', 'public'),
+            ]);
+        }
     }
 }

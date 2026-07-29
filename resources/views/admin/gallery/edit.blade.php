@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 
-@section('title', 'Edit Gallery Image')
-@section('page-title', 'Edit Gallery Image')
+@section('title', 'Edit Gallery Folder')
+@section('page-title', 'Edit Gallery Folder')
 
 @section('content')
 
@@ -22,10 +22,10 @@
                         Gallery Management
                     </span>
 
-                    <h2>Edit Gallery Image</h2>
+                    <h2>Edit Gallery Folder</h2>
 
                     <p>
-                        Update the image and settings for
+                        Update the folder and photos for
                         <strong>{{ $gallery->title }}</strong>.
                     </p>
                 </div>

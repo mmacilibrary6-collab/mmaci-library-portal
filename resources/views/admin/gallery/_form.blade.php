@@ -34,7 +34,7 @@
 
         <div class="row g-4">
 
-            <div class="col-lg-8">
+            <div class="col-12">
 
                 <label for="title" class="form-label">
                     Gallery Title <span>*</span>
@@ -58,33 +58,6 @@
 
             </div>
 
-            <div class="col-lg-4">
-
-                <label for="sort_order" class="form-label">
-                    Sort Order
-                </label>
-
-                <input
-                    type="number"
-                    name="sort_order"
-                    id="sort_order"
-                    min="0"
-                    value="{{ old('sort_order', $galleryItem?->sort_order ?? 0) }}"
-                    class="form-control @error('sort_order') is-invalid @enderror"
-                    placeholder="0">
-
-                <div class="field-help">
-                    Lower numbers will appear first.
-                </div>
-
-                @error('sort_order')
-                    <div class="invalid-feedback">
-                        {{ $message }}
-                    </div>
-                @enderror
-
-            </div>
-
         </div>
 
     </section>
@@ -99,8 +72,8 @@
             </span>
 
             <div>
-                <h5>Gallery Image</h5>
-                <p>Upload the image that will appear in the public gallery.</p>
+                <h5>Gallery Photos</h5>
+                <p>Upload one or more photos for this folder.</p>
             </div>
 
         </div>
@@ -110,14 +83,15 @@
             <div class="col-lg-6">
 
                 <label
-                    for="image"
+                    for="images"
                     class="gallery-upload-area @error('image') upload-error @enderror">
 
                     <input
                         type="file"
-                        name="image"
-                        id="image"
+                        name="images[]"
+                        id="images"
                         accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp"
+                        multiple
                         {{ $isEditing ? '' : 'required' }}>
 
                     <span class="upload-icon">
@@ -125,10 +99,7 @@
                     </span>
 
                     <strong>
-                        {{ $isEditing
-                            ? 'Choose a replacement image'
-                            : 'Choose a gallery image'
-                        }}
+                        {{ $isEditing ? 'Choose more photos' : 'Choose folder photos' }}
                     </strong>
 
                     <span class="upload-description">
@@ -154,7 +125,7 @@
 
                 </div>
 
-                @error('image')
+                @error('images')
                     <div class="gallery-error-message">
                         {{ $message }}
                     </div>
@@ -223,10 +194,10 @@
 
             <span class="visibility-option-content">
 
-                <strong>Display image publicly</strong>
+                <strong>Display folder publicly</strong>
 
                 <small>
-                    When enabled, visitors can see this image in the gallery.
+                    When enabled, visitors can see this folder in the gallery.
                 </small>
 
             </span>

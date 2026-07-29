@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 
-@section('title', 'Add Gallery Image')
-@section('page-title', 'Add Gallery Image')
+@section('title', 'Add Gallery Folder')
+@section('page-title', 'Add Gallery Folder')
 
 @section('content')
 
@@ -22,10 +22,10 @@
                         Gallery Management
                     </span>
 
-                    <h2>Add Gallery Image</h2>
+                    <h2>Add Gallery Folder</h2>
 
                     <p>
-                        Upload a new image to the public library gallery.
+                        Create a new folder for photos in the public library gallery.
                     </p>
                 </div>
 
