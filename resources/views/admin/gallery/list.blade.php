@@ -7,24 +7,24 @@
 
 <div class="container-fluid gallery-list-page">
 
-    {{-- Page Header --}}
-    <section class="gallery-list-header">
+    {{-- Header --}}
+    <section class="gallery-page-header">
 
-        <div class="gallery-list-heading">
+        <div class="gallery-page-heading">
 
-            <span class="gallery-list-icon">
+            <span class="gallery-page-icon">
                 <i class="bi bi-folder2-open"></i>
             </span>
 
             <div>
-                <span class="gallery-list-eyebrow">
+                <span class="gallery-page-eyebrow">
                     Website Content
                 </span>
 
                 <h2>Gallery Management</h2>
 
                 <p>
-                    Create folders and manage photos displayed in the public gallery.
+                    Create folders and manage photos shown in the public gallery.
                 </p>
             </div>
 
@@ -32,7 +32,7 @@
 
         <a
             href="{{ route('admin.gallery.create') }}"
-            class="gallery-add-button">
+            class="gallery-add-folder">
 
             <i class="bi bi-folder-plus"></i>
             Add Gallery Folder
@@ -41,12 +41,10 @@
 
     </section>
 
-    {{-- Success Message --}}
+    {{-- Success --}}
     @if (session('success'))
 
-        <div
-            class="gallery-success-alert alert alert-dismissible fade show"
-            role="alert">
+        <div class="gallery-success alert alert-dismissible fade show">
 
             <span class="gallery-success-icon">
                 <i class="bi bi-check-lg"></i>
@@ -68,14 +66,13 @@
 
     @endif
 
-    {{-- Management Card --}}
-    <section class="gallery-management-card">
+    <section class="gallery-list-card">
 
         {{-- Filters --}}
         <form
             action="{{ route('admin.gallery.index') }}"
             method="GET"
-            class="gallery-filters">
+            class="gallery-filter-bar">
 
             <div class="gallery-search">
 
@@ -85,54 +82,41 @@
                     type="search"
                     name="search"
                     value="{{ request('search') }}"
-                    placeholder="Search gallery folders"
-                    aria-label="Search gallery folders">
+                    placeholder="Search gallery folders">
 
             </div>
 
             <select
                 name="status"
-                class="form-select gallery-status-filter"
-                aria-label="Filter gallery folders by visibility">
+                class="form-select gallery-status-select">
 
-                <option value="">
-                    All visibility
-                </option>
+                <option value="">All visibility</option>
 
                 <option
                     value="active"
                     @selected(request('status') === 'active')>
-
                     Active
-
                 </option>
 
                 <option
                     value="inactive"
                     @selected(request('status') === 'inactive')>
-
                     Inactive
-
                 </option>
 
             </select>
 
-            <button
-                type="submit"
-                class="gallery-filter-button">
-
+            <button type="submit" class="gallery-filter-submit">
                 <i class="bi bi-funnel-fill"></i>
                 Filter
-
             </button>
 
             @if (request()->filled('search') || request()->filled('status'))
 
                 <a
                     href="{{ route('admin.gallery.index') }}"
-                    class="gallery-reset-button"
-                    title="Clear filters"
-                    aria-label="Clear filters">
+                    class="gallery-filter-reset"
+                    title="Clear filters">
 
                     <i class="bi bi-arrow-clockwise"></i>
 
@@ -142,32 +126,26 @@
 
         </form>
 
-        {{-- Results Heading --}}
-        <div class="gallery-results-heading">
+        {{-- Result Header --}}
+        <div class="gallery-result-header">
 
             <div>
                 <h5>Gallery Folders</h5>
-
-                <p>
-                    Manage public folders and the photos inside each folder.
-                </p>
+                <p>Manage folder covers, visibility, and photos.</p>
             </div>
 
-            <span class="gallery-result-count">
-
+            <span>
                 {{ $galleries->total() }}
-
                 {{ \Illuminate\Support\Str::plural(
                     'folder',
                     $galleries->total()
                 ) }}
-
             </span>
 
         </div>
 
-        {{-- Folder Grid --}}
-        <div class="gallery-folder-grid">
+        {{-- Grid --}}
+        <div class="gallery-card-grid">
 
             @forelse ($galleries as $gallery)
 
@@ -178,8 +156,7 @@
 
                 <article class="gallery-folder-card">
 
-                    {{-- Cover --}}
-                    <div class="gallery-folder-cover">
+                    <div class="gallery-folder-image">
 
                         <img
                             src="{{ $gallery->image_url }}"
@@ -187,26 +164,23 @@
                             loading="lazy"
                             onerror="this.onerror=null; this.src='{{ asset('images/readingarea.jpg') }}';">
 
-                        <div class="gallery-cover-shade"></div>
+                        <div class="gallery-image-shade"></div>
 
-                        <div class="gallery-cover-badges">
+                        <div class="gallery-image-top">
 
-                            <span class="photo-count-badge">
-
+                            <span class="gallery-photo-count">
                                 <i class="bi bi-images"></i>
 
                                 {{ $photoCount }}
-
                                 {{ \Illuminate\Support\Str::plural(
                                     'photo',
                                     $photoCount
                                 ) }}
-
                             </span>
 
-                            <span class="gallery-status-badge {{ $gallery->is_active ? 'active' : 'inactive' }}">
+                            <span class="gallery-folder-status {{ $gallery->is_active ? 'is-active' : 'is-inactive' }}">
 
-                                <span class="status-dot"></span>
+                                <i class="bi bi-circle-fill"></i>
 
                                 {{ $gallery->is_active
                                     ? 'Active'
@@ -217,20 +191,19 @@
 
                         </div>
 
-                        <span class="folder-cover-icon">
+                        <span class="gallery-image-folder-icon">
                             <i class="bi bi-folder-fill"></i>
                         </span>
 
                     </div>
 
-                    {{-- Folder Information --}}
-                    <div class="gallery-folder-content">
+                    <div class="gallery-folder-body">
 
                         <h3 title="{{ $gallery->title }}">
                             {{ $gallery->title }}
                         </h3>
 
-                        <div class="gallery-folder-meta">
+                        <div class="gallery-folder-details">
 
                             <span>
                                 <i class="bi bi-calendar3"></i>
@@ -242,25 +215,17 @@
                             </span>
 
                             <span>
-                                <i class="bi bi-collection-fill"></i>
-
-                                {{ $photoCount }}
-
-                                {{ \Illuminate\Support\Str::plural(
-                                    'item',
-                                    $photoCount
-                                ) }}
-
+                                <i class="bi bi-images"></i>
+                                {{ $photoCount }} items
                             </span>
 
                         </div>
 
-                        {{-- Actions --}}
-                        <div class="gallery-folder-actions">
+                        <div class="gallery-folder-buttons">
 
                             <a
                                 href="{{ route('admin.gallery.edit', $gallery) }}"
-                                class="gallery-edit-button">
+                                class="gallery-manage-button">
 
                                 <i class="bi bi-pencil-square"></i>
                                 Manage Folder
@@ -270,16 +235,15 @@
                             <form
                                 action="{{ route('admin.gallery.destroy', $gallery) }}"
                                 method="POST"
-                                onsubmit="return confirm('Are you sure you want to permanently delete this gallery folder and all of its photos?');">
+                                onsubmit="return confirm('Delete this gallery folder and all of its photos?');">
 
                                 @csrf
                                 @method('DELETE')
 
                                 <button
                                     type="submit"
-                                    class="gallery-delete-button"
-                                    title="Delete folder"
-                                    aria-label="Delete {{ $gallery->title }}">
+                                    class="gallery-remove-button"
+                                    title="Delete folder">
 
                                     <i class="bi bi-trash3"></i>
 
@@ -295,9 +259,9 @@
 
             @empty
 
-                <div class="gallery-empty-state">
+                <div class="gallery-empty">
 
-                    <span class="gallery-empty-icon">
+                    <span>
                         <i class="bi bi-folder2-open"></i>
                     </span>
 
@@ -305,32 +269,24 @@
 
                     <p>
                         @if (request()->filled('search') || request()->filled('status'))
-                            No gallery folders match your current filters.
+                            No folders match your current filters.
                         @else
-                            Create your first folder to begin building the public gallery.
+                            Create your first folder to begin building the gallery.
                         @endif
                     </p>
 
                     @if (request()->filled('search') || request()->filled('status'))
 
-                        <a
-                            href="{{ route('admin.gallery.index') }}"
-                            class="gallery-empty-secondary">
-
+                        <a href="{{ route('admin.gallery.index') }}">
                             <i class="bi bi-arrow-clockwise"></i>
                             Clear Filters
-
                         </a>
 
                     @else
 
-                        <a
-                            href="{{ route('admin.gallery.create') }}"
-                            class="gallery-empty-primary">
-
+                        <a href="{{ route('admin.gallery.create') }}">
                             <i class="bi bi-folder-plus"></i>
                             Add Gallery Folder
-
                         </a>
 
                     @endif
@@ -341,7 +297,6 @@
 
         </div>
 
-        {{-- Pagination --}}
         @if ($galleries->hasPages())
 
             <div class="gallery-pagination">
@@ -359,19 +314,21 @@
 @push('styles')
 <style>
     .gallery-list-page {
-        --gallery-navy: #0b2e59;
-        --gallery-blue: #184b8c;
-        --gallery-gold: #f4b400;
+        --navy: #0b2e59;
+        --blue: #184b8c;
+        --gold: #f4b400;
+        width: 100%;
         padding: 24px;
     }
 
     /* Header */
 
-    .gallery-list-header {
+    .gallery-page-header {
         position: relative;
-        min-height: 142px;
-        margin-bottom: 20px;
-        padding: 27px 30px;
+        width: 100%;
+        min-height: 140px;
+        margin-bottom: 18px;
+        padding: 26px 29px;
         display: flex;
         align-items: center;
         justify-content: space-between;
@@ -381,19 +338,15 @@
         background:
             radial-gradient(
                 circle at 88% 12%,
-                rgba(244, 180, 0, .23),
+                rgba(244, 180, 0, .22),
                 transparent 28%
             ),
-            linear-gradient(
-                125deg,
-                var(--gallery-navy),
-                var(--gallery-blue)
-            );
-        border-radius: 22px;
-        box-shadow: 0 16px 36px rgba(11, 46, 89, .15);
+            linear-gradient(125deg, var(--navy), var(--blue));
+        border-radius: 20px;
+        box-shadow: 0 14px 32px rgba(11, 46, 89, .14);
     }
 
-    .gallery-list-header::after {
+    .gallery-page-header::after {
         content: "";
         position: absolute;
         right: 16%;
@@ -402,552 +355,495 @@
         height: 180px;
         border: 27px solid rgba(255, 255, 255, .05);
         border-radius: 50%;
-        pointer-events: none;
     }
 
-    .gallery-list-heading {
+    .gallery-page-heading {
         position: relative;
         z-index: 1;
+        min-width: 0;
         display: flex;
         align-items: center;
-        gap: 17px;
+        gap: 16px;
     }
 
-    .gallery-list-icon {
-        width: 60px;
-        height: 60px;
-        flex: 0 0 60px;
+    .gallery-page-icon {
+        width: 58px;
+        height: 58px;
+        flex: 0 0 58px;
         display: grid;
         place-items: center;
-        color: var(--gallery-navy);
-        background: var(--gallery-gold);
-        border-radius: 17px;
-        font-size: 25px;
-        box-shadow: 0 12px 25px rgba(0, 0, 0, .14);
+        color: var(--navy);
+        background: var(--gold);
+        border-radius: 16px;
+        font-size: 24px;
     }
 
-    .gallery-list-eyebrow {
+    .gallery-page-eyebrow {
         display: block;
-        margin-bottom: 4px;
+        margin-bottom: 3px;
         color: #ffd96d;
-        font-size: 10px;
+        font-size: 9px;
         font-weight: 800;
         letter-spacing: .14em;
         text-transform: uppercase;
     }
 
-    .gallery-list-header h2 {
-        margin: 0 0 5px;
-        font-size: clamp(23px, 3vw, 30px);
+    .gallery-page-header h2 {
+        margin: 0 0 4px;
+        font-size: clamp(22px, 3vw, 29px);
         font-weight: 800;
     }
 
-    .gallery-list-header p {
+    .gallery-page-header p {
         margin: 0;
         color: rgba(255, 255, 255, .72);
-        font-size: 12px;
+        font-size: 11px;
     }
 
-    .gallery-add-button {
+    .gallery-add-folder {
         position: relative;
         z-index: 1;
-        min-height: 44px;
-        padding: 0 17px;
+        min-height: 43px;
+        padding: 0 16px;
+        flex-shrink: 0;
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        gap: 8px;
-        color: var(--gallery-navy);
-        background: var(--gallery-gold);
-        border: 1px solid var(--gallery-gold);
-        border-radius: 11px;
+        gap: 7px;
+        color: var(--navy);
+        background: var(--gold);
+        border: 1px solid var(--gold);
+        border-radius: 10px;
         font-size: 11px;
         font-weight: 800;
         text-decoration: none;
-        box-shadow: 0 9px 20px rgba(0, 0, 0, .13);
         transition: .2s ease;
     }
 
-    .gallery-add-button:hover {
-        color: var(--gallery-navy);
+    .gallery-add-folder:hover {
+        color: var(--navy);
         background: #ffc928;
-        border-color: #ffc928;
         transform: translateY(-2px);
     }
 
-    /* Success Alert */
+    /* Success */
 
-    .gallery-success-alert {
+    .gallery-success {
         position: relative;
-        margin-bottom: 18px;
-        padding: 13px 48px 13px 14px;
+        margin-bottom: 16px;
+        padding: 12px 46px 12px 13px;
         display: flex;
         align-items: center;
-        gap: 11px;
+        gap: 10px;
         color: #276749;
         background: #f0fff7;
         border: 1px solid #bee6ce;
         border-left: 4px solid #2f9e63;
-        border-radius: 13px;
+        border-radius: 12px;
     }
 
     .gallery-success-icon {
-        width: 35px;
-        height: 35px;
-        flex: 0 0 35px;
+        width: 34px;
+        height: 34px;
+        flex: 0 0 34px;
         display: grid;
         place-items: center;
         color: #fff;
         background: #2f9e63;
-        border-radius: 10px;
+        border-radius: 9px;
     }
 
-    .gallery-success-alert strong {
+    .gallery-success strong {
         display: block;
-        margin-bottom: 1px;
-        font-size: 12px;
+        font-size: 11px;
     }
 
-    .gallery-success-alert p {
+    .gallery-success p {
         margin: 0;
         color: #52856a;
         font-size: 10px;
     }
 
-    .gallery-success-alert .btn-close {
-        position: absolute;
-        top: 50%;
-        right: 14px;
-        transform: translateY(-50%) scale(.75);
-    }
+    /* Main card */
 
-    /* Main Card */
-
-    .gallery-management-card {
+    .gallery-list-card {
+        width: 100%;
         overflow: hidden;
         background: #fff;
-        border: 1px solid #e0e6ee;
-        border-radius: 20px;
-        box-shadow: 0 13px 32px rgba(11, 46, 89, .08);
+        border: 1px solid #dfe5ed;
+        border-radius: 18px;
+        box-shadow: 0 10px 28px rgba(11, 46, 89, .07);
     }
 
     /* Filters */
 
-    .gallery-filters {
-        padding: 19px 22px;
-        display: flex;
+    .gallery-filter-bar {
+        width: 100%;
+        padding: 17px 20px;
+        display: grid;
+        grid-template-columns: minmax(200px, 1fr) 170px auto auto;
+        gap: 9px;
         align-items: center;
-        gap: 10px;
-        background: #f9fbfd;
-        border-bottom: 1px solid #e9edf3;
+        background: #f8fafc;
+        border-bottom: 1px solid #e7ecf2;
     }
 
     .gallery-search {
         position: relative;
-        flex: 1;
-        min-width: 220px;
+        min-width: 0;
     }
 
     .gallery-search i {
         position: absolute;
         top: 50%;
-        left: 14px;
-        color: #8591a1;
-        font-size: 13px;
+        left: 13px;
+        color: #8792a1;
+        font-size: 12px;
         transform: translateY(-50%);
     }
 
     .gallery-search input {
         width: 100%;
-        height: 43px;
-        padding: 0 14px 0 39px;
+        height: 42px;
+        padding: 0 13px 0 37px;
         color: #33465e;
         background: #fff;
-        border: 1px solid #dbe2eb;
-        border-radius: 10px;
+        border: 1px solid #d9e1ea;
+        border-radius: 9px;
         font-size: 11px;
         outline: none;
-        transition: .2s ease;
     }
 
     .gallery-search input:focus {
-        border-color: var(--gallery-blue);
+        border-color: var(--blue);
         box-shadow: 0 0 0 4px rgba(24, 75, 140, .08);
     }
 
-    .gallery-status-filter {
-        width: 180px;
-        height: 43px;
+    .gallery-status-select {
+        width: 100%;
+        height: 42px;
         color: #43546a;
         background-color: #fff;
-        border-color: #dbe2eb;
-        border-radius: 10px;
+        border-color: #d9e1ea;
+        border-radius: 9px;
         font-size: 11px;
         box-shadow: none;
     }
 
-    .gallery-status-filter:focus {
-        border-color: var(--gallery-blue);
-        box-shadow: 0 0 0 4px rgba(24, 75, 140, .08);
-    }
-
-    .gallery-filter-button,
-    .gallery-reset-button {
-        height: 43px;
+    .gallery-filter-submit,
+    .gallery-filter-reset {
+        height: 42px;
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        border-radius: 10px;
+        border-radius: 9px;
         font-size: 11px;
         font-weight: 700;
-        transition: .2s ease;
     }
 
-    .gallery-filter-button {
-        padding: 0 16px;
-        gap: 7px;
+    .gallery-filter-submit {
+        padding: 0 15px;
+        gap: 6px;
         color: #fff;
-        background: var(--gallery-navy);
-        border: 1px solid var(--gallery-navy);
+        background: var(--navy);
+        border: 1px solid var(--navy);
     }
 
-    .gallery-filter-button:hover {
-        background: var(--gallery-blue);
-        border-color: var(--gallery-blue);
-    }
-
-    .gallery-reset-button {
-        width: 43px;
-        color: #657386;
+    .gallery-filter-reset {
+        width: 42px;
+        color: #647286;
         background: #fff;
-        border: 1px solid #dbe2eb;
+        border: 1px solid #d9e1ea;
         text-decoration: none;
     }
 
-    .gallery-reset-button:hover {
-        color: var(--gallery-navy);
-        border-color: #aab8c8;
-    }
+    /* Result heading */
 
-    /* Results Heading */
-
-    .gallery-results-heading {
-        padding: 20px 22px 17px;
+    .gallery-result-header {
+        padding: 18px 20px 15px;
         display: flex;
         align-items: center;
         justify-content: space-between;
-        gap: 15px;
+        gap: 14px;
     }
 
-    .gallery-results-heading h5 {
-        margin: 0 0 3px;
-        color: var(--gallery-navy);
-        font-size: 15px;
+    .gallery-result-header h5 {
+        margin: 0 0 2px;
+        color: var(--navy);
+        font-size: 14px;
         font-weight: 800;
     }
 
-    .gallery-results-heading p {
+    .gallery-result-header p {
         margin: 0;
-        color: #8390a1;
-        font-size: 10px;
+        color: #8490a0;
+        font-size: 9px;
     }
 
-    .gallery-result-count {
-        padding: 6px 10px;
+    .gallery-result-header > span {
+        padding: 5px 9px;
         color: #68768a;
-        background: #f0f3f7;
+        background: #eef2f6;
         border-radius: 999px;
         font-size: 9px;
         font-weight: 700;
+        white-space: nowrap;
     }
 
-    /* Folder Grid */
+    /* Grid */
 
-    .gallery-folder-grid {
-        padding: 0 22px 23px;
+    .gallery-card-grid {
+        padding: 0 20px 21px;
         display: grid;
         grid-template-columns: repeat(3, minmax(0, 1fr));
-        gap: 17px;
+        gap: 16px;
     }
 
     .gallery-folder-card {
         min-width: 0;
         overflow: hidden;
         background: #fff;
-        border: 1px solid #e0e6ed;
-        border-radius: 15px;
-        box-shadow: 0 7px 19px rgba(11, 46, 89, .06);
-        transition: .25s ease;
+        border: 1px solid #dfe5ed;
+        border-radius: 14px;
+        box-shadow: 0 6px 17px rgba(11, 46, 89, .06);
+        transition: .22s ease;
     }
 
     .gallery-folder-card:hover {
-        border-color: #c8d3df;
-        box-shadow: 0 14px 28px rgba(11, 46, 89, .12);
-        transform: translateY(-4px);
+        border-color: #c5d0dd;
+        box-shadow: 0 12px 25px rgba(11, 46, 89, .11);
+        transform: translateY(-3px);
     }
 
-    /* Folder Cover */
-
-    .gallery-folder-cover {
+    .gallery-folder-image {
         position: relative;
-        height: 205px;
+        width: 100%;
+        height: 190px;
         overflow: hidden;
-        background: #e9eef5;
+        background: #e8edf3;
     }
 
-    .gallery-folder-cover > img {
+    .gallery-folder-image > img {
         width: 100%;
         height: 100%;
         display: block;
         object-fit: cover;
         object-position: center;
-        transition: transform .4s ease;
+        transition: transform .35s ease;
     }
 
-    .gallery-folder-card:hover .gallery-folder-cover > img {
-        transform: scale(1.045);
+    .gallery-folder-card:hover .gallery-folder-image > img {
+        transform: scale(1.04);
     }
 
-    .gallery-cover-shade {
+    .gallery-image-shade {
         position: absolute;
         inset: 0;
-        pointer-events: none;
         background: linear-gradient(
             180deg,
-            rgba(11, 46, 89, .20),
-            transparent 48%,
-            rgba(11, 46, 89, .58)
+            rgba(11, 46, 89, .16),
+            transparent 50%,
+            rgba(11, 46, 89, .50)
         );
     }
 
-    .gallery-cover-badges {
+    .gallery-image-top {
         position: absolute;
-        top: 11px;
-        right: 11px;
-        left: 11px;
+        top: 10px;
+        right: 10px;
+        left: 10px;
         display: flex;
         align-items: center;
         justify-content: space-between;
-        gap: 8px;
+        gap: 7px;
     }
 
-    .photo-count-badge,
-    .gallery-status-badge {
-        min-height: 27px;
-        padding: 0 9px;
+    .gallery-photo-count,
+    .gallery-folder-status {
+        min-height: 26px;
+        padding: 0 8px;
         display: inline-flex;
         align-items: center;
         gap: 5px;
         border-radius: 999px;
-        font-size: 9px;
+        font-size: 8px;
         font-weight: 800;
     }
 
-    .photo-count-badge {
-        color: var(--gallery-navy);
-        background: var(--gallery-gold);
+    .gallery-photo-count {
+        color: var(--navy);
+        background: var(--gold);
     }
 
-    .gallery-status-badge {
+    .gallery-folder-status {
         color: #fff;
     }
 
-    .gallery-status-badge .status-dot {
-        width: 6px;
-        height: 6px;
-        background: currentColor;
-        border-radius: 50%;
+    .gallery-folder-status i {
+        font-size: 5px;
     }
 
-    .gallery-status-badge.active {
+    .gallery-folder-status.is-active {
         background: rgba(25, 135, 84, .92);
     }
 
-    .gallery-status-badge.inactive {
+    .gallery-folder-status.is-inactive {
         background: rgba(108, 117, 125, .92);
     }
 
-    .folder-cover-icon {
+    .gallery-image-folder-icon {
         position: absolute;
-        right: 14px;
-        bottom: 13px;
+        right: 13px;
+        bottom: 11px;
         color: rgba(255, 255, 255, .90);
-        font-size: 25px;
+        font-size: 23px;
     }
 
-    /* Folder Content */
-
-    .gallery-folder-content {
-        padding: 17px;
+    .gallery-folder-body {
+        padding: 15px;
     }
 
-    .gallery-folder-content h3 {
-        margin: 0 0 10px;
+    .gallery-folder-body h3 {
+        margin: 0 0 9px;
         overflow: hidden;
-        color: var(--gallery-navy);
-        font-size: 14px;
+        color: var(--navy);
+        font-size: 13px;
         font-weight: 800;
         line-height: 1.4;
         text-overflow: ellipsis;
         white-space: nowrap;
     }
 
-    .gallery-folder-meta {
-        margin-bottom: 15px;
+    .gallery-folder-details {
+        margin-bottom: 13px;
         display: flex;
         align-items: center;
         justify-content: space-between;
-        gap: 8px;
+        gap: 7px;
         color: #7b8797;
-        font-size: 9px;
+        font-size: 8px;
     }
 
-    .gallery-folder-meta span {
+    .gallery-folder-details span {
         display: inline-flex;
         align-items: center;
-        gap: 5px;
+        gap: 4px;
     }
 
-    .gallery-folder-meta i {
-        color: var(--gallery-blue);
+    .gallery-folder-details i {
+        color: var(--blue);
     }
 
-    /* Actions */
-
-    .gallery-folder-actions {
-        padding-top: 13px;
+    .gallery-folder-buttons {
+        padding-top: 12px;
         display: grid;
-        grid-template-columns: minmax(0, 1fr) 40px;
-        gap: 8px;
-        border-top: 1px solid #edf0f4;
+        grid-template-columns: minmax(0, 1fr) 38px;
+        gap: 7px;
+        border-top: 1px solid #ebeff4;
     }
 
-    .gallery-folder-actions form {
+    .gallery-folder-buttons form {
         margin: 0;
     }
 
-    .gallery-edit-button,
-    .gallery-delete-button {
+    .gallery-manage-button,
+    .gallery-remove-button {
         width: 100%;
-        min-height: 38px;
+        min-height: 36px;
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        gap: 6px;
-        border-radius: 9px;
-        font-size: 10px;
+        gap: 5px;
+        border-radius: 8px;
+        font-size: 9px;
         font-weight: 700;
         text-decoration: none;
-        transition: .2s ease;
     }
 
-    .gallery-edit-button {
-        color: var(--gallery-blue);
+    .gallery-manage-button {
+        color: var(--blue);
         background: #edf4fc;
         border: 1px solid #d5e4f6;
     }
 
-    .gallery-edit-button:hover {
+    .gallery-manage-button:hover {
         color: #fff;
-        background: var(--gallery-blue);
-        border-color: var(--gallery-blue);
+        background: var(--blue);
+        border-color: var(--blue);
     }
 
-    .gallery-delete-button {
+    .gallery-remove-button {
         color: #c14343;
         background: #fff2f2;
         border: 1px solid #f0d4d4;
     }
 
-    .gallery-delete-button:hover {
+    .gallery-remove-button:hover {
         color: #fff;
         background: #d84b4b;
         border-color: #d84b4b;
     }
 
-    /* Empty State */
+    /* Empty */
 
-    .gallery-empty-state {
+    .gallery-empty {
         grid-column: 1 / -1;
-        padding: 65px 20px;
+        padding: 55px 20px;
         text-align: center;
         background: #f8fafc;
         border: 1px dashed #cbd5e1;
-        border-radius: 15px;
+        border-radius: 13px;
     }
 
-    .gallery-empty-icon {
-        width: 66px;
-        height: 66px;
-        margin: 0 auto 15px;
+    .gallery-empty > span {
+        width: 60px;
+        height: 60px;
+        margin: 0 auto 13px;
         display: grid;
         place-items: center;
-        color: var(--gallery-navy);
-        background: #e9eff6;
-        border-radius: 18px;
-        font-size: 28px;
+        color: var(--navy);
+        background: #e8eef5;
+        border-radius: 16px;
+        font-size: 25px;
     }
 
-    .gallery-empty-state h4 {
-        margin: 0 0 6px;
-        color: var(--gallery-navy);
-        font-size: 16px;
+    .gallery-empty h4 {
+        margin: 0 0 5px;
+        color: var(--navy);
+        font-size: 15px;
         font-weight: 800;
     }
 
-    .gallery-empty-state p {
-        margin: 0 auto 17px;
+    .gallery-empty p {
+        margin: 0 0 15px;
         color: #7e8a9a;
-        font-size: 11px;
+        font-size: 10px;
     }
 
-    .gallery-empty-primary,
-    .gallery-empty-secondary {
-        min-height: 40px;
-        padding: 0 15px;
+    .gallery-empty a {
+        min-height: 38px;
+        padding: 0 14px;
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        gap: 7px;
-        border-radius: 9px;
-        font-size: 10px;
+        gap: 6px;
+        color: #fff;
+        background: var(--navy);
+        border-radius: 8px;
+        font-size: 9px;
         font-weight: 700;
         text-decoration: none;
     }
 
-    .gallery-empty-primary {
-        color: #fff;
-        background: var(--gallery-navy);
-        border: 1px solid var(--gallery-navy);
-    }
-
-    .gallery-empty-primary:hover {
-        color: var(--gallery-navy);
-        background: var(--gallery-gold);
-        border-color: var(--gallery-gold);
-    }
-
-    .gallery-empty-secondary {
-        color: var(--gallery-navy);
-        background: #fff;
-        border: 1px solid #ccd5e0;
-    }
-
-    /* Pagination */
-
     .gallery-pagination {
-        padding: 15px 22px;
-        border-top: 1px solid #e9edf3;
-    }
-
-    .gallery-pagination nav {
-        margin: 0;
+        padding: 14px 20px;
+        border-top: 1px solid #e7ecf2;
     }
 
     /* Responsive */
 
     @media (max-width: 1199.98px) {
-        .gallery-folder-grid {
+        .gallery-card-grid {
             grid-template-columns: repeat(2, minmax(0, 1fr));
         }
     }
@@ -957,49 +853,43 @@
             padding: 16px 10px;
         }
 
-        .gallery-list-header {
-            padding: 23px 20px;
+        .gallery-page-header {
+            padding: 22px 19px;
             align-items: flex-start;
             flex-direction: column;
-            border-radius: 18px;
+            border-radius: 17px;
         }
 
-        .gallery-list-icon {
-            width: 52px;
-            height: 52px;
-            flex-basis: 52px;
-            font-size: 22px;
+        .gallery-page-icon {
+            width: 50px;
+            height: 50px;
+            flex-basis: 50px;
         }
 
-        .gallery-add-button {
+        .gallery-add-folder {
             width: 100%;
         }
 
-        .gallery-filters {
-            align-items: stretch;
-            flex-direction: column;
+        .gallery-filter-bar {
+            grid-template-columns: 1fr;
         }
 
-        .gallery-search,
-        .gallery-status-filter,
-        .gallery-filter-button,
-        .gallery-reset-button {
+        .gallery-filter-reset {
             width: 100%;
-            min-width: 0;
         }
 
-        .gallery-folder-grid {
+        .gallery-card-grid {
             grid-template-columns: 1fr;
         }
     }
 
     @media (max-width: 420px) {
-        .gallery-list-heading {
+        .gallery-page-heading {
             align-items: flex-start;
         }
 
-        .gallery-results-heading,
-        .gallery-folder-meta {
+        .gallery-result-header,
+        .gallery-folder-details {
             align-items: flex-start;
             flex-direction: column;
         }

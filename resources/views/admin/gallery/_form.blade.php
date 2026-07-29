@@ -21,61 +21,53 @@
 <div class="gallery-folder-form">
 
     {{-- Folder Information --}}
-    <section class="gallery-form-section">
+    <section class="gallery-form-card">
 
-        <div class="gallery-section-heading">
+        <div class="gallery-form-heading">
 
-            <span class="gallery-section-icon">
+            <span class="gallery-heading-icon">
                 <i class="bi bi-folder2-open"></i>
             </span>
 
             <div>
                 <h5>Folder Information</h5>
-                <p>Enter the name that will identify this gallery folder.</p>
+                <p>Enter a clear name for this gallery folder.</p>
             </div>
 
         </div>
 
-        <div class="row g-4">
+        <label for="title" class="form-label">
+            Folder Name <span>*</span>
+        </label>
 
-            <div class="col-12">
+        <input
+            type="text"
+            name="title"
+            id="title"
+            value="{{ old('title', $galleryItem?->title) }}"
+            class="form-control @error('title') is-invalid @enderror"
+            placeholder="Example: Library Orientation 2026"
+            maxlength="255"
+            required>
 
-                <label for="title" class="form-label">
-                    Folder Name <span>*</span>
-                </label>
-
-                <input
-                    type="text"
-                    name="title"
-                    id="title"
-                    value="{{ old('title', $galleryItem?->title) }}"
-                    class="form-control @error('title') is-invalid @enderror"
-                    placeholder="Example: Library Orientation 2026"
-                    maxlength="255"
-                    required>
-
-                <div class="field-help">
-                    Use a short and descriptive folder name.
-                </div>
-
-                @error('title')
-                    <div class="invalid-feedback">
-                        {{ $message }}
-                    </div>
-                @enderror
-
-            </div>
-
+        <div class="gallery-field-help">
+            Use a short and descriptive folder name.
         </div>
+
+        @error('title')
+            <div class="invalid-feedback">
+                {{ $message }}
+            </div>
+        @enderror
 
     </section>
 
     {{-- Folder Cover --}}
-    <section class="gallery-form-section">
+    <section class="gallery-form-card">
 
-        <div class="gallery-section-heading">
+        <div class="gallery-form-heading">
 
-            <span class="gallery-section-icon">
+            <span class="gallery-heading-icon">
                 <i class="bi bi-card-image"></i>
             </span>
 
@@ -84,21 +76,22 @@
 
                 <p>
                     {{ $isEditing
-                        ? 'Upload a replacement image or keep the current folder cover.'
-                        : 'Choose an optional cover image for this gallery folder.'
+                        ? 'Choose a replacement or leave this empty to retain the current cover.'
+                        : 'Choose an optional cover image for this folder.'
                     }}
                 </p>
             </div>
 
         </div>
 
-        <div class="row g-4 align-items-stretch">
+        <div class="gallery-cover-layout">
 
-            <div class="col-lg-6 gallery-pane-column">
+            {{-- Upload --}}
+            <div class="gallery-cover-column">
 
                 <label
                     for="image"
-                    class="gallery-upload-area @error('image') upload-error @enderror">
+                    class="gallery-drop-zone @error('image') has-error @enderror">
 
                     <input
                         type="file"
@@ -106,7 +99,7 @@
                         id="image"
                         accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp">
 
-                    <span class="gallery-upload-icon">
+                    <span class="gallery-drop-icon">
                         <i class="bi bi-cloud-arrow-up"></i>
                     </span>
 
@@ -117,42 +110,43 @@
                         }}
                     </strong>
 
-                    <span class="upload-description">
-                        Click here to browse your files
-                    </span>
+                    <small>Click here to browse your files</small>
 
-                    <span class="upload-requirements">
+                    <span class="gallery-file-rules">
                         JPG, PNG or WEBP · Maximum 5 MB
                     </span>
 
                 </label>
 
-                <div class="selected-file-row">
+                <div class="gallery-selected-file">
 
                     <i class="bi bi-file-earmark-image"></i>
 
                     <span id="selectedCoverName">
                         {{ $isEditing
-                            ? 'Leave empty to keep the current cover.'
-                            : 'No cover image selected.'
+                            ? 'No replacement selected.'
+                            : 'No cover selected.'
                         }}
                     </span>
 
                 </div>
 
                 @error('image')
-                    <div class="gallery-error-message">
+                    <div class="gallery-error">
                         {{ $message }}
                     </div>
                 @enderror
 
             </div>
 
-            <div class="col-lg-6 gallery-pane-column">
+            {{-- Preview --}}
+            <div class="gallery-cover-column">
 
-                <div class="preview-heading">
+                <div class="gallery-preview-heading">
 
-                    
+                    <label class="form-label mb-0">
+                        Cover Preview
+                    </label>
 
                     <span id="coverPreviewStatus">
                         {{ $isEditing ? 'Current cover' : 'Default preview' }}
@@ -168,16 +162,16 @@
                         alt="{{ $galleryItem?->title ?? 'Gallery folder cover' }}"
                         onerror="this.onerror=null; this.src='{{ asset('images/readingarea.jpg') }}';">
 
-                    <div class="cover-preview-shade"></div>
+                    <div class="gallery-preview-shade"></div>
 
-                    <span class="cover-folder-badge">
+                    <span class="gallery-folder-badge">
                         <i class="bi bi-folder-fill"></i>
                         Folder Cover
                     </span>
 
-                    <span class="cover-preview-badge">
+                    <span class="gallery-preview-badge">
                         <i class="bi bi-eye-fill"></i>
-                        Live Preview
+                        Preview
                     </span>
 
                 </div>
@@ -188,12 +182,12 @@
 
     </section>
 
-    {{-- Folder Images --}}
-    <section class="gallery-form-section">
+    {{-- Folder Photos --}}
+    <section class="gallery-form-card">
 
-        <div class="gallery-section-heading">
+        <div class="gallery-form-heading">
 
-            <span class="gallery-section-icon">
+            <span class="gallery-heading-icon">
                 <i class="bi bi-images"></i>
             </span>
 
@@ -202,8 +196,8 @@
 
                 <p>
                     {{ $isEditing
-                        ? 'Upload multiple photos that will appear inside this folder.'
-                        : 'Create the folder first, then add photos from the edit page.'
+                        ? 'Upload and view the photos stored inside this folder.'
+                        : 'You can add photos after creating the folder.'
                     }}
                 </p>
             </div>
@@ -212,11 +206,12 @@
 
         @if ($isEditing)
 
-            <div class="row g-4">
+            <div class="gallery-photos-layout">
 
-                <div class="col-lg-5 gallery-pane-column">
+                {{-- Upload Photos --}}
+                <div class="gallery-photo-upload">
 
-                    <label for="images" class="gallery-upload-area gallery-multiple-upload">
+                    <label for="images" class="gallery-drop-zone photo-drop-zone">
 
                         <input
                             type="file"
@@ -225,23 +220,21 @@
                             accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp"
                             multiple>
 
-                        <span class="gallery-upload-icon">
+                        <span class="gallery-drop-icon">
                             <i class="bi bi-images"></i>
                         </span>
 
                         <strong>Add photos to this folder</strong>
 
-                        <span class="upload-description">
-                            Select one or more images
-                        </span>
+                        <small>Select one or more image files</small>
 
-                        <span class="upload-requirements">
-                            Multiple files allowed
+                        <span class="gallery-file-rules">
+                            Multiple images allowed
                         </span>
 
                     </label>
 
-                    <div class="selected-file-row">
+                    <div class="gallery-selected-file">
 
                         <i class="bi bi-card-checklist"></i>
 
@@ -252,13 +245,13 @@
                     </div>
 
                     @error('images')
-                        <div class="gallery-error-message">
+                        <div class="gallery-error">
                             {{ $message }}
                         </div>
                     @enderror
 
                     @error('images.*')
-                        <div class="gallery-error-message">
+                        <div class="gallery-error">
                             {{ $message }}
                         </div>
                     @enderror
@@ -267,7 +260,7 @@
                         type="submit"
                         formaction="{{ route('admin.gallery.images.store', $galleryItem) }}"
                         formmethod="POST"
-                        class="upload-photos-button">
+                        class="gallery-upload-button">
 
                         <i class="bi bi-cloud-arrow-up-fill"></i>
                         Upload Selected Photos
@@ -276,62 +269,55 @@
 
                 </div>
 
-                <div class="col-lg-7 gallery-pane-column">
+                {{-- Current Photos --}}
+                <div class="gallery-current-photos">
 
-                    <div class="current-folder-images">
+                    <div class="current-photos-heading">
 
-                        <div class="current-images-heading">
+                        <div>
+                            <h6>Current Photos</h6>
+                            <p>Photos saved inside this folder.</p>
+                        </div>
 
-                            <div>
-                                <h6>Current Folder Photos</h6>
-                                <p>Photos currently saved inside this folder.</p>
+                        <span>
+                            {{ $folderImages->count() }}
+                            {{ \Illuminate\Support\Str::plural(
+                                'photo',
+                                $folderImages->count()
+                            ) }}
+                        </span>
+
+                    </div>
+
+                    <div class="current-photos-grid">
+
+                        @forelse ($folderImages as $galleryImage)
+
+                            <div class="current-photo-item">
+
+                                <img
+                                    src="{{ $galleryImage->image_url }}"
+                                    alt="Photo from {{ $galleryItem->title }}"
+                                    loading="lazy"
+                                    onerror="this.onerror=null; this.src='{{ asset('images/readingarea.jpg') }}';">
+
                             </div>
 
-                            <span>
-                                {{ $folderImages->count() }}
-                                {{ \Illuminate\Support\Str::plural(
-                                    'photo',
-                                    $folderImages->count()
-                                ) }}
-                            </span>
+                        @empty
 
-                        </div>
+                            <div class="current-photos-empty">
 
-                        <div class="folder-image-grid">
+                                <i class="bi bi-images"></i>
 
-                            @forelse ($folderImages as $galleryImage)
+                                <strong>No photos uploaded</strong>
 
-                                <div class="folder-image-item">
+                                <p>
+                                    Select photos on the left to begin.
+                                </p>
 
-                                    <img
-                                        src="{{ $galleryImage->image_url }}"
-                                        alt="Photo from {{ $galleryItem->title }}"
-                                        loading="lazy"
-                                        onerror="this.onerror=null; this.src='{{ asset('images/readingarea.jpg') }}';">
+                            </div>
 
-                                    <div class="folder-image-overlay">
-                                        <i class="bi bi-image"></i>
-                                    </div>
-
-                                </div>
-
-                            @empty
-
-                                <div class="folder-images-empty">
-
-                                    <i class="bi bi-images"></i>
-
-                                    <strong>No photos uploaded</strong>
-
-                                    <p>
-                                        Use the upload panel to add the first photos.
-                                    </p>
-
-                                </div>
-
-                            @endforelse
-
-                        </div>
+                        @endforelse
 
                     </div>
 
@@ -341,18 +327,18 @@
 
         @else
 
-            <div class="photos-after-save">
+            <div class="gallery-information-box">
 
                 <span>
                     <i class="bi bi-info-circle-fill"></i>
                 </span>
 
                 <div>
-                    <strong>Photos can be added after saving</strong>
+                    <strong>Save the folder first</strong>
 
                     <p>
-                        Create this folder first. You can then upload multiple
-                        photos from its edit page.
+                        After creating this folder, open its edit page to
+                        upload multiple gallery photos.
                     </p>
                 </div>
 
@@ -363,32 +349,32 @@
     </section>
 
     {{-- Visibility --}}
-    <section class="gallery-form-section">
+    <section class="gallery-form-card">
 
-        <div class="gallery-section-heading">
+        <div class="gallery-form-heading">
 
-            <span class="gallery-section-icon">
+            <span class="gallery-heading-icon">
                 <i class="bi bi-eye-fill"></i>
             </span>
 
             <div>
-                <h5>Visibility Settings</h5>
-                <p>Control whether this folder appears on the public website.</p>
+                <h5>Visibility</h5>
+                <p>Control whether visitors can see this folder publicly.</p>
             </div>
 
         </div>
 
         <input type="hidden" name="is_active" value="0">
 
-        <label for="is_active" class="gallery-visibility-option">
+        <label for="is_active" class="gallery-visibility">
 
-            <span class="visibility-icon">
+            <span class="gallery-visibility-icon">
                 <i class="bi bi-globe2"></i>
             </span>
 
-            <span class="visibility-content">
+            <span class="gallery-visibility-text">
 
-                <strong>Display this folder publicly</strong>
+                <strong>Display folder publicly</strong>
 
                 <small>
                     Visitors can view this folder and its photos when enabled.
@@ -412,7 +398,7 @@
 
     </section>
 
-    {{-- Form Actions --}}
+    {{-- Actions --}}
     <div class="gallery-form-actions">
 
         <a
@@ -424,7 +410,7 @@
 
         </a>
 
-        <button type="submit" class="gallery-submit-button">
+        <button type="submit" class="gallery-save-button">
 
             <i class="bi {{ $isEditing ? 'bi-check2-circle' : 'bi-folder-plus' }}"></i>
 
@@ -442,71 +428,59 @@
 @push('styles')
 <style>
     .gallery-folder-form {
-        --gallery-navy: #0b2e59;
-        --gallery-blue: #184b8c;
-        --gallery-gold: #f4b400;
+        --navy: #0b2e59;
+        --blue: #184b8c;
+        --gold: #f4b400;
+        width: 100%;
         display: grid;
         gap: 16px;
     }
 
-    .gallery-form-section {
-        padding: 25px 27px;
+    .gallery-form-card {
+        width: 100%;
+        padding: 24px 26px;
         background: #fff;
         border: 1px solid #dfe5ed;
-        border-radius: 18px;
-        box-shadow: 0 10px 28px rgba(11, 46, 89, .06);
-        transition:
-            border-color .2s ease,
-            box-shadow .2s ease;
+        border-radius: 17px;
+        box-shadow: 0 8px 24px rgba(11, 46, 89, .06);
     }
 
-    .gallery-form-section:hover {
-        border-color: #cdd7e3;
-        box-shadow: 0 15px 34px rgba(11, 46, 89, .09);
-    }
-
-    .gallery-section-heading {
-        margin-bottom: 22px;
+    .gallery-form-heading {
+        margin-bottom: 21px;
         display: flex;
         align-items: center;
         gap: 13px;
     }
 
-    .gallery-section-icon {
-        width: 44px;
-        height: 44px;
-        flex: 0 0 44px;
+    .gallery-heading-icon {
+        width: 43px;
+        height: 43px;
+        flex: 0 0 43px;
         display: grid;
         place-items: center;
-        color: var(--gallery-navy);
-        background: rgba(244, 180, 0, .18);
-        border-radius: 13px;
+        color: var(--navy);
+        background: rgba(244, 180, 0, .17);
+        border-radius: 12px;
         font-size: 18px;
     }
 
-    .gallery-section-heading h5 {
+    .gallery-form-heading h5 {
         margin: 0 0 3px;
-        color: var(--gallery-navy);
+        color: var(--navy);
         font-size: 15px;
         font-weight: 800;
     }
 
-    .gallery-section-heading p {
+    .gallery-form-heading p {
         margin: 0;
-        color: #758194;
+        color: #748095;
         font-size: 11px;
-        line-height: 1.6;
-    }
-
-    .gallery-pane-column {
-        display: flex;
-        flex-direction: column;
-        gap: 12px;
+        line-height: 1.5;
     }
 
     .gallery-folder-form .form-label {
         margin-bottom: 8px;
-        color: #243b57;
+        color: #263d58;
         font-size: 12px;
         font-weight: 700;
     }
@@ -516,57 +490,72 @@
     }
 
     .gallery-folder-form .form-control {
-        min-height: 48px;
+        min-height: 47px;
         padding: 10px 14px;
-        color: #243b57;
+        color: #263d58;
         background: #fbfcfe;
-        border: 1px solid #dce3ec;
-        border-radius: 11px;
+        border: 1px solid #dbe2eb;
+        border-radius: 10px;
         font-size: 12px;
         box-shadow: none;
-        transition: .2s ease;
     }
 
     .gallery-folder-form .form-control:focus {
         background: #fff;
-        border-color: var(--gallery-blue);
+        border-color: var(--blue);
         box-shadow: 0 0 0 4px rgba(24, 75, 140, .08);
     }
 
-    .field-help {
+    .gallery-field-help {
         margin-top: 7px;
-        color: #8a94a3;
+        color: #8893a2;
         font-size: 10px;
     }
 
-    .gallery-upload-area {
+    /* Two-column cover layout */
+
+    .gallery-cover-layout {
+        width: 100%;
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+        gap: 20px;
+        align-items: start;
+    }
+
+    .gallery-cover-column {
+        min-width: 0;
+    }
+
+    /* Upload areas */
+
+    .gallery-drop-zone {
         position: relative;
-        min-height: 248px;
-        padding: 24px;
+        width: 100%;
+        height: 245px;
+        padding: 22px;
         display: flex;
         align-items: center;
         justify-content: center;
         flex-direction: column;
         text-align: center;
         cursor: pointer;
-        background: linear-gradient(180deg, #f9fbfd, #f3f7fc);
-        border: 2px dashed #cfd9e6;
-        border-radius: 16px;
+        background: #f7f9fc;
+        border: 2px dashed #cbd6e3;
+        border-radius: 15px;
         transition: .2s ease;
     }
 
-    .gallery-upload-area:hover {
-        background: #f2f6fb;
-        border-color: var(--gallery-blue);
-        transform: translateY(-2px);
+    .gallery-drop-zone:hover {
+        background: #f1f6fb;
+        border-color: var(--blue);
     }
 
-    .gallery-upload-area.upload-error {
+    .gallery-drop-zone.has-error {
         background: #fff7f7;
         border-color: #dc3545;
     }
 
-    .gallery-upload-area input {
+    .gallery-drop-zone input {
         position: absolute;
         inset: 0;
         width: 100%;
@@ -575,79 +564,89 @@
         opacity: 0;
     }
 
-    .gallery-upload-icon {
-        width: 55px;
-        height: 55px;
+    .gallery-drop-icon {
+        width: 54px;
+        height: 54px;
         margin-bottom: 12px;
         display: grid;
         place-items: center;
-        color: var(--gallery-navy);
+        color: var(--navy);
         background: #fff;
-        border: 1px solid #e1e8f0;
-        border-radius: 15px;
-        font-size: 24px;
-        box-shadow: 0 8px 20px rgba(11, 46, 89, .08);
+        border: 1px solid #e0e7ef;
+        border-radius: 14px;
+        font-size: 23px;
+        box-shadow: 0 7px 18px rgba(11, 46, 89, .07);
     }
 
-    .gallery-upload-area strong {
+    .gallery-drop-zone strong {
         margin-bottom: 4px;
-        color: var(--gallery-navy);
+        color: var(--navy);
         font-size: 13px;
     }
 
-    .upload-description {
+    .gallery-drop-zone small {
         margin-bottom: 10px;
-        color: #718096;
+        color: #748095;
         font-size: 10px;
     }
 
-    .upload-requirements {
+    .gallery-file-rules {
         padding: 5px 10px;
-        color: #667386;
+        color: #637185;
         background: #e8eef5;
         border-radius: 999px;
         font-size: 9px;
         font-weight: 700;
     }
 
-    .selected-file-row {
-        width: 100%;
+    .gallery-selected-file {
         min-height: 39px;
-        margin-top: 0;
+        margin-top: 9px;
         padding: 8px 11px;
         display: flex;
         align-items: center;
         gap: 8px;
-        color: #687587;
+        overflow: hidden;
+        color: #647286;
         background: #f7f9fc;
-        border: 1px solid #e5eaf1;
+        border: 1px solid #e3e9f0;
         border-radius: 9px;
         font-size: 10px;
     }
 
-    .selected-file-row i {
-        color: var(--gallery-blue);
+    .gallery-selected-file i {
+        flex-shrink: 0;
+        color: var(--blue);
     }
 
-    .gallery-error-message {
+    .gallery-selected-file span {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .gallery-error {
         margin-top: 7px;
         color: #dc3545;
         font-size: 10px;
         font-weight: 600;
     }
 
-    .preview-heading {
-        margin-bottom: 0;
+    /* Cover preview */
+
+    .gallery-preview-heading {
+        height: 27px;
+        margin-bottom: 8px;
         display: flex;
         align-items: center;
         justify-content: space-between;
         gap: 10px;
     }
 
-    .preview-heading > span {
+    .gallery-preview-heading > span {
         padding: 4px 8px;
-        color: var(--gallery-blue);
-        background: #eaf1f9;
+        color: var(--blue);
+        background: #e9f1f9;
         border-radius: 999px;
         font-size: 9px;
         font-weight: 700;
@@ -655,12 +654,12 @@
 
     .gallery-cover-preview {
         position: relative;
-        min-height: 248px;
-        height: 100%;
+        width: 100%;
+        height: 245px;
         overflow: hidden;
         background: #e9eef5;
-        border: 1px solid #d9e1eb;
-        border-radius: 16px;
+        border: 1px solid #d8e0e9;
+        border-radius: 15px;
     }
 
     .gallery-cover-preview img {
@@ -669,228 +668,218 @@
         display: block;
         object-fit: cover;
         object-position: center;
-        transition: transform .4s ease;
     }
 
-    .gallery-cover-preview:hover img {
-        transform: scale(1.035);
-    }
-
-    .cover-preview-shade {
+    .gallery-preview-shade {
         position: absolute;
         inset: 0;
-        pointer-events: none;
         background: linear-gradient(
             180deg,
             rgba(11, 46, 89, .04),
-            rgba(11, 46, 89, .38)
+            rgba(11, 46, 89, .40)
         );
     }
 
-    .cover-folder-badge,
-    .cover-preview-badge {
+    .gallery-folder-badge,
+    .gallery-preview-badge {
         position: absolute;
-        min-height: 29px;
-        padding: 0 10px;
+        min-height: 28px;
+        padding: 0 9px;
         display: inline-flex;
         align-items: center;
-        gap: 6px;
+        gap: 5px;
         border-radius: 999px;
         font-size: 9px;
         font-weight: 800;
     }
 
-    .cover-folder-badge {
-        top: 13px;
-        left: 13px;
-        color: var(--gallery-navy);
-        background: var(--gallery-gold);
+    .gallery-folder-badge {
+        top: 12px;
+        left: 12px;
+        color: var(--navy);
+        background: var(--gold);
     }
 
-    .cover-preview-badge {
-        right: 13px;
-        bottom: 13px;
+    .gallery-preview-badge {
+        right: 12px;
+        bottom: 12px;
         color: #fff;
-        background: rgba(11, 46, 89, .80);
-        backdrop-filter: blur(6px);
+        background: rgba(11, 46, 89, .82);
     }
 
-    .gallery-multiple-upload {
-        min-height: 248px;
+    /* Photos layout */
+
+    .gallery-photos-layout {
+        width: 100%;
+        display: grid;
+        grid-template-columns: minmax(260px, 36%) minmax(0, 64%);
+        gap: 20px;
+        align-items: start;
     }
 
-    .upload-photos-button {
+    .gallery-photo-upload {
+        min-width: 0;
+    }
+
+    .photo-drop-zone {
+        height: 225px;
+    }
+
+    .gallery-upload-button {
         width: 100%;
         min-height: 44px;
-        margin-top: 10px;
+        margin-top: 9px;
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        gap: 8px;
+        gap: 7px;
         color: #fff;
-        background: var(--gallery-blue);
-        border: 1px solid var(--gallery-blue);
+        background: var(--blue);
+        border: 1px solid var(--blue);
         border-radius: 10px;
         font-size: 11px;
         font-weight: 700;
         transition: .2s ease;
     }
 
-    .upload-photos-button:hover {
-        background: var(--gallery-navy);
-        border-color: var(--gallery-navy);
-        transform: translateY(-1px);
+    .gallery-upload-button:hover {
+        background: var(--navy);
+        border-color: var(--navy);
     }
 
-    .current-folder-images {
-        min-height: 100%;
-        padding: 17px;
+    .gallery-current-photos {
+        min-width: 0;
+        padding: 16px;
         background: #f7f9fc;
-        border: 1px solid #e3e9f2;
-        border-radius: 16px;
+        border: 1px solid #e0e7ef;
+        border-radius: 15px;
     }
 
-    .current-images-heading {
-        margin-bottom: 14px;
+    .current-photos-heading {
+        margin-bottom: 13px;
         display: flex;
         align-items: center;
         justify-content: space-between;
-        gap: 12px;
+        gap: 10px;
     }
 
-    .current-images-heading h6 {
+    .current-photos-heading h6 {
         margin: 0 0 2px;
-        color: var(--gallery-navy);
+        color: var(--navy);
         font-size: 12px;
         font-weight: 800;
     }
 
-    .current-images-heading p {
+    .current-photos-heading p {
         margin: 0;
-        color: #8490a0;
+        color: #8390a0;
         font-size: 9px;
     }
 
-    .current-images-heading > span {
+    .current-photos-heading > span {
         padding: 5px 9px;
-        color: var(--gallery-blue);
+        color: var(--blue);
         background: #e6eff9;
         border-radius: 999px;
         font-size: 9px;
         font-weight: 700;
+        white-space: nowrap;
     }
 
-    .folder-image-grid {
+    .current-photos-grid {
         display: grid;
         grid-template-columns: repeat(3, minmax(0, 1fr));
         gap: 9px;
     }
 
-    .folder-image-item {
-        position: relative;
-        aspect-ratio: 1 / .78;
+    .current-photo-item {
+        min-width: 0;
+        aspect-ratio: 4 / 3;
         overflow: hidden;
-        background: #e9eef5;
-        border: 1px solid #dce3ec;
-        border-radius: 10px;
+        background: #e8edf3;
+        border: 1px solid #d9e1ea;
+        border-radius: 9px;
     }
 
-    .folder-image-item img {
+    .current-photo-item img {
         width: 100%;
         height: 100%;
         display: block;
         object-fit: cover;
-        transition: transform .3s ease;
     }
 
-    .folder-image-item:hover img {
-        transform: scale(1.06);
-    }
-
-    .folder-image-overlay {
-        position: absolute;
-        inset: 0;
-        display: grid;
-        place-items: center;
-        color: #fff;
-        background: rgba(11, 46, 89, .42);
-        font-size: 17px;
-        opacity: 0;
-        transition: opacity .2s ease;
-    }
-
-    .folder-image-item:hover .folder-image-overlay {
-        opacity: 1;
-    }
-
-    .folder-images-empty {
+    .current-photos-empty {
         grid-column: 1 / -1;
-        min-height: 190px;
-        padding: 24px;
+        min-height: 175px;
+        padding: 20px;
         display: flex;
         align-items: center;
         justify-content: center;
         flex-direction: column;
         text-align: center;
-        color: #788597;
         background: #fff;
-        border: 1px dashed #d5dee9;
-        border-radius: 13px;
+        border: 1px dashed #d1dbe6;
+        border-radius: 11px;
     }
 
-    .folder-images-empty > i {
-        margin-bottom: 9px;
-        color: #a4afbc;
+    .current-photos-empty i {
+        margin-bottom: 8px;
+        color: #a1adbb;
         font-size: 27px;
     }
 
-    .folder-images-empty strong {
+    .current-photos-empty strong {
         margin-bottom: 3px;
-        color: var(--gallery-navy);
+        color: var(--navy);
         font-size: 12px;
     }
 
-    .folder-images-empty p {
+    .current-photos-empty p {
         margin: 0;
+        color: #7b8798;
         font-size: 10px;
     }
 
-    .photos-after-save {
-        padding: 16px 18px;
+    /* Create-page information */
+
+    .gallery-information-box {
+        padding: 15px 17px;
         display: flex;
         align-items: flex-start;
         gap: 12px;
         color: #315b8b;
         background: #f0f6fc;
-        border: 1px solid #d5e5f5;
-        border-radius: 13px;
+        border: 1px solid #d4e4f4;
+        border-radius: 12px;
     }
 
-    .photos-after-save > span {
+    .gallery-information-box > span {
         width: 38px;
         height: 38px;
         flex: 0 0 38px;
         display: grid;
         place-items: center;
-        color: var(--gallery-blue);
+        color: var(--blue);
         background: #dceaf8;
         border-radius: 10px;
     }
 
-    .photos-after-save strong {
+    .gallery-information-box strong {
         display: block;
         margin-bottom: 3px;
-        color: var(--gallery-navy);
+        color: var(--navy);
         font-size: 12px;
     }
 
-    .photos-after-save p {
+    .gallery-information-box p {
         margin: 0;
         color: #69809a;
         font-size: 10px;
     }
 
-    .gallery-visibility-option {
+    /* Visibility */
+
+    .gallery-visibility {
         min-height: 76px;
         padding: 14px 16px;
         display: flex;
@@ -899,16 +888,10 @@
         cursor: pointer;
         background: #f8fafd;
         border: 1px solid #dfe6ef;
-        border-radius: 14px;
-        transition: .2s ease;
+        border-radius: 13px;
     }
 
-    .gallery-visibility-option:hover {
-        background: #f3f7fc;
-        border-color: #bfcddd;
-    }
-
-    .visibility-icon {
+    .gallery-visibility-icon {
         width: 42px;
         height: 42px;
         flex: 0 0 42px;
@@ -920,40 +903,41 @@
         font-size: 17px;
     }
 
-    .visibility-content {
+    .gallery-visibility-text {
         flex: 1;
         min-width: 0;
     }
 
-    .visibility-content strong,
-    .visibility-content small {
+    .gallery-visibility-text strong,
+    .gallery-visibility-text small {
         display: block;
     }
 
-    .visibility-content strong {
+    .gallery-visibility-text strong {
         margin-bottom: 3px;
-        color: var(--gallery-navy);
+        color: var(--navy);
         font-size: 12px;
     }
 
-    .visibility-content small {
+    .gallery-visibility-text small {
         color: #778396;
         font-size: 10px;
     }
 
-    .gallery-visibility-option .form-check-input {
+    .gallery-visibility .form-check-input {
         width: 42px;
         height: 22px;
         margin: 0;
         cursor: pointer;
-        border-color: #bbc5d1;
         box-shadow: none;
     }
 
-    .gallery-visibility-option .form-check-input:checked {
+    .gallery-visibility .form-check-input:checked {
         background-color: #198754;
         border-color: #198754;
     }
+
+    /* Actions */
 
     .gallery-form-actions {
         display: flex;
@@ -963,13 +947,13 @@
     }
 
     .gallery-cancel-button,
-    .gallery-submit-button {
+    .gallery-save-button {
         min-height: 44px;
         padding: 0 17px;
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        gap: 8px;
+        gap: 7px;
         border-radius: 10px;
         font-size: 11px;
         font-weight: 700;
@@ -983,45 +967,53 @@
         border: 1px solid #d7dee7;
     }
 
-    .gallery-cancel-button:hover {
-        color: var(--gallery-navy);
-        border-color: #aab7c7;
-    }
-
-    .gallery-submit-button {
+    .gallery-save-button {
         color: #fff;
-        background: var(--gallery-navy);
-        border: 1px solid var(--gallery-navy);
+        background: var(--navy);
+        border: 1px solid var(--navy);
         box-shadow: 0 8px 18px rgba(11, 46, 89, .16);
     }
 
-    .gallery-submit-button:hover {
-        color: var(--gallery-navy);
-        background: var(--gallery-gold);
-        border-color: var(--gallery-gold);
-        transform: translateY(-1px);
+    .gallery-save-button:hover {
+        color: var(--navy);
+        background: var(--gold);
+        border-color: var(--gold);
     }
 
-    @media (max-width: 767.98px) {
-        .gallery-form-section {
-            padding: 21px 18px;
-            border-radius: 15px;
+    /* Responsive */
+
+    @media (max-width: 991.98px) {
+        .gallery-cover-layout,
+        .gallery-photos-layout {
+            grid-template-columns: 1fr;
         }
 
-        .gallery-section-heading {
+        .gallery-current-photos {
+            width: 100%;
+        }
+    }
+
+    @media (max-width: 575.98px) {
+        .gallery-form-card {
+            padding: 20px 17px;
+            border-radius: 14px;
+        }
+
+        .gallery-form-heading {
             align-items: flex-start;
         }
 
-        .gallery-upload-area {
-            min-height: 210px;
-        }
-
+        .gallery-drop-zone,
         .gallery-cover-preview {
-            height: 230px;
+            height: 215px;
         }
 
-        .folder-image-grid {
+        .current-photos-grid {
             grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .gallery-visibility-text small {
+            display: none;
         }
 
         .gallery-form-actions {
@@ -1029,124 +1021,9 @@
         }
 
         .gallery-cancel-button,
-        .gallery-submit-button {
+        .gallery-save-button {
             width: 100%;
         }
-    }
-
-    .gallery-cover-layout,
-    .gallery-folder-layout {
-        align-items: stretch;
-    }
-
-    .gallery-pane-column {
-        display: flex;
-        flex-direction: column;
-        gap: 12px;
-        min-height: 100%;
-    }
-
-    .gallery-pane-column > .gallery-upload-area,
-    .gallery-pane-column > .current-folder-images {
-        flex: 1;
-    }
-
-    .gallery-upload-area {
-        min-height: 100%;
-    }
-
-    .gallery-cover-preview {
-        min-height: 100%;
-    }
-
-    .gallery-multiple-upload {
-        min-height: 100%;
-    }
-
-    .selected-file-row {
-        min-height: 44px;
-        margin-top: 0;
-        padding: 10px 12px;
-        border-radius: 12px;
-        font-size: 11px;
-    }
-
-    .preview-heading {
-        margin-bottom: 0;
-    }
-
-    .gallery-upload-icon {
-        margin-bottom: 14px;
-    }
-
-    .gallery-upload-area strong {
-        font-size: 14px;
-    }
-
-    .upload-description {
-        margin-bottom: 12px;
-        font-size: 11px;
-    }
-
-    .upload-requirements {
-        padding: 6px 12px;
-        font-size: 10px;
-    }
-
-    .upload-photos-button {
-        min-height: 48px;
-        margin-top: 0;
-        border-radius: 12px;
-        font-size: 12px;
-    }
-
-    .current-folder-images {
-        min-height: 100%;
-        padding: 18px;
-        border-radius: 18px;
-    }
-
-    .current-images-heading h6 {
-        font-size: 13px;
-    }
-
-    .current-images-heading p {
-        font-size: 10px;
-    }
-
-    .current-images-heading > span {
-        padding: 6px 10px;
-        font-size: 10px;
-    }
-
-    .folder-image-grid {
-        gap: 10px;
-    }
-
-    .folder-image-item {
-        border-radius: 12px;
-    }
-
-    .folder-images-empty {
-        grid-column: 1 / -1;
-        min-height: 170px;
-        border-radius: 12px;
-    }
-
-    .photos-after-save {
-        width: 100%;
-        padding: 11px 14px;
-        border-radius: 14px;
-    }
-
-    .gallery-visibility-option {
-        min-height: 84px;
-        padding: 16px 18px;
-        border-radius: 16px;
-    }
-
-    .gallery-form-actions {
-        margin-top: 2px;
     }
 </style>
 @endpush
@@ -1158,7 +1035,7 @@
         const imagesInput = document.getElementById('images');
         const coverPreview = document.getElementById('galleryCoverPreview');
         const coverName = document.getElementById('selectedCoverName');
-        const imagesCount = document.getElementById('selectedImagesCount');
+        const imageCount = document.getElementById('selectedImagesCount');
         const previewStatus = document.getElementById('coverPreviewStatus');
 
         if (coverInput && coverPreview) {
@@ -1197,11 +1074,11 @@
             });
         }
 
-        if (imagesInput && imagesCount) {
+        if (imagesInput && imageCount) {
             imagesInput.addEventListener('change', function () {
                 const files = Array.from(this.files || []);
 
-                imagesCount.textContent = files.length
+                imageCount.textContent = files.length
                     ? `${files.length} photo${files.length === 1 ? '' : 's'} selected.`
                     : 'No photos selected.';
             });
