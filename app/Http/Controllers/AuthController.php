@@ -95,7 +95,7 @@ class AuthController extends Controller
 
         return back()
             ->withInput($request->only('email'))
-            ->with('error', 'Invalid email or password.');
+            ->with('error', 'The account does not exist, or the email and password are invalid.');
     }
 
     /**

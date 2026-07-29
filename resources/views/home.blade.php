@@ -440,14 +440,16 @@
                 </div>
 
                 <div class="col-lg-7">
-                    <iframe
-                        src="https://maps.google.com/maps?q=8.9556933,125.5405096&z=17&output=embed"
-                        class="library-map"
-                        loading="lazy"
-                        allowfullscreen
-                        referrerpolicy="no-referrer-when-downgrade"
-                        title="MMACI Library Services Office location">
-                    </iframe>
+                    <div class="library-map-wrapper">
+                        <iframe
+                            src="https://maps.google.com/maps?q=8.9556933,125.5405096&z=17&output=embed"
+                            class="library-map"
+                            loading="lazy"
+                            allowfullscreen
+                            referrerpolicy="no-referrer-when-downgrade"
+                            title="MMACI Library Services Office location">
+                        </iframe>
+                    </div>
                 </div>
             </div>
         </div>
@@ -1222,10 +1224,16 @@ document.addEventListener('DOMContentLoaded', function () {
 
 .library-map {
     width: 100%;
-    min-height: 610px;
     height: 100%;
     display: block;
     border: 0;
+}
+
+.library-map-wrapper {
+    width: 100%;
+    min-height: 610px;
+    overflow: hidden;
+    background: #dfe6ef;
 }
 
 .home-cta {
