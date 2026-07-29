@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Support\DatabaseMedia;
 use App\Support\MediaStorage;
 
 class GalleryImage extends Model
@@ -26,12 +27,9 @@ class GalleryImage extends Model
             return asset('images/readingarea.jpg');
         }
 
-        if (str_starts_with($this->image, 'data:')) {
-            return $this->image;
-        }
-
-        return MediaStorage::exists($this->image)
-            ? MediaStorage::url($this->image, asset('images/readingarea.jpg'))
-            : asset('images/readingarea.jpg');
+        return DatabaseMedia::toDataUri(
+            $this->image,
+            MediaStorage::url($this->image, asset('images/readingarea.jpg'))
+        );
     }
 }

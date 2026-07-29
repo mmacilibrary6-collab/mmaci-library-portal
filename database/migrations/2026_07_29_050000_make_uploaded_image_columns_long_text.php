@@ -10,7 +10,7 @@ return new class extends Migration
     {
         foreach (['ebook_programs', 'galleries', 'gallery_images', 'open_access_resources', 'calendar_events'] as $tableName) {
             if (Schema::hasTable($tableName) && Schema::hasColumn($tableName, 'image')) {
-                DB::statement("ALTER TABLE `{$tableName}` MODIFY `image` LONGTEXT NULL");
+                DB::statement("ALTER TABLE `{$tableName}` MODIFY `image` LONGBLOB NULL");
             }
         }
     }

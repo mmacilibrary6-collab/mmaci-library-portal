@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Support\DatabaseMedia;
 use App\Support\MediaStorage;
 
 class OpenAccessResource extends Model
@@ -43,12 +44,9 @@ class OpenAccessResource extends Model
             return asset('images/default-resource.png');
         }
 
-        if (str_starts_with($this->image, 'data:')) {
-            return $this->image;
-        }
-
-        return MediaStorage::exists($this->image)
-            ? MediaStorage::url($this->image, asset('images/default-resource.png'))
-            : asset('images/default-resource.png');
+        return DatabaseMedia::toDataUri(
+            $this->image,
+            MediaStorage::url($this->image, asset('images/default-resource.png'))
+        );
     }
 }
