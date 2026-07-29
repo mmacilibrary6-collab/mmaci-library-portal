@@ -65,7 +65,7 @@
                     aria-label="View {{ $gallery->title }}"
                     style="--reveal-delay: {{ min($loop->index * 70, 350) }}ms"
                     data-gallery-title="{{ $gallery->title }}"
-                    data-gallery-images='@js($gallery->images->isNotEmpty() ? $gallery->images->map(fn ($image) => $image->image_url)->values() : [$gallery->cover_image_url])'>
+                    data-gallery-images='@json($gallery->images->isNotEmpty() ? $gallery->images->map(fn ($image) => $image->image_url)->values() : [$gallery->cover_image_url])'>
 
                     <div class="gallery-image">
                         <img

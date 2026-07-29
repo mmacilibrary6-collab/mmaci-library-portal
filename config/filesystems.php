@@ -15,7 +15,12 @@ return [
 
     'default' => env('FILESYSTEM_DISK', 'local'),
 
-    'media_disk' => env('MEDIA_DISK', env('FILESYSTEM_DISK', 'public')),
+    'media_disk' => env(
+        'MEDIA_DISK',
+        env('AWS_BUCKET')
+            ? 's3'
+            : env('FILESYSTEM_DISK', 'public')
+    ),
 
     /*
     |--------------------------------------------------------------------------
