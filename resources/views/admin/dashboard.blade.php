@@ -19,7 +19,7 @@
             </h1>
 
             <p class="dashboard-subtitle mb-0">
-                Welcome back. Here is the latest overview of the MMACI Library Services Office.
+                Here is the latest overview of the MMACI Library Services Office.
             </p>
         </div>
 
