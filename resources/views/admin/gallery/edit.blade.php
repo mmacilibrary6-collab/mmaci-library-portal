@@ -77,7 +77,18 @@
 
             @method('PUT')
 
-            @include('admin.gallery._form')
+            @include('admin.gallery._form', ['uploadMode' => false])
+
+        </form>
+
+        <form
+            action="{{ route('admin.gallery.images.store', $gallery) }}"
+            method="POST"
+            enctype="multipart/form-data"
+            novalidate
+            class="mt-4">
+
+            @include('admin.gallery._form', ['uploadMode' => true])
 
         </form>
 

@@ -3,6 +3,7 @@
 @php
     $galleryItem = $gallery ?? null;
     $isEditing = $galleryItem !== null;
+    $uploadMode = $uploadMode ?? false;
 
     $currentImage = $isEditing
         ? $galleryItem->image_url
@@ -19,6 +20,8 @@
 @endphp
 
 <div class="gallery-folder-form">
+
+@if (! $uploadMode)
 
     {{-- Folder Information --}}
     <section class="gallery-form-card">
@@ -158,6 +161,10 @@
 
     </section>
 
+@endif
+
+@if ($uploadMode)
+
     {{-- Folder Photos --}}
     <section class="gallery-form-card">
 
@@ -236,8 +243,6 @@
 
                     <button
                         type="submit"
-                        formaction="{{ route('admin.gallery.images.store', $galleryItem) }}"
-                        formmethod="POST"
                         class="gallery-upload-button">
 
                         <i class="bi bi-cloud-arrow-up-fill"></i>
@@ -327,6 +332,10 @@
 
     </section>
 
+@endif
+
+@if (! $uploadMode)
+
     {{-- Visibility --}}
     <section class="gallery-form-card">
 
@@ -401,6 +410,8 @@
         </button>
 
     </div>
+
+@endif
 
 </div>
 
