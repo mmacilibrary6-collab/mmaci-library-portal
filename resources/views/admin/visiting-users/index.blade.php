@@ -37,7 +37,8 @@
                             </span>
                         </div>
 
-                        <p class="activity-meta mb-1">{{ $visitor->school ?? 'School not specified' }}</p>
+                        <p class="activity-meta mb-1">{{ $visitor->institution ?? $visitor->school ?? 'Institution not specified' }}</p>
+                        <p class="activity-meta mb-1">{{ $visitor->visitor_type ? ucfirst($visitor->visitor_type) : 'Visitor type not specified' }}</p>
                         <p class="activity-meta mb-0">{{ $visitor->purpose ?? 'Purpose not specified.' }}</p>
                     </div>
                 </div>

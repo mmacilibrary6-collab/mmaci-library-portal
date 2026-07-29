@@ -12,9 +12,14 @@ class Gallery extends Model
 
     protected $fillable = [
         'title',
+        'description',
         'image',
         'sort_order',
         'is_active',
+        'event_date',
+        'location',
+        'status',
+        'is_featured',
     ];
 
     protected $casts = [

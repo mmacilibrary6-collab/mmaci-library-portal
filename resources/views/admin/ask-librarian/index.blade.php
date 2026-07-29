@@ -38,7 +38,18 @@
                         </div>
 
                         <p class="activity-meta mb-1">{{ $question->email ?? 'No email provided' }}</p>
-                        <p class="activity-meta mb-0">{{ $question->question ?? 'No question provided.' }}</p>
+                        <p class="activity-meta mb-1">{{ $question->contact_number ?? 'No contact number provided' }}</p>
+                        <p class="activity-meta mb-0">
+                            <strong>Subject:</strong> {{ $question->subject ?? 'No subject provided.' }}
+                        </p>
+                        <p class="activity-meta mb-0 mt-1">{{ $question->message ?? 'No message provided.' }}</p>
+
+                        @if(!empty($question->reply))
+                            <div class="mt-3 p-3 rounded-3" style="background: #f7f9fc; border: 1px solid #e2e8f0;">
+                                <small class="text-uppercase fw-bold text-muted d-block mb-1">Reply</small>
+                                <div>{{ $question->reply }}</div>
+                            </div>
+                        @endif
                     </div>
                 </div>
             @empty

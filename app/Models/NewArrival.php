@@ -13,11 +13,18 @@ class NewArrival extends Model
     protected $fillable = [
         'title',
         'author',
+        'isbn',
         'category',
-        'description',
         'resource_type',
+        'publication_year',
+        'publisher',
+        'description',
+        'cover_image',
+        'file_url',
+        'access_url',
         'availability_status',
         'arrival_date',
+        'is_featured',
         'image',
     ];
 

@@ -20,8 +20,11 @@ class AskLibrarian extends Model
     protected $fillable = [
         'name',
         'email',
-        'question',
-        'response',
+        'contact_number',
+        'subject',
+        'message',
+        'reply',
+        'replied_at',
         'status',
     ];
 
@@ -30,6 +33,10 @@ class AskLibrarian extends Model
      */
     protected $attributes = [
         'status' => 'pending',
+    ];
+
+    protected $casts = [
+        'replied_at' => 'datetime',
     ];
 
     /**
@@ -45,7 +52,7 @@ class AskLibrarian extends Model
      */
     public function scopeAnswered($query)
     {
-        return $query->where('status', 'answered');
+        return $query->whereIn('status', ['replied', 'read']);
     }
 
     /**
@@ -53,7 +60,7 @@ class AskLibrarian extends Model
      */
     public function isAnswered()
     {
-        return $this->status === 'answered';
+        return in_array($this->status, ['replied', 'read'], true);
     }
 
     /**
@@ -62,5 +69,18 @@ class AskLibrarian extends Model
     public function isPending()
     {
         return $this->status === 'pending';
+    }
+
+    /**
+     * Backward-compatible aliases for older view code.
+     */
+    public function getQuestionAttribute(): ?string
+    {
+        return $this->subject;
+    }
+
+    public function getResponseAttribute(): ?string
+    {
+        return $this->reply;
     }
 }

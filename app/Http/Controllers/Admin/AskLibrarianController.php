@@ -32,11 +32,22 @@ class AskLibrarianController extends Controller
     public function update(Request $request, AskLibrarian $askLibrarian)
     {
         $validated = $request->validate([
-            'status' => 'required|in:pending,answered',
-            'response' => 'nullable|string',
+            'status' => 'required|in:pending,read,replied,closed',
+            'reply' => 'nullable|string',
         ]);
 
-        $askLibrarian->update($validated);
+        $reply = trim((string) $validated['reply']);
+
+        $data = [
+            'status' => $validated['status'],
+            'reply' => $reply !== '' ? $reply : null,
+        ];
+
+        if ($data['reply'] !== null && $validated['status'] === 'replied') {
+            $data['replied_at'] = now();
+        }
+
+        $askLibrarian->update($data);
 
         return redirect()
             ->route('admin.ask-librarian.index')

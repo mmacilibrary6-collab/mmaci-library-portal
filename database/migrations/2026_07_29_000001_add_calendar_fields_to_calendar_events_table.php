@@ -36,8 +36,12 @@ return new class extends Migration
                 $table->string('location')->nullable()->after('end_time');
             }
 
+            if (! Schema::hasColumn('calendar_events', 'image')) {
+                $table->string('image')->nullable()->after('location');
+            }
+
             if (! Schema::hasColumn('calendar_events', 'status')) {
-                $table->string('status')->default('published')->after('location');
+                $table->string('status')->default('published')->after('image');
             }
         });
     }
@@ -55,6 +59,7 @@ return new class extends Migration
                 'start_time',
                 'end_time',
                 'location',
+                'image',
                 'status',
             ];
 

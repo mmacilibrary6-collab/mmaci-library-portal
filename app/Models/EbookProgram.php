@@ -17,6 +17,8 @@ class EbookProgram extends Model
         'image',
         'sort_order',
         'status',
+        'is_active',
+        'icon',
     ];
 
     protected $casts = [

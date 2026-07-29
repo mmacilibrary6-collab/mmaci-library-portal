@@ -19,13 +19,17 @@ class VisitingUser extends Model
      */
     protected $fillable = [
         'full_name',
-        'school',
-        'purpose',
         'contact_number',
         'email',
+        'institution',
+        'visitor_type',
+        'purpose',
         'visit_date',
+        'visit_time',
+        'valid_id_type',
+        'valid_id_number',
         'status',
-        'remarks',
+        'admin_notes',
     ];
 
     /**
@@ -40,6 +44,7 @@ class VisitingUser extends Model
      */
     protected $casts = [
         'visit_date' => 'date',
+        'visit_time' => 'datetime:H:i',
     ];
 
     /**
@@ -63,7 +68,7 @@ class VisitingUser extends Model
      */
     public function scopeRejected($query)
     {
-        return $query->where('status', 'rejected');
+        return $query->where('status', 'declined');
     }
 
     /**
@@ -87,6 +92,19 @@ class VisitingUser extends Model
      */
     public function isRejected()
     {
-        return $this->status === 'rejected';
+        return $this->status === 'declined';
+    }
+
+    /**
+     * Backward-compatible aliases for older view code.
+     */
+    public function getSchoolAttribute(): ?string
+    {
+        return $this->institution;
+    }
+
+    public function getRemarksAttribute(): ?string
+    {
+        return $this->admin_notes;
     }
 }
