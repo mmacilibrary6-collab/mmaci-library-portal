@@ -25,7 +25,7 @@
                     <h2>Edit Gallery Folder</h2>
 
                     <p>
-                        Update the folder and photos for
+                        Update the folder settings and photos for
                         <strong>{{ $gallery->title }}</strong>.
                     </p>
                 </div>
@@ -179,7 +179,6 @@
 
     .gallery-page-header p strong {
         color: #fff;
-        font-weight: 700;
     }
 
     .gallery-back-button {

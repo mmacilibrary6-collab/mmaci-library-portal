@@ -14,7 +14,7 @@
             <div class="gallery-header-content">
 
                 <span class="gallery-header-icon">
-                    <i class="bi bi-image-fill"></i>
+                    <i class="bi bi-folder-plus"></i>
                 </span>
 
                 <div>
@@ -25,7 +25,7 @@
                     <h2>Add Gallery Folder</h2>
 
                     <p>
-                        Create a new folder for photos in the public library gallery.
+                        Create a folder for photos displayed in the public gallery.
                     </p>
                 </div>
 
