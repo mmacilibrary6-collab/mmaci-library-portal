@@ -83,6 +83,7 @@ class AuthController extends Controller
         if (Auth::attempt($credentials, $request->boolean('remember'))) {
             $request->session()->regenerate();
             $this->clearRateLimit($this->loginAccountKey($credentials['email']));
+            $this->clearRateLimit($this->loginIpKey($request));
 
             return redirect()
                 ->intended(route('admin.dashboard'))
@@ -90,7 +91,7 @@ class AuthController extends Controller
         }
 
         $this->hitRateLimiter($this->loginAccountKey($credentials['email']), self::LOGIN_DECAY_SECONDS);
-        $this->hitRateLimiter($request, $this->loginIpKey($request), self::LOGIN_IP_DECAY_SECONDS);
+        $this->hitRateLimiter($this->loginIpKey($request), self::LOGIN_IP_DECAY_SECONDS);
 
         return back()
             ->withInput($request->only('email'))
@@ -109,7 +110,7 @@ class AuthController extends Controller
         $this->ensureIsNotRateLimited($request, $this->resetAccountKey($validated['email']), self::RESET_MAX_ATTEMPTS);
         $this->ensureIsNotRateLimited($request, $this->resetIpKey($request), self::RESET_IP_MAX_ATTEMPTS);
         $this->hitRateLimiter($this->resetAccountKey($validated['email']), self::RESET_DECAY_SECONDS);
-        $this->hitRateLimiter($request, $this->resetIpKey($request), self::RESET_IP_DECAY_SECONDS);
+        $this->hitRateLimiter($this->resetIpKey($request), self::RESET_IP_DECAY_SECONDS);
 
         $status = Password::sendResetLink($validated);
 
@@ -184,12 +185,12 @@ class AuthController extends Controller
         }
     }
 
-    private function hitRateLimiter(Request $request, string $key, int $decaySeconds): void
+    private function hitRateLimiter(string $key, int $decaySeconds): void
     {
         RateLimiter::hit($key, $decaySeconds);
     }
 
-    private function clearRateLimit(Request $request, string $key): void
+    private function clearRateLimit(string $key): void
     {
         RateLimiter::clear($key);
     }
