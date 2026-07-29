@@ -54,6 +54,7 @@ class NewArrival extends Model
         }
 
         $image = trim($this->image);
+        $image = str_replace('\\', '/', $image);
 
         if (Str::startsWith($image, ['http://', 'https://'])) {
             return $image;
@@ -63,7 +64,7 @@ class NewArrival extends Model
             ? Str::after($image, 'storage/')
             : $image;
 
-        $image = ltrim($image, '/');
+        $image = ltrim(str_replace('\\', '/', $image), '/');
 
         return Storage::disk('public')->exists($image)
             ? route('public.media', ['path' => $image])

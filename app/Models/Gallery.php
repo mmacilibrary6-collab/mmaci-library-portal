@@ -54,6 +54,7 @@ class Gallery extends Model
         }
 
         $image = trim($this->image);
+        $image = str_replace('\\', '/', $image);
 
         if (
             str_starts_with($image, 'http://') ||
@@ -66,7 +67,7 @@ class Gallery extends Model
             ? substr($image, 8)
             : $image;
 
-        $image = ltrim($image, '/');
+        $image = ltrim(str_replace('\\', '/', $image), '/');
 
         return Storage::disk('public')->exists($image)
             ? route('public.media', ['path' => $image])

@@ -43,6 +43,8 @@ Route::get('/', [HomeController::class, 'index'])
 
 Route::get('/media', function () {
     $path = trim((string) request()->query('path', ''));
+    $path = str_replace('\\', '/', $path);
+    $path = ltrim($path, '/');
 
     abort_unless($path !== '' && Storage::disk('public')->exists($path), 404);
 
