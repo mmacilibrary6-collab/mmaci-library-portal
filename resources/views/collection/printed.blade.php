@@ -156,14 +156,14 @@
                     'category' => 'academic',
                     'description' => 'Resources covering criminology, criminal justice, law enforcement, and public safety.',
                     'icon' => 'bi-shield-check',
-                    'image' => asset('images/criminology.png')
+                    'image' => asset('images/Criminology.png')
                 ],
                 [
                     'title' => 'College of Maritime Education Collection',
                     'category' => 'academic',
                     'description' => 'Printed materials for navigation, marine engineering, seamanship, and maritime studies.',
                     'icon' => 'bi-water',
-                    'image' => asset('images/maritime.png')
+                    'image' => asset('images/Maritime.png')
                 ],
                 [
                     'title' => 'Bachelor of Library and Information Science',
