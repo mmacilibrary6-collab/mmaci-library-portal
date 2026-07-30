@@ -21,12 +21,6 @@
             <!-- Page Information -->
 
             <div class="page-information">
-
-                <span class="page-eyebrow">
-                    Administration
-                </span>
-
-
             </div>
 
         </div>
@@ -80,9 +74,6 @@
                     </div>
 
                     <div class="admin-details d-none d-sm-block">
-
-                        <strong>Administrator</strong>
-
                         <small>
                             {{ Auth::user()->email ?? 'admin@mmaci.edu.ph' }}
                         </small>
@@ -110,9 +101,6 @@
                             </div>
 
                             <div>
-
-                                <strong>Administrator</strong>
-
                                 <small>
                                     {{ Auth::user()->email ?? 'admin@mmaci.edu.ph' }}
                                 </small>
