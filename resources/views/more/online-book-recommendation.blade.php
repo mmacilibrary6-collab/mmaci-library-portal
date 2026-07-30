@@ -16,10 +16,6 @@
     <div class="container">
         <div class="recommendation-hero-content">
 
-            <span class="hero-label">
-                Library Services
-            </span>
-
             <h1>Online Book Recommendation</h1>
 
             <p>

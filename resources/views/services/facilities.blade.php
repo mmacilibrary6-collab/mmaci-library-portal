@@ -7,7 +7,6 @@
 <section class="facilities-hero">
     <div class="container">
         <div class="facilities-hero-content">
-            <span class="eyebrow eyebrow-light">Library Facilities</span>
 
             <h1>Spaces made for better learning.</h1>
 
