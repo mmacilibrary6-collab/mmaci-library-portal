@@ -636,6 +636,18 @@
 
     .panel-footer .pagination {
         margin: 0;
+        flex-wrap: wrap;
+        gap: 6px;
+    }
+
+    .panel-footer .pagination .page-link {
+        min-width: 36px;
+        min-height: 36px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 7px 10px;
+        border-radius: 10px;
     }
 
     @media (max-width: 767.98px) {
@@ -672,6 +684,10 @@
         .panel-footer > div {
             max-width: 100%;
             overflow-x: auto;
+        }
+
+        .panel-footer .pagination {
+            justify-content: flex-start;
         }
     }
 

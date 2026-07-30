@@ -64,6 +64,7 @@
             margin:0;
             font-family:'Poppins',sans-serif;
             background:var(--light);
+            overflow-x:hidden;
 
         }
 
@@ -94,12 +95,14 @@
             margin-left:var(--sidebar);
 
             min-height:100vh;
+            width:calc(100% - var(--sidebar));
 
         }
 
         .content{
 
             padding:30px;
+            min-width:0;
 
         }
 
@@ -239,6 +242,32 @@
 
         }
 
+        .pagination {
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .pagination .page-link {
+            min-width: 40px;
+            min-height: 40px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 8px 12px;
+            border-radius: 10px;
+            color: var(--navy);
+        }
+
+        .pagination .page-item.active .page-link {
+            background: var(--navy);
+            border-color: var(--navy);
+            color: #fff;
+        }
+
+        .pagination .page-item.disabled .page-link {
+            opacity: .55;
+        }
+
         @media(max-width:992px){
 
             .sidebar{
@@ -258,6 +287,48 @@
             .main{
 
                 margin-left:0;
+                width:100%;
+
+            }
+
+            .content {
+
+                padding:20px 18px;
+
+            }
+
+        }
+
+        @media (max-width: 767.98px) {
+
+            .pagination {
+
+                justify-content: flex-start;
+
+            }
+
+            .pagination .page-link {
+
+                min-width: 36px;
+                min-height: 36px;
+                padding: 7px 10px;
+                font-size: 0.9rem;
+
+            }
+
+        }
+
+        @media (max-width: 575.98px) {
+
+            .content {
+
+                padding: 16px 14px;
+
+            }
+
+            .card {
+
+                border-radius: 14px;
 
             }
 

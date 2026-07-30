@@ -832,6 +832,18 @@
 
 .folder-pagination .pagination {
     margin: 0;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.folder-pagination .pagination .page-link {
+    min-width: 36px;
+    min-height: 36px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 7px 10px;
+    border-radius: 10px;
 }
 
 @media (max-width: 991.98px) {
@@ -883,6 +895,10 @@
         width: 100%;
         margin-left: 0;
         overflow-x: auto;
+    }
+
+    .folder-pagination .pagination {
+        justify-content: flex-start;
     }
 
 }
