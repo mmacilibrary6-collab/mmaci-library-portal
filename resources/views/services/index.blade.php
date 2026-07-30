@@ -361,8 +361,7 @@ html {
             rgba(11, 46, 89, .68) 55%,
             rgba(24, 75, 140, .52) 100%
         ),
-        url("{{ asset('images/services-placeholder.jpg') }}")
-        center center / cover no-repeat;
+        url("{{ asset('images/services-placeholder.jpg') }}") center center / cover no-repeat;
 }
 
 .services-hero::after {

@@ -7,7 +7,7 @@
 <section class="home-hero">
     <div class="container">
         <div class="home-hero-content" data-aos="fade-up">
-            <span class="home-hero-label">MMACI Library Services Office</span>
+           
 
             <h1>Welcome to MMACI</h1>
 
@@ -636,13 +636,20 @@ document.addEventListener('DOMContentLoaded', function () {
 
 .home-hero {
     position: relative;
-    min-height: 620px;
+    min-height: 440px;
     display: grid;
     place-items: center;
     overflow: hidden;
+    isolation: isolate;
     color: var(--home-white);
+    background-color: var(--home-navy);
     background:
-        linear-gradient(105deg, rgba(7, 32, 65, .92), rgba(11, 46, 89, .7)),
+        linear-gradient(
+            105deg,
+            rgba(7, 30, 61, .86) 0%,
+            rgba(11, 46, 89, .68) 55%,
+            rgba(24, 75, 140, .52) 100%
+        ),
         url("{{ asset('images/placeholder.jpg') }}") center / cover no-repeat;
 }
 
@@ -660,9 +667,9 @@ document.addEventListener('DOMContentLoaded', function () {
 .home-hero-content {
     position: relative;
     z-index: 1;
-    max-width: 830px;
+    max-width: 790px;
     margin: auto;
-    padding: 120px 0 100px;
+    padding: 95px 0 80px;
     text-align: center;
 }
 

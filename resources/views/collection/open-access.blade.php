@@ -274,20 +274,21 @@
 
 .open-access-hero {
     position: relative;
-    min-height: 380px;
-    display: flex;
+    min-height: 440px;
+    display: grid;
+    place-items: center;
     align-items: center;
     overflow: hidden;
     color: #ffffff;
+    background-color: var(--mmaci-navy);
     background:
         linear-gradient(
-            115deg,
-            rgba(5, 25, 54, 0.97),
-            rgba(11, 46, 89, 0.91),
-            rgba(24, 75, 140, 0.76)
+            105deg,
+            rgba(7, 30, 61, .86) 0%,
+            rgba(11, 46, 89, .68) 55%,
+            rgba(24, 75, 140, .52) 100%
         ),
-        url("{{ asset('images/librarycollect.jpg') }}")
-        center / cover no-repeat;
+        url("{{ asset('images/default-resource.png') }}") center / cover no-repeat;
 }
 
 .open-access-hero::before {
@@ -315,9 +316,9 @@
 .open-access-hero-content {
     position: relative;
     z-index: 2;
-    max-width: 900px;
+    max-width: 790px;
     margin: auto;
-    padding: 78px 0 64px;
+    padding: 95px 0 80px;
     text-align: center;
 }
 
