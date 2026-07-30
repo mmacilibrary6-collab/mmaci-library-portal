@@ -92,6 +92,13 @@
         img {
 
             max-width: 100%;
+            height: auto;
+
+        }
+
+        iframe {
+
+            max-width: 100%;
 
         }
 
@@ -291,6 +298,66 @@
 
                 padding: 85px 0 70px;
                 text-align: center;
+
+            }
+
+        }
+
+        @media (max-width: 767.98px) {
+
+            .section-space {
+
+                padding: 70px 0;
+
+            }
+
+            .page-hero {
+
+                padding: 72px 0 58px;
+
+            }
+
+            .page-hero h1 {
+
+                font-size: clamp(30px, 8vw, 44px);
+
+            }
+
+            .page-hero p {
+
+                font-size: 15px;
+                line-height: 1.75;
+
+            }
+
+        }
+
+        @media (max-width: 575.98px) {
+
+            .section-space {
+
+                padding: 58px 0;
+
+            }
+
+            .page-hero {
+
+                padding: 64px 0 50px;
+
+            }
+
+            .page-hero .container,
+            .section-space .container {
+
+                padding-left: 16px;
+                padding-right: 16px;
+
+            }
+
+            .btn-mmaci,
+            .btn-outline-mmaci {
+
+                width: 100%;
 
             }
 
