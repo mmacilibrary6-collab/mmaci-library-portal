@@ -5,189 +5,669 @@
 @section('content')
 
 @php
-    $formUrl = $formUrl ?? 'https://docs.google.com/forms/d/e/1FAIpQLSfsg3Tn_nx3bf6KKQg46bhLVlPjvNre-mmHHKvFVh21_KBhmw/viewform';
+    $formUrl = $formUrl
+        ?? 'https://docs.google.com/forms/d/e/1FAIpQLSfsg3Tn_nx3bf6KKQg46bhLVlPjvNre-mmHHKvFVh21_KBhmw/viewform';
+
     $embedUrl = $formUrl . '?embedded=true';
 @endphp
 
-<section class="ask-hero online-book-hero">
-    <div class="ask-hero-overlay"></div>
+{{-- Hero --}}
+<section class="recommendation-hero">
+    <div class="container">
+        <div class="recommendation-hero-content">
 
-    <div class="container position-relative">
-        <div class="ask-hero-content">
-            <span class="section-label">More Services</span>
+            <span class="hero-label">
+                Library Services
+            </span>
+
             <h1>Online Book Recommendation</h1>
+
             <p>
-                Suggest books you would like the library to consider for future
-                purchase and collection development.
+                Recommend books you would like the MMACI Library to consider
+                for future purchase and collection development.
             </p>
 
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb justify-content-center mb-0">
+
                     <li class="breadcrumb-item">
                         <a href="{{ route('home') }}">Home</a>
                     </li>
-                    <li class="breadcrumb-item">More</li>
-                    <li class="breadcrumb-item active" aria-current="page">
-                        Online Book Recommendation
+
+                    <li class="breadcrumb-item">
+                        More
                     </li>
+
+                    <li class="breadcrumb-item active" aria-current="page">
+                        Book Recommendation
+                    </li>
+
                 </ol>
             </nav>
+
         </div>
     </div>
 </section>
 
-<section class="recommendation-section section-space">
+{{-- Main Content --}}
+<section class="recommendation-section">
     <div class="container">
-        <div class="row g-5 align-items-start">
-            <div class="col-lg-4">
-                <div class="recommendation-intro">
-                    <span class="eyebrow">Tell us what you need</span>
-                    <h2 class="section-title text-start">
-                        Recommend a Book Online
-                    </h2>
-                    <p class="section-description">
-                        Use the form on the right to submit your suggested book
-                        title, author, and any helpful details for the library.
-                    </p>
 
-                    <div class="recommendation-points">
-                        <div class="recommendation-point">
-                            <i class="bi bi-check-circle-fill"></i>
-                            <span>Easy to submit from any device</span>
-                        </div>
-                        <div class="recommendation-point">
-                            <i class="bi bi-check-circle-fill"></i>
-                            <span>Supports collection development requests</span>
-                        </div>
-                        <div class="recommendation-point">
-                            <i class="bi bi-check-circle-fill"></i>
-                            <span>Reviewed by the library team</span>
-                        </div>
-                    </div>
+        <div class="recommendation-layout">
 
-                    <a href="{{ $formUrl }}" target="_blank" rel="noopener noreferrer" class="text-action">
-                        Open in Google Forms
-                        <i class="bi bi-arrow-up-right" aria-hidden="true"></i>
-                    </a>
-                </div>
-            </div>
+            {{-- Information Panel --}}
+            <aside class="recommendation-sidebar">
 
-            <div class="col-lg-8">
-                <div class="recommendation-form-card">
-                    <div class="recommendation-form-header">
+                <span class="content-label">
+                    Recommend a Resource
+                </span>
+
+                <h2>Help us improve our collection</h2>
+
+                <p class="sidebar-description">
+                    Tell us which books and learning materials you would like
+                    to see in the MMACI Library collection.
+                </p>
+
+                <div class="recommendation-points">
+
+                    <div class="recommendation-point">
+                        <span class="point-icon">
+                            <i class="bi bi-check-lg" aria-hidden="true"></i>
+                        </span>
+
                         <div>
-                            <span>Google Form</span>
-                            <h3>Online Book Recommendation</h3>
+                            <strong>Simple submission</strong>
+                            <small>Complete the form using any device.</small>
                         </div>
-                        <a href="{{ $formUrl }}" target="_blank" rel="noopener noreferrer" class="survey-button">
-                            Open Form
-                        </a>
                     </div>
 
-                    <div class="recommendation-embed">
-                        <iframe
-                            src="{{ $embedUrl }}"
-                            title="Online Book Recommendation Form"
-                            loading="lazy"
-                            referrerpolicy="no-referrer-when-downgrade">
-                        </iframe>
+                    <div class="recommendation-point">
+                        <span class="point-icon">
+                            <i class="bi bi-check-lg" aria-hidden="true"></i>
+                        </span>
+
+                        <div>
+                            <strong>Collection development</strong>
+                            <small>
+                                Your recommendation helps improve our resources.
+                            </small>
+                        </div>
                     </div>
+
+                    <div class="recommendation-point">
+                        <span class="point-icon">
+                            <i class="bi bi-check-lg" aria-hidden="true"></i>
+                        </span>
+
+                        <div>
+                            <strong>Library review</strong>
+                            <small>
+                                Recommendations are reviewed by library personnel.
+                            </small>
+                        </div>
+                    </div>
+
                 </div>
+
+                <div class="recommendation-note">
+                    <i class="bi bi-info-circle" aria-hidden="true"></i>
+
+                    <p>
+                        Submitting a recommendation does not guarantee immediate
+                        purchase. Requests are evaluated according to relevance,
+                        availability, and budget.
+                    </p>
+                </div>
+
+                <a
+                    href="{{ $formUrl }}"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="secondary-action">
+
+                    Open in Google Forms
+
+                    <i
+                        class="bi bi-box-arrow-up-right"
+                        aria-hidden="true">
+                    </i>
+                </a>
+
+            </aside>
+
+            {{-- Embedded Form --}}
+            <div class="recommendation-form-card">
+
+                <header class="recommendation-form-header">
+
+                    <div>
+                        <span>Recommendation Form</span>
+                        <h2>Submit your book suggestion</h2>
+                    </div>
+
+                    <a
+                        href="{{ $formUrl }}"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="primary-action">
+
+                        Open Form
+
+                        <i
+                            class="bi bi-box-arrow-up-right"
+                            aria-hidden="true">
+                        </i>
+                    </a>
+
+                </header>
+
+                <div class="recommendation-embed">
+
+                    <div class="form-loading" aria-hidden="true">
+                        <div class="loading-spinner"></div>
+                        <span>Loading recommendation form...</span>
+                    </div>
+
+                    <iframe
+                        src="{{ $embedUrl }}"
+                        title="MMACI Online Book Recommendation Form"
+                        loading="lazy"
+                        referrerpolicy="strict-origin-when-cross-origin"
+                        onload="this.parentElement.classList.add('form-loaded')">
+                    </iframe>
+
+                </div>
+
             </div>
+
         </div>
+
     </div>
 </section>
 
-@endsection
-
-@push('styles')
 <style>
-    .online-book-hero {
-        background:
-            radial-gradient(circle at 85% 20%, rgba(244, 180, 0, 0.30), transparent 28%),
-            linear-gradient(135deg, var(--mmaci-navy), var(--mmaci-blue));
+:root {
+    --recommendation-navy: #0b2e59;
+    --recommendation-blue: #184b8c;
+    --recommendation-gold: #f4b400;
+    --recommendation-green: #278b5a;
+    --recommendation-text: #18263b;
+    --recommendation-muted: #667389;
+    --recommendation-background: #f4f7fb;
+    --recommendation-border: #dfe6ef;
+    --recommendation-white: #ffffff;
+}
+
+/* Hero */
+
+.recommendation-hero {
+    position: relative;
+    min-height: 430px;
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+    isolation: isolate;
+    color: var(--recommendation-white);
+    background-color: var(--recommendation-navy);
+    background-image:
+        linear-gradient(
+            105deg,
+            rgba(7, 30, 61, 0.90) 0%,
+            rgba(11, 46, 89, 0.72) 55%,
+            rgba(24, 75, 140, 0.58) 100%
+        ),
+        url("{{ asset('images/book-recommendation-placeholder.jpg') }}");
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+}
+
+.recommendation-hero::after {
+    content: "";
+    position: absolute;
+    right: -140px;
+    bottom: -220px;
+    width: 440px;
+    height: 440px;
+    border: 58px solid rgba(244, 180, 0, 0.11);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 0;
+}
+
+.recommendation-hero-content {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 900px;
+    margin: auto;
+    padding: 85px 15px 70px;
+    text-align: center;
+}
+
+.hero-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    color: var(--recommendation-gold);
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0.13em;
+    text-transform: uppercase;
+}
+
+.hero-label::before,
+.hero-label::after {
+    content: "";
+    width: 28px;
+    height: 2px;
+    border-radius: 20px;
+    background: var(--recommendation-gold);
+}
+
+.recommendation-hero h1 {
+    max-width: 900px;
+    margin: 18px auto;
+    color: var(--recommendation-white);
+    font-size: clamp(46px, 6vw, 72px);
+    font-weight: 900;
+    line-height: 1.04;
+    letter-spacing: -0.045em;
+    text-wrap: balance;
+}
+
+.recommendation-hero p {
+    max-width: 700px;
+    margin: 0 auto 26px;
+    color: rgba(255, 255, 255, 0.82);
+    font-size: 17px;
+    line-height: 1.75;
+}
+
+.recommendation-hero .breadcrumb {
+    display: flex;
+    flex-wrap: wrap;
+    row-gap: 6px;
+    font-size: 13px;
+}
+
+.recommendation-hero .breadcrumb-item,
+.recommendation-hero .breadcrumb-item.active {
+    color: rgba(255, 255, 255, 0.62);
+}
+
+.recommendation-hero .breadcrumb-item a {
+    color: var(--recommendation-white);
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.recommendation-hero .breadcrumb-item a:hover {
+    color: var(--recommendation-gold);
+}
+
+.recommendation-hero
+.breadcrumb-item + .breadcrumb-item::before {
+    color: rgba(255, 255, 255, 0.42);
+}
+
+/* Main section */
+
+.recommendation-section {
+    padding: 70px 0;
+    background: var(--recommendation-background);
+}
+
+.recommendation-layout {
+    display: grid;
+    grid-template-columns: minmax(260px, 340px) minmax(0, 1fr);
+    gap: 28px;
+    align-items: start;
+}
+
+/* Sidebar */
+
+.recommendation-sidebar {
+    position: sticky;
+    top: 100px;
+    padding: 30px;
+    border: 1px solid var(--recommendation-border);
+    border-radius: 20px;
+    background: var(--recommendation-white);
+    box-shadow: 0 14px 34px rgba(11, 46, 89, 0.07);
+}
+
+.content-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--recommendation-blue);
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.11em;
+    text-transform: uppercase;
+}
+
+.content-label::before {
+    content: "";
+    width: 24px;
+    height: 3px;
+    border-radius: 10px;
+    background: var(--recommendation-gold);
+}
+
+.recommendation-sidebar h2 {
+    margin: 14px 0 13px;
+    color: var(--recommendation-navy);
+    font-size: clamp(27px, 3vw, 36px);
+    font-weight: 850;
+    line-height: 1.12;
+    letter-spacing: -0.035em;
+}
+
+.sidebar-description {
+    margin: 0;
+    color: var(--recommendation-muted);
+    font-size: 15px;
+    line-height: 1.75;
+}
+
+.recommendation-points {
+    display: grid;
+    gap: 18px;
+    margin: 26px 0;
+    padding-top: 24px;
+    border-top: 1px solid var(--recommendation-border);
+}
+
+.recommendation-point {
+    display: grid;
+    grid-template-columns: 34px 1fr;
+    gap: 12px;
+    align-items: start;
+}
+
+.point-icon {
+    width: 34px;
+    height: 34px;
+    display: grid;
+    place-items: center;
+    border-radius: 10px;
+    color: var(--recommendation-navy);
+    background: rgba(244, 180, 0, 0.18);
+    font-size: 17px;
+}
+
+.recommendation-point strong,
+.recommendation-point small {
+    display: block;
+}
+
+.recommendation-point strong {
+    margin-bottom: 3px;
+    color: var(--recommendation-navy);
+    font-size: 14px;
+    font-weight: 800;
+}
+
+.recommendation-point small {
+    color: var(--recommendation-muted);
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+.recommendation-note {
+    display: grid;
+    grid-template-columns: 20px 1fr;
+    gap: 10px;
+    margin-bottom: 22px;
+    padding: 14px;
+    border-left: 3px solid var(--recommendation-blue);
+    border-radius: 8px;
+    color: var(--recommendation-muted);
+    background: #f3f7fc;
+}
+
+.recommendation-note i {
+    color: var(--recommendation-blue);
+}
+
+.recommendation-note p {
+    margin: 0;
+    font-size: 12px;
+    line-height: 1.6;
+}
+
+/* Buttons */
+
+.primary-action,
+.secondary-action {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
+    min-height: 44px;
+    padding: 11px 17px;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 800;
+    text-decoration: none;
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease,
+        background 0.2s ease;
+}
+
+.primary-action {
+    flex-shrink: 0;
+    color: var(--recommendation-navy);
+    background: var(--recommendation-gold);
+}
+
+.secondary-action {
+    width: 100%;
+    color: var(--recommendation-white);
+    background: var(--recommendation-navy);
+}
+
+.primary-action:hover,
+.secondary-action:hover {
+    transform: translateY(-2px);
+}
+
+.primary-action:hover {
+    color: var(--recommendation-navy);
+    box-shadow: 0 10px 22px rgba(244, 180, 0, 0.22);
+}
+
+.secondary-action:hover {
+    color: var(--recommendation-white);
+    background: var(--recommendation-blue);
+    box-shadow: 0 10px 22px rgba(11, 46, 89, 0.18);
+}
+
+/* Form card */
+
+.recommendation-form-card {
+    min-width: 0;
+    overflow: hidden;
+    border: 1px solid var(--recommendation-border);
+    border-radius: 20px;
+    background: var(--recommendation-white);
+    box-shadow: 0 14px 34px rgba(11, 46, 89, 0.08);
+}
+
+.recommendation-form-header {
+    min-height: 88px;
+    padding: 20px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    border-bottom: 1px solid var(--recommendation-border);
+}
+
+.recommendation-form-header span {
+    display: block;
+    color: var(--recommendation-blue);
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.11em;
+    text-transform: uppercase;
+}
+
+.recommendation-form-header h2 {
+    margin: 5px 0 0;
+    color: var(--recommendation-navy);
+    font-size: clamp(20px, 2vw, 25px);
+    font-weight: 850;
+    line-height: 1.2;
+    letter-spacing: -0.025em;
+}
+
+.recommendation-embed {
+    position: relative;
+    width: 100%;
+    height: min(1050px, calc(100vh - 120px));
+    min-height: 720px;
+    background: #f7f9fc;
+}
+
+.recommendation-embed iframe {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    height: 100%;
+    display: block;
+    border: 0;
+    background: var(--recommendation-white);
+}
+
+.form-loading {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-content: center;
+    justify-items: center;
+    gap: 12px;
+    color: var(--recommendation-muted);
+    font-size: 13px;
+}
+
+.form-loaded .form-loading {
+    display: none;
+}
+
+.loading-spinner {
+    width: 34px;
+    height: 34px;
+    border: 3px solid #dfe6ef;
+    border-top-color: var(--recommendation-blue);
+    border-radius: 50%;
+    animation: recommendation-spin 0.8s linear infinite;
+}
+
+@keyframes recommendation-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Responsive */
+
+@media (max-width: 991.98px) {
+    .recommendation-layout {
+        grid-template-columns: 1fr;
     }
 
-    .recommendation-intro {
-        background: #fff;
-        border: 1px solid #e1e8f2;
-        border-radius: 24px;
-        padding: 30px;
-        box-shadow: 0 18px 40px rgba(15, 40, 75, 0.06);
+    .recommendation-sidebar {
+        position: static;
     }
 
     .recommendation-points {
-        display: grid;
-        gap: 14px;
-        margin: 28px 0;
+        grid-template-columns: repeat(3, 1fr);
     }
 
-    .recommendation-point {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        color: var(--mmaci-navy);
-        font-weight: 600;
+    .recommendation-note {
+        max-width: 700px;
     }
 
-    .recommendation-point i {
-        color: var(--mmaci-gold);
-        font-size: 18px;
+    .secondary-action {
+        width: auto;
+    }
+}
+
+@media (max-width: 767.98px) {
+    .recommendation-hero {
+        min-height: 390px;
+    }
+
+    .recommendation-hero-content {
+        padding: 72px 10px 62px;
+    }
+
+    .recommendation-hero h1 {
+        font-size: clamp(40px, 12vw, 56px);
+    }
+
+    .recommendation-hero p {
+        font-size: 15px;
+        line-height: 1.65;
+    }
+
+    .recommendation-section {
+        padding: 45px 0;
+    }
+
+    .recommendation-sidebar {
+        padding: 24px 21px;
+        border-radius: 17px;
+    }
+
+    .recommendation-points {
+        grid-template-columns: 1fr;
     }
 
     .recommendation-form-card {
-        overflow: hidden;
-        border-radius: 24px;
-        background: #fff;
-        border: 1px solid #e1e8f2;
-        box-shadow: 0 18px 40px rgba(15, 40, 75, 0.08);
+        border-radius: 17px;
     }
 
     .recommendation-form-header {
-        padding: 22px 24px;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 18px;
-        border-bottom: 1px solid #edf2f7;
+        align-items: flex-start;
+        flex-direction: column;
+        padding: 19px 20px;
     }
 
-    .recommendation-form-header span {
-        display: block;
-        color: var(--mmaci-muted);
-        font-size: 12px;
-        font-weight: 700;
-        letter-spacing: 0.08em;
-        text-transform: uppercase;
-    }
-
-    .recommendation-form-header h3 {
-        margin: 4px 0 0;
-        color: var(--mmaci-navy);
-        font-size: 24px;
-        font-weight: 800;
-        letter-spacing: -0.03em;
+    .primary-action {
+        width: 100%;
     }
 
     .recommendation-embed {
-        position: relative;
-        width: 100%;
-        min-height: 1100px;
-        background: #f7f9fc;
+        height: 900px;
+        min-height: 900px;
+    }
+}
+
+@media (max-width: 575.98px) {
+    .hero-label {
+        font-size: 10px;
     }
 
-    .recommendation-embed iframe {
-        display: block;
-        width: 100%;
-        min-height: 1100px;
-        border: 0;
+    .hero-label::before,
+    .hero-label::after {
+        width: 17px;
     }
 
-    @media (max-width: 991px) {
-        .recommendation-embed,
-        .recommendation-embed iframe {
-            min-height: 980px;
-        }
+    .recommendation-hero .breadcrumb {
+        display: none;
     }
+
+    .recommendation-embed {
+        height: 820px;
+        min-height: 820px;
+    }
+}
 </style>
-@endpush
+
+@endsection
