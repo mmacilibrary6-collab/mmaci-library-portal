@@ -129,7 +129,7 @@
                     <span>Faculty Lounge</span>
                 </div>
                 <div class="summary-item">
-                    <strong>1</strong>
+                    <strong>2</strong>
                     <span>Audio Visual Room (AVR)</span>
                 </div>
             </div>
