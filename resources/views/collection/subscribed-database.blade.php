@@ -17,10 +17,6 @@
             {{-- Hero Content --}}
             <div class="database-hero-content">
 
-                <span class="database-label">
-                    Digital Collection
-                </span>
-
                 <h1>Subscribed Online Database</h1>
 
                 <p>
