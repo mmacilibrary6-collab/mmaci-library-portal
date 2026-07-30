@@ -148,7 +148,7 @@
                                 src="{{ $resource->image_url }}"
                                 alt="{{ $resource->title }}"
                                 loading="lazy"
-                                onerror="this.onerror=null;this.src='{{ asset('images/default-resource.png') }}';">
+                                onerror="this.onerror=null;this.src='{{ asset('images/Opacc.jpg') }}';">
 
                         </div>
 
@@ -288,7 +288,7 @@
             rgba(11, 46, 89, .68) 55%,
             rgba(24, 75, 140, .52) 100%
         ),
-        url("{{ asset('images/default-resource.png') }}") center / cover no-repeat;
+        url("{{ asset('images/Opacc.jpg') }}") center / cover no-repeat;
 }
 
 .open-access-hero::before {

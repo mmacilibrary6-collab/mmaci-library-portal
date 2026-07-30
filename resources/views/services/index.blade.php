@@ -93,7 +93,7 @@
 
         @php
             $serviceImages = [
-                asset('images/opac.png'),
+                asset('images/Opacc.jpg'),
                 asset('images/chesz.jpg'),
                 asset('images/laptops.jpg'),
             ];
