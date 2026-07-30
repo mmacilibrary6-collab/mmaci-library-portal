@@ -35,8 +35,6 @@
 
     </div>
 
-    @include('partials.flash-messages')
-
     <div class="folder-management-card">
 
         {{-- Filters --}}
