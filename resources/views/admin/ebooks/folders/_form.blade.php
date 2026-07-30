@@ -1,5 +1,5 @@
 @php
-    $folder = $ebookFolder ?? null;
+    $folder = isset($ebookFolder) ? $ebookFolder : null;
     $isEditing = $folder !== null;
 
     $programId = old(
