@@ -7,7 +7,7 @@
 <section class="services-hero">
     <div class="container">
         <div class="services-hero-content">
-            <span class="eyebrow eyebrow-light">Library Services</span>
+           
 
             <h1>Everything you need to use the library well.</h1>
 

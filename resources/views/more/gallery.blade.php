@@ -7,7 +7,6 @@
 <section class="gallery-hero">
     <div class="container">
         <div class="gallery-hero-content">
-            <span class=" eyebrow-light">Library Gallery</span>
             <h1>Moments within our library</h1>
             <p>
                 Explore activities, programs, celebrations, and memorable
