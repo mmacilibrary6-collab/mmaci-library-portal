@@ -6,10 +6,6 @@
 
 @php
     $accessUrl = $accessUrl ?? 'https://search.ebscohost.com/';
-
-    $embedUrl = $accessUrl
-        . (str_contains($accessUrl, '?') ? '&' : '?')
-        . 'embedded=true';
 @endphp
 
 {{-- Hero --}}
@@ -18,7 +14,8 @@
 
         <div class="database-hero-grid">
 
-            <div class="database-hero-copy">
+            {{-- Hero Content --}}
+            <div class="database-hero-content">
 
                 <span class="database-label">
                     Digital Collection
@@ -28,17 +25,19 @@
 
                 <p>
                     Access reliable journals, articles, research papers, and
-                    academic resources available through the MMACI Library's
-                    EBSCO subscription.
+                    academic resources through the MMACI Library's EBSCO
+                    subscription.
                 </p>
 
-                <div class="database-notice">
+                <div class="credential-notice">
+
                     <i class="bi bi-person-badge" aria-hidden="true"></i>
 
                     <span>
-                        Login credentials are available from the Circulation
-                        Staff at the library desk.
+                        Students must use the login credentials provided by the
+                        MMACI Circulation Staff.
                     </span>
+
                 </div>
 
                 <div class="database-actions">
@@ -68,25 +67,28 @@
 
             </div>
 
+            {{-- Complete EBSCO Screenshot --}}
             <div class="database-preview">
 
                 <div class="preview-toolbar">
-                    <span class="preview-dot"></span>
-                    <span class="preview-dot"></span>
-                    <span class="preview-dot"></span>
+
+                    <span class="preview-dot preview-dot-red"></span>
+                    <span class="preview-dot preview-dot-yellow"></span>
+                    <span class="preview-dot preview-dot-green"></span>
 
                     <div class="preview-address">
                         EBSCO Online Database
                     </div>
+
                 </div>
 
                 <div class="preview-image-wrapper">
 
                     <img
                         src="{{ asset('images/ebsco-signin.png') }}"
-                        alt="EBSCO online database sign-in page"
+                        alt="Complete EBSCO sign-in screen"
                         class="database-image"
-                        loading="lazy"
+                        loading="eager"
                         onerror="this.onerror=null;this.src='{{ asset('images/database-placeholder.jpg') }}';">
 
                 </div>
@@ -98,153 +100,132 @@
     </div>
 </section>
 
-{{-- Access Section --}}
+{{-- Access Instructions --}}
 <section class="database-access-section">
     <div class="container">
 
         <header class="database-section-heading">
 
             <span class="database-content-label">
-                Database Access
+                How to Access
             </span>
 
-            <h2>Search academic resources online</h2>
+            <h2>Start using the EBSCO database</h2>
 
             <p>
-                Sign in with the account details provided by the MMACI
-                Circulation Staff.
+                Follow these steps to access the subscribed academic resources.
             </p>
 
         </header>
 
-        <div class="database-layout">
+        <div class="access-layout">
 
-            {{-- Instructions --}}
-            <aside class="database-instructions">
+            {{-- Steps --}}
+            <div class="access-steps">
 
-                <div class="instruction-heading">
-                    <span>Before you continue</span>
-                    <h3>Access instructions</h3>
-                </div>
-
-                <div class="instruction-list">
-
-                    <div class="instruction-item">
-                        <span class="instruction-number">1</span>
-
-                        <div>
-                            <strong>Request your credentials</strong>
-                            <p>
-                                Visit the Circulation Desk to receive your EBSCO
-                                username and password.
-                            </p>
-                        </div>
-                    </div>
-
-                    <div class="instruction-item">
-                        <span class="instruction-number">2</span>
-
-                        <div>
-                            <strong>Open the database</strong>
-                            <p>
-                                Use the embedded window or open EBSCO in a
-                                separate browser tab.
-                            </p>
-                        </div>
-                    </div>
-
-                    <div class="instruction-item">
-                        <span class="instruction-number">3</span>
-
-                        <div>
-                            <strong>Sign in securely</strong>
-                            <p>
-                                Enter the credentials given by the Circulation
-                                Staff and avoid sharing them publicly.
-                            </p>
-                        </div>
-                    </div>
-
-                    <div class="instruction-item">
-                        <span class="instruction-number">4</span>
-
-                        <div>
-                            <strong>Ask for assistance</strong>
-                            <p>
-                                Contact the library staff if your login does not
-                                work or the database cannot be opened.
-                            </p>
-                        </div>
-                    </div>
-
-                </div>
-
-                <div class="help-note">
-                    <i class="bi bi-info-circle" aria-hidden="true"></i>
-
-                    <p>
-                        Some database providers may prevent their login page
-                        from loading inside an embedded window. Select
-                        <strong>Open EBSCO</strong> if the form does not appear.
-                    </p>
-                </div>
-
-            </aside>
-
-            {{-- Embedded Database --}}
-            <div class="database-card">
-
-                <header class="database-card-header">
+                <article class="access-step">
+                    <span class="step-number">01</span>
 
                     <div>
-                        <span>Subscribed Resource</span>
-                        <h3>EBSCO Online Access</h3>
+                        <h3>Request your credentials</h3>
+
+                        <p>
+                            Visit the MMACI Circulation Desk and request the
+                            official EBSCO username and password.
+                        </p>
                     </div>
+                </article>
 
-                    <a
-                        href="{{ $accessUrl }}"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        class="database-open-button">
+                <article class="access-step">
+                    <span class="step-number">02</span>
 
-                        Open EBSCO
+                    <div>
+                        <h3>Open the EBSCO website</h3>
 
-                        <i
-                            class="bi bi-box-arrow-up-right"
-                            aria-hidden="true">
-                        </i>
-                    </a>
-
-                </header>
-
-                <div class="database-frame">
-
-                    <div class="database-loading" aria-hidden="true">
-                        <div class="database-spinner"></div>
-                        <span>Loading EBSCO database...</span>
+                        <p>
+                            Select the access button to open the official
+                            database securely in a new browser tab.
+                        </p>
                     </div>
+                </article>
 
-                    <iframe
-                        src="{{ $embedUrl }}"
-                        title="EBSCO Subscribed Online Database"
-                        loading="lazy"
-                        referrerpolicy="strict-origin-when-cross-origin"
-                        onload="this.parentElement.classList.add('database-loaded')">
-                    </iframe>
+                <article class="access-step">
+                    <span class="step-number">03</span>
 
-                </div>
+                    <div>
+                        <h3>Enter your login details</h3>
 
-                <footer class="database-card-footer">
+                        <p>
+                            Use the credentials given by the Circulation Staff
+                            and keep the account details private.
+                        </p>
+                    </div>
+                </article>
+
+                <article class="access-step">
+                    <span class="step-number">04</span>
+
+                    <div>
+                        <h3>Search academic resources</h3>
+
+                        <p>
+                            Browse journals, articles, research papers, and
+                            other learning resources available through EBSCO.
+                        </p>
+                    </div>
+                </article>
+
+            </div>
+
+            {{-- Access Card --}}
+            <aside class="access-card">
+
+                <span class="access-card-label">
+                    Subscribed Resource
+                </span>
+
+                <h2>EBSCO Online Access</h2>
+
+                <p>
+                    EBSCO does not allow its login page to appear inside another
+                    website. Open it securely in a separate browser tab.
+                </p>
+
+                <div class="access-card-notice">
 
                     <i class="bi bi-shield-check" aria-hidden="true"></i>
 
-                    <span>
-                        Access is intended for authorized MMACI library users.
-                    </span>
+                    <div>
+                        <strong>Authorized access only</strong>
 
-                </footer>
+                        <span>
+                            Available to MMACI students and authorized library
+                            users.
+                        </span>
+                    </div>
 
-            </div>
+                </div>
+
+                <a
+                    href="{{ $accessUrl }}"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="access-card-button">
+
+                    Continue to EBSCO
+
+                    <i
+                        class="bi bi-box-arrow-up-right"
+                        aria-hidden="true">
+                    </i>
+                </a>
+
+                <small>
+                    Need assistance? Visit the Circulation Desk during library
+                    hours.
+                </small>
+
+            </aside>
 
         </div>
 
@@ -275,8 +256,8 @@
     background-image:
         linear-gradient(
             105deg,
-            rgba(7, 30, 61, 0.94),
-            rgba(11, 46, 89, 0.82)
+            rgba(7, 30, 61, 0.95),
+            rgba(11, 46, 89, 0.84)
         ),
         url("{{ asset('images/database-placeholder.jpg') }}");
     background-position: center;
@@ -287,11 +268,11 @@
 .database-hero::after {
     content: "";
     position: absolute;
-    right: -150px;
-    bottom: -250px;
-    width: 470px;
-    height: 470px;
-    border: 65px solid rgba(244, 180, 0, 0.10);
+    right: -160px;
+    bottom: -270px;
+    width: 490px;
+    height: 490px;
+    border: 68px solid rgba(244, 180, 0, 0.10);
     border-radius: 50%;
     pointer-events: none;
 }
@@ -300,23 +281,28 @@
     position: relative;
     z-index: 1;
     display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(400px, 0.88fr);
-    gap: 65px;
+    grid-template-columns: minmax(0, 0.9fr) minmax(440px, 1.1fr);
+    gap: 60px;
     align-items: center;
 }
 
-.database-label {
+.database-label,
+.database-content-label {
     display: inline-flex;
     align-items: center;
     gap: 9px;
-    color: var(--database-gold);
-    font-size: 12px;
+    font-size: 11px;
     font-weight: 800;
     letter-spacing: 0.13em;
     text-transform: uppercase;
 }
 
-.database-label::before {
+.database-label {
+    color: var(--database-gold);
+}
+
+.database-label::before,
+.database-content-label::before {
     content: "";
     width: 28px;
     height: 3px;
@@ -325,54 +311,53 @@
 }
 
 .database-hero h1 {
-    max-width: 720px;
     margin: 17px 0 20px;
     color: var(--database-white);
-    font-size: clamp(45px, 5.7vw, 73px);
+    font-size: clamp(45px, 5.7vw, 72px);
     font-weight: 900;
     line-height: 1.02;
     letter-spacing: -0.05em;
     text-wrap: balance;
 }
 
-.database-hero-copy > p {
-    max-width: 650px;
-    margin: 0 0 24px;
+.database-hero-content > p {
+    max-width: 620px;
+    margin: 0 0 23px;
     color: rgba(255, 255, 255, 0.80);
     font-size: 16px;
     line-height: 1.75;
 }
 
-.database-notice {
-    max-width: 610px;
+.credential-notice {
+    max-width: 590px;
+    padding: 14px 16px;
     display: grid;
-    grid-template-columns: 22px 1fr;
+    grid-template-columns: 21px 1fr;
     gap: 11px;
     align-items: start;
-    padding: 14px 16px;
-    border: 1px solid rgba(255, 255, 255, 0.13);
+    border: 1px solid rgba(255, 255, 255, 0.15);
     border-radius: 10px;
-    color: rgba(255, 255, 255, 0.83);
+    color: rgba(255, 255, 255, 0.84);
     background: rgba(255, 255, 255, 0.08);
     font-size: 13px;
     line-height: 1.6;
 }
 
-.database-notice i {
+.credential-notice i {
     color: var(--database-gold);
-    font-size: 18px;
+    font-size: 17px;
 }
 
 .database-actions {
     display: flex;
     flex-wrap: wrap;
     gap: 12px;
-    margin-top: 27px;
+    margin-top: 26px;
 }
 
 .database-primary-button,
 .database-secondary-button,
-.database-open-button {
+.access-card-button {
     min-height: 46px;
     padding: 12px 18px;
     display: inline-flex;
@@ -397,7 +382,7 @@
 .database-primary-button:hover {
     color: var(--database-navy);
     transform: translateY(-2px);
-    box-shadow: 0 10px 25px rgba(244, 180, 0, 0.24);
+    box-shadow: 0 10px 24px rgba(244, 180, 0, 0.24);
 }
 
 .database-secondary-button {
@@ -412,15 +397,16 @@
     transform: translateY(-2px);
 }
 
-/* Preview */
+/* Complete Screenshot */
 
 .database-preview {
+    min-width: 0;
     overflow: hidden;
-    border: 1px solid rgba(255, 255, 255, 0.18);
+    border: 1px solid rgba(255, 255, 255, 0.20);
     border-radius: 18px;
     background: var(--database-white);
-    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.24);
-    transform: rotate(1deg);
+    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.25);
+    transform: rotate(0.8deg);
     transition: transform 0.25s ease;
 }
 
@@ -430,7 +416,7 @@
 
 .preview-toolbar {
     min-height: 44px;
-    padding: 0 15px;
+    padding: 0 14px;
     display: flex;
     align-items: center;
     gap: 7px;
@@ -441,19 +427,19 @@
 .preview-dot {
     width: 9px;
     height: 9px;
+    flex-shrink: 0;
     border-radius: 50%;
-    background: #cbd4df;
 }
 
-.preview-dot:first-child {
+.preview-dot-red {
     background: #e26a5d;
 }
 
-.preview-dot:nth-child(2) {
+.preview-dot-yellow {
     background: #e9b949;
 }
 
-.preview-dot:nth-child(3) {
+.preview-dot-green {
     background: #43a86b;
 }
 
@@ -472,20 +458,20 @@
 }
 
 .preview-image-wrapper {
-    aspect-ratio: 16 / 10;
-    overflow: hidden;
-    background: #eef2f7;
+    width: 100%;
+    padding: 0;
+    overflow: visible;
+    background: var(--database-white);
 }
 
 .database-image {
     width: 100%;
-    height: 100%;
+    height: auto;
     display: block;
-    object-fit: cover;
-    object-position: top center;
+    object-fit: contain;
 }
 
-/* Access section */
+/* Instructions */
 
 .database-access-section {
     padding: 70px 0;
@@ -498,22 +484,7 @@
 }
 
 .database-content-label {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
     color: var(--database-blue);
-    font-size: 11px;
-    font-weight: 800;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-}
-
-.database-content-label::before {
-    content: "";
-    width: 25px;
-    height: 3px;
-    border-radius: 10px;
-    background: var(--database-gold);
 }
 
 .database-section-heading h2 {
@@ -532,227 +503,175 @@
     line-height: 1.7;
 }
 
-.database-layout {
+.access-layout {
     display: grid;
-    grid-template-columns: minmax(260px, 330px) minmax(0, 1fr);
+    grid-template-columns: minmax(0, 1fr) minmax(280px, 365px);
     gap: 28px;
     align-items: start;
 }
 
-/* Instructions */
-
-.database-instructions {
-    position: sticky;
-    top: 100px;
-    padding: 27px;
-    border: 1px solid var(--database-border);
-    border-radius: 18px;
-    background: var(--database-white);
-    box-shadow: 0 13px 32px rgba(11, 46, 89, 0.06);
-}
-
-.instruction-heading {
-    padding-bottom: 20px;
-    border-bottom: 1px solid var(--database-border);
-}
-
-.instruction-heading span {
-    color: var(--database-blue);
-    font-size: 10px;
-    font-weight: 800;
-    letter-spacing: 0.11em;
-    text-transform: uppercase;
-}
-
-.instruction-heading h3 {
-    margin: 6px 0 0;
-    color: var(--database-navy);
-    font-size: 25px;
-    font-weight: 850;
-    letter-spacing: -0.03em;
-}
-
-.instruction-list {
+.access-steps {
     display: grid;
-    gap: 21px;
-    margin-top: 23px;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
 }
 
-.instruction-item {
+.access-step {
+    min-height: 180px;
+    padding: 24px;
     display: grid;
-    grid-template-columns: 32px 1fr;
-    gap: 12px;
+    grid-template-columns: 44px 1fr;
+    gap: 16px;
     align-items: start;
+    border: 1px solid var(--database-border);
+    border-radius: 16px;
+    background: var(--database-white);
+    box-shadow: 0 10px 26px rgba(11, 46, 89, 0.05);
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease,
+        border-color 0.2s ease;
 }
 
-.instruction-number {
-    width: 32px;
-    height: 32px;
+.access-step:hover {
+    transform: translateY(-3px);
+    border-color: rgba(24, 75, 140, 0.30);
+    box-shadow: 0 15px 32px rgba(11, 46, 89, 0.09);
+}
+
+.step-number {
+    width: 44px;
+    height: 44px;
     display: grid;
     place-items: center;
-    border-radius: 9px;
+    border-radius: 12px;
     color: var(--database-navy);
-    background: rgba(244, 180, 0, 0.19);
+    background: rgba(244, 180, 0, 0.18);
     font-size: 12px;
     font-weight: 900;
 }
 
-.instruction-item strong {
-    display: block;
-    margin-bottom: 4px;
+.access-step h3 {
+    margin: 3px 0 8px;
     color: var(--database-navy);
+    font-size: 17px;
+    font-weight: 850;
+    line-height: 1.3;
+}
+
+.access-step p {
+    margin: 0;
+    color: var(--database-muted);
     font-size: 13px;
-    font-weight: 800;
+    line-height: 1.65;
 }
 
-.instruction-item p {
-    margin: 0;
-    color: var(--database-muted);
-    font-size: 12px;
-    line-height: 1.55;
-}
+/* Access Card */
 
-.help-note {
-    display: grid;
-    grid-template-columns: 19px 1fr;
-    gap: 9px;
-    margin-top: 24px;
-    padding: 13px;
-    border-radius: 9px;
-    color: var(--database-muted);
-    background: #f1f6fc;
-}
-
-.help-note i {
-    color: var(--database-blue);
-}
-
-.help-note p {
-    margin: 0;
-    font-size: 11px;
-    line-height: 1.6;
-}
-
-/* Database card */
-
-.database-card {
-    min-width: 0;
+.access-card {
+    position: sticky;
+    top: 100px;
+    padding: 28px;
     overflow: hidden;
-    border: 1px solid var(--database-border);
     border-radius: 18px;
-    background: var(--database-white);
-    box-shadow: 0 13px 32px rgba(11, 46, 89, 0.08);
+    color: var(--database-white);
+    background:
+        radial-gradient(
+            circle at top right,
+            rgba(244, 180, 0, 0.15),
+            transparent 35%
+        ),
+        linear-gradient(
+            145deg,
+            var(--database-navy),
+            var(--database-blue)
+        );
+    box-shadow: 0 18px 40px rgba(11, 46, 89, 0.18);
 }
 
-.database-card-header {
-    min-height: 86px;
-    padding: 19px 22px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 18px;
-    border-bottom: 1px solid var(--database-border);
-}
-
-.database-card-header span {
-    display: block;
-    color: var(--database-blue);
+.access-card-label {
+    color: var(--database-gold);
     font-size: 10px;
     font-weight: 800;
-    letter-spacing: 0.11em;
+    letter-spacing: 0.12em;
     text-transform: uppercase;
 }
 
-.database-card-header h3 {
-    margin: 5px 0 0;
-    color: var(--database-navy);
-    font-size: 23px;
-    font-weight: 850;
-    letter-spacing: -0.025em;
-}
-
-.database-open-button {
-    flex-shrink: 0;
+.access-card h2 {
+    margin: 9px 0 12px;
     color: var(--database-white);
-    background: var(--database-navy);
+    font-size: 29px;
+    font-weight: 900;
+    letter-spacing: -0.035em;
 }
 
-.database-open-button:hover {
-    color: var(--database-white);
-    background: var(--database-blue);
-    transform: translateY(-2px);
+.access-card > p {
+    margin: 0;
+    color: rgba(255, 255, 255, 0.76);
+    font-size: 14px;
+    line-height: 1.7;
 }
 
-.database-frame {
-    position: relative;
-    width: 100%;
-    height: min(900px, calc(100vh - 115px));
-    min-height: 680px;
-    background: #f7f9fc;
-}
-
-.database-frame iframe {
-    position: relative;
-    z-index: 1;
-    width: 100%;
-    height: 100%;
-    display: block;
-    border: 0;
-    background: var(--database-white);
-}
-
-.database-loading {
-    position: absolute;
-    inset: 0;
+.access-card-notice {
+    margin: 23px 0;
+    padding: 14px;
     display: grid;
-    place-content: center;
-    justify-items: center;
-    gap: 12px;
-    color: var(--database-muted);
+    grid-template-columns: 35px 1fr;
+    gap: 11px;
+    align-items: center;
+    border: 1px solid rgba(255, 255, 255, 0.13);
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.access-card-notice i {
+    color: var(--database-gold);
+    font-size: 25px;
+}
+
+.access-card-notice strong,
+.access-card-notice span {
+    display: block;
+}
+
+.access-card-notice strong {
+    margin-bottom: 3px;
+    color: var(--database-white);
     font-size: 13px;
 }
 
-.database-loaded .database-loading {
-    display: none;
-}
-
-.database-spinner {
-    width: 34px;
-    height: 34px;
-    border: 3px solid var(--database-border);
-    border-top-color: var(--database-blue);
-    border-radius: 50%;
-    animation: database-spin 0.8s linear infinite;
-}
-
-@keyframes database-spin {
-    to {
-        transform: rotate(360deg);
-    }
-}
-
-.database-card-footer {
-    min-height: 48px;
-    padding: 12px 21px;
-    display: flex;
-    align-items: center;
-    gap: 9px;
-    border-top: 1px solid var(--database-border);
-    color: var(--database-muted);
-    background: #fafbfd;
+.access-card-notice span {
+    color: rgba(255, 255, 255, 0.65);
     font-size: 11px;
+    line-height: 1.45;
 }
 
-.database-card-footer i {
-    color: var(--database-green);
-    font-size: 16px;
+.access-card-button {
+    width: 100%;
+    color: var(--database-navy);
+    background: var(--database-gold);
+}
+
+.access-card-button:hover {
+    color: var(--database-navy);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 24px rgba(244, 180, 0, 0.20);
+}
+
+.access-card small {
+    display: block;
+    margin-top: 13px;
+    color: rgba(255, 255, 255, 0.58);
+    font-size: 10px;
+    line-height: 1.5;
+    text-align: center;
 }
 
 /* Responsive */
 
 @media (max-width: 991.98px) {
     .database-hero-grid,
-    .database-layout {
+    .access-layout {
         grid-template-columns: 1fr;
     }
 
@@ -761,29 +680,26 @@
     }
 
     .database-preview {
-        max-width: 680px;
+        width: 100%;
+        max-width: 760px;
         transform: none;
     }
 
-    .database-instructions {
+    .access-card {
         position: static;
-    }
-
-    .instruction-list {
-        grid-template-columns: repeat(2, 1fr);
     }
 }
 
 @media (max-width: 767.98px) {
     .database-hero {
-        padding: 60px 0;
+        padding: 58px 0;
     }
 
     .database-hero h1 {
-        font-size: clamp(42px, 12vw, 58px);
+        font-size: clamp(41px, 12vw, 57px);
     }
 
-    .database-hero-copy > p {
+    .database-hero-content > p {
         font-size: 15px;
     }
 
@@ -791,32 +707,13 @@
         padding: 45px 0;
     }
 
-    .database-section-heading {
-        margin-bottom: 26px;
+    .access-steps {
+        grid-template-columns: 1fr;
     }
 
-    .database-instructions {
-        padding: 23px 20px;
-        border-radius: 16px;
-    }
-
-    .database-card {
-        border-radius: 16px;
-    }
-
-    .database-card-header {
-        align-items: flex-start;
-        flex-direction: column;
-        padding: 18px 19px;
-    }
-
-    .database-open-button {
-        width: 100%;
-    }
-
-    .database-frame {
-        height: 760px;
-        min-height: 760px;
+    .access-step {
+        min-height: auto;
+        padding: 21px;
     }
 }
 
@@ -830,13 +727,22 @@
         width: 100%;
     }
 
-    .instruction-list {
-        grid-template-columns: 1fr;
+    .database-preview {
+        border-radius: 13px;
     }
 
-    .database-frame {
-        height: 680px;
-        min-height: 680px;
+    .access-step {
+        grid-template-columns: 38px 1fr;
+        gap: 13px;
+    }
+
+    .step-number {
+        width: 38px;
+        height: 38px;
+    }
+
+    .access-card {
+        padding: 24px 21px;
     }
 }
 </style>
