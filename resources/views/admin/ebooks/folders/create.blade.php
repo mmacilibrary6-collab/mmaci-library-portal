@@ -155,49 +155,6 @@
         transform: translateY(-1px);
     }
 
-    .form-error-alert {
-        margin-bottom: 18px;
-        padding: 16px 18px;
-        display: flex;
-        align-items: flex-start;
-        gap: 13px;
-        border: 1px solid #f1caca;
-        border-left: 4px solid #d84b4b;
-        border-radius: 14px;
-        background: #fff7f7;
-        color: #883535;
-    }
-
-    .error-alert-icon {
-        width: 37px;
-        height: 37px;
-        flex: 0 0 37px;
-        display: grid;
-        place-items: center;
-        border-radius: 10px;
-        background: #fde4e4;
-        color: #cf4242;
-    }
-
-    .error-alert-content strong {
-        display: block;
-        margin-bottom: 2px;
-        font-size: 13px;
-    }
-
-    .error-alert-content p {
-        margin: 0;
-        color: #a35b5b;
-        font-size: 11px;
-    }
-
-    .error-alert-content ul {
-        margin: 9px 0 0;
-        padding-left: 18px;
-        color: #9a4b4b;
-        font-size: 11px;
-    }
-
     @media (max-width: 767.98px) {
         .folder-create-page {
             padding: 16px 10px;

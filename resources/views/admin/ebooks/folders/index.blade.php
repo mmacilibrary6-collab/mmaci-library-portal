@@ -447,17 +447,6 @@
     background: #FFD043;
 }
 
-/* Feedback */
-
-.folder-alert {
-    display: flex;
-    align-items: center;
-    gap: 9px;
-    border: 0;
-    border-radius: 11px;
-    font-size: 12px;
-}
-
 /* Main Card */
 
 .folder-management-card {
