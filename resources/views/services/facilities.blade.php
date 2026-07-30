@@ -7,7 +7,7 @@
 <section class="facilities-hero">
     <div class="container">
         <div class="facilities-hero-content">
-            
+            <span class="eyebrow eyebrow-light">Library Facilities</span>
 
             <h1>Spaces made for better learning.</h1>
 
@@ -236,7 +236,7 @@
     overflow: hidden;
     background:
         linear-gradient(110deg, rgba(7, 32, 65, .94), rgba(11, 46, 89, .86)),
-        url("{{ asset('images/readingarea.jpg') }}") center / cover no-repeat;
+        url("{{ asset('images/libraryphoto.jpg') }}") center / cover no-repeat;
     color: var(--facility-white);
 }
 
