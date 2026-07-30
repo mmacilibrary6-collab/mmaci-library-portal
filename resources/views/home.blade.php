@@ -650,7 +650,7 @@ document.addEventListener('DOMContentLoaded', function () {
             rgba(11, 46, 89, .68) 55%,
             rgba(24, 75, 140, .52) 100%
         ),
-        url("{{ asset('images/placeholder.jpg') }}") center / cover no-repeat;
+        url("{{ asset('images/libraryphotojpg.jpg') }}") center / cover no-repeat;
 }
 
 .home-hero::after {
