@@ -65,10 +65,6 @@
                                 alt="{{ $facilityTitle }}"
                                 loading="lazy"
                                 onerror="this.onerror=null;this.src='{{ asset('images/readingarea.jpg') }}';">
-
-                            <span class="facility-count">
-                                {{ str_pad($loop->iteration, 2, '0', STR_PAD_LEFT) }}
-                            </span>
                         </div>
                     </div>
 
@@ -131,6 +127,10 @@
                 <div class="summary-item">
                     <strong>1</strong>
                     <span>Faculty Lounge</span>
+                </div>
+                <div class="summary-item">
+                    <strong>1</strong>
+                    <span>Audio Visual Room (AVR)</span>
                 </div>
             </div>
         </div>
@@ -235,7 +235,7 @@
     overflow: hidden;
     background:
         linear-gradient(110deg, rgba(7, 32, 65, .94), rgba(11, 46, 89, .86)),
-        url("{{ asset('images/libraryphoto.jpg') }}") center / cover no-repeat;
+        url("{{ asset('images/AVR.jpg') }}") center / cover no-repeat;
     color: var(--facility-white);
 }
 
@@ -384,20 +384,6 @@
     transform: scale(1.025);
 }
 
-.facility-count {
-    position: absolute;
-    top: 22px;
-    left: 22px;
-    min-width: 48px;
-    padding: 10px 14px;
-    color: var(--facility-navy);
-    background: var(--facility-gold);
-    border-radius: 10px;
-    font-size: 13px;
-    font-weight: 800;
-    text-align: center;
-}
-
 .facility-details {
     height: 100%;
     display: flex;
@@ -530,13 +516,17 @@
 
 .summary-grid {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(2, 1fr);
 }
 
 .summary-item {
     min-width: 0;
     padding: 8px 22px;
     border-left: 1px solid rgba(255, 255, 255, .14);
+}
+
+.summary-item:nth-child(odd) {
+    border-left: 0;
 }
 
 .summary-item strong {
@@ -695,10 +685,6 @@
         gap: 30px;
     }
 
-    .summary-item:first-child {
-        border-left: 0;
-    }
-
     .guidelines-intro {
         position: static;
         max-width: 650px;
@@ -752,7 +738,7 @@
         gap: 25px 0;
     }
 
-    .summary-item:nth-child(3) {
+    .summary-item {
         border-left: 0;
     }
 
