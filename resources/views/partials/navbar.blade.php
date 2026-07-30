@@ -167,6 +167,22 @@
 
                         </li>
 
+                        <li>
+
+                            <a
+
+                                class="dropdown-item"
+
+                                href="{{ route('collection.subscribed-database') }}">
+
+                                <i class="bi bi-database me-2"></i>
+
+                                Subscribed Online Database
+
+                            </a>
+
+                        </li>
+
                     </ul>
 
                 </li>

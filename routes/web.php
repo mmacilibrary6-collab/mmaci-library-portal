@@ -90,6 +90,11 @@ Route::prefix('collection')
             '/open-access',
             [CollectionController::class, 'openAccess']
         )->name('open-access');
+
+        Route::get(
+            '/subscribed-database',
+            [CollectionController::class, 'subscribedDatabase']
+        )->name('subscribed-database');
     });
 
 /*
