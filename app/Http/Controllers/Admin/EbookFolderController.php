@@ -131,7 +131,7 @@ class EbookFolderController extends Controller
         Request $request,
         EbookFolder $ebookFolder
     ): RedirectResponse {
-        $data = $this->validateAndPrepareFolder($request);
+        $data = $this->validateAndPrepareFolder($request, $ebookFolder);
 
         $ebookFolder->update($data);
 
@@ -163,7 +163,8 @@ class EbookFolderController extends Controller
      * Validate and prepare folder information.
      */
     private function validateAndPrepareFolder(
-        Request $request
+        Request $request,
+        ?EbookFolder $ebookFolder = null
     ): array {
         /*
          * Use Active as the default if the status field
