@@ -27,7 +27,7 @@
                 </span>
 
                 <h4 class="page-title">
-                    @yield('page-title', 'Dashboard')
+                    Dashboard
                 </h4>
 
             </div>
