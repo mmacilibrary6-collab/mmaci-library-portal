@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\EbookProgram;
 use App\Models\NewArrival;
 use App\Models\OpenAccessResource;
+use App\Models\ThesisProgram;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
@@ -87,6 +88,25 @@ class CollectionController extends Controller
             'collection.ebooks',
             compact('programs')
         );
+    }
+
+    public function theses(): View
+    {
+        $programs = ThesisProgram::query()
+            ->where('status', true)
+            ->with([
+                'folders' => function ($query) {
+                    $query
+                        ->where('status', true)
+                        ->orderBy('sort_order')
+                        ->orderBy('title');
+                },
+            ])
+            ->orderBy('sort_order')
+            ->orderBy('title')
+            ->get();
+
+        return view('collection.theses', compact('programs'));
     }
 
     public function openAccess(): View

@@ -141,6 +141,22 @@
 
                                 class="dropdown-item"
 
+                                href="{{ route('collection.theses') }}">
+
+                                <i class="bi bi-journal-text me-2"></i>
+
+                                Thesis &amp; Dissertation
+
+                            </a>
+
+                        </li>
+
+                        <li>
+
+                            <a
+
+                                class="dropdown-item"
+
                                 href="{{ route('collection.open-access') }}">
 
                                 <i class="bi bi-globe2 me-2"></i>

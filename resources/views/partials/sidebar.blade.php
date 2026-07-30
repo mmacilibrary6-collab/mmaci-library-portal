@@ -162,6 +162,38 @@
         </a>
 
         <a
+            href="{{ route('admin.thesis-programs.index') }}"
+            class="sidebar-link
+                {{ request()->routeIs('admin.thesis-programs.*')
+                    ? 'active'
+                    : ''
+                }}">
+
+            <i class="bi bi-journal-text"></i>
+
+            <span>
+                Thesis &amp; Dissertation Programs
+            </span>
+
+        </a>
+
+        <a
+            href="{{ route('admin.thesis-folders.index') }}"
+            class="sidebar-link
+                {{ request()->routeIs('admin.thesis-folders.*')
+                    ? 'active'
+                    : ''
+                }}">
+
+            <i class="bi bi-folder-fill"></i>
+
+            <span>
+                Thesis &amp; Dissertation Folders
+            </span>
+
+        </a>
+
+        <a
             href="{{ route('admin.open-access-resources.index') }}"
             class="sidebar-link
                 {{ request()->routeIs(

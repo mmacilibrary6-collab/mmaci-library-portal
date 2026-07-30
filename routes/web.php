@@ -27,6 +27,8 @@ use App\Http\Controllers\Admin\AskLibrarianController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\EbookFolderController;
 use App\Http\Controllers\Admin\EbookProgramController;
+use App\Http\Controllers\Admin\ThesisFolderController;
+use App\Http\Controllers\Admin\ThesisProgramController;
 use App\Http\Controllers\Admin\GalleryController;
 use App\Http\Controllers\Admin\LibraryUpdateController;
 use App\Http\Controllers\Admin\NewArrivalController;
@@ -78,6 +80,11 @@ Route::prefix('collection')
             '/ebooks',
             [CollectionController::class, 'ebooks']
         )->name('ebooks');
+
+        Route::get(
+            '/thesis-and-dissertation',
+            [CollectionController::class, 'theses']
+        )->name('theses');
 
         Route::get(
             '/open-access',
@@ -284,6 +291,11 @@ Route::prefix('admin')
             EbookProgramController::class
         )->except(['show']);
 
+        Route::resource(
+            'thesis-programs',
+            ThesisProgramController::class
+        )->except(['show']);
+
         /*
         |--------------------------------------------------------------------------
         | E-Book Folder Management
@@ -293,6 +305,11 @@ Route::prefix('admin')
         Route::resource(
             'ebook-folders',
             EbookFolderController::class
+        )->except(['show']);
+
+        Route::resource(
+            'thesis-folders',
+            ThesisFolderController::class
         )->except(['show']);
 
         Route::resource(
