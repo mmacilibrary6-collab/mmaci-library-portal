@@ -7,7 +7,7 @@
 <section class="services-hero">
     <div class="container">
         <div class="services-hero-content">
-            
+            <span class="eyebrow eyebrow-light">Library Services</span>
 
             <h1>Everything you need to use the library well.</h1>
 
@@ -93,7 +93,7 @@
 
         @php
             $serviceImages = [
-                asset('images/Opacc.jpg'),
+                asset('images/opac.png'),
                 asset('images/chesz.jpg'),
                 asset('images/laptops.jpg'),
             ];
@@ -351,10 +351,18 @@ html {
     display: grid;
     place-items: center;
     overflow: hidden;
+    isolation: isolate;
     color: var(--service-white);
+    background-color: var(--service-navy);
     background:
-        linear-gradient(105deg, rgba(7, 32, 65, .96), rgba(11, 46, 89, .84)),
-        url("{{ asset('images/readingarea.jpg') }}") center / cover no-repeat;
+        linear-gradient(
+            105deg,
+            rgba(7, 30, 61, .86) 0%,
+            rgba(11, 46, 89, .68) 55%,
+            rgba(24, 75, 140, .52) 100%
+        ),
+        url("{{ asset('images/services-placeholder.jpg') }}")
+        center center / cover no-repeat;
 }
 
 .services-hero::after {
@@ -366,6 +374,8 @@ html {
     height: 430px;
     border: 58px solid rgba(244, 180, 0, .1);
     border-radius: 50%;
+    pointer-events: none;
+    z-index: 0;
 }
 
 .services-hero-content {

@@ -7,9 +7,11 @@
 <section class="home-hero">
     <div class="container">
         <div class="home-hero-content" data-aos="fade-up">
-            <span class="eyebrow-light">Welcome to MMACI</span>
+            <span class="home-hero-label">MMACI Library Services Office</span>
 
-            <h1>Library Services Office</h1>
+            <h1>Welcome to MMACI</h1>
+
+            <h2>Library Services Office</h2>
 
             <p>
                 Supporting learning, teaching, research, and creative
@@ -640,8 +642,8 @@ document.addEventListener('DOMContentLoaded', function () {
     overflow: hidden;
     color: var(--home-white);
     background:
-        linear-gradient(105deg, rgba(7, 32, 65, .95), rgba(11, 46, 89, .78)),
-        url("{{ asset('images/readingarea.jpg') }}") center / cover no-repeat;
+        linear-gradient(105deg, rgba(7, 32, 65, .92), rgba(11, 46, 89, .7)),
+        url("{{ asset('images/placeholder.jpg') }}") center / cover no-repeat;
 }
 
 .home-hero::after {
@@ -687,12 +689,42 @@ document.addEventListener('DOMContentLoaded', function () {
     color: var(--home-gold);
 }
 
-.home-hero h1 {
-    margin: 19px 0;
-    font-size: clamp(48px, 7vw, 78px);
+.home-hero-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--home-gold);
+    font-size: 13px;
     font-weight: 800;
-    line-height: 1.03;
-    letter-spacing: -.05em;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+}
+
+.home-hero-label::before,
+.home-hero-label::after {
+    content: "";
+    width: 30px;
+    height: 2px;
+    border-radius: 10px;
+    background: var(--home-gold);
+}
+
+.home-hero h1 {
+    max-width: 980px;
+    margin: 20px auto 8px;
+    font-size: clamp(62px, 8.5vw, 112px);
+    font-weight: 900;
+    line-height: .94;
+    letter-spacing: -.055em;
+    text-wrap: balance;
+}
+
+.home-hero h2 {
+    margin: 0 0 25px;
+    color: var(--home-gold);
+    font-size: clamp(20px, 2.4vw, 31px);
+    font-weight: 700;
+    letter-spacing: .02em;
 }
 
 .home-hero p {
@@ -1559,7 +1591,21 @@ document.addEventListener('DOMContentLoaded', function () {
 
 @media (max-width: 575.98px) {
     .home-hero h1 {
-        font-size: 43px;
+        font-size: clamp(48px, 15vw, 66px);
+    }
+
+    .home-hero h2 {
+        font-size: 19px;
+    }
+
+    .home-hero-label {
+        font-size: 10px;
+        letter-spacing: .1em;
+    }
+
+    .home-hero-label::before,
+    .home-hero-label::after {
+        width: 18px;
     }
 
     .home-hero p {
