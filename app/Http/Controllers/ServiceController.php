@@ -150,6 +150,13 @@ class ServiceController extends Controller
                 'capacity' => 'Faculty Only',
                 'description' => 'The Faculty Lounge is an exclusive space where faculty members can read, prepare instructional materials, conduct consultations, and perform academic work in a quiet environment.',
             ],
+            [
+                'title' => 'Audio Visual Room (AVR)',
+                'image' => asset('images/AVR.jpg'),
+                'icon' => 'bi-play-btn-fill',
+                'capacity' => 'At least 100 people',
+                'description' => 'The AVR is a place to provide bigger space to the large number of people to hold their classes or meetings. The AVR can accommodate at least 100 people.',
+            ],
         ];
 
         return view(
