@@ -7,6 +7,10 @@
 <div class="container-fluid folder-edit-page">
     <div class="edit-page-container">
 
+        @php
+            $folder = $ebookFolder ?? null;
+        @endphp
+
         <section class="edit-header">
             <div class="header-content">
                 <span class="header-icon">
@@ -18,7 +22,7 @@
                     <h2>Edit E-Book Folder</h2>
                     <p>
                         Update the details and access settings for
-                        <strong>{{ $ebookFolder->title }}</strong>.
+                        <strong>{{ $folder?->title }}</strong>.
                     </p>
                 </div>
             </div>
@@ -28,14 +32,16 @@
                 <span>Back to Folders</span>
             </a>
         </section>
-<form
-            action="{{ route('admin.ebook-folders.update', $ebookFolder) }}"
+        <form
+            action="{{ route('admin.ebook-folders.update', $folder) }}"
             method="POST"
             novalidate>
             @csrf
             @method('PUT')
 
-            @include('admin.ebooks.folders._form')
+            @include('admin.ebooks.folders._form', [
+                'ebookFolder' => $folder,
+            ])
         </form>
 
     </div>

@@ -25,13 +25,15 @@
                 <span>Back to Folders</span>
             </a>
         </section>
-<form
+        <form
             action="{{ route('admin.ebook-folders.store') }}"
             method="POST"
             novalidate>
             @csrf
 
-            @include('admin.ebooks.folders._form')
+            @include('admin.ebooks.folders._form', [
+                'ebookFolder' => null,
+            ])
         </form>
 
     </div>
