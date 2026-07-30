@@ -4,6 +4,10 @@
 
 @section('content')
 
+@php
+    $appointmentEmbedUrl = $appointmentFormUrl . '?embedded=true';
+@endphp
+
 <!-- ================= HERO ================= -->
 
 <section class="visiting-hero">
@@ -202,7 +206,7 @@
                         rel="noopener noreferrer"
                         class="btn btn-warning rounded-pill px-4 py-3 fw-bold">
 
-                        Open Visiting Researcher Form
+                        Open in Google Forms
 
                         <i class="bi bi-box-arrow-up-right ms-2"></i>
 
@@ -217,6 +221,43 @@
                         <i class="bi bi-calendar2-check-fill"></i>
 
                     </div>
+
+                </div>
+
+            </div>
+
+            <div class="appointment-embed-wrap">
+
+                <div class="appointment-embed-header">
+
+                    <div>
+
+                        <span>Google Form</span>
+
+                        <h3>Visiting Researcher Appointment</h3>
+
+                    </div>
+
+                    <a
+                        href="{{ $appointmentFormUrl }}"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="appointment-open-link">
+
+                        Open Form
+
+                    </a>
+
+                </div>
+
+                <div class="appointment-embed">
+
+                    <iframe
+                        src="{{ $appointmentEmbedUrl }}"
+                        title="Visiting Researcher Appointment Form"
+                        loading="lazy"
+                        referrerpolicy="no-referrer-when-downgrade">
+                    </iframe>
 
                 </div>
 
@@ -624,22 +665,10 @@
 
     .appointment-card {
         position: relative;
-        padding: 55px;
         overflow: hidden;
-        color: #ffffff;
-        background:
-            radial-gradient(
-                circle at top right,
-                rgba(244, 180, 0, 0.28),
-                transparent 35%
-            ),
-            linear-gradient(
-                135deg,
-                var(--mmaci-navy),
-                var(--mmaci-blue)
-            );
         border-radius: 27px;
-        box-shadow: 0 22px 55px rgba(11, 46, 89, 0.20);
+        background: #ffffff;
+        box-shadow: 0 22px 55px rgba(11, 46, 89, 0.12);
     }
 
     .appointment-card::after {
@@ -657,6 +686,74 @@
     .appointment-card .row {
         position: relative;
         z-index: 1;
+        padding: 55px;
+        color: #ffffff;
+        background:
+            radial-gradient(
+                circle at top right,
+                rgba(244, 180, 0, 0.28),
+                transparent 35%
+            ),
+            linear-gradient(
+                135deg,
+                var(--mmaci-navy),
+                var(--mmaci-blue)
+            );
+    }
+
+    .appointment-embed-wrap {
+        border-top: 1px solid #e7edf5;
+        background: #ffffff;
+    }
+
+    .appointment-embed-header {
+        padding: 22px 55px 18px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+    }
+
+    .appointment-embed-header span {
+        display: block;
+        color: var(--mmaci-muted);
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+    }
+
+    .appointment-embed-header h3 {
+        margin: 4px 0 0;
+        color: var(--mmaci-navy);
+        font-size: 24px;
+        font-weight: 800;
+        letter-spacing: -0.03em;
+    }
+
+    .appointment-open-link {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 12px 18px;
+        border-radius: 999px;
+        background: var(--mmaci-yellow);
+        color: var(--mmaci-navy);
+        font-weight: 800;
+        text-decoration: none;
+        white-space: nowrap;
+    }
+
+    .appointment-embed {
+        min-height: 1120px;
+        background: #f7f9fc;
+    }
+
+    .appointment-embed iframe {
+        width: 100%;
+        min-height: 1120px;
+        display: block;
+        border: 0;
     }
 
     .appointment-card span {
@@ -790,8 +887,22 @@
         }
 
         .appointment-card {
-            padding: 42px 30px;
             border-radius: 22px;
+        }
+
+        .appointment-card .row {
+            padding: 40px 24px 30px;
+        }
+
+        .appointment-embed-header {
+            padding: 18px 24px 16px;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .appointment-embed,
+        .appointment-embed iframe {
+            min-height: 980px;
         }
     }
 
