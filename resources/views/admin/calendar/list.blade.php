@@ -4,72 +4,88 @@
 @section('page-title', 'Calendar Events')
 
 @section('content')
+<div class="container-fluid calendar-page">
+    <section class="calendar-hero">
+        <div class="hero-copy">
+            <span class="hero-icon">
+                <i class="bi bi-calendar3"></i>
+            </span>
 
-<div class="container-fluid admin-page py-4">
-    <section class="admin-page-header">
-        <div class="admin-page-heading">
-            <span class="admin-page-icon"><i class="bi bi-calendar3"></i></span>
             <div>
-                <span class="admin-page-eyebrow">Website Content</span>
+                <span class="hero-eyebrow">Website Content</span>
                 <h2>Calendar Events</h2>
                 <p>Create, update, publish, or remove library events.</p>
             </div>
         </div>
 
-        <a href="{{ route('admin.calendar.create') }}" class="admin-primary-link">
-            <i class="bi bi-calendar-plus me-2"></i>Add Event
+        <a href="{{ route('admin.calendar.create') }}" class="btn-add-calendar">
+            <i class="bi bi-calendar-plus"></i>
+            Add Event
         </a>
     </section>
 
-    @if (session('success'))
-        <div class="alert alert-success border-0 rounded-4 shadow-sm">
-            <i class="bi bi-check-circle-fill me-2"></i>{{ session('success') }}
+    @if(session('success'))
+        <div class="page-alert success alert-dismissible fade show" role="alert">
+            <span><i class="bi bi-check-lg"></i></span>
+            <div>
+                <strong>Success</strong>
+                <small>{{ session('success') }}</small>
+            </div>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
     @endif
 
-    <section class="admin-panel-card mb-4">
-        <form method="GET" action="{{ route('admin.calendar.index') }}" class="row g-3 align-items-end">
-            <div class="col-lg-7">
-                <label for="search" class="form-label">Search</label>
-                <div class="input-group admin-search">
-                    <span class="input-group-text"><i class="bi bi-search"></i></span>
-                    <input type="search" id="search" name="search" value="{{ request('search') }}" class="form-control" placeholder="Search by title, description, or location">
-                </div>
+    <section class="calendar-panel">
+        <div class="panel-toolbar">
+            <div class="toolbar-title">
+                <h5>Event Records</h5>
+                <p>
+                    {{ $events->total() }}
+                    {{ \Illuminate\Support\Str::plural('event', $events->total()) }}
+                    found
+                </p>
             </div>
-            <div class="col-lg-3">
-                <label for="status" class="form-label">Status</label>
-                <select id="status" name="status" class="form-select">
-                    <option value="">All statuses</option>
+
+            <form method="GET" action="{{ route('admin.calendar.index') }}" class="filter-form">
+                <div class="search-field">
+                    <i class="bi bi-search"></i>
+                    <input
+                        type="search"
+                        id="search"
+                        name="search"
+                        value="{{ request('search') }}"
+                        placeholder="Search by title, description, or location"
+                        aria-label="Search calendar events">
+                </div>
+
+                <select id="status" name="status" aria-label="Event status">
+                    <option value="">All Statuses</option>
                     <option value="published" @selected(request('status') === 'published')>Published</option>
                     <option value="draft" @selected(request('status') === 'draft')>Draft</option>
                     <option value="cancelled" @selected(request('status') === 'cancelled')>Cancelled</option>
                 </select>
-            </div>
-            <div class="col-lg-2 d-grid gap-2">
-                <button type="submit" class="btn btn-warning fw-semibold rounded-pill">
-                    <i class="bi bi-funnel-fill me-2"></i>Filter
+
+                <button type="submit" class="filter-button">
+                    <i class="bi bi-funnel"></i>
+                    Filter
                 </button>
-            </div>
-        </form>
 
-        @if(request()->filled('search') || request()->filled('status'))
-            <div class="mt-3">
-                <a href="{{ route('admin.calendar.index') }}" class="admin-clear-link">
-                    <i class="bi bi-x-circle me-1"></i>Clear filters
-                </a>
-            </div>
-        @endif
-    </section>
+                @if(request()->filled('search') || request()->filled('status'))
+                    <a href="{{ route('admin.calendar.index') }}" class="reset-button" title="Clear filters" aria-label="Clear filters">
+                        <i class="bi bi-x-lg"></i>
+                    </a>
+                @endif
+            </form>
+        </div>
 
-    <section class="admin-panel-card">
         <div class="table-responsive">
-            <table class="table align-middle mb-0 admin-table">
+            <table class="table calendar-table align-middle mb-0">
                 <thead>
                     <tr>
                         <th>Event</th>
-                        <th>Date & Time</th>
+                        <th>Date &amp; Time</th>
                         <th>Location</th>
-                        <th>Status</th>
+                        <th class="text-center">Status</th>
                         <th class="text-end">Actions</th>
                     </tr>
                 </thead>
@@ -77,70 +93,93 @@
                     @forelse($events as $event)
                         <tr>
                             <td>
-                                <div class="event-row">
-                                    <span class="event-icon"><i class="bi bi-calendar-event"></i></span>
+                                <div class="event-identity">
+                                    <span class="event-icon">
+                                        <i class="bi bi-calendar-event"></i>
+                                    </span>
+
                                     <div>
-                                        <h6 class="event-title mb-1">{{ $event->title }}</h6>
-                                        <p class="event-description mb-0">{{ \Illuminate\Support\Str::limit($event->description ?? 'No description provided.', 85) }}</p>
+                                        <strong>{{ $event->title }}</strong>
+                                        <span>{{ \Illuminate\Support\Str::limit($event->description ?? 'No description provided.', 68) }}</span>
                                     </div>
                                 </div>
                             </td>
-                            <td>
-                                <div class="fw-semibold text-dark">{{ optional($event->event_date)->format('M d, Y') }}</div>
-                                <small class="text-muted">
+
+                            <td class="time-cell">
+                                <strong>
+                                    {{ optional($event->event_date)->format('M d, Y') }}
+                                </strong>
+
+                                <span>
                                     @if($event->start_time)
                                         {{ \Carbon\Carbon::parse($event->start_time)->format('g:i A') }}
                                         @if($event->end_time)
-                                            – {{ \Carbon\Carbon::parse($event->end_time)->format('g:i A') }}
+                                            — {{ \Carbon\Carbon::parse($event->end_time)->format('g:i A') }}
                                         @endif
                                     @else
                                         Time not specified
                                     @endif
-                                </small>
+                                </span>
                             </td>
-                            <td>
+
+                            <td class="location-cell">
                                 @if($event->location)
-                                    <i class="bi bi-geo-alt text-primary me-1"></i>{{ $event->location }}
+                                    <i class="bi bi-geo-alt"></i>
+                                    <span>{{ $event->location }}</span>
                                 @else
                                     <span class="text-muted">Not specified</span>
                                 @endif
                             </td>
-                            <td>
-                                <span class="status-badge status-{{ $event->status }}">{{ ucfirst($event->status) }}</span>
+
+                            <td class="text-center">
+                                <span class="status-badge status-{{ $event->status }}">
+                                    {{ ucfirst($event->status) }}
+                                </span>
                             </td>
-                            <td class="text-end">
-                                <div class="dropdown">
-                                    <button class="btn btn-light border action-button" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                        <i class="bi bi-three-dots-vertical"></i>
+
+                            <td>
+                                <div class="table-actions justify-content-end">
+                                    <a
+                                        href="{{ route('admin.calendar.edit', $event) }}"
+                                        class="action-button edit"
+                                        title="Edit {{ $event->title }}"
+                                        aria-label="Edit {{ $event->title }}">
+                                        <i class="bi bi-pencil"></i>
+                                    </a>
+
+                                    <button
+                                        type="button"
+                                        class="action-button delete"
+                                        title="Delete {{ $event->title }}"
+                                        aria-label="Delete {{ $event->title }}"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#deleteEventModal{{ $event->id }}">
+                                        <i class="bi bi-trash3"></i>
                                     </button>
-                                    <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0 rounded-4">
-                                        <li>
-                                            <a href="{{ route('admin.calendar.edit', $event) }}" class="dropdown-item">
-                                                <i class="bi bi-pencil-square me-2"></i>Edit Event
-                                            </a>
-                                        </li>
-                                        <li><hr class="dropdown-divider"></li>
-                                        <li>
-                                            <button type="button" class="dropdown-item text-danger" data-bs-toggle="modal" data-bs-target="#deleteEventModal{{ $event->id }}">
-                                                <i class="bi bi-trash3 me-2"></i>Delete Event
-                                            </button>
-                                        </li>
-                                    </ul>
                                 </div>
 
                                 <div class="modal fade" id="deleteEventModal{{ $event->id }}" tabindex="-1" aria-hidden="true">
                                     <div class="modal-dialog modal-dialog-centered">
                                         <div class="modal-content border-0 rounded-4">
                                             <div class="modal-body p-4 text-center">
-                                                <div class="delete-icon mb-3"><i class="bi bi-trash3"></i></div>
+                                                <div class="delete-icon mb-3">
+                                                    <i class="bi bi-trash3"></i>
+                                                </div>
                                                 <h4 class="fw-bold text-dark">Delete Event?</h4>
-                                                <p class="text-muted">You are about to delete <strong>{{ $event->title }}</strong>. This action cannot be undone.</p>
+                                                <p class="text-muted">
+                                                    You are about to delete <strong>{{ $event->title }}</strong>.
+                                                    This action cannot be undone.
+                                                </p>
                                                 <div class="d-flex justify-content-center gap-2 mt-4">
-                                                    <button type="button" class="btn btn-light border rounded-pill px-4" data-bs-dismiss="modal">Cancel</button>
+                                                    <button type="button" class="btn btn-light border rounded-pill px-4" data-bs-dismiss="modal">
+                                                        Cancel
+                                                    </button>
                                                     <form method="POST" action="{{ route('admin.calendar.destroy', $event) }}">
                                                         @csrf
                                                         @method('DELETE')
-                                                        <button type="submit" class="btn btn-danger rounded-pill px-4">Delete</button>
+                                                        <button type="submit" class="btn btn-danger rounded-pill px-4">
+                                                            Delete
+                                                        </button>
                                                     </form>
                                                 </div>
                                             </div>
@@ -153,11 +192,19 @@
                         <tr>
                             <td colspan="5">
                                 <div class="empty-state">
-                                    <i class="bi bi-calendar-x"></i>
-                                    <h4>No calendar events found</h4>
-                                    <p>Create your first event or adjust the current search filters.</p>
-                                    <a href="{{ route('admin.calendar.create') }}" class="btn btn-warning rounded-pill px-4 fw-semibold">
-                                        <i class="bi bi-plus-lg me-2"></i>Add Event
+                                    <span><i class="bi bi-calendar-x"></i></span>
+                                    <h5>No calendar events found</h5>
+                                    <p>
+                                        @if(request()->filled('search') || request()->filled('status'))
+                                            Try adjusting or clearing your filters.
+                                        @else
+                                            Create your first event to show on the public website.
+                                        @endif
+                                    </p>
+
+                                    <a href="{{ request()->filled('search') || request()->filled('status') ? route('admin.calendar.index') : route('admin.calendar.create') }}">
+                                        <i class="bi {{ request()->filled('search') || request()->filled('status') ? 'bi-x-lg' : 'bi-plus-lg' }}"></i>
+                                        {{ request()->filled('search') || request()->filled('status') ? 'Clear Filters' : 'Add Event' }}
                                     </a>
                                 </div>
                             </td>
@@ -168,48 +215,542 @@
         </div>
 
         @if($events->hasPages())
-            <div class="pagination-wrapper">
-                {{ $events->links() }}
+            <div class="panel-footer">
+                <p>
+                    Showing {{ $events->firstItem() }}–{{ $events->lastItem() }}
+                    of {{ $events->total() }}
+                </p>
+
+                <div>{{ $events->withQueryString()->links() }}</div>
             </div>
         @endif
     </section>
 </div>
-
-<style>
-.admin-page-header{display:flex;align-items:center;justify-content:space-between;gap:20px;margin-bottom:24px}
-.admin-page-heading{display:flex;align-items:center;gap:16px}
-.admin-page-icon{width:60px;height:60px;display:grid;place-items:center;border-radius:18px;background:#f4b400;color:#0b2e59;font-size:1.4rem}
-.admin-page-eyebrow{display:block;font-size:.75rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:#8a94a6;margin-bottom:4px}
-.admin-page-heading h2,.admin-page-heading p{margin:0}
-.admin-page-heading h2{color:#0b2e59;font-weight:800}
-.admin-page-heading p{color:#667085;margin-top:4px}
-.admin-primary-link,.admin-clear-link{display:inline-flex;align-items:center;justify-content:center;text-decoration:none}
-.admin-primary-link{padding:12px 18px;border-radius:999px;background:#f4b400;color:#0b2e59;font-weight:800;box-shadow:0 10px 22px rgba(244,180,0,.22)}
-.admin-primary-link:hover{background:#ffca2c;color:#0b2e59}
-.admin-panel-card{background:#fff;border:1px solid #e9edf2;border-radius:24px;box-shadow:0 14px 36px rgba(11,46,89,.08);padding:24px}
-.admin-search .input-group-text,.form-control,.form-select{border-color:#d8dee8}
-.admin-search .input-group-text{background:#f8fafc;border-radius:14px 0 0 14px}
-.admin-search .form-control,.form-select{min-height:52px;border-radius:14px}
-.form-control:focus,.form-select:focus{border-color:#f4b400;box-shadow:0 0 0 .2rem rgba(244,180,0,.15)}
-.admin-clear-link{font-weight:700;color:#0b2e59}
-.admin-table thead th{padding:17px 18px;color:#667085;background:#f8fafc;border-bottom:1px solid #e9edf2;font-size:.75rem;font-weight:800;letter-spacing:.5px;text-transform:uppercase;white-space:nowrap}
-.admin-table tbody td{padding:18px 18px;border-color:#edf0f4;vertical-align:middle}
-.event-row{display:flex;align-items:center;gap:14px;min-width:280px}
-.event-icon{width:46px;height:46px;flex-shrink:0;display:grid;place-items:center;color:#0b2e59;background:#edf4fb;border-radius:14px;font-size:1.1rem}
-.event-title{color:#1d2939;font-weight:800}
-.event-description{max-width:360px;color:#667085;font-size:.8rem}
-.status-badge{display:inline-flex;align-items:center;padding:6px 11px;border-radius:999px;font-size:.7rem;font-weight:800}
-.status-published{color:#067647;background:#ecfdf3}
-.status-draft{color:#6941c6;background:#f4f3ff}
-.status-cancelled{color:#b42318;background:#fef3f2}
-.action-button{width:38px;height:38px;padding:0;border-radius:10px}
-.delete-icon{width:70px;height:70px;display:grid;place-items:center;margin:0 auto;color:#b42318;background:#fef3f2;border-radius:50%;font-size:1.8rem}
-.empty-state{padding:70px 20px;text-align:center}
-.empty-state>i{display:block;color:#cbd5e1;font-size:3.5rem;margin-bottom:15px}
-.empty-state h4{color:#344054;font-weight:800}
-.empty-state p{color:#98a2b3}
-.pagination-wrapper{padding:20px 0 0;border-top:1px solid #edf0f4;margin-top:20px}
-@media (max-width:767.98px){.admin-page-header{flex-direction:column;align-items:flex-start}.admin-primary-link{width:100%}.admin-panel-card{padding:18px}.event-row{min-width:unset}.event-description{max-width:unset}.admin-table tbody td,.admin-table thead th{white-space:normal}}
-</style>
-
 @endsection
+
+@push('styles')
+<style>
+    .calendar-page {
+        --navy: #0b2e59;
+        --blue: #184b8c;
+        --gold: #f4b400;
+        --ink: #253851;
+        --muted: #778599;
+        --line: #e4eaf1;
+        padding: 24px;
+    }
+
+    .calendar-hero {
+        position: relative;
+        overflow: hidden;
+        min-height: 150px;
+        margin-bottom: 22px;
+        padding: 28px 30px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 24px;
+        border-radius: 22px;
+        background:
+            radial-gradient(circle at 90% 10%, rgba(244, 180, 0, .2), transparent 28%),
+            linear-gradient(125deg, var(--navy), var(--blue));
+        color: #fff;
+        box-shadow: 0 16px 36px rgba(11, 46, 89, .16);
+    }
+
+    .calendar-hero::after {
+        content: "";
+        position: absolute;
+        right: 12%;
+        bottom: -70px;
+        width: 180px;
+        height: 180px;
+        border: 28px solid rgba(255, 255, 255, .05);
+        border-radius: 50%;
+    }
+
+    .hero-copy {
+        position: relative;
+        z-index: 1;
+        display: flex;
+        align-items: center;
+        gap: 18px;
+    }
+
+    .hero-icon {
+        width: 62px;
+        height: 62px;
+        flex: 0 0 62px;
+        display: grid;
+        place-items: center;
+        border-radius: 18px;
+        background: var(--gold);
+        color: var(--navy);
+        font-size: 27px;
+        box-shadow: 0 12px 25px rgba(0, 0, 0, .14);
+    }
+
+    .hero-eyebrow {
+        display: block;
+        margin-bottom: 4px;
+        color: #ffd96d;
+        font-size: 10px;
+        font-weight: 800;
+        letter-spacing: .14em;
+        text-transform: uppercase;
+    }
+
+    .calendar-hero h2 {
+        margin: 0 0 5px;
+        font-size: clamp(24px, 3vw, 32px);
+        font-weight: 800;
+    }
+
+    .calendar-hero p {
+        margin: 0;
+        color: rgba(255, 255, 255, .72);
+        font-size: 12px;
+    }
+
+    .btn-add-calendar {
+        position: relative;
+        z-index: 1;
+        min-height: 46px;
+        padding: 0 18px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 9px;
+        border-radius: 12px;
+        background: var(--gold);
+        color: var(--navy);
+        font-size: 12px;
+        font-weight: 800;
+        text-decoration: none;
+        box-shadow: 0 10px 22px rgba(0, 0, 0, .15);
+        transition: .2s ease;
+    }
+
+    .btn-add-calendar:hover {
+        background: #ffc62b;
+        color: var(--navy);
+        transform: translateY(-2px);
+    }
+
+    .page-alert {
+        position: relative;
+        margin-bottom: 18px;
+        padding: 13px 48px 13px 14px;
+        display: flex;
+        align-items: center;
+        gap: 11px;
+        border-radius: 13px;
+    }
+
+    .page-alert > span {
+        width: 34px;
+        height: 34px;
+        flex: 0 0 34px;
+        display: grid;
+        place-items: center;
+        border-radius: 9px;
+    }
+
+    .page-alert strong,
+    .page-alert small {
+        display: block;
+    }
+
+    .page-alert strong {
+        font-size: 12px;
+    }
+
+    .page-alert small {
+        font-size: 10px;
+    }
+
+    .page-alert.success {
+        border: 1px solid #bde7d0;
+        background: #f0fbf5;
+        color: #17643b;
+    }
+
+    .page-alert.success > span {
+        background: #d8f4e4;
+    }
+
+    .calendar-panel {
+        overflow: hidden;
+        border: 1px solid var(--line);
+        border-radius: 20px;
+        background: #fff;
+        box-shadow: 0 12px 30px rgba(25, 50, 80, .07);
+    }
+
+    .panel-toolbar {
+        padding: 20px 22px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 20px;
+        border-bottom: 1px solid var(--line);
+    }
+
+    .toolbar-title {
+        flex: 0 0 auto;
+    }
+
+    .toolbar-title h5 {
+        margin: 0 0 3px;
+        color: var(--navy);
+        font-size: 16px;
+        font-weight: 800;
+    }
+
+    .toolbar-title p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 10px;
+    }
+
+    .filter-form {
+        flex: 1;
+        display: flex;
+        justify-content: flex-end;
+        gap: 7px;
+    }
+
+    .search-field {
+        position: relative;
+        width: min(100%, 290px);
+    }
+
+    .search-field i {
+        position: absolute;
+        top: 50%;
+        left: 13px;
+        color: #95a1b1;
+        transform: translateY(-50%);
+    }
+
+    .search-field input,
+    .filter-form select {
+        height: 41px;
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        outline: none;
+        background: #fff;
+        color: var(--ink);
+        font-size: 11px;
+    }
+
+    .search-field input {
+        width: 100%;
+        padding: 0 13px 0 38px;
+    }
+
+    .filter-form select {
+        width: 125px;
+        padding: 0 30px 0 11px;
+    }
+
+    .search-field input:focus,
+    .filter-form select:focus {
+        border-color: rgba(244, 180, 0, .7);
+        box-shadow: 0 0 0 .14rem rgba(244, 180, 0, .12);
+    }
+
+    .filter-button,
+    .reset-button {
+        height: 41px;
+        border: 0;
+        border-radius: 10px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        text-decoration: none;
+        font-size: 11px;
+        font-weight: 800;
+    }
+
+    .filter-button {
+        padding: 0 16px;
+        gap: 8px;
+        background: var(--gold);
+        color: var(--navy);
+        box-shadow: 0 8px 18px rgba(244, 180, 0, .18);
+    }
+
+    .filter-button:hover {
+        background: #ffc62b;
+        color: var(--navy);
+    }
+
+    .reset-button {
+        width: 41px;
+        background: #edf3fb;
+        color: var(--navy);
+    }
+
+    .calendar-table thead th {
+        padding: 17px 18px;
+        color: #667085;
+        background: #f8fafc;
+        border-bottom: 1px solid var(--line);
+        font-size: .75rem;
+        font-weight: 800;
+        letter-spacing: .5px;
+        text-transform: uppercase;
+        white-space: nowrap;
+    }
+
+    .calendar-table tbody td {
+        padding: 18px 18px;
+        border-color: #edf0f4;
+        vertical-align: middle;
+    }
+
+    .event-identity {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        min-width: 280px;
+    }
+
+    .event-icon {
+        width: 46px;
+        height: 46px;
+        flex-shrink: 0;
+        display: grid;
+        place-items: center;
+        color: #0b2e59;
+        background: #edf4fb;
+        border-radius: 14px;
+        font-size: 1.1rem;
+    }
+
+    .event-identity strong {
+        display: block;
+        color: #1d2939;
+        font-weight: 800;
+    }
+
+    .event-identity span {
+        display: block;
+        max-width: 380px;
+        color: #667085;
+        font-size: .8rem;
+    }
+
+    .time-cell strong {
+        display: block;
+        color: #1d2939;
+        font-weight: 800;
+    }
+
+    .time-cell span,
+    .location-cell {
+        color: #667085;
+        font-size: .85rem;
+    }
+
+    .location-cell {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .status-badge {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 86px;
+        padding: 6px 11px;
+        border-radius: 999px;
+        font-size: .7rem;
+        font-weight: 800;
+    }
+
+    .status-published {
+        color: #067647;
+        background: #ecfdf3;
+    }
+
+    .status-draft {
+        color: #6941c6;
+        background: #f4f3ff;
+    }
+
+    .status-cancelled {
+        color: #b42318;
+        background: #fef3f2;
+    }
+
+    .table-actions {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .action-button {
+        width: 38px;
+        height: 38px;
+        border: 0;
+        border-radius: 10px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        text-decoration: none;
+        transition: .2s ease;
+    }
+
+    .action-button.edit {
+        background: #edf4fb;
+        color: var(--navy);
+    }
+
+    .action-button.delete {
+        background: #fef3f2;
+        color: #b42318;
+    }
+
+    .action-button:hover {
+        transform: translateY(-1px);
+    }
+
+    .empty-state {
+        padding: 70px 20px;
+        text-align: center;
+    }
+
+    .empty-state > span {
+        width: 78px;
+        height: 78px;
+        margin: 0 auto 15px;
+        display: grid;
+        place-items: center;
+        border-radius: 24px;
+        color: #cbd5e1;
+        background: #f8fafc;
+        font-size: 2rem;
+    }
+
+    .empty-state h5 {
+        margin: 0 0 8px;
+        color: #344054;
+        font-size: 1.35rem;
+        font-weight: 800;
+    }
+
+    .empty-state p {
+        margin: 0 0 18px;
+        color: #98a2b3;
+    }
+
+    .empty-state a {
+        min-height: 42px;
+        padding: 0 18px;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        border-radius: 12px;
+        background: var(--navy);
+        color: #fff;
+        font-size: 12px;
+        font-weight: 800;
+        text-decoration: none;
+    }
+
+    .empty-state a:hover {
+        color: #fff;
+        background: #123b71;
+    }
+
+    .delete-icon {
+        width: 70px;
+        height: 70px;
+        display: grid;
+        place-items: center;
+        margin: 0 auto;
+        color: #b42318;
+        background: #fef3f2;
+        border-radius: 50%;
+        font-size: 1.8rem;
+    }
+
+    .panel-footer {
+        padding: 18px 22px 22px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        border-top: 1px solid var(--line);
+    }
+
+    .panel-footer p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 11px;
+    }
+
+    @media (max-width: 991.98px) {
+        .panel-toolbar,
+        .filter-form,
+        .calendar-hero {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .filter-form {
+            justify-content: flex-start;
+        }
+
+        .search-field,
+        .filter-form select,
+        .filter-button {
+            width: 100%;
+        }
+
+        .btn-add-calendar {
+            width: 100%;
+        }
+    }
+
+    @media (max-width: 767.98px) {
+        .calendar-page {
+            padding: 18px;
+        }
+
+        .calendar-hero {
+            padding: 22px;
+        }
+
+        .calendar-panel {
+            border-radius: 18px;
+        }
+
+        .panel-toolbar {
+            padding: 18px;
+        }
+
+        .event-identity {
+            min-width: unset;
+        }
+
+        .event-identity span {
+            max-width: unset;
+        }
+
+        .calendar-table tbody td,
+        .calendar-table thead th {
+            white-space: normal;
+        }
+
+        .panel-footer {
+            padding: 16px 18px 18px;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+    }
+</style>
+@endpush
