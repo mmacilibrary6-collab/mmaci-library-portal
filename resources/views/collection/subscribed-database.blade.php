@@ -186,10 +186,6 @@
 
                 <h2>EBSCO Online Access</h2>
 
-                <p>
-                    EBSCO does not allow its login page to appear inside another
-                    website. Open it securely in a separate browser tab.
-                </p>
 
                 <div class="access-card-notice">
 
