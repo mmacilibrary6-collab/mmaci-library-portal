@@ -25,16 +25,7 @@
         </a>
     </section>
 
-    @if(session('success'))
-        <div class="alert program-alert alert-dismissible fade show" role="alert">
-            <span class="alert-icon"><i class="bi bi-check-lg"></i></span>
-            <div>
-                <strong>Success</strong>
-                <span>{{ session('success') }}</span>
-            </div>
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-    @endif
+    @include('partials.flash-messages')
 
     <section class="programs-panel">
         <div class="panel-toolbar">

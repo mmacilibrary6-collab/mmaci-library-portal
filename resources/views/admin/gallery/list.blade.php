@@ -41,30 +41,7 @@
 
     </section>
 
-    {{-- Success --}}
-    @if (session('success'))
-
-        <div class="gallery-success alert alert-dismissible fade show">
-
-            <span class="gallery-success-icon">
-                <i class="bi bi-check-lg"></i>
-            </span>
-
-            <div>
-                <strong>Changes saved</strong>
-                <p>{{ session('success') }}</p>
-            </div>
-
-            <button
-                type="button"
-                class="btn-close"
-                data-bs-dismiss="alert"
-                aria-label="Close">
-            </button>
-
-        </div>
-
-    @endif
+    @include('partials.flash-messages')
 
     <section class="gallery-list-card">
 

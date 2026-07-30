@@ -41,30 +41,7 @@
 
     </section>
 
-    {{-- Success Message --}}
-    @if (session('success'))
-
-        <div class="resource-success-alert alert alert-dismissible fade show">
-
-            <span class="success-alert-icon">
-                <i class="bi bi-check-lg"></i>
-            </span>
-
-            <div>
-                <strong>Changes saved</strong>
-                <p>{{ session('success') }}</p>
-            </div>
-
-            <button
-                type="button"
-                class="btn-close"
-                data-bs-dismiss="alert"
-                aria-label="Close">
-            </button>
-
-        </div>
-
-    @endif
+    @include('partials.flash-messages')
 
     <section class="resource-management-card">
 

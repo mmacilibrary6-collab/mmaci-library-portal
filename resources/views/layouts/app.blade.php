@@ -308,59 +308,7 @@
 
     <main>
 
-        @if (session('success'))
-
-            <div class="container mt-4">
-
-                <div class="alert alert-success alert-dismissible fade show shadow-sm">
-
-                    <i class="bi bi-check-circle-fill me-2"></i>
-
-                    {{ session('success') }}
-
-                    <button type="button"
-                            class="btn-close"
-                            data-bs-dismiss="alert">
-                    </button>
-
-                </div>
-
-            </div>
-
-        @endif
-
-        @if ($errors->any())
-
-            <div class="container mt-4">
-
-                <div class="alert alert-danger alert-dismissible fade show shadow-sm">
-
-                    <strong>
-                        Please correct the following:
-                    </strong>
-
-                    <ul class="mb-0 mt-2">
-
-                        @foreach ($errors->all() as $error)
-
-                            <li>
-                                {{ $error }}
-                            </li>
-
-                        @endforeach
-
-                    </ul>
-
-                    <button type="button"
-                            class="btn-close"
-                            data-bs-dismiss="alert">
-                    </button>
-
-                </div>
-
-            </div>
-
-        @endif
+        @include('partials.flash-messages', ['containerClass' => 'container mt-4'])
 
         @yield('content')
 

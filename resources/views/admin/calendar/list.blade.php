@@ -24,16 +24,7 @@
         </a>
     </section>
 
-    @if(session('success'))
-        <div class="page-alert success alert-dismissible fade show" role="alert">
-            <span><i class="bi bi-check-lg"></i></span>
-            <div>
-                <strong>Success</strong>
-                <small>{{ session('success') }}</small>
-            </div>
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        </div>
-    @endif
+    @include('partials.flash-messages')
 
     <section class="calendar-panel">
         <div class="panel-toolbar">

@@ -283,20 +283,7 @@
 
     <div class="content">
 
-        @if(session('success'))
-
-            <div class="alert alert-success alert-dismissible fade show">
-
-                {{ session('success') }}
-
-                <button
-                    class="btn-close"
-                    data-bs-dismiss="alert">
-                </button>
-
-            </div>
-
-        @endif
+        @include('partials.flash-messages', ['containerClass' => 'mb-4'])
 
         @yield('content')
 

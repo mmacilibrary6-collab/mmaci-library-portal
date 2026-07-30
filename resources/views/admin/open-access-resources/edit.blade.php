@@ -42,34 +42,7 @@
             </a>
 
         </section>
-
-        @if ($errors->any())
-
-            <div class="resource-form-alert" role="alert">
-
-                <span class="resource-alert-icon">
-                    <i class="bi bi-exclamation-triangle-fill"></i>
-                </span>
-
-                <div class="resource-alert-content">
-
-                    <strong>Please check the form</strong>
-
-                    <p>Some information is missing or invalid.</p>
-
-                    <ul>
-                        @foreach ($errors->all() as $error)
-                            <li>{{ $error }}</li>
-                        @endforeach
-                    </ul>
-
-                </div>
-
-            </div>
-
-        @endif
-
-        <form
+<form
             action="{{ route(
                 'admin.open-access-resources.update',
                 $openAccessResource

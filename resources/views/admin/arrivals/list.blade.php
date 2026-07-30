@@ -24,27 +24,7 @@
         </a>
     </section>
 
-    @if(session('success'))
-        <div class="page-alert success alert-dismissible fade show" role="alert">
-            <span><i class="bi bi-check-lg"></i></span>
-            <div>
-                <strong>Success</strong>
-                <small>{{ session('success') }}</small>
-            </div>
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        </div>
-    @endif
-
-    @if(session('error'))
-        <div class="page-alert danger alert-dismissible fade show" role="alert">
-            <span><i class="bi bi-exclamation-lg"></i></span>
-            <div>
-                <strong>Something went wrong</strong>
-                <small>{{ session('error') }}</small>
-            </div>
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        </div>
-    @endif
+    @include('partials.flash-messages')
 
     <section class="arrivals-panel">
         <div class="panel-toolbar">

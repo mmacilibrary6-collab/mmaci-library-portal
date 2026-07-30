@@ -42,34 +42,7 @@
             </a>
 
         </section>
-
-        @if ($errors->any())
-
-            <div class="gallery-form-alert" role="alert">
-
-                <span class="gallery-alert-icon">
-                    <i class="bi bi-exclamation-triangle-fill"></i>
-                </span>
-
-                <div class="gallery-alert-content">
-
-                    <strong>Please check the form</strong>
-
-                    <p>Some information is missing or invalid.</p>
-
-                    <ul>
-                        @foreach ($errors->all() as $error)
-                            <li>{{ $error }}</li>
-                        @endforeach
-                    </ul>
-
-                </div>
-
-            </div>
-
-        @endif
-
-        <form
+<form
             action="{{ route('admin.gallery.update', $gallery) }}"
             method="POST"
             enctype="multipart/form-data"
@@ -287,3 +260,4 @@
     }
 </style>
 @endpush
+

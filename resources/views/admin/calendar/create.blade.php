@@ -44,30 +44,7 @@
         </section>
 
         {{-- Errors --}}
-        @if ($errors->any())
-
-            <div class="calendar-error-alert">
-
-                <span class="calendar-error-icon">
-                    <i class="bi bi-exclamation-triangle-fill"></i>
-                </span>
-
-                <div>
-                    <strong>Please check the form</strong>
-                    <p>Some information is missing or invalid.</p>
-
-                    <ul>
-                        @foreach ($errors->all() as $error)
-                            <li>{{ $error }}</li>
-                        @endforeach
-                    </ul>
-                </div>
-
-            </div>
-
-        @endif
-
-        <form
+<form
             method="POST"
             action="{{ route('admin.calendar.store') }}"
             novalidate>
