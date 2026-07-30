@@ -185,6 +185,12 @@ class EbookFolderController extends Controller
                     'required',
                     'string',
                     'max:255',
+                    Rule::unique('ebook_folders', 'title')
+                        ->where(fn ($query) => $query->where(
+                            'ebook_program_id',
+                            $request->input('ebook_program_id')
+                        ))
+                        ->ignore($ebookFolder?->id),
                 ],
 
                 'description' => [
@@ -218,6 +224,9 @@ class EbookFolderController extends Controller
 
                 'title.max' =>
                     'The folder name must not exceed 255 characters.',
+
+                'title.unique' =>
+                    'This folder name already exists for the selected program.',
 
                 'drive_link.required' =>
                     'Please enter the Google Drive folder link.',

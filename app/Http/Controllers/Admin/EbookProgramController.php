@@ -175,6 +175,9 @@ class EbookProgramController extends Controller
                     'required',
                     'string',
                     'max:255',
+                    Rule::unique('ebook_programs', 'title')->ignore(
+                        $ebookProgram?->id
+                    ),
                 ],
 
                 'description' => [
@@ -206,6 +209,9 @@ class EbookProgramController extends Controller
 
                 'title.max' =>
                     'The program title must not exceed 255 characters.',
+
+                'title.unique' =>
+                    'This program name already exists.',
 
                 'image_file.image' =>
                     'The uploaded file must be an image.',
