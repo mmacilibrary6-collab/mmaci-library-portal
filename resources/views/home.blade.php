@@ -104,6 +104,99 @@
 <section class="home-section">
     <div class="container">
         <header class="section-heading">
+            <span class="eyebrow">Latest from the Library</span>
+            <h2>Library updates</h2>
+            <p>
+                Stay informed with announcements, highlights, and new
+                moments from the MMACI Library Services Office.
+            </p>
+        </header>
+
+        @if(($libraryUpdates ?? collect())->isNotEmpty())
+            <div
+                id="libraryUpdatesCarousel"
+                class="carousel slide library-updates-carousel"
+                data-bs-ride="carousel"
+                data-bs-interval="5000"
+                data-bs-pause="hover">
+
+                <div class="carousel-indicators">
+                    @foreach($libraryUpdates as $update)
+                        <button
+                            type="button"
+                            data-bs-target="#libraryUpdatesCarousel"
+                            data-bs-slide-to="{{ $loop->index }}"
+                            class="{{ $loop->first ? 'active' : '' }}"
+                            aria-current="{{ $loop->first ? 'true' : 'false' }}"
+                            aria-label="Show library update {{ $loop->iteration }}">
+                        </button>
+                    @endforeach
+                </div>
+
+                <div class="carousel-inner">
+                    @foreach($libraryUpdates as $update)
+                        <div class="carousel-item {{ $loop->first ? 'active' : '' }}">
+                            <div class="library-update-slide">
+                                <img
+                                    src="{{ $update->image_url }}"
+                                    alt="{{ $update->title }}"
+                                    loading="{{ $loop->first ? 'eager' : 'lazy' }}"
+                                    onerror="this.onerror=null;this.src='{{ asset('images/readingarea.jpg') }}';">
+
+                                <div class="library-update-overlay"></div>
+
+                                <div class="library-update-copy">
+                                    <span>Library Update</span>
+                                    <h3>{{ $update->title }}</h3>
+
+                                    @if(filled($update->description))
+                                        <p>
+                                            {{ \Illuminate\Support\Str::limit(
+                                                $update->description,
+                                                160
+                                            ) }}
+                                        </p>
+                                    @endif
+                                </div>
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+
+                <button
+                    class="carousel-control-prev"
+                    type="button"
+                    data-bs-target="#libraryUpdatesCarousel"
+                    data-bs-slide="prev">
+                    <span class="carousel-arrow">
+                        <i class="bi bi-chevron-left" aria-hidden="true"></i>
+                    </span>
+                    <span class="visually-hidden">Previous update</span>
+                </button>
+
+                <button
+                    class="carousel-control-next"
+                    type="button"
+                    data-bs-target="#libraryUpdatesCarousel"
+                    data-bs-slide="next">
+                    <span class="carousel-arrow">
+                        <i class="bi bi-chevron-right" aria-hidden="true"></i>
+                    </span>
+                    <span class="visually-hidden">Next update</span>
+                </button>
+            </div>
+        @else
+            <div class="empty-state empty-state-wide">
+                <h4>No library updates yet</h4>
+                <p>Admin-added library update slides will appear here.</p>
+            </div>
+        @endif
+    </div>
+</section>
+
+<section class="home-section">
+    <div class="container">
+        <header class="section-heading">
             <span class="eyebrow">Recently Added</span>
             <h2>New arrivals</h2>
             <p>
@@ -761,6 +854,73 @@ document.addEventListener('DOMContentLoaded', function () {
     color: var(--home-navy);
     transform: translateY(-2px);
     box-shadow: 0 10px 25px rgba(0, 0, 0, .17);
+}
+
+.library-updates-carousel {
+    position: relative;
+}
+
+.library-update-slide {
+    position: relative;
+    min-height: 420px;
+    overflow: hidden;
+    border-radius: 28px;
+    background: linear-gradient(135deg, rgba(11, 46, 89, .94), rgba(24, 75, 140, .84));
+    box-shadow: 0 18px 42px rgba(11, 46, 89, .12);
+}
+
+.library-update-slide img {
+    width: 100%;
+    height: 420px;
+    object-fit: cover;
+    display: block;
+}
+
+.library-update-overlay {
+    position: absolute;
+    inset: 0;
+    background:
+        linear-gradient(180deg, rgba(6, 22, 44, .08), rgba(6, 22, 44, .72)),
+        radial-gradient(circle at 20% 20%, rgba(244, 180, 0, .12), transparent 30%);
+}
+
+.library-update-copy {
+    position: absolute;
+    left: 32px;
+    right: 32px;
+    bottom: 30px;
+    z-index: 1;
+    max-width: 720px;
+    color: #fff;
+}
+
+.library-update-copy span {
+    display: inline-flex;
+    align-items: center;
+    margin-bottom: 10px;
+    padding: 6px 12px;
+    border-radius: 999px;
+    background: rgba(244, 180, 0, .92);
+    color: #0b2e59;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+}
+
+.library-update-copy h3 {
+    margin: 0 0 8px;
+    font-size: clamp(28px, 4vw, 46px);
+    font-weight: 900;
+    line-height: 1.06;
+}
+
+.library-update-copy p {
+    margin: 0;
+    max-width: 640px;
+    color: rgba(255, 255, 255, .86);
+    font-size: 15px;
+    line-height: 1.75;
 }
 
 .home-section {

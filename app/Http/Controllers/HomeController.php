@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\CalendarEvent;
+use App\Models\LibraryUpdate;
 use App\Models\NewArrival;
 use Illuminate\View\View;
 use Illuminate\Support\Facades\Schema;
@@ -37,9 +38,17 @@ class HomeController extends Controller
             ->take(8)
             ->get();
 
+        $libraryUpdates = LibraryUpdate::query()
+            ->where('status', true)
+            ->orderBy('sort_order')
+            ->orderByDesc('created_at')
+            ->take(8)
+            ->get();
+
         return view('home', compact(
             'events',
-            'arrivals'
+            'arrivals',
+            'libraryUpdates'
         ));
     }
 }

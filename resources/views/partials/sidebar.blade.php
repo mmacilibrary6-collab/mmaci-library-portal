@@ -108,6 +108,22 @@
 
         </a>
 
+        <a
+            href="{{ route('admin.library-updates.index') }}"
+            class="sidebar-link
+                {{ request()->routeIs('admin.library-updates.*')
+                    ? 'active'
+                    : ''
+                }}">
+
+            <i class="bi bi-megaphone-fill"></i>
+
+            <span>
+                Library Updates
+            </span>
+
+        </a>
+
         {{-- Digital Resources --}}
         <span class="sidebar-label sidebar-section-label">
             Digital Resources

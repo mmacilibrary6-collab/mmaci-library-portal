@@ -28,6 +28,7 @@ use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\EbookFolderController;
 use App\Http\Controllers\Admin\EbookProgramController;
 use App\Http\Controllers\Admin\GalleryController;
+use App\Http\Controllers\Admin\LibraryUpdateController;
 use App\Http\Controllers\Admin\NewArrivalController;
 use App\Http\Controllers\Admin\OpenAccessResourceController;
 use App\Http\Controllers\Admin\VisitingUserController;
@@ -292,6 +293,11 @@ Route::prefix('admin')
         Route::resource(
             'ebook-folders',
             EbookFolderController::class
+        )->except(['show']);
+
+        Route::resource(
+            'library-updates',
+            LibraryUpdateController::class
         )->except(['show']);
 
         /*
