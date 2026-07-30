@@ -273,6 +273,20 @@
 
                                 class="dropdown-item"
 
+                                href="{{ route('more.online-book-recommendation') }}">
+
+                                Online Book Recommendation
+
+                            </a>
+
+                        </li>
+
+                        <li>
+
+                            <a
+
+                                class="dropdown-item"
+
                                 href="{{ route('more.visiting-users') }}">
 
                                 Visiting Users

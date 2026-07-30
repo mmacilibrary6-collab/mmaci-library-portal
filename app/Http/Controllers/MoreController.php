@@ -19,6 +19,9 @@ class MoreController extends Controller
     private const VISITING_RESEARCHER_FORM_URL =
         'https://docs.google.com/forms/d/e/1FAIpQLSeKuNcoNY5ndVnlJfsFyjjM96t7Ga5FBz00MAT6gSM2KHOhTQ/viewform';
 
+    private const ONLINE_BOOK_RECOMMENDATION_FORM_URL =
+        'https://docs.google.com/forms/d/e/1FAIpQLSfsg3Tn_nx3bf6KKQg46bhLVlPjvNre-mmHHKvFVh21_KBhmw/viewform';
+
     /**
      * Display the Ask the Librarian page.
      */
@@ -114,6 +117,16 @@ class MoreController extends Controller
         return view('more.visiting-users', [
             'appointmentFormUrl' => self::VISITING_RESEARCHER_FORM_URL,
             'steps' => $steps,
+        ]);
+    }
+
+    /**
+     * Display the online book recommendation page.
+     */
+    public function onlineBookRecommendation(): View
+    {
+        return view('more.online-book-recommendation', [
+            'formUrl' => self::ONLINE_BOOK_RECOMMENDATION_FORM_URL,
         ]);
     }
 }

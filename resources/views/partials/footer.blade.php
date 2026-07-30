@@ -115,6 +115,12 @@
                         </a>
                     </li>
 
+                    <li>
+                        <a href="{{ route('more.online-book-recommendation') }}">
+                            Online Book Recommendation
+                        </a>
+                    </li>
+
                 </ul>
 
             </div>

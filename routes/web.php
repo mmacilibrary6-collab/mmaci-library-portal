@@ -161,6 +161,11 @@ Route::prefix('more')
             '/visiting-users',
             [MoreController::class, 'visitingUsers']
         )->name('visiting-users');
+
+        Route::get(
+            '/online-book-recommendation',
+            [MoreController::class, 'onlineBookRecommendation']
+        )->name('online-book-recommendation');
     });
 
 /*
