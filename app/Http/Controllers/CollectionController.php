@@ -9,6 +9,7 @@ use App\Models\PeriodicalProgram;
 use App\Models\OpenAccessResource;
 use App\Models\ThesisProgram;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\View\View;
 
 class CollectionController extends Controller
@@ -144,12 +145,22 @@ class CollectionController extends Controller
 
     public function periodicals(): View
     {
+        $hasFolderCategory = Schema::hasColumn('periodical_folders', 'category');
+
         $programs = PeriodicalProgram::query()
             ->where('status', true)
             ->orderBy('sort_order')
             ->orderBy('title')
             ->with([
-                'folders' => fn ($query) => $query->where('status', true)->orderBy('category')->orderBy('sort_order')->orderBy('title'),
+                'folders' => function ($query) use ($hasFolderCategory) {
+                    $query->where('status', true);
+
+                    if ($hasFolderCategory) {
+                        $query->orderBy('category');
+                    }
+
+                    $query->orderBy('sort_order')->orderBy('title');
+                },
             ])
             ->get();
 
