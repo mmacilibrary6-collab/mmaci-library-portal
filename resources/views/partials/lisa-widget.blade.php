@@ -7,11 +7,6 @@
         <span class="lisa-launcher-avatar">
             <img src="{{ $lisaAvatar }}" alt="Lisa avatar">
         </span>
-        <span class="lisa-launcher-copy">
-            <strong>Lisa</strong>
-            <small>Ask the library guide</small>
-        </span>
-        <i class="bi bi-chat-dots-fill"></i>
     </button>
 
     <div class="lisa-panel" id="lisaPanel" hidden>
@@ -53,29 +48,32 @@
                 bottom: 22px;
                 z-index: 1080;
                 font-family: 'Poppins', sans-serif;
+                width: auto;
+                height: auto;
             }
 
             .lisa-launcher {
                 display: flex;
                 align-items: center;
-                gap: 10px;
-                padding: 10px 12px 10px 10px;
+                justify-content: center;
+                width: 62px;
+                height: 62px;
+                padding: 0;
                 background: linear-gradient(135deg, #0b2e59, #184b8c);
                 color: #fff;
                 border: 0;
                 border-radius: 999px;
                 box-shadow: 0 18px 40px rgba(11, 46, 89, 0.28);
-                min-height: 62px;
             }
 
             .lisa-launcher-avatar,
             .lisa-avatar {
                 flex: 0 0 auto;
-                width: 40px;
-                height: 40px;
+                width: 52px;
+                height: 52px;
                 border-radius: 50%;
                 overflow: hidden;
-                border: 2px solid rgba(255,255,255,.45);
+                border: 3px solid rgba(255,255,255,.55);
                 background: #fff;
             }
 
@@ -87,33 +85,12 @@
                 display: block;
             }
 
-            .lisa-launcher-copy {
-                display: grid;
-                line-height: 1.1;
-                text-align: left;
-            }
-
-            .lisa-launcher-copy strong {
-                font-size: 13px;
-            }
-
-            .lisa-launcher-copy small {
-                font-size: 11px;
-                color: rgba(255,255,255,.78);
-            }
-
-            .lisa-launcher > i {
-                margin-left: 4px;
-                font-size: 16px;
-            }
-
             .lisa-panel {
                 width: min(390px, calc(100vw - 28px));
                 height: min(620px, calc(100vh - 96px));
-                position: absolute;
-                right: 0;
-                bottom: 74px;
-                margin-bottom: 12px;
+                position: fixed;
+                right: 22px;
+                bottom: 96px;
                 background: #fff;
                 border: 1px solid rgba(11,46,89,.12);
                 border-radius: 24px;
@@ -121,6 +98,16 @@
                 overflow: hidden;
                 display: grid;
                 grid-template-rows: auto 1fr auto auto;
+                transform: translateY(14px) scale(.98);
+                opacity: 0;
+                pointer-events: none;
+                transition: opacity .18s ease, transform .18s ease;
+            }
+
+            .lisa-panel.is-open {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+                pointer-events: auto;
             }
 
             .lisa-header {
@@ -253,18 +240,13 @@
 
             @media (max-width: 575.98px) {
                 .lisa-widget {
-                    left: 14px;
                     right: 14px;
                     bottom: 14px;
                 }
 
                 .lisa-launcher {
-                    width: 100%;
-                    justify-content: space-between;
-                }
-
-                .lisa-launcher-copy small {
-                    display: none;
+                    width: 58px;
+                    height: 58px;
                 }
 
                 .lisa-panel {
@@ -272,7 +254,7 @@
                     height: min(70vh, 620px);
                     right: 0;
                     left: 0;
-                    bottom: 74px;
+                    bottom: 78px;
                 }
             }
         </style>
@@ -353,6 +335,7 @@
 
                 function openPanel() {
                     panel.hidden = false;
+                    panel.classList.add('is-open');
                     localStorage.setItem(openKey, '1');
                     setTimeout(function () {
                         messages.scrollTop = messages.scrollHeight;
@@ -360,6 +343,7 @@
                 }
 
                 function closePanel() {
+                    panel.classList.remove('is-open');
                     panel.hidden = true;
                     localStorage.removeItem(openKey);
                 }
@@ -445,6 +429,8 @@
 
                 if (localStorage.getItem(openKey) === '1') {
                     openPanel();
+                } else {
+                    panel.hidden = true;
                 }
             })();
         </script>
