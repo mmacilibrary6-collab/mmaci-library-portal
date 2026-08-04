@@ -71,6 +71,7 @@ class PeriodicalProgramController extends Controller
     {
         $request->merge(['status' => (string) $request->input('status', '1')]);
         $validated = $request->validate([
+            'category' => ['required', Rule::in(['journal_newspaper', 'magazine'])],
             'title' => ['required', 'string', 'max:255', Rule::unique('periodical_programs', 'title')->ignore($periodicalProgram?->id)],
             'description' => ['nullable', 'string'],
             'image_file' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:5120'],
@@ -79,6 +80,7 @@ class PeriodicalProgramController extends Controller
         ]);
 
         $data = [
+            'category' => $validated['category'],
             'title' => trim($validated['title']),
             'description' => filled($validated['description'] ?? null) ? trim($validated['description']) : null,
             'status' => (int) $validated['status'],

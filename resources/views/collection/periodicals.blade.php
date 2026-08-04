@@ -7,7 +7,7 @@
     <div class="container">
         <div class="theses-hero-content">
             <h1>Periodical Collection</h1>
-            <p>Browse journal, newspaper clipping, and magazine programs with their folder links.</p>
+            <p>Browse journal and newspaper clipping programs, plus magazines, with their folder links.</p>
 
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb justify-content-center mb-0">
@@ -23,9 +23,9 @@
 <section class="theses-intro">
     <div class="container">
         <header class="section-heading">
-            <span class="eyebrow">Explore by Program</span>
+                    <span class="eyebrow">Explore by Category</span>
             <h2>Find periodicals for your needs</h2>
-            <p>Select a program below to view its available folder links.</p>
+            <p>Select a category below to view its available folder links.</p>
         </header>
     </div>
 </section>
@@ -38,6 +38,7 @@
                     $modalId = 'periodical-folders-modal-' . $program->id;
                     $programImage = $program->image_url ?: asset('images/readingarea.jpg');
                     $folderCount = $program->folders->count();
+                    $programLabel = $program->categoryLabel();
                 @endphp
 
                 <div class="col-xl-4 col-lg-4 col-md-6 program-item">
@@ -48,7 +49,7 @@
                                 <span class="folder-count">{{ $folderCount }} {{ \Illuminate\Support\Str::plural('Folder', $folderCount) }}</span>
                             </div>
                             <div class="program-content">
-                                <h3>{{ $program->title }}</h3>
+                                <h3>{{ $programLabel }}</h3>
                                 <p>{{ $program->description ?: 'Browse available folder links for this periodical program.' }}</p>
                                 <span class="program-action">{{ $program->folders->isNotEmpty() ? 'View available folders' : 'No folders available' }} <i class="bi bi-arrow-right"></i></span>
                             </div>
@@ -61,7 +62,7 @@
                                 <div class="modal-header">
                                     <div>
                                         <span>Periodical Collection</span>
-                                        <h4 class="modal-title">{{ $program->title }}</h4>
+                                        <h4 class="modal-title">{{ $programLabel }}</h4>
                                     </div>
                                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                 </div>

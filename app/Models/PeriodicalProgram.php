@@ -13,6 +13,7 @@ class PeriodicalProgram extends Model
     use HasFactory;
 
     protected $fillable = [
+        'category',
         'title',
         'description',
         'image',
@@ -24,6 +25,15 @@ class PeriodicalProgram extends Model
         'sort_order' => 'integer',
         'status' => 'boolean',
     ];
+
+    public function categoryLabel(): string
+    {
+        return match ($this->category) {
+            'journal_newspaper' => 'Journal & Newspaper Clippings',
+            'magazine' => 'Magazines',
+            default => $this->title ?: 'Periodical',
+        };
+    }
 
     public function folders(): HasMany
     {
