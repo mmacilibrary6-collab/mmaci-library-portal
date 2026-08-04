@@ -23,10 +23,17 @@
 <section class="theses-intro">
     <div class="container">
         <header class="section-heading">
-                    <span class="eyebrow">Explore by Category</span>
+            <span class="eyebrow">Explore by Category</span>
             <h2>Find periodicals for your needs</h2>
             <p>Select a category below to view its available folder links.</p>
         </header>
+        <form method="GET" action="{{ route('periodicals') }}" class="periodical-filter">
+            <div class="filter-chip-group" role="tablist" aria-label="Periodical categories">
+                <button type="submit" name="category" value="" class="filter-chip {{ blank($selectedCategory ?? null) ? 'active' : '' }}">All Categories</button>
+                <button type="submit" name="category" value="journal_newspaper" class="filter-chip {{ ($selectedCategory ?? null) === 'journal_newspaper' ? 'active' : '' }}">Journal &amp; Newspaper Clippings</button>
+                <button type="submit" name="category" value="magazine" class="filter-chip {{ ($selectedCategory ?? null) === 'magazine' ? 'active' : '' }}">Magazines</button>
+            </div>
+        </form>
     </div>
 </section>
 
@@ -50,7 +57,10 @@
                             <div class="program-content">
                                 <h3>{{ $program->title }}</h3>
                                 <p>{{ $program->description ?: 'Browse available folder links for this periodical program.' }}</p>
-                                <span class="program-action">{{ $program->folders->isNotEmpty() ? 'View available folders' : 'No folders available' }} <i class="bi bi-arrow-right"></i></span>
+                                <span class="program-action">
+                                    {{ $program->folders->isNotEmpty() ? 'View available folders' : 'No folders available' }}
+                                    <i class="bi bi-arrow-right"></i>
+                                </span>
                             </div>
                         </button>
                     </article>
@@ -218,6 +228,35 @@
 .theses-intro {
     padding: 68px 0 24px;
     background: var(--thesis-bg);
+}
+
+.periodical-filter {
+    margin-top: 26px;
+}
+
+.filter-chip-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    justify-content: center;
+}
+
+.filter-chip {
+    padding: 12px 18px;
+    color: var(--thesis-navy);
+    background: var(--thesis-white);
+    border: 1px solid var(--thesis-line);
+    border-radius: 999px;
+    font-size: 14px;
+    font-weight: 700;
+    transition: .2s ease;
+}
+
+.filter-chip:hover,
+.filter-chip.active {
+    color: var(--thesis-white);
+    background: var(--thesis-blue);
+    border-color: var(--thesis-blue);
 }
 
 .section-heading h2 {

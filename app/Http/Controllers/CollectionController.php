@@ -143,17 +143,22 @@ class CollectionController extends Controller
         return view('collection.donated-books', compact('books'));
     }
 
-    public function periodicals(): View
+    public function periodicals(Request $request): View
     {
         $hasFolderCategory = Schema::hasColumn('periodical_folders', 'category');
+        $selectedCategory = $request->input('category');
 
         $programs = PeriodicalProgram::query()
             ->where('status', true)
             ->orderBy('sort_order')
             ->orderBy('title')
             ->with([
-                'folders' => function ($query) use ($hasFolderCategory) {
+                'folders' => function ($query) use ($hasFolderCategory, $selectedCategory) {
                     $query->where('status', true);
+
+                    if ($hasFolderCategory && filled($selectedCategory)) {
+                        $query->where('category', $selectedCategory);
+                    }
 
                     if ($hasFolderCategory) {
                         $query->orderBy('category');
@@ -164,6 +169,20 @@ class CollectionController extends Controller
             ])
             ->get();
 
-        return view('collection.periodicals', compact('programs'));
+        if (filled($selectedCategory)) {
+            $programs = $programs
+                ->map(function ($program) use ($selectedCategory) {
+                    $program->setRelation(
+                        'folders',
+                        $program->folders->filter(fn ($folder) => $folder->category === $selectedCategory)->values()
+                    );
+
+                    return $program;
+                })
+                ->filter(fn ($program) => $program->folders->isNotEmpty())
+                ->values();
+        }
+
+        return view('collection.periodicals', compact('programs', 'selectedCategory'));
     }
 }
