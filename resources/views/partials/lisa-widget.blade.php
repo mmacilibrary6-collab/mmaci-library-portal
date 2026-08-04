@@ -17,7 +17,7 @@
         class="lisa-chat-panel"
         hidden
         aria-label="Lisa chatbot"
-        style="position:absolute!important;right:72px!important;bottom:0!important;width:350px!important;height:480px!important;max-width:calc(100vw - 32px)!important;max-height:calc(100dvh - 120px)!important;overflow:hidden!important;display:none!important;margin:0!important;padding:0!important;transform:none!important;border-radius:28px!important;">
+        style="position:absolute!important;right:72px!important;bottom:0!important;width:350px!important;height:480px!important;max-width:calc(100vw - 32px)!important;max-height:calc(100dvh - 120px)!important;overflow:hidden!important;display:none!important;margin:0!important;padding:0!important;transform:none!important;border-radius:12px!important;">
         <header class="lisa-chat-header">
             <div class="lisa-chat-header-left">
                 <img src="{{ $lisaAvatar }}" alt="Lisa avatar" class="lisa-chat-header-avatar" style="width:36px!important;height:36px!important;display:block!important;object-fit:cover!important;">
@@ -128,7 +128,7 @@
                 overflow: hidden !important;
                 display: flex;
                 flex-direction: column;
-                border-radius: 28px;
+                border-radius: 12px;
                 background: #f8fafc;
                 border: 1px solid rgba(11, 46, 89, 0.12);
                 box-shadow: 0 24px 60px rgba(11, 46, 89, 0.24);
@@ -239,7 +239,7 @@
             #lisa-chatbot-widget .lisa-chat-bubble {
                 max-width: 84%;
                 padding: 11px 13px;
-                border-radius: 16px;
+                border-radius: 22px;
                 font-size: 13px;
                 line-height: 1.6;
                 white-space: pre-wrap;
@@ -251,13 +251,13 @@
                 background: #ffffff;
                 color: #1f2f46;
                 border: 1px solid #e3e9f1;
-                border-top-left-radius: 6px;
+                border-top-left-radius: 16px;
             }
 
             #lisa-chatbot-widget .lisa-chat-message.user .lisa-chat-bubble {
                 background: #184b8c;
                 color: #ffffff;
-                border-top-right-radius: 6px;
+                border-top-right-radius: 16px;
             }
 
             #lisa-chatbot-widget .lisa-chat-chips {
@@ -456,7 +456,7 @@
                 panel.style.margin = '0';
                 panel.style.padding = '0';
                 panel.style.transform = 'none';
-                panel.style.borderRadius = '28px';
+                panel.style.borderRadius = '12px';
 
                 let history = [];
 
