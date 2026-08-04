@@ -371,6 +371,8 @@
 
 <body>
 
+    @include('partials.lisa-widget')
+
     @include('partials.navbar')
 
     <main>
@@ -382,8 +384,6 @@
     </main>
 
     @include('partials.footer')
-
-    @include('partials.lisa-widget')
 
     <!-- Bootstrap JavaScript -->
 
