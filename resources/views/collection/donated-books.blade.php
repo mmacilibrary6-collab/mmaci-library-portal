@@ -71,7 +71,7 @@
             rgba(11, 46, 89, .94),
             rgba(24, 75, 140, .88)
         ),
-        url("{{ asset('images/readingarea.jpg') }}") center center / cover no-repeat;
+        url("{{ asset('images/books1.jpg') }}") center center / cover no-repeat;
 }
 
 .donated-books-hero::after {
