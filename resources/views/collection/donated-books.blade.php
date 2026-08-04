@@ -23,12 +23,7 @@
 <section class="donated-books-intro">
     <div class="container">
         <div class="section-heading text-center mx-auto">
-            <span class="eyebrow justify-content-center">Special Collection</span>
-            <h2>Recently donated books for the community</h2>
-            <p>
-                These books have been donated to support learning and reading
-                across the MMACI community.
-            </p>
+
         </div>
     </div>
 </section>
