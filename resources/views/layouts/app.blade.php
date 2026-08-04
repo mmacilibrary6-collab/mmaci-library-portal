@@ -371,8 +371,6 @@
 
 <body>
 
-    @include('partials.lisa-widget')
-
     @include('partials.navbar')
 
     <main>

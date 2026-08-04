@@ -907,4 +907,7 @@
     }
 </style>
 
+    @include('components.lisa-chatbox')
+
 @endsection
+

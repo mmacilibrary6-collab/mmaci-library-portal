@@ -54,6 +54,8 @@
         </div>
     </div>
 </section>
+    @include('components.lisa-chatbox')
+
 @endsection
 
 @push('styles')
@@ -185,3 +187,5 @@
 }
 </style>
 @endpush
+
+

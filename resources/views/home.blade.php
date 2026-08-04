@@ -1829,4 +1829,8 @@ document.addEventListener('DOMContentLoaded', function () {
 }
 </style>
 
+    @include('components.lisa-chatbox')
+
 @endsection
+
+
