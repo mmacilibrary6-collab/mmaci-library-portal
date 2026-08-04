@@ -64,7 +64,7 @@ class LisaAssistant
 
     protected function knowledgeEntries(): array
     {
-        return Cache::rememberForever('lisa.knowledge.entries', function () {
+        return Cache::remember('lisa.knowledge.entries.v2', now()->addMinutes(10), function () {
             $entries = [
                 [
                     'title' => 'Home page',
@@ -164,27 +164,39 @@ class LisaAssistant
 
     protected function scannedEntries(): array
     {
-        $paths = [
-            base_path('routes/web.php'),
-            resource_path('views/layouts/app.blade.php'),
-            resource_path('views/partials/navbar.blade.php'),
-            resource_path('views/partials/footer.blade.php'),
-            resource_path('views/home.blade.php'),
-            resource_path('views/about.blade.php'),
-            resource_path('views/services/index.blade.php'),
-            resource_path('views/services/facilities.blade.php'),
-            resource_path('views/collection/printed.blade.php'),
-            resource_path('views/collection/ebooks.blade.php'),
-            resource_path('views/collection/theses.blade.php'),
-            resource_path('views/collection/donated-books.blade.php'),
-            resource_path('views/collection/open-access.blade.php'),
-            resource_path('views/collection/subscribed-database.blade.php'),
-            resource_path('views/collection/periodicals.blade.php'),
-            resource_path('views/more/ask-librarian.blade.php'),
-            resource_path('views/more/gallery.blade.php'),
-            resource_path('views/more/online-book-recommendation.blade.php'),
-            resource_path('views/more/reserve-avr.blade.php'),
+        $viewsPath = resource_path('views');
+
+        if (! File::isDirectory($viewsPath)) {
+            return [];
+        }
+
+        $excludedDirectories = [
+            'admin/',
+            'auth/',
+            'components/',
+            'emails/',
+            'layouts/',
+            'partials/',
+            'vendor/',
         ];
+
+        $paths = collect(File::allFiles($viewsPath))
+            ->filter(function ($file) use ($viewsPath, $excludedDirectories) {
+                $relativePath = Str::of($file->getPathname())
+                    ->after(rtrim($viewsPath, DIRECTORY_SEPARATOR).DIRECTORY_SEPARATOR)
+                    ->replace('\\', '/')
+                    ->toString();
+
+                if (! Str::endsWith($relativePath, '.blade.php')) {
+                    return false;
+                }
+
+                return ! collect($excludedDirectories)
+                    ->contains(fn (string $directory) => Str::startsWith($relativePath, $directory));
+            })
+            ->map(fn ($file) => $file->getPathname())
+            ->values()
+            ->all();
 
         $entries = [];
 
