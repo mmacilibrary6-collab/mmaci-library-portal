@@ -8,7 +8,8 @@
         id="lisa-chat-launcher"
         class="lisa-chat-launcher"
         style="width:60px!important;height:60px!important;min-width:60px!important;min-height:60px!important;max-width:60px!important;max-height:60px!important;display:grid!important;"
-        aria-label="Open Lisa chat">
+        aria-label="Open Lisa chat"
+        aria-expanded="false">
         <img src="{{ $lisaAvatar }}" alt="Lisa avatar" class="lisa-chat-avatar" style="width:100%!important;height:100%!important;display:block!important;object-fit:cover!important;">
     </button>
 
@@ -524,12 +525,16 @@
                     panel.hidden = false;
                     panel.style.display = 'flex';
                     panel.classList.add('is-open');
+                    widget.classList.add('is-open');
+                    launcher.setAttribute('aria-expanded', 'true');
                     localStorage.setItem(openKey, '1');
                     setTimeout(scrollMessages, 0);
                 }
 
                 function closePanel() {
                     panel.classList.remove('is-open');
+                    widget.classList.remove('is-open');
+                    launcher.setAttribute('aria-expanded', 'false');
                     localStorage.removeItem(openKey);
                     setTimeout(function () {
                         panel.style.display = 'none';
@@ -590,6 +595,12 @@
                         openPanel();
                     } else {
                         closePanel();
+                    }
+                });
+
+                launcher.addEventListener('pointerup', function () {
+                    if (panel.hidden) {
+                        openPanel();
                     }
                 });
 
