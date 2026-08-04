@@ -2,37 +2,27 @@
     $lisaAvatar = 'https://static.vecteezy.com/system/resources/previews/054/064/121/non_2x/young-girl-reading-in-library-illustration-for-education-and-learning-themes-free-vector.jpg';
 @endphp
 
-<div id="lisa-chatbot-widget" class="lisa-chatbot-widget" aria-live="polite" style="position:fixed!important;right:24px!important;bottom:24px!important;left:auto!important;top:auto!important;width:auto!important;height:auto!important;margin:0!important;padding:0!important;z-index:2147483000!important;isolation:isolate!important;display:block!important;pointer-events:auto!important;transform:none!important;float:none!important;clear:both!important;">
-    <input type="checkbox" id="lisa-chat-toggle" class="lisa-chat-toggle" aria-hidden="true" tabindex="-1">
-    <label
+<div id="lisa-chatbot-widget" class="lisa-chatbot-widget" aria-live="polite">
+    <button
         type="button"
         id="lisa-chat-launcher"
         class="lisa-chat-launcher"
-        for="lisa-chat-toggle"
-        style="width:60px!important;height:60px!important;min-width:60px!important;min-height:60px!important;max-width:60px!important;max-height:60px!important;display:grid!important;border-radius:9999px!important;overflow:hidden!important;clip-path:circle(50% at 50% 50%)!important;"
         aria-label="Open Lisa chat"
-        aria-expanded="false"
-        onclick="return false;">
-        <img src="{{ $lisaAvatar }}" alt="Lisa avatar" class="lisa-chat-avatar" style="width:100%!important;height:100%!important;display:block!important;object-fit:cover!important;border-radius:9999px!important;">
-    </label>
+        aria-expanded="false">
+        <img src="{{ $lisaAvatar }}" alt="Lisa avatar" class="lisa-chat-avatar">
+    </button>
 
-    <section
-        id="lisa-chat-panel"
-        class="lisa-chat-panel"
-        aria-label="Lisa chatbot"
-        style="position:absolute!important;right:72px!important;bottom:0!important;width:350px!important;height:480px!important;max-width:calc(100vw - 32px)!important;max-height:calc(100dvh - 120px)!important;overflow:hidden!important;display:none!important;margin:0!important;padding:0!important;transform:none!important;border-radius:12px!important;">
+    <section id="lisa-chat-panel" class="lisa-chat-panel" aria-label="Lisa chatbot" hidden>
         <header class="lisa-chat-header">
             <div class="lisa-chat-header-left">
-                <img src="{{ $lisaAvatar }}" alt="Lisa avatar" class="lisa-chat-header-avatar" style="width:36px!important;height:36px!important;display:block!important;object-fit:cover!important;">
+                <img src="{{ $lisaAvatar }}" alt="Lisa avatar" class="lisa-chat-header-avatar">
                 <div class="lisa-chat-header-copy">
                     <strong>Lisa</strong>
                     <span>MMACI Library Guide</span>
                 </div>
             </div>
 
-            <button type="button" id="lisa-chat-close" class="lisa-chat-icon-button" aria-label="Close Lisa chat" onclick="return window.LisaChatbot ? window.LisaChatbot.close() : false;">
-                <i class="bi bi-x-lg" aria-hidden="true"></i>
-            </button>
+            <button type="button" id="lisa-chat-close" class="lisa-chat-icon-button" aria-label="Close Lisa chat">×</button>
         </header>
 
         <div class="lisa-chat-body">
@@ -48,9 +38,7 @@
                 rows="1"
                 placeholder="Ask Lisa about the website, collections, or services..."></textarea>
 
-            <button type="submit" class="lisa-chat-send" aria-label="Send message">
-                <i class="bi bi-send-fill" aria-hidden="true"></i>
-            </button>
+            <button type="submit" class="lisa-chat-send" aria-label="Send message">➤</button>
         </form>
     </section>
 </div>
@@ -63,52 +51,41 @@
                 box-sizing: border-box;
             }
 
-            #lisa-chatbot-widget .lisa-chat-toggle {
-                position: absolute;
-                width: 1px;
-                height: 1px;
-                opacity: 0;
-                pointer-events: none;
-            }
-
             #lisa-chatbot-widget {
                 position: fixed !important;
                 right: 24px !important;
                 bottom: 24px !important;
-                left: auto !important;
-                top: auto !important;
+                z-index: 2147483000 !important;
+                isolation: isolate !important;
                 width: auto !important;
                 height: auto !important;
                 margin: 0 !important;
                 padding: 0 !important;
-                z-index: 2147483000 !important;
-                isolation: isolate;
-                contain: layout paint;
+                pointer-events: auto !important;
             }
 
             #lisa-chatbot-widget .lisa-chat-launcher {
                 appearance: none;
                 -webkit-appearance: none;
-                border: 0;
-                padding: 0;
-                margin: 0;
                 width: 60px;
                 height: 60px;
-                border-radius: 9999px;
+                border: 0;
+                margin: 0;
+                padding: 0;
+                border-radius: 50%;
+                overflow: hidden;
                 display: grid;
                 place-items: center;
-                overflow: hidden;
                 cursor: pointer;
                 background: linear-gradient(135deg, #0b2e59, #184b8c);
-                box-shadow: 0 16px 34px rgba(11, 46, 89, 0.28);
-                transition: transform 0.18s ease, box-shadow 0.18s ease, opacity 0.18s ease;
-                animation: lisa-bob 3.6s ease-in-out infinite;
-                user-select: none;
+                box-shadow: 0 14px 30px rgba(11, 46, 89, 0.28);
+                transition: transform 0.2s ease, box-shadow 0.2s ease;
+                animation: lisa-float 3.6s ease-in-out infinite;
             }
 
             #lisa-chatbot-widget .lisa-chat-launcher:hover {
                 transform: translateY(-2px);
-                box-shadow: 0 20px 38px rgba(11, 46, 89, 0.34);
+                box-shadow: 0 18px 38px rgba(11, 46, 89, 0.34);
                 animation-play-state: paused;
             }
 
@@ -127,52 +104,33 @@
                 height: 100%;
                 display: block;
                 object-fit: cover;
-                border-radius: 9999px;
             }
 
             #lisa-chatbot-widget .lisa-chat-panel {
                 position: absolute !important;
-                right: 0 !important;
-                bottom: 72px !important;
+                right: 72px !important;
+                bottom: 0 !important;
                 width: 350px !important;
                 height: 480px !important;
                 max-width: calc(100vw - 32px) !important;
                 max-height: calc(100dvh - 120px) !important;
-                overflow: hidden !important;
                 display: flex;
                 flex-direction: column;
+                overflow: hidden;
                 border-radius: 12px;
                 background: #f8fafc;
                 border: 1px solid rgba(11, 46, 89, 0.12);
                 box-shadow: 0 24px 60px rgba(11, 46, 89, 0.24);
-                transform: translateX(12px) scale(0.98);
                 opacity: 0;
+                transform: translateX(12px) scale(0.98);
                 pointer-events: none;
-                transition: transform 0.2s ease, opacity 0.2s ease;
+                transition: opacity 0.2s ease, transform 0.2s ease;
             }
 
-            #lisa-chatbot-widget .lisa-chat-panel.is-open {
+            #lisa-chatbot-widget.is-open .lisa-chat-panel {
                 opacity: 1;
-                pointer-events: auto;
                 transform: translateX(0) scale(1);
-            }
-
-            #lisa-chatbot-widget[data-open="1"] .lisa-chat-panel {
-                display: flex !important;
-                opacity: 1 !important;
-                pointer-events: auto !important;
-                transform: translateX(0) scale(1) !important;
-            }
-
-            #lisa-chatbot-widget .lisa-chat-toggle:checked ~ .lisa-chat-panel {
-                display: flex !important;
-                opacity: 1 !important;
-                pointer-events: auto !important;
-                transform: translateX(0) scale(1) !important;
-            }
-
-            #lisa-chatbot-widget [hidden] {
-                display: none !important;
+                pointer-events: auto;
             }
 
             #lisa-chatbot-widget .lisa-chat-header {
@@ -197,16 +155,15 @@
                 width: 36px;
                 height: 36px;
                 border-radius: 50%;
+                flex: 0 0 auto;
                 border: 2px solid rgba(255, 255, 255, 0.55);
                 background: #fff;
-                object-fit: cover;
-                flex: 0 0 auto;
             }
 
             #lisa-chatbot-widget .lisa-chat-header-copy {
+                min-width: 0;
                 display: flex;
                 flex-direction: column;
-                min-width: 0;
                 line-height: 1.15;
             }
 
@@ -228,15 +185,17 @@
                 appearance: none;
                 -webkit-appearance: none;
                 border: 0;
-                width: 34px;
-                height: 34px;
-                border-radius: 999px;
+                width: 32px;
+                height: 32px;
+                border-radius: 50%;
                 display: grid;
                 place-items: center;
                 color: #fff;
                 background: rgba(255, 255, 255, 0.14);
                 cursor: pointer;
                 flex: 0 0 auto;
+                font-size: 20px;
+                line-height: 1;
             }
 
             #lisa-chatbot-widget .lisa-chat-body {
@@ -266,7 +225,7 @@
             #lisa-chatbot-widget .lisa-chat-bubble {
                 max-width: 84%;
                 padding: 11px 13px;
-                border-radius: 22px;
+                border-radius: 18px;
                 font-size: 13px;
                 line-height: 1.6;
                 white-space: pre-wrap;
@@ -278,13 +237,13 @@
                 background: #ffffff;
                 color: #1f2f46;
                 border: 1px solid #e3e9f1;
-                border-top-left-radius: 16px;
+                border-top-left-radius: 6px;
             }
 
             #lisa-chatbot-widget .lisa-chat-message.user .lisa-chat-bubble {
                 background: #184b8c;
-                color: #ffffff;
-                border-top-right-radius: 16px;
+                color: #fff;
+                border-top-right-radius: 6px;
             }
 
             #lisa-chatbot-widget .lisa-chat-chips {
@@ -293,7 +252,7 @@
                 flex-wrap: wrap;
                 gap: 8px;
                 padding: 0 14px 12px;
-                max-height: 92px;
+                max-height: 96px;
                 overflow: hidden;
             }
 
@@ -308,13 +267,6 @@
                 font-size: 12px;
                 font-weight: 600;
                 cursor: pointer;
-                transition: background 0.18s ease, transform 0.18s ease, border-color 0.18s ease;
-            }
-
-            #lisa-chatbot-widget .lisa-chat-chip:hover {
-                transform: translateY(-1px);
-                background: #eaf0f8;
-                border-color: #c9d7ea;
             }
 
             #lisa-chatbot-widget .lisa-chat-footer {
@@ -360,6 +312,8 @@
                 background: linear-gradient(135deg, #f4b400, #dca300);
                 box-shadow: 0 10px 24px rgba(244, 180, 0, 0.28);
                 cursor: pointer;
+                font-size: 18px;
+                line-height: 1;
             }
 
             #lisa-chatbot-widget .sr-only {
@@ -373,6 +327,11 @@
                 border: 0;
             }
 
+            @keyframes lisa-float {
+                0%, 100% { transform: translateY(0); }
+                50% { transform: translateY(-6px); }
+            }
+
             @media (max-width: 576px) {
                 #lisa-chatbot-widget {
                     right: 12px !important;
@@ -380,8 +339,8 @@
                 }
 
                 #lisa-chatbot-widget .lisa-chat-launcher {
-                    width: 52px !important;
-                    height: 52px !important;
+                    width: 52px;
+                    height: 52px;
                 }
 
                 #lisa-chatbot-widget .lisa-chat-panel {
@@ -392,19 +351,10 @@
                 }
             }
 
-            @keyframes lisa-bob {
-                0%, 100% {
-                    transform: translateY(0);
-                }
-                50% {
-                    transform: translateY(-6px);
-                }
-            }
-
             @media (prefers-reduced-motion: reduce) {
                 #lisa-chatbot-widget .lisa-chat-launcher,
-                #lisa-chatbot-widget .lisa-chat-panel,
-                #lisa-chatbot-widget .lisa-chat-chip {
+                #lisa-chatbot-widget .lisa-chat-panel {
+                    animation: none;
                     transition: none;
                 }
             }
@@ -414,308 +364,210 @@
     @push('scripts')
         <script>
             (function () {
-                if (window.__lisaChatbotInitialized) {
-                    return;
-                }
-
-                window.__lisaChatbotInitialized = true;
-
-                const widget = document.getElementById('lisa-chatbot-widget');
-                const launcher = document.getElementById('lisa-chat-launcher');
-                const panel = document.getElementById('lisa-chat-panel');
-                const closeButton = document.getElementById('lisa-chat-close');
-                const messages = document.getElementById('lisa-chat-messages');
-                const chips = document.getElementById('lisa-chat-chips');
-                const form = document.getElementById('lisa-chat-form');
-                const input = document.getElementById('lisa-chat-input');
-                const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
-                const storageKey = 'lisa.chat.history';
-                const openKey = 'lisa.chat.open';
-                const quickReplies = [
-                    'How do I use the E-books page?',
-                    'Where is Reserve AVR?',
-                    'How do gallery uploads work?'
-                ];
-
-                if (!widget || !launcher || !panel || !closeButton || !messages || !chips || !form || !input || !csrfToken) {
-                    return;
-                }
-
-                window.LisaChatbot = window.LisaChatbot || {};
-
-                if (widget.parentElement !== document.body) {
-                    document.body.appendChild(widget);
-                }
-
-                widget.style.position = 'fixed';
-                widget.style.right = '24px';
-                widget.style.bottom = '24px';
-                widget.style.left = 'auto';
-                widget.style.top = 'auto';
-                widget.style.width = 'auto';
-                widget.style.height = 'auto';
-                widget.style.margin = '0';
-                widget.style.padding = '0';
-                widget.style.zIndex = '2147483000';
-                widget.style.isolation = 'isolate';
-                widget.style.display = 'block';
-                widget.style.pointerEvents = 'auto';
-                widget.style.transform = 'none';
-                widget.style.float = 'none';
-                widget.style.clear = 'both';
-                widget.style.contain = 'layout paint';
-
-                launcher.style.width = '60px';
-                launcher.style.height = '60px';
-                launcher.style.minWidth = '60px';
-                launcher.style.minHeight = '60px';
-                launcher.style.maxWidth = '60px';
-                launcher.style.maxHeight = '60px';
-                launcher.style.display = 'grid';
-
-                panel.style.position = 'absolute';
-                panel.style.right = '72px';
-                panel.style.bottom = '0';
-                panel.style.width = '350px';
-                panel.style.height = '480px';
-                panel.style.maxWidth = 'calc(100vw - 32px)';
-                panel.style.maxHeight = 'calc(100dvh - 120px)';
-                panel.style.overflow = 'hidden';
-                panel.style.display = 'none';
-                panel.style.margin = '0';
-                panel.style.padding = '0';
-                panel.style.transform = 'none';
-                panel.style.borderRadius = '12px';
-                launcher.style.borderRadius = '9999px';
-                launcher.style.overflow = 'hidden';
-                launcher.style.clipPath = 'circle(50% at 50% 50%)';
-                launcher.querySelector('.lisa-chat-avatar')?.style.setProperty('border-radius', '9999px', 'important');
-
-                let history = [];
-
-                const welcomeMessage = {
-                    role: 'assistant',
-                    text: 'Hi, I’m Lisa — your MMACI Library guide. Ask me about collections, services, reservations, or how to use the site.'
-                };
-
-                function loadHistory() {
-                    try {
-                        history = JSON.parse(localStorage.getItem(storageKey) || '[]');
-                    } catch (error) {
-                        history = [];
-                    }
-
-                    if (!Array.isArray(history) || history.length === 0) {
-                        history = [welcomeMessage];
-                    }
-                }
-
-                function saveHistory() {
-                    localStorage.setItem(storageKey, JSON.stringify(history.slice(-24)));
-                }
-
-                function scrollMessages() {
-                    messages.scrollTop = messages.scrollHeight;
-                }
-
-                function renderMessages() {
-                    messages.innerHTML = '';
-
-                    history.forEach(function (entry) {
-                        const row = document.createElement('div');
-                        row.className = 'lisa-chat-message ' + (entry.role === 'user' ? 'user' : 'bot');
-
-                        const bubble = document.createElement('div');
-                        bubble.className = 'lisa-chat-bubble';
-                        bubble.textContent = entry.text;
-
-                        row.appendChild(bubble);
-                        messages.appendChild(row);
-                    });
-
-                    scrollMessages();
-                }
-
-                function renderChips(items) {
-                    chips.innerHTML = '';
-
-                    (items || []).forEach(function (item) {
-                        const chip = document.createElement('button');
-                        chip.type = 'button';
-                        chip.className = 'lisa-chat-chip';
-                        chip.textContent = item;
-                        chip.setAttribute('aria-label', 'Ask Lisa: ' + item);
-                        chip.addEventListener('click', function () {
-                            input.value = item;
-                            input.focus();
-                        }, { passive: true });
-                        chips.appendChild(chip);
-                    });
-                }
-
-                function openPanel() {
-                    widget.dataset.open = '1';
-                    panel.hidden = false;
-                    panel.style.setProperty('display', 'flex', 'important');
-                    panel.classList.add('is-open');
-                    widget.classList.add('is-open');
-                    launcher.setAttribute('aria-expanded', 'true');
-                    localStorage.setItem(openKey, '1');
-                    setTimeout(scrollMessages, 0);
-                    return false;
-                }
-
-                function closePanel() {
-                    delete widget.dataset.open;
-                    panel.classList.remove('is-open');
-                    widget.classList.remove('is-open');
-                    launcher.setAttribute('aria-expanded', 'false');
-                    localStorage.removeItem(openKey);
-                    setTimeout(function () {
-                        panel.style.setProperty('display', 'none', 'important');
-                        panel.hidden = true;
-                    }, 180);
-                    return false;
-                }
-
-                async function sendMessage(text) {
-                    history.push({ role: 'user', text: text });
-                    renderMessages();
-                    saveHistory();
-
-                    const typingId = 'typing-' + Date.now();
-                    history.push({ role: 'assistant', text: 'Lisa is thinking…', id: typingId });
-                    renderMessages();
-                    saveHistory();
-
-                    try {
-                        const response = await fetch('{{ route('lisa.message') }}', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'Accept': 'application/json',
-                                'X-CSRF-TOKEN': csrfToken
-                            },
-                            body: JSON.stringify({ message: text })
-                        });
-
-                        const data = await response.json();
-
-                        history = history.filter(function (entry) {
-                            return entry.id !== typingId;
-                        });
-
-                        history.push({
-                            role: 'assistant',
-                            text: data.answer || 'I’m sorry, I could not find an answer right now.'
-                        });
-
-                        renderMessages();
-                        renderChips(data.suggestions || quickReplies);
-                        saveHistory();
-                    } catch (error) {
-                        history = history.filter(function (entry) {
-                            return entry.id !== typingId;
-                        });
-                        history.push({
-                            role: 'assistant',
-                            text: 'Sorry, Lisa could not reach the local knowledge engine just now. Please try again.'
-                        });
-                        renderMessages();
-                        saveHistory();
-                    }
-                }
-
-                const toggle = document.getElementById('lisa-chat-toggle');
-
-                launcher.addEventListener('click', function () {
-                    if (toggle) {
-                        toggle.checked = !toggle.checked;
-                        if (toggle.checked) {
-                            openPanel();
-                        } else {
-                            closePanel();
-                        }
-                    }
-                });
-
-                if (toggle) {
-                    toggle.addEventListener('change', function () {
-                        if (toggle.checked) {
-                            openPanel();
-                        } else {
-                            closePanel();
-                        }
-                    });
-                }
-
-                closeButton.addEventListener('click', closePanel);
-
-                form.addEventListener('submit', function (event) {
-                    event.preventDefault();
-                    const text = input.value.trim();
-
-                    if (!text) {
+                const bootstrap = () => {
+                    if (window.__lisaChatbotInitialized) {
                         return;
                     }
 
-                    input.value = '';
-                    sendMessage(text);
-                });
+                    const widget = document.getElementById('lisa-chatbot-widget');
+                    const launcher = document.getElementById('lisa-chat-launcher');
+                    const panel = document.getElementById('lisa-chat-panel');
+                    const closeButton = document.getElementById('lisa-chat-close');
+                    const messages = document.getElementById('lisa-chat-messages');
+                    const chips = document.getElementById('lisa-chat-chips');
+                    const form = document.getElementById('lisa-chat-form');
+                    const input = document.getElementById('lisa-chat-input');
+                    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
 
-                input.addEventListener('keydown', function (event) {
-                    if (event.key === 'Enter' && !event.shiftKey) {
+                    if (!widget || !launcher || !panel || !closeButton || !messages || !chips || !form || !input || !csrfToken) {
+                        return;
+                    }
+
+                    window.__lisaChatbotInitialized = true;
+
+                    const storageKey = 'lisa.chat.history';
+                    const openKey = 'lisa.chat.open';
+                    const quickReplies = [
+                        'How do I use the E-books page?',
+                        'Where is Reserve AVR?',
+                        'How do gallery uploads work?'
+                    ];
+
+                    const fallbackMessage = {
+                        role: 'assistant',
+                        text: 'Hi, I’m Lisa — your MMACI Library guide. Ask me about collections, services, reservations, or how to use the site.'
+                    };
+
+                    const api = {
+                        open() {
+                            widget.classList.add('is-open');
+                            panel.hidden = false;
+                            launcher.setAttribute('aria-expanded', 'true');
+                            panel.setAttribute('aria-hidden', 'false');
+                            localStorage.setItem(openKey, '1');
+                            setTimeout(() => messages.scrollTop = messages.scrollHeight, 0);
+                        },
+                        close() {
+                            widget.classList.remove('is-open');
+                            launcher.setAttribute('aria-expanded', 'false');
+                            panel.setAttribute('aria-hidden', 'true');
+                            localStorage.removeItem(openKey);
+                            setTimeout(() => {
+                                panel.hidden = true;
+                            }, 150);
+                        },
+                        toggle() {
+                            if (widget.classList.contains('is-open')) {
+                                this.close();
+                            } else {
+                                this.open();
+                            }
+                            return false;
+                        }
+                    };
+
+                    window.LisaChatbot = api;
+
+                    let history = [];
+
+                    function loadHistory() {
+                        try {
+                            history = JSON.parse(localStorage.getItem(storageKey) || '[]');
+                        } catch (error) {
+                            history = [];
+                        }
+
+                        if (!Array.isArray(history) || history.length === 0) {
+                            history = [fallbackMessage];
+                        }
+                    }
+
+                    function saveHistory() {
+                        localStorage.setItem(storageKey, JSON.stringify(history.slice(-24)));
+                    }
+
+                    function renderMessages() {
+                        messages.innerHTML = '';
+
+                        history.forEach((entry) => {
+                            const row = document.createElement('div');
+                            row.className = `lisa-chat-message ${entry.role === 'user' ? 'user' : 'bot'}`;
+
+                            const bubble = document.createElement('div');
+                            bubble.className = 'lisa-chat-bubble';
+                            bubble.textContent = entry.text;
+
+                            row.appendChild(bubble);
+                            messages.appendChild(row);
+                        });
+
+                        messages.scrollTop = messages.scrollHeight;
+                    }
+
+                    function renderChips(items) {
+                        chips.innerHTML = '';
+
+                        (items || []).forEach((item) => {
+                            const chip = document.createElement('button');
+                            chip.type = 'button';
+                            chip.className = 'lisa-chat-chip';
+                            chip.textContent = item;
+                            chip.setAttribute('aria-label', `Ask Lisa: ${item}`);
+                            chip.addEventListener('click', () => {
+                                input.value = item;
+                                input.focus();
+                            });
+                            chips.appendChild(chip);
+                        });
+                    }
+
+                    async function sendMessage(text) {
+                        history.push({ role: 'user', text });
+                        renderMessages();
+                        saveHistory();
+
+                        const typingId = `typing-${Date.now()}`;
+                        history.push({ role: 'assistant', text: 'Lisa is thinking…', id: typingId });
+                        renderMessages();
+
+                        try {
+                            const response = await fetch('{{ route('lisa.message') }}', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'Accept': 'application/json',
+                                    'X-CSRF-TOKEN': csrfToken
+                                },
+                                body: JSON.stringify({ message: text })
+                            });
+
+                            const data = await response.json();
+
+                            history = history.filter((entry) => entry.id !== typingId);
+                            history.push({
+                                role: 'assistant',
+                                text: data.answer || 'I’m sorry, I could not find an answer right now.'
+                            });
+
+                            renderMessages();
+                            renderChips(data.suggestions || quickReplies);
+                            saveHistory();
+                        } catch (error) {
+                            history = history.filter((entry) => entry.id !== typingId);
+                            history.push({
+                                role: 'assistant',
+                                text: 'Sorry, Lisa could not reach the local knowledge engine just now. Please try again.'
+                            });
+                            renderMessages();
+                            saveHistory();
+                        }
+                    }
+
+                    launcher.addEventListener('click', (event) => {
                         event.preventDefault();
-                        form.requestSubmit();
-                    }
-                });
+                        api.toggle();
+                    });
 
-                loadHistory();
-                renderMessages();
-                renderChips(quickReplies);
+                    closeButton.addEventListener('click', (event) => {
+                        event.preventDefault();
+                        api.close();
+                    });
 
-                if (localStorage.getItem(openKey) === '1') {
-                    if (toggle) {
-                        toggle.checked = true;
-                    }
-                    openPanel();
-                } else {
-                    delete widget.dataset.open;
-                    if (toggle) {
-                        toggle.checked = false;
-                    }
-                    panel.hidden = true;
-                    panel.style.setProperty('display', 'none', 'important');
-                }
+                    form.addEventListener('submit', (event) => {
+                        event.preventDefault();
+                        const text = input.value.trim();
 
-                const applyResponsivePanelPlacement = () => {
-                    if (window.matchMedia('(max-width: 576px)').matches) {
-                        panel.style.right = '0';
-                        panel.style.bottom = '64px';
+                        if (!text) {
+                            return;
+                        }
+
+                        input.value = '';
+                        sendMessage(text);
+                    });
+
+                    input.addEventListener('keydown', (event) => {
+                        if (event.key === 'Enter' && !event.shiftKey) {
+                            event.preventDefault();
+                            form.requestSubmit();
+                        }
+                    });
+
+                    loadHistory();
+                    renderMessages();
+                    renderChips(quickReplies);
+
+                    if (localStorage.getItem(openKey) === '1') {
+                        api.open();
                     } else {
-                        panel.style.right = '72px';
-                        panel.style.bottom = '0';
+                        api.close();
                     }
                 };
 
-                applyResponsivePanelPlacement();
-                window.addEventListener('resize', applyResponsivePanelPlacement, { passive: true });
-
-                window.LisaChatbot.toggle = function () {
-                    if (widget.dataset.open === '1') {
-                        return closePanel();
-                    }
-
-                    return openPanel();
-                };
-
-                window.LisaChatbot.open = function () {
-                    return openPanel();
-                };
-
-                window.LisaChatbot.close = function () {
-                    return closePanel();
-                };
+                if (document.readyState === 'loading') {
+                    document.addEventListener('DOMContentLoaded', bootstrap, { once: true });
+                } else {
+                    bootstrap();
+                }
             })();
         </script>
     @endpush
