@@ -61,7 +61,7 @@
                                 <div class="modal-header">
                                     <div>
                                         <span>Periodical Collection</span>
-                                        <h4 class="modal-title">{{ $programLabel }}</h4>
+                                        <h4 class="modal-title">{{ $program->title }}</h4>
                                     </div>
                                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                 </div>
