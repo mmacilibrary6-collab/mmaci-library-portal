@@ -7,10 +7,10 @@
         type="button"
         id="lisa-chat-launcher"
         class="lisa-chat-launcher"
-        style="width:60px!important;height:60px!important;min-width:60px!important;min-height:60px!important;max-width:60px!important;max-height:60px!important;display:grid!important;"
+        style="width:60px!important;height:60px!important;min-width:60px!important;min-height:60px!important;max-width:60px!important;max-height:60px!important;display:grid!important;border-radius:9999px!important;overflow:hidden!important;clip-path:circle(50% at 50% 50%)!important;"
         aria-label="Open Lisa chat"
         aria-expanded="false">
-        <img src="{{ $lisaAvatar }}" alt="Lisa avatar" class="lisa-chat-avatar" style="width:100%!important;height:100%!important;display:block!important;object-fit:cover!important;">
+        <img src="{{ $lisaAvatar }}" alt="Lisa avatar" class="lisa-chat-avatar" style="width:100%!important;height:100%!important;display:block!important;object-fit:cover!important;border-radius:9999px!important;">
     </button>
 
     <section
@@ -84,7 +84,7 @@
                 margin: 0;
                 width: 60px;
                 height: 60px;
-                border-radius: 999px;
+                border-radius: 9999px;
                 display: grid;
                 place-items: center;
                 overflow: hidden;
@@ -116,6 +116,7 @@
                 height: 100%;
                 display: block;
                 object-fit: cover;
+                border-radius: 9999px;
             }
 
             #lisa-chatbot-widget .lisa-chat-panel {
@@ -458,6 +459,10 @@
                 panel.style.padding = '0';
                 panel.style.transform = 'none';
                 panel.style.borderRadius = '12px';
+                launcher.style.borderRadius = '9999px';
+                launcher.style.overflow = 'hidden';
+                launcher.style.clipPath = 'circle(50% at 50% 50%)';
+                launcher.querySelector('.lisa-chat-avatar')?.style.setProperty('border-radius', '9999px', 'important');
 
                 let history = [];
 
