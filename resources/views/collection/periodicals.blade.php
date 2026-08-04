@@ -27,7 +27,7 @@
             <h2>Find periodicals for your needs</h2>
             <p>Select a category below to view its available folder links.</p>
         </header>
-        <form method="GET" action="{{ route('periodicals') }}" class="periodical-filter">
+        <form method="GET" action="{{ route('collection.periodicals') }}" class="periodical-filter">
             <div class="filter-chip-group" role="tablist" aria-label="Periodical categories">
                 <button type="submit" name="category" value="" class="filter-chip {{ blank($selectedCategory ?? null) ? 'active' : '' }}">All Categories</button>
                 <button type="submit" name="category" value="journal_newspaper" class="filter-chip {{ ($selectedCategory ?? null) === 'journal_newspaper' ? 'active' : '' }}">Journal &amp; Newspaper Clippings</button>
