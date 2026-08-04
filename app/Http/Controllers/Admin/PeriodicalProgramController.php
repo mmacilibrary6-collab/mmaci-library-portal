@@ -60,9 +60,7 @@ class PeriodicalProgramController extends Controller
 
     public function destroy(PeriodicalProgram $periodicalProgram): RedirectResponse
     {
-        if ($periodicalProgram->folders()->exists()) {
-            return redirect()->route('admin.periodical-programs.index')->with('error', 'This program cannot be deleted because it still has folders. Delete the folders first.');
-        }
+        $periodicalProgram->folders()->delete();
         $periodicalProgram->delete();
         return redirect()->route('admin.periodical-programs.index')->with('success', 'Periodical program deleted successfully.');
     }

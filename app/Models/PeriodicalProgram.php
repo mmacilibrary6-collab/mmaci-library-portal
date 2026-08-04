@@ -25,6 +25,13 @@ class PeriodicalProgram extends Model
         'status' => 'boolean',
     ];
 
+    protected static function booted(): void
+    {
+        static::deleting(function (PeriodicalProgram $program) {
+            $program->folders()->delete();
+        });
+    }
+
     public function folders(): HasMany
     {
         return $this->hasMany(PeriodicalFolder::class, 'periodical_program_id');

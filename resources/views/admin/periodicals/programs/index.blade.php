@@ -14,7 +14,6 @@
         </div>
         <a href="{{ route('admin.periodical-programs.create') }}" class="btn-add-program"><i class="bi bi-plus-lg"></i><span>Add Program</span></a>
     </section>
-    @include('partials.flash-messages')
     <section class="programs-panel">
         <div class="panel-toolbar"><div><h5>Program List</h5><p>{{ $programs->total() }} {{ \Illuminate\Support\Str::plural('program', $programs->total()) }} found</p></div></div>
         <div class="table-responsive">
