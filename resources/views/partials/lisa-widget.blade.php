@@ -3,21 +3,22 @@
 @endphp
 
 <div id="lisa-chatbot-widget" class="lisa-chatbot-widget" aria-live="polite" style="position:fixed!important;right:24px!important;bottom:24px!important;left:auto!important;top:auto!important;width:auto!important;height:auto!important;margin:0!important;padding:0!important;z-index:2147483000!important;isolation:isolate!important;display:block!important;pointer-events:auto!important;transform:none!important;float:none!important;clear:both!important;">
-    <button
+    <input type="checkbox" id="lisa-chat-toggle" class="lisa-chat-toggle" aria-hidden="true" tabindex="-1">
+    <label
         type="button"
         id="lisa-chat-launcher"
         class="lisa-chat-launcher"
+        for="lisa-chat-toggle"
         style="width:60px!important;height:60px!important;min-width:60px!important;min-height:60px!important;max-width:60px!important;max-height:60px!important;display:grid!important;border-radius:9999px!important;overflow:hidden!important;clip-path:circle(50% at 50% 50%)!important;"
         aria-label="Open Lisa chat"
         aria-expanded="false"
-        onclick="return window.LisaChatbot ? window.LisaChatbot.toggle() : false;">
+        onclick="return false;">
         <img src="{{ $lisaAvatar }}" alt="Lisa avatar" class="lisa-chat-avatar" style="width:100%!important;height:100%!important;display:block!important;object-fit:cover!important;border-radius:9999px!important;">
-    </button>
+    </label>
 
     <section
         id="lisa-chat-panel"
         class="lisa-chat-panel"
-        hidden
         aria-label="Lisa chatbot"
         style="position:absolute!important;right:72px!important;bottom:0!important;width:350px!important;height:480px!important;max-width:calc(100vw - 32px)!important;max-height:calc(100dvh - 120px)!important;overflow:hidden!important;display:none!important;margin:0!important;padding:0!important;transform:none!important;border-radius:12px!important;">
         <header class="lisa-chat-header">
@@ -62,6 +63,14 @@
                 box-sizing: border-box;
             }
 
+            #lisa-chatbot-widget .lisa-chat-toggle {
+                position: absolute;
+                width: 1px;
+                height: 1px;
+                opacity: 0;
+                pointer-events: none;
+            }
+
             #lisa-chatbot-widget {
                 position: fixed !important;
                 right: 24px !important;
@@ -94,6 +103,7 @@
                 box-shadow: 0 16px 34px rgba(11, 46, 89, 0.28);
                 transition: transform 0.18s ease, box-shadow 0.18s ease, opacity 0.18s ease;
                 animation: lisa-bob 3.6s ease-in-out infinite;
+                user-select: none;
             }
 
             #lisa-chatbot-widget .lisa-chat-launcher:hover {
@@ -148,6 +158,13 @@
             }
 
             #lisa-chatbot-widget[data-open="1"] .lisa-chat-panel {
+                display: flex !important;
+                opacity: 1 !important;
+                pointer-events: auto !important;
+                transform: translateX(0) scale(1) !important;
+            }
+
+            #lisa-chatbot-widget .lisa-chat-toggle:checked ~ .lisa-chat-panel {
                 display: flex !important;
                 opacity: 1 !important;
                 pointer-events: auto !important;
@@ -609,19 +626,28 @@
                     }
                 }
 
+                const toggle = document.getElementById('lisa-chat-toggle');
+
                 launcher.addEventListener('click', function () {
-                    if (widget.dataset.open !== '1') {
-                        openPanel();
-                    } else {
-                        closePanel();
+                    if (toggle) {
+                        toggle.checked = !toggle.checked;
+                        if (toggle.checked) {
+                            openPanel();
+                        } else {
+                            closePanel();
+                        }
                     }
                 });
 
-                launcher.addEventListener('pointerup', function () {
-                    if (widget.dataset.open !== '1') {
-                        openPanel();
-                    }
-                });
+                if (toggle) {
+                    toggle.addEventListener('change', function () {
+                        if (toggle.checked) {
+                            openPanel();
+                        } else {
+                            closePanel();
+                        }
+                    });
+                }
 
                 closeButton.addEventListener('click', closePanel);
 
@@ -649,9 +675,15 @@
                 renderChips(quickReplies);
 
                 if (localStorage.getItem(openKey) === '1') {
+                    if (toggle) {
+                        toggle.checked = true;
+                    }
                     openPanel();
                 } else {
                     delete widget.dataset.open;
+                    if (toggle) {
+                        toggle.checked = false;
+                    }
                     panel.hidden = true;
                     panel.style.setProperty('display', 'none', 'important');
                 }
