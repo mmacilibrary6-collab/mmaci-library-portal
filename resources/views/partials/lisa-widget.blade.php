@@ -2,14 +2,14 @@
     $lisaAvatar = 'https://static.vecteezy.com/system/resources/previews/054/064/121/non_2x/young-girl-reading-in-library-illustration-for-education-and-learning-themes-free-vector.jpg';
 @endphp
 
-<div class="lisa-widget" id="lisaWidget" aria-live="polite">
-    <button type="button" class="lisa-launcher" id="lisaLauncher" aria-label="Open Lisa chat">
+<div class="lisa-widget" id="lisaWidget" aria-live="polite" style="position:fixed;right:22px;bottom:22px;z-index:1080;width:64px;height:64px;">
+    <button type="button" class="lisa-launcher" id="lisaLauncher" aria-label="Open Lisa chat" style="position:relative;width:64px;height:64px;padding:0;border:0;border-radius:999px;overflow:hidden;display:grid;place-items:center;box-shadow:0 18px 40px rgba(11,46,89,.28);background:linear-gradient(135deg,#0b2e59,#184b8c);">
         <span class="lisa-launcher-avatar">
             <img src="{{ $lisaAvatar }}" alt="Lisa avatar">
         </span>
     </button>
 
-    <div class="lisa-panel" id="lisaPanel" hidden>
+    <div class="lisa-panel" id="lisaPanel" hidden style="position:fixed;right:22px;bottom:96px;z-index:1081;width:min(380px,calc(100vw - 28px));height:min(620px,calc(100vh - 96px));display:none;">
         <header class="lisa-header">
             <div class="lisa-header-copy">
                 <span class="lisa-avatar">
@@ -53,17 +53,9 @@
             }
 
             .lisa-launcher {
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                width: 62px;
-                height: 62px;
-                padding: 0;
-                background: linear-gradient(135deg, #0b2e59, #184b8c);
+                display: grid;
+                place-items: center;
                 color: #fff;
-                border: 0;
-                border-radius: 999px;
-                box-shadow: 0 18px 40px rgba(11, 46, 89, 0.28);
             }
 
             .lisa-launcher-avatar,
@@ -86,11 +78,6 @@
             }
 
             .lisa-panel {
-                width: min(390px, calc(100vw - 28px));
-                height: min(620px, calc(100vh - 96px));
-                position: fixed;
-                right: 22px;
-                bottom: 96px;
                 background: #fff;
                 border: 1px solid rgba(11,46,89,.12);
                 border-radius: 24px;
@@ -108,6 +95,7 @@
                 opacity: 1;
                 transform: translateY(0) scale(1);
                 pointer-events: auto;
+                display: grid !important;
             }
 
             .lisa-header {
@@ -250,10 +238,10 @@
                 }
 
                 .lisa-panel {
-                    width: 100%;
+                    width: min(100vw - 28px, 380px);
                     height: min(70vh, 620px);
                     right: 0;
-                    left: 0;
+                    left: auto;
                     bottom: 78px;
                 }
             }
@@ -336,6 +324,7 @@
                 function openPanel() {
                     panel.hidden = false;
                     panel.classList.add('is-open');
+                    panel.style.display = 'grid';
                     localStorage.setItem(openKey, '1');
                     setTimeout(function () {
                         messages.scrollTop = messages.scrollHeight;
@@ -345,6 +334,7 @@
                 function closePanel() {
                     panel.classList.remove('is-open');
                     panel.hidden = true;
+                    panel.style.display = 'none';
                     localStorage.removeItem(openKey);
                 }
 
@@ -431,6 +421,7 @@
                     openPanel();
                 } else {
                     panel.hidden = true;
+                    panel.style.display = 'none';
                 }
             })();
         </script>
