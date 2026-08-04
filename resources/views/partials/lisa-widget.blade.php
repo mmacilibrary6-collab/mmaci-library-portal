@@ -146,6 +146,13 @@
                 transform: translateX(0) scale(1);
             }
 
+            #lisa-chatbot-widget[data-open="1"] .lisa-chat-panel {
+                display: flex !important;
+                opacity: 1 !important;
+                pointer-events: auto !important;
+                transform: translateX(0) scale(1) !important;
+            }
+
             #lisa-chatbot-widget [hidden] {
                 display: none !important;
             }
@@ -527,8 +534,9 @@
                 }
 
                 function openPanel() {
+                    widget.dataset.open = '1';
                     panel.hidden = false;
-                    panel.style.display = 'flex';
+                    panel.style.setProperty('display', 'flex', 'important');
                     panel.classList.add('is-open');
                     widget.classList.add('is-open');
                     launcher.setAttribute('aria-expanded', 'true');
@@ -537,12 +545,13 @@
                 }
 
                 function closePanel() {
+                    delete widget.dataset.open;
                     panel.classList.remove('is-open');
                     widget.classList.remove('is-open');
                     launcher.setAttribute('aria-expanded', 'false');
                     localStorage.removeItem(openKey);
                     setTimeout(function () {
-                        panel.style.display = 'none';
+                        panel.style.setProperty('display', 'none', 'important');
                         panel.hidden = true;
                     }, 180);
                 }
@@ -596,7 +605,7 @@
                 }
 
                 launcher.addEventListener('click', function () {
-                    if (panel.hidden) {
+                    if (widget.dataset.open !== '1') {
                         openPanel();
                     } else {
                         closePanel();
@@ -604,7 +613,7 @@
                 });
 
                 launcher.addEventListener('pointerup', function () {
-                    if (panel.hidden) {
+                    if (widget.dataset.open !== '1') {
                         openPanel();
                     }
                 });
@@ -637,8 +646,9 @@
                 if (localStorage.getItem(openKey) === '1') {
                     openPanel();
                 } else {
+                    delete widget.dataset.open;
                     panel.hidden = true;
-                    panel.style.display = 'none';
+                    panel.style.setProperty('display', 'none', 'important');
                 }
 
                 const applyResponsivePanelPlacement = () => {
