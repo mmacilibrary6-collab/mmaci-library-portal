@@ -227,6 +227,39 @@
 
         </a>
 
+        <a
+            href="{{ route('admin.periodical-programs.index') }}"
+            class="sidebar-link
+                {{ request()->routeIs('admin.periodical-programs.*')
+                    || request()->routeIs('admin.periodical-folders.*')
+                    ? 'active'
+                    : ''
+                }}">
+
+            <i class="bi bi-newspaper"></i>
+
+            <span>
+                Periodical Programs
+            </span>
+
+        </a>
+
+        <a
+            href="{{ route('admin.periodical-folders.index') }}"
+            class="sidebar-link
+                {{ request()->routeIs('admin.periodical-folders.*')
+                    ? 'active'
+                    : ''
+                }}">
+
+            <i class="bi bi-folder-fill"></i>
+
+            <span>
+                Periodical Folders
+            </span>
+
+        </a>
+
         {{-- Website --}}
         <span class="sidebar-label sidebar-section-label">
             Website

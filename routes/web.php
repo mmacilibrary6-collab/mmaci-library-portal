@@ -31,6 +31,8 @@ use App\Http\Controllers\Admin\ThesisFolderController;
 use App\Http\Controllers\Admin\ThesisProgramController;
 use App\Http\Controllers\Admin\GalleryController;
 use App\Http\Controllers\Admin\DonatedBookController;
+use App\Http\Controllers\Admin\PeriodicalFolderController;
+use App\Http\Controllers\Admin\PeriodicalProgramController;
 use App\Http\Controllers\Admin\LibraryUpdateController;
 use App\Http\Controllers\Admin\NewArrivalController;
 use App\Http\Controllers\Admin\OpenAccessResourceController;
@@ -101,6 +103,11 @@ Route::prefix('collection')
             '/donated-books',
             [CollectionController::class, 'donatedBooks']
         )->name('donated-books');
+
+        Route::get(
+            '/periodicals',
+            [CollectionController::class, 'periodicals']
+        )->name('periodicals');
     });
 
 /*
@@ -295,6 +302,9 @@ Route::prefix('admin')
             'donated-books',
             DonatedBookController::class
         )->except(['show']);
+
+        Route::resource('periodical-programs', PeriodicalProgramController::class)->except(['show']);
+        Route::resource('periodical-folders', PeriodicalFolderController::class)->except(['show']);
 
         Route::post(
             'gallery/{gallery}/images',

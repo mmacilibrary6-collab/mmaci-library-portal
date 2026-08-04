@@ -199,6 +199,22 @@
 
                         </li>
 
+                        <li>
+
+                            <a
+
+                                class="dropdown-item"
+
+                                href="{{ route('collection.periodicals') }}">
+
+                                <i class="bi bi-newspaper me-2"></i>
+
+                                Periodical Collection
+
+                            </a>
+
+                        </li>
+
                     </ul>
 
                 </li>

@@ -1,0 +1,406 @@
+@extends('layouts.app')
+
+@section('title', 'Periodical Collection | MMACI Library Services Office')
+
+@section('content')
+<section class="theses-hero">
+    <div class="container">
+        <div class="theses-hero-content">
+            <h1>Periodical Collection</h1>
+            <p>Browse journal, newspaper clipping, and magazine programs with their folder links.</p>
+
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb justify-content-center mb-0">
+                    <li class="breadcrumb-item"><a href="{{ route('home') }}">Home</a></li>
+                    <li class="breadcrumb-item">Collection</li>
+                    <li class="breadcrumb-item active" aria-current="page">Periodical Collection</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+</section>
+
+<section class="theses-intro">
+    <div class="container">
+        <header class="section-heading">
+            <span class="eyebrow">Explore by Program</span>
+            <h2>Find periodicals for your needs</h2>
+            <p>Select a program below to view its available folder links.</p>
+        </header>
+    </div>
+</section>
+
+<section class="programs-section">
+    <div class="container">
+        <div class="row g-4">
+            @forelse($programs as $program)
+                @php
+                    $modalId = 'periodical-folders-modal-' . $program->id;
+                    $programImage = $program->image_url ?: asset('images/readingarea.jpg');
+                    $folderCount = $program->folders->count();
+                @endphp
+
+                <div class="col-xl-4 col-lg-4 col-md-6 program-item">
+                    <article class="program-card">
+                        <button type="button" class="program-card-button" data-bs-toggle="modal" data-bs-target="#{{ $modalId }}">
+                            <div class="program-image">
+                                <img src="{{ $programImage }}" alt="{{ $program->title }}" loading="lazy" onerror="this.onerror=null;this.src='{{ asset('images/readingarea.jpg') }}';">
+                                <span class="folder-count">{{ $folderCount }} {{ \Illuminate\Support\Str::plural('Folder', $folderCount) }}</span>
+                            </div>
+                            <div class="program-content">
+                                <h3>{{ $program->title }}</h3>
+                                <p>{{ $program->description ?: 'Browse available folder links for this periodical program.' }}</p>
+                                <span class="program-action">{{ $program->folders->isNotEmpty() ? 'View available folders' : 'No folders available' }} <i class="bi bi-arrow-right"></i></span>
+                            </div>
+                        </button>
+                    </article>
+
+                    <div class="modal fade folder-modal" id="{{ $modalId }}" tabindex="-1" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <div>
+                                        <span>Periodical Collection</span>
+                                        <h4 class="modal-title">{{ $program->title }}</h4>
+                                    </div>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    @if($program->folders->isNotEmpty())
+                                        <div class="folder-list">
+                                            @foreach($program->folders->sortBy('title', SORT_NATURAL | SORT_FLAG_CASE) as $folder)
+                                                <a href="{{ $folder->folder_link }}" target="_blank" rel="noopener noreferrer" class="folder-link">
+                                                    <span class="folder-link-copy">
+                                                        <strong>{{ $folder->title }}</strong>
+                                                        <small>{{ $folder->description ?: 'Open this folder link' }}</small>
+                                                    </span>
+                                                    <i class="bi bi-box-arrow-up-right"></i>
+                                                </a>
+                                            @endforeach
+                                        </div>
+                                    @else
+                                        <div class="folder-empty">
+                                            <h5>No folders available</h5>
+                                            <p>This program has not been assigned folder links yet.</p>
+                                        </div>
+                                    @endif
+                                </div>
+                                <div class="modal-footer">
+                                    <span>{{ $folderCount }} {{ \Illuminate\Support\Str::plural('folder', $folderCount) }} available</span>
+                                    <button type="button" class="modal-close-button" data-bs-dismiss="modal">Close</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            @empty
+                <div class="col-12">
+                    <div class="program-empty">
+                        <h3>No periodical collections available</h3>
+                        <p>Please check again later.</p>
+                    </div>
+                </div>
+            @endforelse
+        </div>
+    </div>
+</section>
+@endsection
+
+@push('styles')
+<style>
+:root {
+    --thesis-navy: #0b2e59;
+    --thesis-blue: #184b8c;
+    --thesis-gold: #f4b400;
+    --thesis-ink: #17243a;
+    --thesis-muted: #647187;
+    --thesis-bg: #f4f7fb;
+    --thesis-line: #dfe6ef;
+    --thesis-white: #ffffff;
+}
+
+.theses-hero {
+    position: relative;
+    min-height: 440px;
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+    color: var(--thesis-white);
+    background:
+        linear-gradient(105deg, rgba(7, 30, 61, .86) 0%, rgba(11, 46, 89, .68) 55%, rgba(24, 75, 140, .52) 100%),
+        url("{{ asset('images/books1.jpg') }}") center center / cover no-repeat;
+}
+
+.theses-hero::after {
+    content: "";
+    position: absolute;
+    right: -130px;
+    bottom: -210px;
+    width: 430px;
+    height: 430px;
+    border: 58px solid rgba(244, 180, 0, .1);
+    border-radius: 50%;
+}
+
+.theses-hero-content {
+    position: relative;
+    z-index: 1;
+    max-width: 790px;
+    margin: auto;
+    padding: 95px 0 80px;
+    text-align: center;
+}
+
+.eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--thesis-blue);
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+}
+
+.eyebrow::before {
+    content: "";
+    width: 28px;
+    height: 3px;
+    background: var(--thesis-gold);
+    border-radius: 10px;
+}
+
+.theses-hero h1 {
+    margin: 18px 0;
+    font-size: clamp(45px, 6vw, 68px);
+    font-weight: 800;
+    line-height: 1.05;
+    letter-spacing: -.045em;
+}
+
+.theses-hero p {
+    max-width: 650px;
+    margin: 0 auto 27px;
+    color: rgba(255, 255, 255, .78);
+    font-size: 17px;
+    line-height: 1.75;
+}
+
+.theses-hero .breadcrumb {
+    font-size: 13px;
+}
+
+.theses-hero .breadcrumb-item,
+.theses-hero .breadcrumb-item.active {
+    color: rgba(255, 255, 255, .6);
+}
+
+.theses-hero .breadcrumb-item a {
+    color: var(--thesis-white);
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.theses-hero .breadcrumb-item + .breadcrumb-item::before {
+    color: rgba(255, 255, 255, .36);
+}
+
+.theses-intro {
+    padding: 68px 0 24px;
+    background: var(--thesis-bg);
+}
+
+.section-heading h2 {
+    margin: 14px 0;
+    color: var(--thesis-navy);
+    font-size: clamp(31px, 4vw, 45px);
+    font-weight: 800;
+    line-height: 1.14;
+    letter-spacing: -.035em;
+}
+
+.section-heading p {
+    margin: 0;
+    color: var(--thesis-muted);
+    font-size: 16px;
+    line-height: 1.8;
+}
+
+.programs-section {
+    min-height: 340px;
+    padding: 24px 0 68px;
+    background: var(--thesis-bg);
+}
+
+.program-card {
+    height: 100%;
+    overflow: hidden;
+    background: var(--thesis-white);
+    border: 1px solid var(--thesis-line);
+    border-radius: 22px;
+    box-shadow: 0 12px 32px rgba(11, 46, 89, .065);
+}
+
+.program-card-button {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    padding: 0;
+    overflow: hidden;
+    color: inherit;
+    background: transparent;
+    border: 0;
+    text-align: left;
+}
+
+.program-image {
+    position: relative;
+    width: 100%;
+    height: 230px;
+    overflow: hidden;
+    background: #dfe6ef;
+}
+
+.program-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.folder-count {
+    position: absolute;
+    right: 16px;
+    bottom: 16px;
+    padding: 8px 11px;
+    color: var(--thesis-white);
+    background: rgba(11, 46, 89, .86);
+    border: 1px solid rgba(255, 255, 255, .2);
+    border-radius: 8px;
+    font-size: 10px;
+    font-weight: 800;
+    text-transform: uppercase;
+}
+
+.program-content {
+    flex: 1;
+    padding: 26px 28px 28px;
+}
+
+.program-content h3 {
+    margin: 0 0 12px;
+    color: var(--thesis-navy);
+    font-size: 24px;
+    font-weight: 800;
+}
+
+.program-content p {
+    margin: 0 0 18px;
+    color: var(--thesis-muted);
+    line-height: 1.75;
+}
+
+.program-action {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    color: var(--thesis-blue);
+    font-size: 14px;
+    font-weight: 800;
+}
+
+.program-empty {
+    padding: 60px 20px;
+    text-align: center;
+    background: var(--thesis-white);
+    border: 1px solid var(--thesis-line);
+    border-radius: 20px;
+}
+
+.folder-modal .modal-content {
+    overflow: hidden;
+    border: 0;
+    border-radius: 22px;
+}
+
+.folder-modal .modal-header {
+    padding: 24px 28px;
+    border-bottom: 1px solid var(--thesis-line);
+}
+
+.folder-modal .modal-title {
+    margin: 8px 0 0;
+    color: var(--thesis-navy);
+    font-size: 26px;
+    font-weight: 800;
+}
+
+.folder-modal .modal-body {
+    padding: 26px 28px;
+}
+
+.folder-list {
+    display: grid;
+    gap: 12px;
+}
+
+.folder-link {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+    padding: 18px 20px;
+    color: inherit;
+    text-decoration: none;
+    background: var(--thesis-bg);
+    border: 1px solid var(--thesis-line);
+    border-radius: 14px;
+}
+
+.folder-link-copy strong,
+.folder-link-copy small {
+    display: block;
+}
+
+.folder-link-copy strong {
+    color: var(--thesis-navy);
+    font-size: 15px;
+    font-weight: 800;
+}
+
+.folder-link-copy small {
+    margin-top: 3px;
+    color: var(--thesis-muted);
+    font-size: 12px;
+}
+
+.folder-empty {
+    padding: 36px 12px;
+    text-align: center;
+}
+
+.folder-empty h5 {
+    color: var(--thesis-navy);
+    font-weight: 800;
+}
+
+.folder-empty p {
+    margin: 0;
+    color: var(--thesis-muted);
+}
+
+.modal-close-button {
+    padding: 11px 18px;
+    color: var(--thesis-white);
+    background: var(--thesis-navy);
+    border: 0;
+    border-radius: 10px;
+    font-weight: 700;
+}
+
+@media (max-width: 767.98px) {
+    .theses-hero { min-height: 320px; }
+    .theses-hero-content { padding: 85px 0 70px; }
+}
+</style>
+@endpush

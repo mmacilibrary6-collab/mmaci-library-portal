@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\EbookProgram;
 use App\Models\DonatedBook;
 use App\Models\NewArrival;
+use App\Models\PeriodicalProgram;
 use App\Models\OpenAccessResource;
 use App\Models\ThesisProgram;
 use Illuminate\Http\Request;
@@ -139,5 +140,19 @@ class CollectionController extends Controller
             ->get();
 
         return view('collection.donated-books', compact('books'));
+    }
+
+    public function periodicals(): View
+    {
+        $programs = PeriodicalProgram::query()
+            ->where('status', true)
+            ->orderBy('sort_order')
+            ->orderBy('title')
+            ->with([
+                'folders' => fn ($query) => $query->where('status', true)->orderBy('sort_order')->orderBy('title'),
+            ])
+            ->get();
+
+        return view('collection.periodicals', compact('programs'));
     }
 }
