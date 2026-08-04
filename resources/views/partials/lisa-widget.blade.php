@@ -2,43 +2,61 @@
     $lisaAvatar = 'https://static.vecteezy.com/system/resources/previews/054/064/121/non_2x/young-girl-reading-in-library-illustration-for-education-and-learning-themes-free-vector.jpg';
 @endphp
 
-<div id="lisa-chatbot-widget" class="lisa-chatbot-widget" aria-live="polite">
+<div
+    id="lisa-chatbot-widget"
+    aria-live="polite"
+    style="position:fixed;right:24px;bottom:24px;left:auto;top:auto;width:auto;height:auto;margin:0;padding:0;z-index:2147483000;isolation:isolate;pointer-events:auto;">
     <button
         type="button"
         id="lisa-chat-launcher"
-        class="lisa-chat-launcher"
         aria-label="Open Lisa chat"
-        aria-expanded="false">
-        <img src="{{ $lisaAvatar }}" alt="Lisa avatar" class="lisa-chat-avatar">
+        aria-expanded="false"
+        style="all:unset;box-sizing:border-box;display:block;width:60px;height:60px;border-radius:9999px;overflow:hidden;cursor:pointer;box-shadow:0 14px 30px rgba(11,46,89,.28);background:linear-gradient(135deg,#0b2e59,#184b8c);animation:lisaFloat 3.6s ease-in-out infinite;position:relative;">
+        <span
+            aria-hidden="true"
+            style="display:block;width:100%;height:100%;background-image:url('{{ $lisaAvatar }}');background-size:cover;background-position:center;background-repeat:no-repeat;"></span>
     </button>
 
-    <section id="lisa-chat-panel" class="lisa-chat-panel" aria-label="Lisa chatbot" hidden>
-        <header class="lisa-chat-header">
-            <div class="lisa-chat-header-left">
-                <img src="{{ $lisaAvatar }}" alt="Lisa avatar" class="lisa-chat-header-avatar">
-                <div class="lisa-chat-header-copy">
-                    <strong>Lisa</strong>
-                    <span>MMACI Library Guide</span>
+    <section
+        id="lisa-chat-panel"
+        aria-label="Lisa chatbot"
+        hidden
+        style="position:absolute;right:72px;bottom:0;width:350px;height:480px;max-width:calc(100vw - 32px);max-height:calc(100dvh - 120px);display:flex;flex-direction:column;overflow:hidden;border-radius:12px;background:#f8fafc;border:1px solid rgba(11,46,89,.12);box-shadow:0 24px 60px rgba(11,46,89,.24);opacity:0;transform:translateX(12px) scale(.98);pointer-events:none;transition:opacity .2s ease, transform .2s ease, width .2s ease, height .2s ease;">
+        <header style="flex:0 0 auto;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 14px;background:linear-gradient(135deg,#0b2e59,#184b8c);color:#fff;">
+            <div style="display:flex;align-items:center;gap:10px;min-width:0;">
+                <span
+                    aria-hidden="true"
+                    style="width:36px;height:36px;flex:0 0 auto;border-radius:50%;border:2px solid rgba(255,255,255,.55);background-image:url('{{ $lisaAvatar }}');background-size:cover;background-position:center;background-repeat:no-repeat;"></span>
+                <div style="min-width:0;display:flex;flex-direction:column;line-height:1.15;">
+                    <strong style="color:#fff;font-size:14px;font-weight:700;">Lisa</strong>
+                    <span style="color:rgba(255,255,255,.78);font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">MMACI Library Guide</span>
                 </div>
             </div>
 
-            <button type="button" id="lisa-chat-close" class="lisa-chat-icon-button" aria-label="Close Lisa chat">×</button>
+            <button
+                type="button"
+                id="lisa-chat-close"
+                aria-label="Close Lisa chat"
+                style="all:unset;box-sizing:border-box;display:grid;place-items:center;width:32px;height:32px;border-radius:50%;cursor:pointer;background:rgba(255,255,255,.14);color:#fff;font-size:22px;line-height:1;">×</button>
         </header>
 
-        <div class="lisa-chat-body">
-            <div id="lisa-chat-messages" class="lisa-chat-messages" aria-live="polite"></div>
-            <div id="lisa-chat-chips" class="lisa-chat-chips" aria-label="Suggested questions"></div>
+        <div style="flex:1 1 auto;min-height:0;display:flex;flex-direction:column;background:linear-gradient(180deg,#f8fafc 0%,#ffffff 100%);">
+            <div id="lisa-chat-messages" aria-live="polite" style="flex:1 1 auto;min-height:0;overflow-y:auto;padding:14px;"></div>
+            <div id="lisa-chat-chips" aria-label="Suggested questions" style="flex:0 0 auto;display:flex;flex-wrap:wrap;gap:8px;padding:0 14px 12px;max-height:96px;overflow:hidden;"></div>
         </div>
 
-        <form id="lisa-chat-form" class="lisa-chat-footer" autocomplete="off">
-            <label class="sr-only" for="lisa-chat-input">Message Lisa</label>
+        <form id="lisa-chat-form" autocomplete="off" style="flex:0 0 auto;display:flex;align-items:flex-end;gap:10px;padding:12px 14px 14px;border-top:1px solid #e3e9f1;background:#fff;">
+            <label for="lisa-chat-input" style="position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);border:0;">Message Lisa</label>
             <textarea
                 id="lisa-chat-input"
-                class="lisa-chat-input"
                 rows="1"
-                placeholder="Ask Lisa about the website, collections, or services..."></textarea>
+                placeholder="Ask Lisa about the website, collections, or services..."
+                style="box-sizing:border-box;flex:1 1 auto;min-width:0;resize:none;border:1px solid #d9e3ef;border-radius:16px;padding:11px 13px;background:#fff;color:#1f2f46;font-size:14px;line-height:1.5;max-height:108px;outline:none;"></textarea>
 
-            <button type="submit" class="lisa-chat-send" aria-label="Send message">➤</button>
+            <button
+                type="submit"
+                aria-label="Send message"
+                style="all:unset;box-sizing:border-box;display:grid;place-items:center;width:42px;height:42px;flex:0 0 auto;border-radius:50%;cursor:pointer;color:#fff;background:linear-gradient(135deg,#f4b400,#dca300);box-shadow:0 10px 24px rgba(244,180,0,.28);font-size:18px;line-height:1;">➤</button>
         </form>
     </section>
 </div>
@@ -49,168 +67,6 @@
             #lisa-chatbot-widget,
             #lisa-chatbot-widget * {
                 box-sizing: border-box;
-            }
-
-            #lisa-chatbot-widget {
-                position: fixed !important;
-                right: 24px !important;
-                bottom: 24px !important;
-                z-index: 2147483000 !important;
-                isolation: isolate !important;
-                width: auto !important;
-                height: auto !important;
-                margin: 0 !important;
-                padding: 0 !important;
-                pointer-events: auto !important;
-            }
-
-            #lisa-chatbot-widget .lisa-chat-launcher {
-                appearance: none;
-                -webkit-appearance: none;
-                width: 60px;
-                height: 60px;
-                border: 0;
-                margin: 0;
-                padding: 0;
-                border-radius: 50%;
-                overflow: hidden;
-                display: grid;
-                place-items: center;
-                cursor: pointer;
-                background: linear-gradient(135deg, #0b2e59, #184b8c);
-                box-shadow: 0 14px 30px rgba(11, 46, 89, 0.28);
-                transition: transform 0.2s ease, box-shadow 0.2s ease;
-                animation: lisa-float 3.6s ease-in-out infinite;
-            }
-
-            #lisa-chatbot-widget .lisa-chat-launcher:hover {
-                transform: translateY(-2px);
-                box-shadow: 0 18px 38px rgba(11, 46, 89, 0.34);
-                animation-play-state: paused;
-            }
-
-            #lisa-chatbot-widget .lisa-chat-launcher:focus-visible,
-            #lisa-chatbot-widget .lisa-chat-icon-button:focus-visible,
-            #lisa-chatbot-widget .lisa-chat-send:focus-visible,
-            #lisa-chatbot-widget .lisa-chat-chip:focus-visible,
-            #lisa-chatbot-widget .lisa-chat-input:focus-visible {
-                outline: 3px solid rgba(244, 180, 0, 0.45);
-                outline-offset: 2px;
-            }
-
-            #lisa-chatbot-widget .lisa-chat-avatar,
-            #lisa-chatbot-widget .lisa-chat-header-avatar {
-                width: 100%;
-                height: 100%;
-                display: block;
-                object-fit: cover;
-            }
-
-            #lisa-chatbot-widget .lisa-chat-panel {
-                position: absolute !important;
-                right: 72px !important;
-                bottom: 0 !important;
-                width: 350px !important;
-                height: 480px !important;
-                max-width: calc(100vw - 32px) !important;
-                max-height: calc(100dvh - 120px) !important;
-                display: flex;
-                flex-direction: column;
-                overflow: hidden;
-                border-radius: 12px;
-                background: #f8fafc;
-                border: 1px solid rgba(11, 46, 89, 0.12);
-                box-shadow: 0 24px 60px rgba(11, 46, 89, 0.24);
-                opacity: 0;
-                transform: translateX(12px) scale(0.98);
-                pointer-events: none;
-                transition: opacity 0.2s ease, transform 0.2s ease;
-            }
-
-            #lisa-chatbot-widget.is-open .lisa-chat-panel {
-                opacity: 1;
-                transform: translateX(0) scale(1);
-                pointer-events: auto;
-            }
-
-            #lisa-chatbot-widget .lisa-chat-header {
-                flex: 0 0 auto;
-                display: flex;
-                align-items: center;
-                justify-content: space-between;
-                gap: 12px;
-                padding: 12px 14px;
-                background: linear-gradient(135deg, #0b2e59, #184b8c);
-                color: #fff;
-            }
-
-            #lisa-chatbot-widget .lisa-chat-header-left {
-                display: flex;
-                align-items: center;
-                gap: 10px;
-                min-width: 0;
-            }
-
-            #lisa-chatbot-widget .lisa-chat-header-avatar {
-                width: 36px;
-                height: 36px;
-                border-radius: 50%;
-                flex: 0 0 auto;
-                border: 2px solid rgba(255, 255, 255, 0.55);
-                background: #fff;
-            }
-
-            #lisa-chatbot-widget .lisa-chat-header-copy {
-                min-width: 0;
-                display: flex;
-                flex-direction: column;
-                line-height: 1.15;
-            }
-
-            #lisa-chatbot-widget .lisa-chat-header-copy strong {
-                color: #fff;
-                font-size: 14px;
-                font-weight: 700;
-            }
-
-            #lisa-chatbot-widget .lisa-chat-header-copy span {
-                color: rgba(255, 255, 255, 0.78);
-                font-size: 12px;
-                white-space: nowrap;
-                overflow: hidden;
-                text-overflow: ellipsis;
-            }
-
-            #lisa-chatbot-widget .lisa-chat-icon-button {
-                appearance: none;
-                -webkit-appearance: none;
-                border: 0;
-                width: 32px;
-                height: 32px;
-                border-radius: 50%;
-                display: grid;
-                place-items: center;
-                color: #fff;
-                background: rgba(255, 255, 255, 0.14);
-                cursor: pointer;
-                flex: 0 0 auto;
-                font-size: 20px;
-                line-height: 1;
-            }
-
-            #lisa-chatbot-widget .lisa-chat-body {
-                flex: 1 1 auto;
-                min-height: 0;
-                display: flex;
-                flex-direction: column;
-                background: linear-gradient(180deg, #f8fafc 0%, #ffffff 100%);
-            }
-
-            #lisa-chatbot-widget .lisa-chat-messages {
-                flex: 1 1 auto;
-                min-height: 0;
-                overflow-y: auto;
-                padding: 14px;
             }
 
             #lisa-chatbot-widget .lisa-chat-message {
@@ -246,16 +102,6 @@
                 border-top-right-radius: 6px;
             }
 
-            #lisa-chatbot-widget .lisa-chat-chips {
-                flex: 0 0 auto;
-                display: flex;
-                flex-wrap: wrap;
-                gap: 8px;
-                padding: 0 14px 12px;
-                max-height: 96px;
-                overflow: hidden;
-            }
-
             #lisa-chatbot-widget .lisa-chat-chip {
                 appearance: none;
                 -webkit-appearance: none;
@@ -269,65 +115,20 @@
                 cursor: pointer;
             }
 
-            #lisa-chatbot-widget .lisa-chat-footer {
-                flex: 0 0 auto;
-                display: flex;
-                align-items: flex-end;
-                gap: 10px;
-                padding: 12px 14px 14px;
-                border-top: 1px solid #e3e9f1;
-                background: #ffffff;
+            #lisa-chatbot-widget.is-open #lisa-chat-panel {
+                opacity: 1;
+                transform: translateX(0) scale(1);
+                pointer-events: auto;
             }
 
-            #lisa-chatbot-widget .lisa-chat-input {
-                flex: 1 1 auto;
-                min-width: 0;
-                resize: none;
-                border: 1px solid #d9e3ef;
-                border-radius: 16px;
-                padding: 11px 13px;
-                background: #fff;
-                color: #1f2f46;
-                font-size: 14px;
-                line-height: 1.5;
-                max-height: 108px;
-                outline: none;
+            #lisa-chatbot-widget .lisa-chat-launcher:focus-visible,
+            #lisa-chatbot-widget button:focus-visible,
+            #lisa-chatbot-widget textarea:focus-visible {
+                outline: 3px solid rgba(244, 180, 0, 0.45);
+                outline-offset: 2px;
             }
 
-            #lisa-chatbot-widget .lisa-chat-input::placeholder {
-                color: #91a0b3;
-            }
-
-            #lisa-chatbot-widget .lisa-chat-send {
-                appearance: none;
-                -webkit-appearance: none;
-                border: 0;
-                width: 42px;
-                height: 42px;
-                flex: 0 0 auto;
-                border-radius: 50%;
-                display: grid;
-                place-items: center;
-                color: #fff;
-                background: linear-gradient(135deg, #f4b400, #dca300);
-                box-shadow: 0 10px 24px rgba(244, 180, 0, 0.28);
-                cursor: pointer;
-                font-size: 18px;
-                line-height: 1;
-            }
-
-            #lisa-chatbot-widget .sr-only {
-                position: absolute;
-                width: 1px;
-                height: 1px;
-                padding: 0;
-                margin: -1px;
-                overflow: hidden;
-                clip: rect(0, 0, 0, 0);
-                border: 0;
-            }
-
-            @keyframes lisa-float {
+            @keyframes lisaFloat {
                 0%, 100% { transform: translateY(0); }
                 50% { transform: translateY(-6px); }
             }
@@ -339,11 +140,11 @@
                 }
 
                 #lisa-chatbot-widget .lisa-chat-launcher {
-                    width: 52px;
-                    height: 52px;
+                    width: 52px !important;
+                    height: 52px !important;
                 }
 
-                #lisa-chatbot-widget .lisa-chat-panel {
+                #lisa-chatbot-widget #lisa-chat-panel {
                     right: 0 !important;
                     bottom: 64px !important;
                     width: min(350px, calc(100vw - 24px)) !important;
@@ -352,10 +153,8 @@
             }
 
             @media (prefers-reduced-motion: reduce) {
-                #lisa-chatbot-widget .lisa-chat-launcher,
-                #lisa-chatbot-widget .lisa-chat-panel {
+                #lisa-chatbot-widget .lisa-chat-launcher {
                     animation: none;
-                    transition: none;
                 }
             }
         </style>
@@ -364,7 +163,7 @@
     @push('scripts')
         <script>
             (function () {
-                const bootstrap = () => {
+                function initLisaChatbot() {
                     if (window.__lisaChatbotInitialized) {
                         return;
                     }
@@ -384,6 +183,7 @@
                     }
 
                     window.__lisaChatbotInitialized = true;
+                    window.LisaChatbot = window.LisaChatbot || {};
 
                     const storageKey = 'lisa.chat.history';
                     const openKey = 'lisa.chat.open';
@@ -393,54 +193,22 @@
                         'How do gallery uploads work?'
                     ];
 
-                    const fallbackMessage = {
-                        role: 'assistant',
-                        text: 'Hi, I’m Lisa — your MMACI Library guide. Ask me about collections, services, reservations, or how to use the site.'
-                    };
-
-                    const api = {
-                        open() {
-                            widget.classList.add('is-open');
-                            panel.hidden = false;
-                            launcher.setAttribute('aria-expanded', 'true');
-                            panel.setAttribute('aria-hidden', 'false');
-                            localStorage.setItem(openKey, '1');
-                            setTimeout(() => messages.scrollTop = messages.scrollHeight, 0);
-                        },
-                        close() {
-                            widget.classList.remove('is-open');
-                            launcher.setAttribute('aria-expanded', 'false');
-                            panel.setAttribute('aria-hidden', 'true');
-                            localStorage.removeItem(openKey);
-                            setTimeout(() => {
-                                panel.hidden = true;
-                            }, 150);
-                        },
-                        toggle() {
-                            if (widget.classList.contains('is-open')) {
-                                this.close();
-                            } else {
-                                this.open();
-                            }
-                            return false;
-                        }
-                    };
-
-                    window.LisaChatbot = api;
-
-                    let history = [];
-
                     function loadHistory() {
                         try {
-                            history = JSON.parse(localStorage.getItem(storageKey) || '[]');
+                            const stored = JSON.parse(localStorage.getItem(storageKey) || '[]');
+                            return Array.isArray(stored) && stored.length ? stored : [{
+                                role: 'assistant',
+                                text: 'Hi, I’m Lisa — your MMACI Library guide. Ask me about collections, services, reservations, or how to use the site.'
+                            }];
                         } catch (error) {
-                            history = [];
-                        }
-
-                        if (!Array.isArray(history) || history.length === 0) {
-                            history = [fallbackMessage];
+                            return [{
+                                role: 'assistant',
+                                text: 'Hi, I’m Lisa — your MMACI Library guide. Ask me about collections, services, reservations, or how to use the site.'
+                            }];
                         }
                     }
+
+                    let history = loadHistory();
 
                     function saveHistory() {
                         localStorage.setItem(storageKey, JSON.stringify(history.slice(-24)));
@@ -479,6 +247,23 @@
                             });
                             chips.appendChild(chip);
                         });
+                    }
+
+                    function openChat() {
+                        widget.classList.add('is-open');
+                        panel.hidden = false;
+                        launcher.setAttribute('aria-expanded', 'true');
+                        panel.style.pointerEvents = 'auto';
+                        localStorage.setItem(openKey, '1');
+                        setTimeout(() => messages.scrollTop = messages.scrollHeight, 0);
+                    }
+
+                    function closeChat() {
+                        widget.classList.remove('is-open');
+                        launcher.setAttribute('aria-expanded', 'false');
+                        localStorage.removeItem(openKey);
+                        panel.style.pointerEvents = 'none';
+                        panel.hidden = true;
                     }
 
                     async function sendMessage(text) {
@@ -525,12 +310,16 @@
 
                     launcher.addEventListener('click', (event) => {
                         event.preventDefault();
-                        api.toggle();
+                        if (widget.classList.contains('is-open')) {
+                            closeChat();
+                        } else {
+                            openChat();
+                        }
                     });
 
                     closeButton.addEventListener('click', (event) => {
                         event.preventDefault();
-                        api.close();
+                        closeChat();
                     });
 
                     form.addEventListener('submit', (event) => {
@@ -552,21 +341,31 @@
                         }
                     });
 
-                    loadHistory();
                     renderMessages();
                     renderChips(quickReplies);
 
                     if (localStorage.getItem(openKey) === '1') {
-                        api.open();
+                        openChat();
                     } else {
-                        api.close();
+                        closeChat();
                     }
-                };
+
+                    document.body.appendChild(widget);
+                    window.LisaChatbot.open = openChat;
+                    window.LisaChatbot.close = closeChat;
+                    window.LisaChatbot.toggle = () => {
+                        if (widget.classList.contains('is-open')) {
+                            closeChat();
+                        } else {
+                            openChat();
+                        }
+                    };
+                }
 
                 if (document.readyState === 'loading') {
-                    document.addEventListener('DOMContentLoaded', bootstrap, { once: true });
+                    document.addEventListener('DOMContentLoaded', initLisaChatbot, { once: true });
                 } else {
-                    bootstrap();
+                    initLisaChatbot();
                 }
             })();
         </script>
