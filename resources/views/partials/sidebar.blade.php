@@ -231,7 +231,6 @@
             href="{{ route('admin.periodical-programs.index') }}"
             class="sidebar-link
                 {{ request()->routeIs('admin.periodical-programs.*')
-                    || request()->routeIs('admin.periodical-folders.*')
                     ? 'active'
                     : ''
                 }}">
