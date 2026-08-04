@@ -5,6 +5,7 @@
 <div id="lisa-chatbot-widget" aria-live="polite">
     <button type="button" id="lisa-chat-launcher" aria-label="Open Lisa chat" aria-expanded="false">
         <span class="lisa-launcher-avatar" aria-hidden="true"></span>
+        <span class="lisa-launcher-status" aria-hidden="true"></span>
     </button>
 
     <section id="lisa-chat-panel" aria-label="Lisa chatbot" hidden>
@@ -13,13 +14,17 @@
                 <span class="lisa-header-avatar" aria-hidden="true"></span>
                 <div class="lisa-header-copy">
                     <strong>Lisa</strong>
-                    <span>MMACI Library Guide</span>
+                    <span><i aria-hidden="true"></i> Online · MMACI Library Guide</span>
                 </div>
             </div>
 
             <div class="lisa-header-actions">
-                <button type="button" id="lisa-chat-minimize" aria-label="Minimize chat">—</button>
-                <button type="button" id="lisa-chat-close" aria-label="Close chat">×</button>
+                <button type="button" id="lisa-chat-minimize" aria-label="Minimize chat">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14" /></svg>
+                </button>
+                <button type="button" id="lisa-chat-close" aria-label="Close chat">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18" /></svg>
+                </button>
             </div>
         </header>
 
@@ -31,7 +36,9 @@
         <form id="lisa-chat-form" autocomplete="off">
             <label for="lisa-chat-input" class="sr-only">Message Lisa</label>
             <textarea id="lisa-chat-input" rows="1" placeholder="Send a message..."></textarea>
-            <button type="submit" aria-label="Send message">➤</button>
+            <button type="submit" aria-label="Send message">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m4 4 17 8-17 8 3-8-3-8Zm3 8h14" /></svg>
+            </button>
         </form>
     </section>
 </div>
@@ -60,6 +67,7 @@
             }
 
             #lisa-chatbot-widget #lisa-chat-launcher {
+                position: relative;
                 appearance: none;
                 -webkit-appearance: none;
                 border: 0;
@@ -75,6 +83,24 @@
                 display: grid;
                 place-items: center;
                 animation: lisaFloat 3.8s ease-in-out infinite;
+                border: 3px solid #fff;
+                transition: transform .2s ease, box-shadow .2s ease;
+            }
+
+            #lisa-chatbot-widget #lisa-chat-launcher:hover {
+                transform: translateY(-2px) scale(1.04);
+                box-shadow: 0 18px 36px rgba(11, 46, 89, 0.34);
+            }
+
+            #lisa-chatbot-widget .lisa-launcher-status {
+                position: absolute;
+                right: 1px;
+                bottom: 1px;
+                width: 14px;
+                height: 14px;
+                border-radius: 50%;
+                background: #22c55e;
+                border: 3px solid #fff;
             }
 
             #lisa-chatbot-widget .lisa-launcher-avatar,
@@ -95,14 +121,14 @@
                 position: absolute;
                 right: 0;
                 bottom: 72px;
-                width: 360px;
-                height: 500px;
+                width: 370px;
+                height: 520px;
                 max-width: calc(100vw - 32px);
                 max-height: calc(100dvh - 120px);
                 display: flex;
                 flex-direction: column;
                 overflow: hidden;
-                border-radius: 12px;
+                border-radius: 20px;
                 background: #f8fafc;
                 border: 1px solid rgba(11, 46, 89, 0.12);
                 box-shadow: 0 24px 60px rgba(11, 46, 89, 0.24);
@@ -110,6 +136,10 @@
                 transform: translateY(12px) scale(0.98);
                 pointer-events: none;
                 transition: opacity 0.2s ease, transform 0.2s ease;
+            }
+
+            #lisa-chatbot-widget #lisa-chat-panel[hidden] {
+                display: none !important;
             }
 
             #lisa-chatbot-widget.is-open #lisa-chat-panel {
@@ -166,6 +196,15 @@
                 text-overflow: ellipsis;
             }
 
+            #lisa-chatbot-widget .lisa-header-copy span i {
+                display: inline-block;
+                width: 7px;
+                height: 7px;
+                margin-right: 4px;
+                border-radius: 50%;
+                background: #4ade80;
+            }
+
             #lisa-chatbot-widget .lisa-header-actions {
                 display: flex;
                 align-items: center;
@@ -184,8 +223,23 @@
                 background: rgba(255, 255, 255, 0.14);
                 color: #fff;
                 cursor: pointer;
-                font-size: 20px;
-                line-height: 1;
+                transition: background .15s ease, transform .15s ease;
+            }
+
+            #lisa-chatbot-widget .lisa-header-actions button:hover {
+                background: rgba(255, 255, 255, 0.24);
+                transform: scale(1.06);
+            }
+
+            #lisa-chatbot-widget .lisa-header-actions svg,
+            #lisa-chatbot-widget #lisa-chat-form button svg {
+                width: 19px;
+                height: 19px;
+                fill: none;
+                stroke: currentColor;
+                stroke-width: 2;
+                stroke-linecap: round;
+                stroke-linejoin: round;
             }
 
             #lisa-chatbot-widget .lisa-body {
@@ -205,7 +259,9 @@
 
             #lisa-chatbot-widget .lisa-message {
                 display: flex;
-                margin-bottom: 10px;
+                align-items: flex-end;
+                gap: 8px;
+                margin-bottom: 12px;
             }
 
             #lisa-chatbot-widget .lisa-message.user {
@@ -217,7 +273,7 @@
                 padding: 11px 13px;
                 border-radius: 18px;
                 font-size: 13px;
-                line-height: 1.6;
+                line-height: 1.5;
                 white-space: pre-wrap;
                 word-break: break-word;
                 box-shadow: 0 8px 20px rgba(16, 24, 40, 0.06);
@@ -228,6 +284,16 @@
                 color: #1f2f46;
                 border: 1px solid #e3e9f1;
                 border-top-left-radius: 6px;
+            }
+
+            #lisa-chatbot-widget .lisa-message.bot::before {
+                content: '';
+                width: 26px;
+                height: 26px;
+                flex: 0 0 26px;
+                border-radius: 50%;
+                background: #fff url('{{ $lisaAvatar }}') center/cover no-repeat;
+                border: 1px solid #dce5ef;
             }
 
             #lisa-chatbot-widget .lisa-message.user .lisa-bubble {
@@ -257,6 +323,13 @@
                 font-size: 12px;
                 font-weight: 600;
                 cursor: pointer;
+                transition: background .15s ease, border-color .15s ease, transform .15s ease;
+            }
+
+            #lisa-chatbot-widget .lisa-chip:hover {
+                background: #eaf1fa;
+                border-color: #b8cce3;
+                transform: translateY(-1px);
             }
 
             #lisa-chatbot-widget #lisa-chat-form {
@@ -274,7 +347,7 @@
                 min-width: 0;
                 resize: none;
                 border: 1px solid #d9e3ef;
-                border-radius: 16px;
+                border-radius: 20px;
                 padding: 11px 13px;
                 background: #fff;
                 color: #1f2f46;
@@ -282,6 +355,12 @@
                 line-height: 1.5;
                 max-height: 108px;
                 outline: none;
+                transition: border-color .15s ease, box-shadow .15s ease;
+            }
+
+            #lisa-chatbot-widget #lisa-chat-input:focus {
+                border-color: #184b8c;
+                box-shadow: 0 0 0 3px rgba(24, 75, 140, .10);
             }
 
             #lisa-chatbot-widget #lisa-chat-input::placeholder {
@@ -302,8 +381,12 @@
                 background: linear-gradient(135deg, #f4b400, #dca300);
                 box-shadow: 0 10px 24px rgba(244, 180, 0, 0.28);
                 cursor: pointer;
-                font-size: 18px;
-                line-height: 1;
+                transition: transform .15s ease, box-shadow .15s ease;
+            }
+
+            #lisa-chatbot-widget #lisa-chat-form button:hover {
+                transform: translateY(-1px) scale(1.03);
+                box-shadow: 0 12px 28px rgba(244, 180, 0, 0.36);
             }
 
             #lisa-chatbot-widget .sr-only {
@@ -317,7 +400,7 @@
                 border: 0;
             }
 
-            #lisa-chatbot-widget .lisa-launcher:focus-visible,
+            #lisa-chatbot-widget #lisa-chat-launcher:focus-visible,
             #lisa-chatbot-widget .lisa-header-actions button:focus-visible,
             #lisa-chatbot-widget .lisa-chip:focus-visible,
             #lisa-chatbot-widget #lisa-chat-form button:focus-visible,
@@ -338,11 +421,24 @@
                 }
 
                 #lisa-chatbot-widget #lisa-chat-panel {
-                    width: min(360px, calc(100vw - 24px));
+                    width: min(370px, calc(100vw - 24px));
                     max-width: calc(100vw - 24px);
-                    height: min(500px, calc(100dvh - 110px));
+                    height: min(520px, calc(100dvh - 104px - env(safe-area-inset-bottom)));
                     right: 0;
                     bottom: 76px;
+                }
+
+                #lisa-chatbot-widget #lisa-chat-launcher {
+                    width: 54px;
+                    height: 54px;
+                }
+
+                #lisa-chatbot-widget #lisa-chat-messages {
+                    padding: 12px;
+                }
+
+                #lisa-chatbot-widget .lisa-bubble {
+                    max-width: 86%;
                 }
             }
 
