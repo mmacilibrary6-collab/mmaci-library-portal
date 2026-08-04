@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AboutController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CollectionController;
+use App\Http\Controllers\LisaController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\MoreController;
 use App\Http\Controllers\ServiceController;
@@ -63,6 +64,9 @@ Route::get('/media', function () {
 
 Route::get('/about', [AboutController::class, 'index'])
     ->name('about');
+
+Route::post('/lisa/message', [LisaController::class, 'message'])
+    ->name('lisa.message');
 
 /*
 |--------------------------------------------------------------------------
