@@ -9,7 +9,8 @@
         class="lisa-chat-launcher"
         style="width:60px!important;height:60px!important;min-width:60px!important;min-height:60px!important;max-width:60px!important;max-height:60px!important;display:grid!important;border-radius:9999px!important;overflow:hidden!important;clip-path:circle(50% at 50% 50%)!important;"
         aria-label="Open Lisa chat"
-        aria-expanded="false">
+        aria-expanded="false"
+        onclick="return window.LisaChatbot ? window.LisaChatbot.toggle() : false;">
         <img src="{{ $lisaAvatar }}" alt="Lisa avatar" class="lisa-chat-avatar" style="width:100%!important;height:100%!important;display:block!important;object-fit:cover!important;border-radius:9999px!important;">
     </button>
 
@@ -28,7 +29,7 @@
                 </div>
             </div>
 
-            <button type="button" id="lisa-chat-close" class="lisa-chat-icon-button" aria-label="Close Lisa chat">
+            <button type="button" id="lisa-chat-close" class="lisa-chat-icon-button" aria-label="Close Lisa chat" onclick="return window.LisaChatbot ? window.LisaChatbot.close() : false;">
                 <i class="bi bi-x-lg" aria-hidden="true"></i>
             </button>
         </header>
@@ -423,6 +424,8 @@
                     return;
                 }
 
+                window.LisaChatbot = window.LisaChatbot || {};
+
                 if (widget.parentElement !== document.body) {
                     document.body.appendChild(widget);
                 }
@@ -542,6 +545,7 @@
                     launcher.setAttribute('aria-expanded', 'true');
                     localStorage.setItem(openKey, '1');
                     setTimeout(scrollMessages, 0);
+                    return false;
                 }
 
                 function closePanel() {
@@ -554,6 +558,7 @@
                         panel.style.setProperty('display', 'none', 'important');
                         panel.hidden = true;
                     }, 180);
+                    return false;
                 }
 
                 async function sendMessage(text) {
@@ -663,6 +668,22 @@
 
                 applyResponsivePanelPlacement();
                 window.addEventListener('resize', applyResponsivePanelPlacement, { passive: true });
+
+                window.LisaChatbot.toggle = function () {
+                    if (widget.dataset.open === '1') {
+                        return closePanel();
+                    }
+
+                    return openPanel();
+                };
+
+                window.LisaChatbot.open = function () {
+                    return openPanel();
+                };
+
+                window.LisaChatbot.close = function () {
+                    return closePanel();
+                };
             })();
         </script>
     @endpush
