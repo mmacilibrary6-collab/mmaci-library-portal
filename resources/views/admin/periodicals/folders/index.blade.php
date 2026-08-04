@@ -7,7 +7,6 @@
         <div class="hero-copy"><span class="hero-icon"><i class="bi bi-folder-fill"></i></span><div><span class="hero-eyebrow">Collection Management</span><h2>Periodical Folders</h2><p>Manage folder links inside periodical programs.</p></div></div>
         <a href="{{ route('admin.periodical-folders.create') }}" class="btn-add-program"><i class="bi bi-plus-lg"></i><span>Add Folder</span></a>
     </section>
-    @include('partials.flash-messages')
     <section class="programs-panel">
         <div class="panel-toolbar"><div><h5>Folder List</h5><p>{{ $folders->total() }} {{ \Illuminate\Support\Str::plural('folder', $folders->total()) }} found</p></div></div>
         <div class="table-responsive">
