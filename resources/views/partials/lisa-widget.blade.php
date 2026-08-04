@@ -17,7 +17,7 @@
         class="lisa-chat-panel"
         hidden
         aria-label="Lisa chatbot"
-        style="position:absolute!important;right:0!important;bottom:72px!important;width:350px!important;height:480px!important;max-width:calc(100vw - 32px)!important;max-height:calc(100dvh - 120px)!important;overflow:hidden!important;display:none!important;margin:0!important;padding:0!important;transform:none!important;">
+        style="position:absolute!important;right:72px!important;bottom:0!important;width:350px!important;height:480px!important;max-width:calc(100vw - 32px)!important;max-height:calc(100dvh - 120px)!important;overflow:hidden!important;display:none!important;margin:0!important;padding:0!important;transform:none!important;border-radius:28px!important;">
         <header class="lisa-chat-header">
             <div class="lisa-chat-header-left">
                 <img src="{{ $lisaAvatar }}" alt="Lisa avatar" class="lisa-chat-header-avatar" style="width:36px!important;height:36px!important;display:block!important;object-fit:cover!important;">
@@ -91,11 +91,13 @@
                 background: linear-gradient(135deg, #0b2e59, #184b8c);
                 box-shadow: 0 16px 34px rgba(11, 46, 89, 0.28);
                 transition: transform 0.18s ease, box-shadow 0.18s ease, opacity 0.18s ease;
+                animation: lisa-bob 3.6s ease-in-out infinite;
             }
 
             #lisa-chatbot-widget .lisa-chat-launcher:hover {
                 transform: translateY(-2px);
                 box-shadow: 0 20px 38px rgba(11, 46, 89, 0.34);
+                animation-play-state: paused;
             }
 
             #lisa-chatbot-widget .lisa-chat-launcher:focus-visible,
@@ -126,11 +128,11 @@
                 overflow: hidden !important;
                 display: flex;
                 flex-direction: column;
-                border-radius: 22px;
+                border-radius: 28px;
                 background: #f8fafc;
                 border: 1px solid rgba(11, 46, 89, 0.12);
                 box-shadow: 0 24px 60px rgba(11, 46, 89, 0.24);
-                transform: translateY(12px) scale(0.98);
+                transform: translateX(12px) scale(0.98);
                 opacity: 0;
                 pointer-events: none;
                 transition: transform 0.2s ease, opacity 0.2s ease;
@@ -139,7 +141,7 @@
             #lisa-chatbot-widget .lisa-chat-panel.is-open {
                 opacity: 1;
                 pointer-events: auto;
-                transform: translateY(0) scale(1);
+                transform: translateX(0) scale(1);
             }
 
             #lisa-chatbot-widget [hidden] {
@@ -363,6 +365,15 @@
                 }
             }
 
+            @keyframes lisa-bob {
+                0%, 100% {
+                    transform: translateY(0);
+                }
+                50% {
+                    transform: translateY(-6px);
+                }
+            }
+
             @media (prefers-reduced-motion: reduce) {
                 #lisa-chatbot-widget .lisa-chat-launcher,
                 #lisa-chatbot-widget .lisa-chat-panel,
@@ -434,8 +445,8 @@
                 launcher.style.display = 'grid';
 
                 panel.style.position = 'absolute';
-                panel.style.right = '0';
-                panel.style.bottom = '72px';
+                panel.style.right = '72px';
+                panel.style.bottom = '0';
                 panel.style.width = '350px';
                 panel.style.height = '480px';
                 panel.style.maxWidth = 'calc(100vw - 32px)';
@@ -445,6 +456,7 @@
                 panel.style.margin = '0';
                 panel.style.padding = '0';
                 panel.style.transform = 'none';
+                panel.style.borderRadius = '28px';
 
                 let history = [];
 
@@ -612,6 +624,19 @@
                     panel.hidden = true;
                     panel.style.display = 'none';
                 }
+
+                const applyResponsivePanelPlacement = () => {
+                    if (window.matchMedia('(max-width: 576px)').matches) {
+                        panel.style.right = '0';
+                        panel.style.bottom = '64px';
+                    } else {
+                        panel.style.right = '72px';
+                        panel.style.bottom = '0';
+                    }
+                };
+
+                applyResponsivePanelPlacement();
+                window.addEventListener('resize', applyResponsivePanelPlacement, { passive: true });
             })();
         </script>
     @endpush
