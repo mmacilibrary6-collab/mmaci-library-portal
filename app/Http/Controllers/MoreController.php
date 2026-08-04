@@ -22,6 +22,9 @@ class MoreController extends Controller
     private const ONLINE_BOOK_RECOMMENDATION_FORM_URL =
         'https://docs.google.com/forms/d/e/1FAIpQLSfsg3Tn_nx3bf6KKQg46bhLVlPjvNre-mmHHKvFVh21_KBhmw/viewform';
 
+    private const RESERVE_AVR_FORM_URL =
+        'https://forms.gle/U1bEuUY8EZid1hoZ8';
+
     /**
      * Display the Ask the Librarian page.
      */
@@ -127,6 +130,16 @@ class MoreController extends Controller
     {
         return view('more.online-book-recommendation', [
             'formUrl' => self::ONLINE_BOOK_RECOMMENDATION_FORM_URL,
+        ]);
+    }
+
+    /**
+     * Display the Reserve AVR page.
+     */
+    public function reserveAvr(): View
+    {
+        return view('more.reserve-avr', [
+            'formUrl' => self::RESERVE_AVR_FORM_URL,
         ]);
     }
 }

@@ -184,6 +184,11 @@ Route::prefix('more')
             '/online-book-recommendation',
             [MoreController::class, 'onlineBookRecommendation']
         )->name('online-book-recommendation');
+
+        Route::get(
+            '/reserve-avr',
+            [MoreController::class, 'reserveAvr']
+        )->name('reserve-avr');
     });
 
 /*

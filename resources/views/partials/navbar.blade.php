@@ -335,6 +335,20 @@
 
                                 class="dropdown-item"
 
+                                href="{{ route('more.reserve-avr') }}">
+
+                                Reserve AVR
+
+                            </a>
+
+                        </li>
+
+                        <li>
+
+                            <a
+
+                                class="dropdown-item"
+
                                 href="{{ route('more.visiting-users') }}">
 
                                 Visiting Users
