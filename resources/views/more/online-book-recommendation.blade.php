@@ -596,28 +596,28 @@
 
 @media (max-width: 767.98px) {
     .recommendation-hero {
-        min-height: 390px;
+        min-height: 330px;
     }
 
     .recommendation-hero-content {
-        padding: 72px 10px 62px;
+        padding: 64px 12px 52px;
     }
 
     .recommendation-hero h1 {
-        font-size: clamp(40px, 12vw, 56px);
+        font-size: clamp(34px, 10vw, 48px);
     }
 
     .recommendation-hero p {
-        font-size: 15px;
-        line-height: 1.65;
+        font-size: 14px;
+        line-height: 1.6;
     }
 
     .recommendation-section {
-        padding: 45px 0;
+        padding: 34px 0 42px;
     }
 
     .recommendation-sidebar {
-        padding: 24px 21px;
+        padding: 22px 18px;
         border-radius: 17px;
     }
 
@@ -640,8 +640,8 @@
     }
 
     .recommendation-embed {
-        height: 900px;
-        min-height: 900px;
+        height: max(980px, calc(100dvh - 20px));
+        min-height: 980px;
     }
 }
 
@@ -660,8 +660,13 @@
     }
 
     .recommendation-embed {
-        height: 820px;
-        min-height: 820px;
+        height: max(1080px, calc(100dvh + 180px));
+        min-height: 1080px;
+    }
+
+    .recommendation-form-card,
+    .recommendation-sidebar {
+        margin-inline: -2px;
     }
 }
 </style>
