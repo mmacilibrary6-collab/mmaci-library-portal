@@ -58,20 +58,21 @@
             .lisa-launcher {
                 display: flex;
                 align-items: center;
-                gap: 12px;
-                padding: 12px 16px 12px 12px;
+                gap: 10px;
+                padding: 10px 12px 10px 10px;
                 background: linear-gradient(135deg, #0b2e59, #184b8c);
                 color: #fff;
                 border: 0;
                 border-radius: 999px;
                 box-shadow: 0 18px 40px rgba(11, 46, 89, 0.28);
+                min-height: 62px;
             }
 
             .lisa-launcher-avatar,
             .lisa-avatar {
                 flex: 0 0 auto;
-                width: 44px;
-                height: 44px;
+                width: 40px;
+                height: 40px;
                 border-radius: 50%;
                 overflow: hidden;
                 border: 2px solid rgba(255,255,255,.45);
@@ -93,22 +94,25 @@
             }
 
             .lisa-launcher-copy strong {
-                font-size: 14px;
+                font-size: 13px;
             }
 
             .lisa-launcher-copy small {
-                font-size: 12px;
+                font-size: 11px;
                 color: rgba(255,255,255,.78);
             }
 
             .lisa-launcher > i {
                 margin-left: 4px;
-                font-size: 18px;
+                font-size: 16px;
             }
 
             .lisa-panel {
                 width: min(390px, calc(100vw - 28px));
                 height: min(620px, calc(100vh - 96px));
+                position: absolute;
+                right: 0;
+                bottom: 74px;
                 margin-bottom: 12px;
                 background: #fff;
                 border: 1px solid rgba(11,46,89,.12);
@@ -259,9 +263,16 @@
                     justify-content: space-between;
                 }
 
+                .lisa-launcher-copy small {
+                    display: none;
+                }
+
                 .lisa-panel {
                     width: 100%;
                     height: min(70vh, 620px);
+                    right: 0;
+                    left: 0;
+                    bottom: 74px;
                 }
             }
         </style>
