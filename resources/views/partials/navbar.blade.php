@@ -571,4 +571,48 @@
 
 }
 
+@media(max-width:767.98px){
+
+    .mmaci-navbar .container{
+
+        padding-left:16px;
+        padding-right:16px;
+
+    }
+
+    .mmaci-navbar .navbar-collapse{
+
+        margin-top:14px;
+        padding:14px;
+        border-radius:18px;
+        background:rgba(9,40,76,.96);
+        box-shadow:0 18px 30px rgba(0,0,0,.18);
+
+    }
+
+    .mmaci-navbar .navbar-nav{
+
+        gap:6px;
+        align-items:stretch !important;
+
+    }
+
+    .mmaci-navbar .nav-link,
+    .mmaci-navbar .dropdown-item,
+    .mmaci-navbar .btn{
+
+        width:100%;
+        text-align:left;
+
+    }
+
+    .mmaci-navbar .dropdown-menu{
+
+        min-width:100%;
+        margin-top:8px;
+
+    }
+
+}
+
 </style>

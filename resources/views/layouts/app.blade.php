@@ -74,6 +74,7 @@
             font-family: 'Poppins', sans-serif;
             color: var(--mmaci-text);
             background: var(--mmaci-white);
+            overflow-x: clip;
 
         }
 
@@ -286,6 +287,22 @@
 
         }
 
+        .table-responsive {
+
+            -webkit-overflow-scrolling: touch;
+
+        }
+
+        .page-hero,
+        .modern-card,
+        .card,
+        .modal-content,
+        .dropdown-menu {
+
+            word-break: break-word;
+
+        }
+
         @media (max-width: 991px) {
 
             .section-space {
@@ -298,6 +315,38 @@
 
                 padding: 85px 0 70px;
                 text-align: center;
+
+            }
+
+            .mmaci-navbar .navbar-collapse {
+
+                margin-top: 14px;
+                padding: 14px;
+                border-radius: 18px;
+                background: rgba(9, 40, 76, 0.96);
+                box-shadow: 0 18px 30px rgba(0, 0, 0, 0.18);
+
+            }
+
+            .mmaci-navbar .navbar-nav {
+
+                gap: 6px;
+                align-items: stretch !important;
+
+            }
+
+            .mmaci-navbar .nav-link,
+            .mmaci-navbar .dropdown-item,
+            .mmaci-navbar .btn {
+
+                width: 100%;
+
+            }
+
+            .mmaci-navbar .dropdown-menu {
+
+                min-width: 100%;
+                margin-top: 8px;
 
             }
 
@@ -330,6 +379,31 @@
 
             }
 
+            .page-hero .container {
+
+                padding-left: 18px;
+                padding-right: 18px;
+
+            }
+
+            .navbar-brand {
+
+                max-width: calc(100% - 72px);
+
+            }
+
+            .brand-title {
+
+                font-size: 18px;
+
+            }
+
+            .brand-subtitle {
+
+                font-size: 10px;
+
+            }
+
         }
 
         @media (max-width: 575.98px) {
@@ -358,6 +432,30 @@
             .btn-outline-mmaci {
 
                 width: 100%;
+
+            }
+
+            .section-title {
+
+                font-size: clamp(1.5rem, 6.5vw, 2rem);
+
+            }
+
+            .modern-card {
+
+                border-radius: 18px;
+
+            }
+
+            .modal-dialog {
+
+                margin: 12px;
+
+            }
+
+            .dropdown-menu {
+
+                border-radius: 16px;
 
             }
 
