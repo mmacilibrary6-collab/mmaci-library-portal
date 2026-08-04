@@ -157,6 +157,22 @@
 
                                 class="dropdown-item"
 
+                                href="{{ route('collection.donated-books') }}">
+
+                                <i class="bi bi-gift me-2"></i>
+
+                                Donated Books
+
+                            </a>
+
+                        </li>
+
+                        <li>
+
+                            <a
+
+                                class="dropdown-item"
+
                                 href="{{ route('collection.open-access') }}">
 
                                 <i class="bi bi-globe2 me-2"></i>

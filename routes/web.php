@@ -30,6 +30,7 @@ use App\Http\Controllers\Admin\EbookProgramController;
 use App\Http\Controllers\Admin\ThesisFolderController;
 use App\Http\Controllers\Admin\ThesisProgramController;
 use App\Http\Controllers\Admin\GalleryController;
+use App\Http\Controllers\Admin\DonatedBookController;
 use App\Http\Controllers\Admin\LibraryUpdateController;
 use App\Http\Controllers\Admin\NewArrivalController;
 use App\Http\Controllers\Admin\OpenAccessResourceController;
@@ -95,6 +96,11 @@ Route::prefix('collection')
             '/subscribed-database',
             [CollectionController::class, 'subscribedDatabase']
         )->name('subscribed-database');
+
+        Route::get(
+            '/donated-books',
+            [CollectionController::class, 'donatedBooks']
+        )->name('donated-books');
     });
 
 /*
@@ -283,6 +289,11 @@ Route::prefix('admin')
         Route::resource(
             'gallery',
             GalleryController::class
+        )->except(['show']);
+
+        Route::resource(
+            'donated-books',
+            DonatedBookController::class
         )->except(['show']);
 
         Route::post(

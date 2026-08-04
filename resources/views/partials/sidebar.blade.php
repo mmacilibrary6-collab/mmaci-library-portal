@@ -124,6 +124,22 @@
 
         </a>
 
+        <a
+            href="{{ route('admin.donated-books.index') }}"
+            class="sidebar-link
+                {{ request()->routeIs('admin.donated-books.*')
+                    ? 'active'
+                    : ''
+                }}">
+
+            <i class="bi bi-gift-fill"></i>
+
+            <span>
+                Donated Books
+            </span>
+
+        </a>
+
         {{-- Digital Resources --}}
         <span class="sidebar-label sidebar-section-label">
             Digital Resources
