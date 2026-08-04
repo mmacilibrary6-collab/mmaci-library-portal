@@ -2,23 +2,25 @@
     $lisaAvatar = 'https://static.vecteezy.com/system/resources/previews/054/064/121/non_2x/young-girl-reading-in-library-illustration-for-education-and-learning-themes-free-vector.jpg';
 @endphp
 
-<div id="lisa-chatbot-widget" class="lisa-chatbot-widget" aria-live="polite">
+<div id="lisa-chatbot-widget" class="lisa-chatbot-widget" aria-live="polite" style="position:fixed!important;right:24px!important;bottom:24px!important;left:auto!important;top:auto!important;width:auto!important;height:auto!important;margin:0!important;padding:0!important;z-index:2147483000!important;isolation:isolate!important;display:block!important;pointer-events:auto!important;transform:none!important;float:none!important;clear:both!important;">
     <button
         type="button"
         id="lisa-chat-launcher"
         class="lisa-chat-launcher"
+        style="width:60px!important;height:60px!important;min-width:60px!important;min-height:60px!important;max-width:60px!important;max-height:60px!important;display:grid!important;"
         aria-label="Open Lisa chat">
-        <img src="{{ $lisaAvatar }}" alt="Lisa avatar" class="lisa-chat-avatar">
+        <img src="{{ $lisaAvatar }}" alt="Lisa avatar" class="lisa-chat-avatar" style="width:100%!important;height:100%!important;display:block!important;object-fit:cover!important;">
     </button>
 
     <section
         id="lisa-chat-panel"
         class="lisa-chat-panel"
         hidden
-        aria-label="Lisa chatbot">
+        aria-label="Lisa chatbot"
+        style="position:absolute!important;right:0!important;bottom:72px!important;width:350px!important;height:480px!important;max-width:calc(100vw - 32px)!important;max-height:calc(100dvh - 120px)!important;overflow:hidden!important;display:none!important;margin:0!important;padding:0!important;transform:none!important;">
         <header class="lisa-chat-header">
             <div class="lisa-chat-header-left">
-                <img src="{{ $lisaAvatar }}" alt="Lisa avatar" class="lisa-chat-header-avatar">
+                <img src="{{ $lisaAvatar }}" alt="Lisa avatar" class="lisa-chat-header-avatar" style="width:36px!important;height:36px!important;display:block!important;object-fit:cover!important;">
                 <div class="lisa-chat-header-copy">
                     <strong>Lisa</strong>
                     <span>MMACI Library Guide</span>
@@ -401,6 +403,49 @@
                     return;
                 }
 
+                if (widget.parentElement !== document.body) {
+                    document.body.appendChild(widget);
+                }
+
+                widget.style.position = 'fixed';
+                widget.style.right = '24px';
+                widget.style.bottom = '24px';
+                widget.style.left = 'auto';
+                widget.style.top = 'auto';
+                widget.style.width = 'auto';
+                widget.style.height = 'auto';
+                widget.style.margin = '0';
+                widget.style.padding = '0';
+                widget.style.zIndex = '2147483000';
+                widget.style.isolation = 'isolate';
+                widget.style.display = 'block';
+                widget.style.pointerEvents = 'auto';
+                widget.style.transform = 'none';
+                widget.style.float = 'none';
+                widget.style.clear = 'both';
+                widget.style.contain = 'layout paint';
+
+                launcher.style.width = '60px';
+                launcher.style.height = '60px';
+                launcher.style.minWidth = '60px';
+                launcher.style.minHeight = '60px';
+                launcher.style.maxWidth = '60px';
+                launcher.style.maxHeight = '60px';
+                launcher.style.display = 'grid';
+
+                panel.style.position = 'absolute';
+                panel.style.right = '0';
+                panel.style.bottom = '72px';
+                panel.style.width = '350px';
+                panel.style.height = '480px';
+                panel.style.maxWidth = 'calc(100vw - 32px)';
+                panel.style.maxHeight = 'calc(100dvh - 120px)';
+                panel.style.overflow = 'hidden';
+                panel.style.display = 'none';
+                panel.style.margin = '0';
+                panel.style.padding = '0';
+                panel.style.transform = 'none';
+
                 let history = [];
 
                 const welcomeMessage = {
@@ -465,6 +510,7 @@
 
                 function openPanel() {
                     panel.hidden = false;
+                    panel.style.display = 'flex';
                     panel.classList.add('is-open');
                     localStorage.setItem(openKey, '1');
                     setTimeout(scrollMessages, 0);
@@ -474,6 +520,7 @@
                     panel.classList.remove('is-open');
                     localStorage.removeItem(openKey);
                     setTimeout(function () {
+                        panel.style.display = 'none';
                         panel.hidden = true;
                     }, 180);
                 }
@@ -563,6 +610,7 @@
                     openPanel();
                 } else {
                     panel.hidden = true;
+                    panel.style.display = 'none';
                 }
             })();
         </script>
