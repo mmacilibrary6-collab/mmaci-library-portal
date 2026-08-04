@@ -38,7 +38,6 @@
                     $modalId = 'periodical-folders-modal-' . $program->id;
                     $programImage = $program->image_url ?: asset('images/readingarea.jpg');
                     $folderCount = $program->folders->count();
-                    $programLabel = $program->categoryLabel();
                 @endphp
 
                 <div class="col-xl-4 col-lg-4 col-md-6 program-item">
@@ -49,7 +48,7 @@
                                 <span class="folder-count">{{ $folderCount }} {{ \Illuminate\Support\Str::plural('Folder', $folderCount) }}</span>
                             </div>
                             <div class="program-content">
-                                <h3>{{ $programLabel }}</h3>
+                                <h3>{{ $program->title }}</h3>
                                 <p>{{ $program->description ?: 'Browse available folder links for this periodical program.' }}</p>
                                 <span class="program-action">{{ $program->folders->isNotEmpty() ? 'View available folders' : 'No folders available' }} <i class="bi bi-arrow-right"></i></span>
                             </div>
@@ -68,15 +67,25 @@
                                 </div>
                                 <div class="modal-body">
                                     @if($program->folders->isNotEmpty())
+                                        @php
+                                            $groupedFolders = $program->folders->groupBy('category');
+                                        @endphp
                                         <div class="folder-list">
-                                            @foreach($program->folders->sortBy('title', SORT_NATURAL | SORT_FLAG_CASE) as $folder)
-                                                <a href="{{ $folder->folder_link }}" target="_blank" rel="noopener noreferrer" class="folder-link">
-                                                    <span class="folder-link-copy">
-                                                        <strong>{{ $folder->title }}</strong>
-                                                        <small>{{ $folder->description ?: 'Open this folder link' }}</small>
-                                                    </span>
-                                                    <i class="bi bi-box-arrow-up-right"></i>
-                                                </a>
+                                            @foreach($groupedFolders as $category => $categoryFolders)
+                                                <div class="folder-category-group">
+                                                    <h5>{{ $categoryFolders->first()?->categoryLabel() ?? 'Periodical' }}</h5>
+                                                    <div class="folder-list">
+                                                        @foreach($categoryFolders->sortBy('title', SORT_NATURAL | SORT_FLAG_CASE) as $folder)
+                                                            <a href="{{ $folder->folder_link }}" target="_blank" rel="noopener noreferrer" class="folder-link">
+                                                                <span class="folder-link-copy">
+                                                                    <strong>{{ $folder->title }}</strong>
+                                                                    <small>{{ $folder->description ?: 'Open this folder link' }}</small>
+                                                                </span>
+                                                                <i class="bi bi-box-arrow-up-right"></i>
+                                                            </a>
+                                                        @endforeach
+                                                    </div>
+                                                </div>
                                             @endforeach
                                         </div>
                                     @else
@@ -343,6 +352,18 @@
 .folder-list {
     display: grid;
     gap: 12px;
+}
+
+.folder-category-group {
+    display: grid;
+    gap: 12px;
+}
+
+.folder-category-group h5 {
+    margin: 2px 0 0;
+    color: var(--thesis-navy);
+    font-size: 18px;
+    font-weight: 800;
 }
 
 .folder-link {

@@ -149,7 +149,7 @@ class CollectionController extends Controller
             ->orderBy('sort_order')
             ->orderBy('title')
             ->with([
-                'folders' => fn ($query) => $query->where('status', true)->orderBy('sort_order')->orderBy('title'),
+                'folders' => fn ($query) => $query->where('status', true)->orderBy('category')->orderBy('sort_order')->orderBy('title'),
             ])
             ->get();
 

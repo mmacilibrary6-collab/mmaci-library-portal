@@ -12,6 +12,7 @@ class PeriodicalFolder extends Model
 
     protected $fillable = [
         'periodical_program_id',
+        'category',
         'title',
         'description',
         'folder_link',
@@ -24,6 +25,15 @@ class PeriodicalFolder extends Model
         'sort_order' => 'integer',
         'status' => 'boolean',
     ];
+
+    public function categoryLabel(): string
+    {
+        return match ($this->category) {
+            'journal_newspaper' => 'Journal & Newspaper Clippings',
+            'magazine' => 'Magazines',
+            default => 'Periodical',
+        };
+    }
 
     public function program(): BelongsTo
     {

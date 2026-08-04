@@ -75,19 +75,31 @@ class PeriodicalFolderController extends Controller
         $request->merge(['status' => (string) $request->input('status', '1')]);
         $validated = $request->validate([
             'periodical_program_id' => ['required', 'integer', Rule::exists('periodical_programs', 'id')],
-            'title' => ['required', 'string', 'max:255', Rule::unique('periodical_folders', 'title')->where(fn ($query) => $query->where('periodical_program_id', $request->input('periodical_program_id')))->ignore($periodicalFolder?->id)],
+            'category' => ['required', Rule::in(['journal_newspaper', 'magazine'])],
+            'title' => [
+                'required',
+                'string',
+                'max:255',
+                Rule::unique('periodical_folders', 'title')
+                    ->where(fn ($query) => $query
+                        ->where('periodical_program_id', $request->input('periodical_program_id'))
+                        ->where('category', $request->input('category')))
+                    ->ignore($periodicalFolder?->id),
+            ],
             'description' => ['nullable', 'string'],
             'folder_link' => ['required', 'url', 'max:2048'],
             'status' => ['required', Rule::in(['0','1'])],
         ], [
             'periodical_program_id.required' => 'Please select a program.',
-            'title.unique' => 'This folder name already exists for the selected program.',
+            'category.required' => 'Please select a category.',
+            'title.unique' => 'This folder name already exists for the selected program and category.',
             'folder_link.required' => 'Please enter the folder link.',
             'folder_link.url' => 'Please enter a valid folder URL.',
         ]);
 
         return [
             'periodical_program_id' => (int) $validated['periodical_program_id'],
+            'category' => $validated['category'],
             'title' => trim($validated['title']),
             'description' => filled($validated['description'] ?? null) ? trim($validated['description']) : null,
             'folder_link' => trim($validated['folder_link']),

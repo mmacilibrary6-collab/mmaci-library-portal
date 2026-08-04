@@ -24,7 +24,7 @@
                 @forelse($programs as $program)
                     <tr>
                         <td class="row-number">{{ ($programs->firstItem() ?? 1) + $loop->index }}</td>
-                        <td><div class="program-identity"><div class="program-thumbnail"><img src="{{ $program->image_url }}" alt="{{ $program->title }}" onerror="this.onerror=null;this.src='{{ asset('images/readingarea.jpg') }}';"></div><div><strong>{{ $program->title }}</strong><small>{{ $program->categoryLabel() }}</small></div></div></td>
+                        <td><div class="program-identity"><div class="program-thumbnail"><img src="{{ $program->image_url }}" alt="{{ $program->title }}" onerror="this.onerror=null;this.src='{{ asset('images/readingarea.jpg') }}';"></div><div><strong>{{ $program->title }}</strong><small>Periodical program</small></div></div></td>
                         <td class="description-cell">{{ \Illuminate\Support\Str::limit($program->description ?: 'No description provided.', 85) }}</td>
                         <td class="text-center"><span class="status-badge {{ (int) $program->status === 1 ? 'active' : 'hidden' }}"><span></span>{{ (int) $program->status === 1 ? 'Active' : 'Hidden' }}</span></td>
                         <td><div class="table-actions"><a href="{{ route('admin.periodical-programs.edit', $program) }}" class="action-button edit"><i class="bi bi-pencil"></i></a><form action="{{ route('admin.periodical-programs.destroy', $program) }}" method="POST" onsubmit="return confirm('Delete this program?');">@csrf @method('DELETE')<button type="submit" class="action-button delete"><i class="bi bi-trash3"></i></button></form></div></td>
