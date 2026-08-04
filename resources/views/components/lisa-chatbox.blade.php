@@ -247,6 +247,30 @@
                 border-top-right-radius: 6px;
             }
 
+            #lisa-chatbot-widget .lisa-page-link {
+                align-self: flex-end;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                margin-top: 6px;
+                padding: 7px 11px;
+                border-radius: 999px;
+                background: linear-gradient(135deg, #0b2e59, #184b8c);
+                color: #ffffff;
+                font-size: 12px;
+                font-weight: 700;
+                text-decoration: none;
+                box-shadow: 0 8px 18px rgba(11, 46, 89, 0.14);
+                transition: transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
+            }
+
+            #lisa-chatbot-widget .lisa-page-link:hover,
+            #lisa-chatbot-widget .lisa-page-link:focus-visible {
+                transform: translateY(-1px);
+                box-shadow: 0 10px 22px rgba(11, 46, 89, 0.18);
+                opacity: 0.96;
+            }
+
             #lisa-chatbot-widget #lisa-chat-chips {
                 flex: 0 0 auto;
                 display: flex;
@@ -430,6 +454,17 @@
                             bubble.textContent = entry.text;
 
                             row.appendChild(bubble);
+
+                            if (entry.pageUrl) {
+                                const link = document.createElement('a');
+                                link.href = entry.pageUrl;
+                                link.target = '_self';
+                                link.rel = 'noopener';
+                                link.textContent = entry.pageLabel || 'Open page';
+                                link.className = 'lisa-page-link';
+                                row.appendChild(link);
+                            }
+
                             messages.appendChild(row);
                         });
 
@@ -492,7 +527,9 @@
                             history = history.filter((entry) => entry.id !== typingId);
                             history.push({
                                 role: 'assistant',
-                                text: data.answer || 'I’m sorry, I could not find an answer right now.'
+                                text: data.answer || 'I’m sorry, I could not find an answer right now.',
+                                pageUrl: data.pageUrl || null,
+                                pageLabel: data.title ? `Open ${data.title}` : 'Open page'
                             });
 
                             renderMessages();
