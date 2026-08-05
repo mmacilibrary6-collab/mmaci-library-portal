@@ -250,17 +250,19 @@
         <div class="row g-5 align-items-center">
             <div class="col-lg-6" data-aos="fade-right">
                 @php
-                    $aboutSlides = [
-                        'personell.jpg',
-                        'Studentslib.jpg',
-                        'Studentslib2.jpg',
-                        'Studentslib3.jpg',
-                        'Studentslib4.jpg',
-                        'Studentslib5.jpg',
-                        'Studentslib6.jpg',
-                        'Studentslib7.jpg',
-                        'Studentslib7.jpg',
-                    ];
+                    if (!isset($aboutSlides) || !is_array($aboutSlides) || count($aboutSlides) === 0) {
+                        $aboutSlides = [
+                            'personell.jpg',
+                            'Studentslib.jpg',
+                            'Studentslib2.jpg',
+                            'Studentslib3.jpg',
+                            'Studentslib4.jpg',
+                            'Studentslib5.jpg',
+                            'Studentslib6.jpg',
+                            'Studentslib7.jpg',
+                            'Studentslib8.jpg',
+                        ];
+                    }
                 @endphp
 
                 <div
