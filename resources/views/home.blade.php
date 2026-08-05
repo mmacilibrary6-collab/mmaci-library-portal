@@ -251,13 +251,14 @@
             <div class="col-lg-6" data-aos="fade-right">
                 @php
                     $aboutSlides = [
-                        'Personell.jpg',
+                        'personell.jpg',
                         'Studentslib.jpg',
                         'Studentslib2.jpg',
                         'Studentslib3.jpg',
                         'Studentslib4.jpg',
                         'Studentslib5.jpg',
                         'Studentslib6.jpg',
+                        'Studentslib7.jpg',
                         'Studentslib7.jpg',
                     ];
                 @endphp

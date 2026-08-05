@@ -397,10 +397,22 @@
                 }
 
                 #lisa-chatbot-widget #lisa-chat-panel {
-                    right: 0;
-                    bottom: 76px;
-                    width: min(360px, calc(100vw - 24px));
-                    height: min(500px, calc(100dvh - 110px));
+                    left: 12px;
+                    right: 12px;
+                    bottom: calc(78px + env(safe-area-inset-bottom));
+                    width: auto;
+                    max-width: calc(100vw - 24px);
+                    height: min(500px, calc(100dvh - 120px));
+                    max-height: calc(100dvh - 120px);
+                }
+
+                #lisa-chatbot-widget #lisa-chat-panel .lisa-header-copy span {
+                    white-space: normal;
+                }
+
+                #lisa-chatbot-widget #lisa-chat-launcher {
+                    padding: 12px 16px;
+                    min-width: 48px;
                 }
             }
 
