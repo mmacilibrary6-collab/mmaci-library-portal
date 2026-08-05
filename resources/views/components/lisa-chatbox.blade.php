@@ -216,11 +216,13 @@
 
             #lisa-chatbot-widget .lisa-message {
                 display: flex;
+                flex-direction: column;
+                align-items: flex-start;
                 margin-bottom: 10px;
             }
 
             #lisa-chatbot-widget .lisa-message.user {
-                justify-content: flex-end;
+                align-items: flex-end;
             }
 
             #lisa-chatbot-widget .lisa-bubble {
@@ -248,18 +250,23 @@
             }
 
             #lisa-chatbot-widget .lisa-page-link {
-                align-self: flex-end;
+                align-self: flex-start;
                 display: inline-flex;
                 align-items: center;
                 justify-content: center;
-                margin-top: 6px;
-                padding: 7px 11px;
-                border-radius: 999px;
+                max-width: 84%;
+                margin-top: 8px;
+                padding: 9px 14px;
+                border-radius: 12px;
                 background: linear-gradient(135deg, #0b2e59, #184b8c);
                 color: #ffffff;
                 font-size: 12px;
                 font-weight: 700;
+                line-height: 1.35;
+                text-align: center;
                 text-decoration: none;
+                white-space: normal;
+                overflow-wrap: anywhere;
                 box-shadow: 0 8px 18px rgba(11, 46, 89, 0.14);
                 transition: transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
             }
@@ -274,11 +281,24 @@
             #lisa-chatbot-widget #lisa-chat-chips {
                 flex: 0 0 auto;
                 display: flex;
-                flex-wrap: wrap;
+                flex-wrap: nowrap;
                 gap: 8px;
-                padding: 0 14px 12px;
-                max-height: 96px;
-                overflow: hidden;
+                padding: 8px 14px 12px;
+                overflow-x: auto;
+                overflow-y: hidden;
+                scroll-snap-type: x proximity;
+                scrollbar-width: thin;
+                scrollbar-color: #c5d2e2 transparent;
+                -webkit-overflow-scrolling: touch;
+            }
+
+            #lisa-chatbot-widget #lisa-chat-chips::-webkit-scrollbar {
+                height: 5px;
+            }
+
+            #lisa-chatbot-widget #lisa-chat-chips::-webkit-scrollbar-thumb {
+                border-radius: 999px;
+                background: #c5d2e2;
             }
 
             #lisa-chatbot-widget .lisa-chip {
@@ -291,6 +311,10 @@
                 padding: 8px 12px;
                 font-size: 12px;
                 font-weight: 600;
+                line-height: 1.35;
+                white-space: nowrap;
+                scroll-snap-align: start;
+                flex: 0 0 auto;
                 cursor: pointer;
             }
 
@@ -474,7 +498,7 @@
                     function renderChips(items) {
                         chips.innerHTML = '';
 
-                        (items || []).forEach((item) => {
+                        (items || []).slice(0, 4).forEach((item) => {
                             const chip = document.createElement('button');
                             chip.type = 'button';
                             chip.className = 'lisa-chip';
