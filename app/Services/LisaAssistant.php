@@ -3,322 +3,354 @@
 namespace App\Services;
 
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
+use Throwable;
 
 class LisaAssistant
 {
-    /**
-     * Produce a free, local response without any external API.
-     */
     public function reply(string $message, array $history = []): array
     {
-        $originalMessage = trim($message);
-        $message = $this->normalize($originalMessage);
-        $history = $this->cleanHistory($history);
+        $original = trim($message);
+        $normalized = $this->normalizeText($original);
 
-        if ($this->isGreeting($message)) {
-            return [
-                'answer' => 'Hi! I’m Lisa, the MMACI Library Guide. I can help you find collections, services, facilities, reservations, library contact information, and pages on this website.',
-                'title' => 'Welcome to MMACI Library',
-                'pageUrl' => url('/'),
-                'suggestions' => $this->defaultSuggestions(),
-            ];
+        if ($normalized === '') {
+            return $this->fallbackResponse();
         }
 
-        if ($this->isThanks($message)) {
+        if ($this->isGreeting($normalized)) {
             return [
-                'answer' => 'You’re welcome! You can ask me another question about the MMACI Library whenever you need help.',
-                'title' => null,
+                'answer' => 'Hello! I’m Lisa, the MMACI Library Guide. I can help you find collections, academic-program resources, services, facilities, forms, events, contact details, and website pages.',
+                'title' => 'How can I help?',
                 'pageUrl' => null,
                 'suggestions' => $this->defaultSuggestions(),
             ];
         }
 
-        $contextMessage = $this->withConversationContext($message, $history);
+        $searchText = $this->buildContextMessage($normalized, $history);
         $entries = $this->knowledgeEntries();
-        $ranked = [];
 
-        foreach ($entries as $entry) {
-            $score = $this->score($contextMessage, $entry);
+        $ranked = collect($entries)
+            ->map(function (array $entry) use ($searchText) {
+                $entry['_score'] = $this->score($searchText, $entry);
+                return $entry;
+            })
+            ->filter(fn (array $entry) => $entry['_score'] > 0)
+            ->sortByDesc('_score')
+            ->values();
 
-            if ($score > 0) {
-                $ranked[] = [
-                    'score' => $score,
-                    'entry' => $entry,
-                ];
-            }
+        $best = $ranked->first();
+
+        if (! $best || $best['_score'] < 5) {
+            return $this->fallbackResponse($original);
         }
 
-        usort($ranked, fn (array $a, array $b) => $b['score'] <=> $a['score']);
-        $bestMatch = $ranked[0]['entry'] ?? null;
-        $bestScore = $ranked[0]['score'] ?? 0;
-
-        if ($bestMatch && $bestScore >= 4) {
-            $answer = $this->publicFacingAnswer($bestMatch['answer']);
-            $answer = $this->avoidRepeatedAnswer($answer, $history, $bestMatch['title']);
-
-            return [
-                'answer' => $answer,
-                'title' => $bestMatch['title'],
-                'suggestions' => $this->uniqueSuggestions(
-                    $bestMatch['suggestions'] ?? [],
-                    $history
-                ),
-                'pageUrl' => $bestMatch['pageUrl'] ?? null,
-            ];
-        }
+        $answer = $this->varyAnswer(
+            $this->publicFacingAnswer((string) $best['answer']),
+            count($history)
+        );
 
         return [
-            'answer' => "I’m not fully sure what you’re asking about yet. I can answer questions about MMACI Library collections, E-books, theses, periodicals, donated books, services, facilities, AVR reservations, visiting users, gallery, and contacting the librarian. Please mention the specific service or page you need.",
-            'title' => 'How can I guide you?',
-            'pageUrl' => null,
-            'suggestions' => $this->defaultSuggestions(),
+            'answer' => $answer,
+            'title' => $best['title'] ?? 'MMACI Library',
+            'suggestions' => collect($best['suggestions'] ?? [])
+                ->merge($this->relatedSuggestions($ranked->slice(1, 3)->all()))
+                ->filter()
+                ->unique(fn ($item) => Str::lower((string) $item))
+                ->take(4)
+                ->values()
+                ->all(),
+            'pageUrl' => $best['pageUrl'] ?? null,
         ];
     }
 
-    protected function score(string $message, array $entry): int
+    protected function buildContextMessage(string $message, array $history): string
     {
-        $score = 0;
-        $title = $this->normalize((string) ($entry['title'] ?? ''));
-        $keywords = $entry['keywords'] ?? [];
+        $words = $this->words($message);
 
-        if ($title !== '' && Str::contains($message, $title)) {
-            $score += 10;
-        }
-
-        $messageWords = collect(preg_split('/\s+/', $message) ?: [])
-            ->filter(fn ($word) => mb_strlen($word) >= 3)
-            ->unique()
-            ->values();
-
-        foreach ($keywords as $keyword) {
-            $keyword = $this->normalize((string) $keyword);
-
-            if ($keyword === '') {
-                continue;
-            }
-
-            if (Str::contains($message, $keyword)) {
-                $score += str_contains($keyword, ' ') ? 8 : 5;
-            }
-
-            $keywordWords = collect(preg_split('/\s+/', $keyword) ?: [])
-                ->filter(fn ($word) => mb_strlen($word) >= 3)
-                ->unique();
-
-            $score += $keywordWords->intersect($messageWords)->count() * 2;
-        }
-
-        return $score;
-    }
-
-    protected function normalize(string $text): string
-    {
-        $text = Str::lower(strip_tags($text));
-        $text = preg_replace('/[^\pL\pN\s\-]/u', ' ', $text) ?? $text;
-
-        return preg_replace('/\s+/', ' ', trim($text)) ?? trim($text);
-    }
-
-    protected function cleanHistory(array $history): array
-    {
-        return collect($history)
-            ->filter(fn ($entry) => is_array($entry) && isset($entry['role'], $entry['text']))
-            ->map(fn ($entry) => [
-                'role' => in_array($entry['role'], ['user', 'assistant'], true)
-                    ? $entry['role']
-                    : 'user',
-                'text' => Str::limit(trim((string) $entry['text']), 1500, ''),
-            ])
-            ->filter(fn ($entry) => $entry['text'] !== '' && $entry['text'] !== 'Lisa is thinking…')
-            ->take(-10)
-            ->values()
-            ->all();
-    }
-
-    protected function withConversationContext(string $message, array $history): string
-    {
-        $followUpWords = ['it', 'that', 'there', 'this', 'how about', 'what about', 'where is it', 'tell me more'];
-        $looksLikeFollowUp = Str::contains($message, $followUpWords) || str_word_count($message) <= 4;
-
-        if (! $looksLikeFollowUp) {
+        if (count($words) > 5 || empty($history)) {
             return $message;
         }
 
         $previousUserMessage = collect($history)
             ->reverse()
-            ->first(fn ($entry) => $entry['role'] === 'user')['text'] ?? null;
+            ->first(function ($entry) use ($message) {
+                return ($entry['role'] ?? null) === 'user'
+                    && $this->normalizeText((string) ($entry['text'] ?? '')) !== $message;
+            });
 
-        return $previousUserMessage
-            ? $this->normalize($previousUserMessage.' '.$message)
-            : $message;
-    }
-
-    protected function avoidRepeatedAnswer(string $answer, array $history, string $title): string
-    {
-        $previousAnswers = collect($history)
-            ->where('role', 'assistant')
-            ->pluck('text')
-            ->map(fn ($text) => $this->normalize((string) $text));
-
-        if ($previousAnswers->contains($this->normalize($answer))) {
-            return "You’re still asking about {$title}. The page link below will take you directly there. Tell me which detail you want clarified so I can give a more specific answer.";
+        if (! $previousUserMessage) {
+            return $message;
         }
 
-        return $answer;
+        return trim(
+            $this->normalizeText((string) $previousUserMessage['text']).' '.$message
+        );
     }
 
-    protected function uniqueSuggestions(array $suggestions, array $history): array
+    protected function score(string $message, array $entry): int
     {
-        $asked = collect($history)
-            ->where('role', 'user')
-            ->pluck('text')
-            ->map(fn ($text) => $this->normalize((string) $text));
+        $message = $this->normalizeText($message);
+        $messageWords = $this->words($message);
+        $score = 0;
 
-        return collect($suggestions)
-            ->map(fn ($suggestion) => trim((string) $suggestion))
-            ->filter()
-            ->unique(fn ($suggestion) => $this->normalize($suggestion))
-            ->reject(fn ($suggestion) => $asked->contains($this->normalize($suggestion)))
-            ->take(4)
-            ->values()
-            ->all();
-    }
+        $title = $this->normalizeText((string) ($entry['title'] ?? ''));
+        $answer = $this->normalizeText((string) ($entry['answer'] ?? ''));
+        $keywords = array_merge([$title], $entry['keywords'] ?? []);
 
-    protected function isGreeting(string $message): bool
-    {
-        return preg_match('/^(hi|hello|hey|good morning|good afternoon|good evening|maayong buntag|maayong hapon)\b/u', $message) === 1;
-    }
+        foreach ($keywords as $keyword) {
+            $keyword = $this->normalizeText((string) $keyword);
 
-    protected function isThanks(string $message): bool
-    {
-        return preg_match('/\b(thank you|thanks|salamat|ty)\b/u', $message) === 1;
-    }
+            if ($keyword === '') {
+                continue;
+            }
 
-    protected function defaultSuggestions(): array
-    {
-        return [
-            'What services does the library offer?',
-            'How can I access the E-books?',
-            'Where can I reserve the AVR?',
-            'How can I contact the librarian?',
-        ];
+            if ($message === $keyword) {
+                $score += 35;
+            } elseif (Str::contains($message, $keyword)) {
+                $score += str_contains($keyword, ' ') ? 20 : 11;
+            }
+
+            foreach ($this->words($keyword) as $keywordWord) {
+                foreach ($messageWords as $messageWord) {
+                    if ($keywordWord === $messageWord) {
+                        $score += 5;
+                    } elseif (
+                        mb_strlen($keywordWord) >= 5
+                        && mb_strlen($messageWord) >= 5
+                        && levenshtein($keywordWord, $messageWord) <= 2
+                    ) {
+                        $score += 2;
+                    }
+                }
+            }
+        }
+
+        foreach ($messageWords as $word) {
+            if (mb_strlen($word) >= 4 && Str::contains($answer, $word)) {
+                $score += 1;
+            }
+        }
+
+        return $score;
     }
 
     protected function knowledgeEntries(): array
     {
-        return Cache::remember('lisa.knowledge.entries.v3', now()->addMinutes(10), function () {
-            $entries = [
-                [
-                    'title' => 'Home page',
-                    'keywords' => ['home', 'homepage', 'landing page'],
-                    'answer' => 'The Home page introduces the MMACI Library Services Office and links to the main sections of the site.',
-                    'pageUrl' => url('/'),
-                    'suggestions' => ['Show me the collection pages', 'What can I find on the homepage?'],
-                ],
-                [
-                    'title' => 'About page',
-                    'keywords' => ['about', 'mission', 'vision', 'history'],
-                    'answer' => 'The About page gives visitors a quick overview of the library and institution, including the identity and purpose of the MMACI Library Services Office.',
-                    'pageUrl' => url('/about'),
-                    'suggestions' => ['Tell me what the About page covers', 'Where is the institution information?'],
-                ],
-                [
-                    'title' => 'E-books',
-                    'keywords' => ['ebook', 'e-book', 'e books', 'electronic books', 'collection ebooks'],
-                    'answer' => 'The E-books section is organized by academic program. Each program contains folders with Google Drive links for downloadable or browsable e-book resources, and each program card opens a modal with the available folders.',
-                    'pageUrl' => url('/collection/ebooks'),
-                    'suggestions' => ['How do I add an ebook folder?', 'Can I search e-books by program?'],
-                ],
-                [
-                    'title' => 'Thesis and dissertation',
-                    'keywords' => ['thesis', 'dissertation', 'theses', 'thesis and dissertation'],
-                    'answer' => 'The Thesis & Dissertation area is organized by academic program. Each program contains folder links to research materials and manuscripts, with the same program-and-folder structure used by E-books.',
-                    'pageUrl' => url('/collection/theses'),
-                    'suggestions' => ['How do thesis folders work?', 'Where are the thesis images stored?'],
-                ],
-                [
-                    'title' => 'Periodicals',
-                    'keywords' => ['periodical', 'periodicals', 'journal', 'newspaper', 'magazine', 'periodical collection'],
-                    'answer' => 'The Periodical Collection is grouped by program, and the folders inside each program are categorized as Journal & Newspaper Clippings or Magazines. The public page also supports category filtering.',
-                    'pageUrl' => url('/collection/periodicals'),
-                    'suggestions' => ['Can I filter periodicals by category?', 'How do periodical folders work?'],
-                ],
-                [
-                    'title' => 'Donated books',
-                    'keywords' => ['donated books', 'donation', 'donated', 'gifted books'],
-                    'answer' => 'Donated Books shows donated titles with descriptions and images, using the same public design style as the other collection pages, with card layouts and placeholder-safe imagery.',
-                    'pageUrl' => url('/collection/donated-books'),
-                    'suggestions' => ['How do I add donated books in admin?', 'What image format should I upload?'],
-                ],
-                [
-                    'title' => 'Open access resources',
-                    'keywords' => ['open access', 'opac', 'public access', 'catalog', 'online public access catalog'],
-                    'answer' => 'Open Access Resources and OPAC-related pages display resource cards and links for public browsing and research support. Broken images there usually mean the uploaded image path needs to be refreshed or re-saved.',
-                    'pageUrl' => url('/collection/open-access'),
-                    'suggestions' => ['Why is an image broken?', 'How do I update an open access resource?'],
-                ],
-                [
-                    'title' => 'Subscribed online database',
-                    'keywords' => ['ebsco', 'database', 'subscribed online database', 'online database'],
-                    'answer' => 'Subscribed Online Database opens the EBSCO login access provided by the library, and users should follow the circulation staff instructions for credentials. The page now appears as an embedded public resource section instead of a plain link.',
-                    'pageUrl' => url('/collection/subscribed-database'),
-                    'suggestions' => ['Where do I get login credentials?', 'Can I embed the database page?'],
-                ],
-                [
-                    'title' => 'Reserve AVR',
-                    'keywords' => ['reserve avr', 'avr', 'audio visual room', 'reservation'],
-                    'answer' => 'Reserve AVR is a public form page where users can request the Audio Visual Room for classes or meetings. The form is embedded directly on the page and the section uses the same polished layout as Online Book Recommendation.',
-                    'pageUrl' => url('/more/reserve-avr'),
-                    'suggestions' => ['How do I reserve the AVR?', 'What is the AVR capacity?'],
-                ],
-                [
-                    'title' => 'Gallery',
-                    'keywords' => ['gallery', 'photos', 'albums', 'slideshow', 'gallery folders'],
-                    'answer' => 'The Gallery page shows public photo folders in a slideshow-style viewer. Admins can create folders and upload images for each event or album, and the public viewer rotates through the uploaded photos.',
-                    'pageUrl' => url('/more/gallery'),
-                    'suggestions' => ['How do gallery uploads work?', 'Can I add multiple photos?'],
-                ],
-                [
-                    'title' => 'Ask the Librarian',
-                    'keywords' => ['ask librarian', 'ask the librarian', 'contact'],
-                    'answer' => 'Ask the Librarian provides contact options and support links for users who need help from library staff. It includes Facebook, email, and video/tutorial-style support items.',
-                    'pageUrl' => url('/more/ask-librarian'),
-                    'suggestions' => ['How do I contact the library?', 'Where is the Facebook page linked?'],
-                ],
-                [
-                    'title' => 'Public services',
-                    'keywords' => ['services', 'facilities', 'reading', 'discussion room', 'laptop access', 'book borrowing'],
-                    'answer' => 'The Services & Facilities pages list the spaces and resources available to the MMACI community, including reading areas, discussion rooms, laptop access, and other shared spaces. The layouts are designed to stay mobile-friendly.',
-                    'pageUrl' => url('/services'),
-                    'suggestions' => ['What facilities are available?', 'How can I reserve a room?'],
-                ],
-                [
-                    'title' => 'Admin dashboard',
-                    'keywords' => ['admin', 'dashboard', 'management', 'calendar events', 'new arrivals', 'library updates'],
-                    'answer' => 'The site management area supports calendar events, arrivals, gallery folders, library updates, e-books, theses, periodicals, donated books, and other content used across the website.',
-                    'pageUrl' => null,
-                    'suggestions' => ['How do I upload an image?', 'Why are duplicate messages showing?'],
-                ],
-                [
-                    'title' => 'Navigation',
-                    'keywords' => ['menu', 'navbar', 'footer', 'navigation'],
-                    'answer' => 'The site navigation groups public pages into Collection, Services & Facilities, and More. The footer and navbar both point to the same public destinations for quick access.',
-                    'pageUrl' => url('/'),
-                    'suggestions' => ['What is inside the More menu?', 'Where are the collection links?'],
-                ],
-                [
-                    'title' => 'Home highlights',
-                    'keywords' => ['library updates', 'new arrivals', 'featured video', 'news and events', 'calendar'],
-                    'answer' => 'The Home page highlights news and events, library updates, new arrivals, a gallery preview, and a featured video, all arranged in the main landing layout.',
-                    'pageUrl' => url('/'),
-                    'suggestions' => ['What shows on the homepage?', 'Where do library updates appear?'],
-                ],
-            ];
-
-            return array_merge($entries, $this->scannedEntries());
+        return Cache::remember('lisa.knowledge.entries.v5', now()->addMinutes(10), function () {
+            return array_merge(
+                $this->manualEntries(),
+                $this->databaseEntries(),
+                $this->scannedEntries()
+            );
         });
+    }
+
+    protected function manualEntries(): array
+    {
+        return [
+            [
+                'title' => 'Home page',
+                'keywords' => ['home', 'homepage', 'landing page', 'news', 'events', 'new arrivals', 'updates'],
+                'answer' => 'The Home page presents MMACI Library announcements, events, new arrivals, featured resources, gallery highlights, and links to the main website sections.',
+                'pageUrl' => url('/'),
+                'suggestions' => ['What events are available?', 'Where are the new arrivals?', 'Show me the collections'],
+            ],
+            [
+                'title' => 'About the library',
+                'keywords' => ['about', 'mission', 'vision', 'goals', 'history', 'library hours', 'opening hours', 'schedule'],
+                'answer' => 'The About section contains information about the MMACI Library Services Office, including its purpose, institutional information, and library details shown on the website.',
+                'pageUrl' => url('/about'),
+                'suggestions' => ['What are the library hours?', 'Where can I see the mission and vision?'],
+            ],
+            [
+                'title' => 'E-books',
+                'keywords' => ['ebook', 'ebooks', 'e-book', 'e-books', 'electronic book', 'digital book', 'find book', 'academic program resources'],
+                'answer' => 'Open the E-books page, choose your academic program, and then select an available folder. The folder link opens the corresponding online resources, usually in Google Drive.',
+                'pageUrl' => url('/collection/ebooks'),
+                'suggestions' => ['What programs have E-books?', 'How do I open an E-book folder?', 'Where can I find Tourism E-books?'],
+            ],
+            [
+                'title' => 'Thesis and dissertation',
+                'keywords' => ['thesis', 'theses', 'dissertation', 'research paper', 'manuscript', 'capstone'],
+                'answer' => 'Open the Thesis and Dissertation section, choose the relevant academic program, and select one of its available research folders.',
+                'pageUrl' => url('/collection/theses'),
+                'suggestions' => ['How do I find a thesis by program?', 'Where are research manuscripts?'],
+            ],
+            [
+                'title' => 'Periodicals',
+                'keywords' => ['periodical', 'journal', 'magazine', 'newspaper', 'clipping', 'article'],
+                'answer' => 'The Periodicals section organizes journals, newspaper clippings, magazines, and similar materials by program or category. Use the available filters or program cards to browse them.',
+                'pageUrl' => url('/collection/periodicals'),
+                'suggestions' => ['Can I filter periodicals?', 'Where are journals and magazines?'],
+            ],
+            [
+                'title' => 'Printed collection',
+                'keywords' => ['printed books', 'printed collection', 'physical book', 'hardcopy', 'book shelf'],
+                'answer' => 'The Printed Collection page introduces the physical library holdings and directs visitors to the available printed-book resources and collection information.',
+                'pageUrl' => url('/collection/printed'),
+                'suggestions' => ['Where can I find physical books?', 'What collections are available?'],
+            ],
+            [
+                'title' => 'Donated books',
+                'keywords' => ['donated book', 'donation', 'gifted book'],
+                'answer' => 'The Donated Books page displays donated titles with their descriptions and cover images. Open the page to browse the currently published donated books.',
+                'pageUrl' => url('/collection/donated-books'),
+                'suggestions' => ['Show me donated books', 'How are donated books added?'],
+            ],
+            [
+                'title' => 'Open access resources',
+                'keywords' => ['open access', 'opac', 'catalog', 'free resource', 'public resource'],
+                'answer' => 'The Open Access Resources section provides publicly available research tools, catalogs, and external learning resources. Select a resource card to open its website.',
+                'pageUrl' => url('/collection/open-access'),
+                'suggestions' => ['Where is the OPAC?', 'Show me free research resources'],
+            ],
+            [
+                'title' => 'Subscribed online database',
+                'keywords' => ['ebsco', 'subscribed database', 'online database', 'database login', 'database credentials'],
+                'answer' => 'The Subscribed Online Database page provides access information for EBSCO and other subscribed resources. Contact the Circulation Staff if credentials are required.',
+                'pageUrl' => url('/collection/subscribed-database'),
+                'suggestions' => ['Where do I get EBSCO credentials?', 'Open the online database page'],
+            ],
+            [
+                'title' => 'Services and facilities',
+                'keywords' => ['service', 'services', 'facility', 'facilities', 'reading area', 'discussion room', 'computer', 'laptop', 'internet', 'borrowing'],
+                'answer' => 'The Services and Facilities sections describe the library support, learning spaces, equipment, and other resources available to users.',
+                'pageUrl' => url('/services'),
+                'suggestions' => ['What facilities are available?', 'What services does the library offer?'],
+            ],
+            [
+                'title' => 'Reserve AVR',
+                'keywords' => ['reserve avr', 'avr', 'audio visual room', 'room reservation', 'book room'],
+                'answer' => 'Use the Reserve AVR page to submit a request for the Audio Visual Room. Complete the form with the required schedule and activity information.',
+                'pageUrl' => url('/more/reserve-avr'),
+                'suggestions' => ['Open the AVR reservation form', 'What information is required?'],
+            ],
+            [
+                'title' => 'Online book recommendation',
+                'keywords' => ['recommend book', 'book recommendation', 'suggest a book', 'request a book'],
+                'answer' => 'Use the Online Book Recommendation page to suggest a title that you would like the library to consider.',
+                'pageUrl' => url('/more/online-book-recommendation'),
+                'suggestions' => ['Open the book recommendation form', 'How do I suggest a title?'],
+            ],
+            [
+                'title' => 'Gallery',
+                'keywords' => ['gallery', 'photo', 'photos', 'album', 'pictures'],
+                'answer' => 'The Gallery contains public photo albums and event images from the library. Select an album or image collection to view its contents.',
+                'pageUrl' => url('/more/gallery'),
+                'suggestions' => ['Open the gallery', 'What photos are available?'],
+            ],
+            [
+                'title' => 'Ask the Librarian',
+                'keywords' => ['ask librarian', 'contact librarian', 'contact', 'email', 'facebook', 'help desk', 'support'],
+                'answer' => 'The Ask the Librarian page provides the available contact and support channels for questions that require assistance from library staff.',
+                'pageUrl' => url('/more/ask-librarian'),
+                'suggestions' => ['How do I contact the library?', 'Open Ask the Librarian'],
+            ],
+            [
+                'title' => 'Visiting users',
+                'keywords' => ['visitor', 'visiting user', 'guest', 'outside user', 'non student'],
+                'answer' => 'The Visiting Users page explains the information and procedures available for guests or users who are not regular MMACI library users.',
+                'pageUrl' => url('/more/visiting-users'),
+                'suggestions' => ['What should visitors know?', 'Open the visiting users page'],
+            ],
+            [
+                'title' => 'Website management',
+                'keywords' => ['admin', 'dashboard', 'manage website', 'upload', 'create event', 'edit content', 'delete content', 'publish'],
+                'answer' => 'Authorized staff can use the website management area to maintain events, collections, folders, gallery content, donated books, arrivals, and other public website information.',
+                'pageUrl' => null,
+                'suggestions' => ['How do I add an event?', 'How do I upload an image?', 'How do I publish content?'],
+            ],
+        ];
+    }
+
+    protected function databaseEntries(): array
+    {
+        $definitions = [
+            'ebook_programs' => ['label' => 'E-books', 'url' => '/collection/ebooks'],
+            'ebook_folders' => ['label' => 'E-book folder', 'url' => '/collection/ebooks'],
+            'thesis_programs' => ['label' => 'Thesis and Dissertation', 'url' => '/collection/theses'],
+            'thesis_folders' => ['label' => 'Thesis folder', 'url' => '/collection/theses'],
+            'periodical_programs' => ['label' => 'Periodicals', 'url' => '/collection/periodicals'],
+            'periodical_folders' => ['label' => 'Periodical folder', 'url' => '/collection/periodicals'],
+            'donated_books' => ['label' => 'Donated Books', 'url' => '/collection/donated-books'],
+            'open_access_resources' => ['label' => 'Open Access Resources', 'url' => '/collection/open-access'],
+            'calendar_events' => ['label' => 'Calendar Events', 'url' => '/'],
+            'new_arrivals' => ['label' => 'New Arrivals', 'url' => '/'],
+            'library_updates' => ['label' => 'Library Updates', 'url' => '/'],
+            'facilities' => ['label' => 'Facilities', 'url' => '/services/facilities'],
+            'services' => ['label' => 'Services', 'url' => '/services'],
+            'gallery_folders' => ['label' => 'Gallery', 'url' => '/more/gallery'],
+        ];
+
+        $entries = [];
+
+        foreach ($definitions as $table => $definition) {
+            try {
+                if (! Schema::hasTable($table)) {
+                    continue;
+                }
+
+                $columns = collect(['title', 'name', 'program_name', 'folder_name', 'description', 'location', 'category'])
+                    ->filter(fn ($column) => Schema::hasColumn($table, $column))
+                    ->values();
+
+                if ($columns->isEmpty()) {
+                    continue;
+                }
+
+                $query = DB::table($table)->select($columns->all())->limit(250);
+
+                if (Schema::hasColumn($table, 'status')) {
+                    $query->where(function ($q) {
+                        $q->where('status', 1)
+                            ->orWhere('status', 'published')
+                            ->orWhere('status', 'active');
+                    });
+                }
+
+                foreach ($query->get() as $record) {
+                    $data = (array) $record;
+                    $title = collect(['title', 'name', 'program_name', 'folder_name'])
+                        ->map(fn ($column) => trim((string) ($data[$column] ?? '')))
+                        ->first(fn ($value) => $value !== '');
+
+                    if (! $title) {
+                        continue;
+                    }
+
+                    $description = trim((string) ($data['description'] ?? ''));
+                    $category = trim((string) ($data['category'] ?? ''));
+                    $location = trim((string) ($data['location'] ?? ''));
+
+                    $details = collect([$description, $category ? "Category: {$category}." : '', $location ? "Location: {$location}." : ''])
+                        ->filter()
+                        ->implode(' ');
+
+                    $entries[] = [
+                        'title' => $title,
+                        'keywords' => array_filter([
+                            $title,
+                            $definition['label'],
+                            $category,
+                            Str::singular($definition['label']),
+                        ]),
+                        'answer' => "I found {$title} under {$definition['label']}. ".($details ?: 'Open the related page to view the available information and resources.'),
+                        'pageUrl' => url($definition['url']),
+                        'suggestions' => [
+                            "Open {$definition['label']}",
+                            "Tell me more about {$title}",
+                        ],
+                    ];
+                }
+            } catch (Throwable) {
+                continue;
+            }
+        }
+
+        return $entries;
     }
 
     protected function scannedEntries(): array
@@ -329,73 +361,68 @@ class LisaAssistant
             return [];
         }
 
-        $excludedDirectories = [
-            'admin/',
-            'auth/',
-            'components/',
-            'emails/',
-            'layouts/',
-            'partials/',
-            'vendor/',
-        ];
+        $excludedDirectories = ['auth/', 'emails/', 'layouts/', 'partials/', 'vendor/'];
 
-        $paths = collect(File::allFiles($viewsPath))
+        return collect(File::allFiles($viewsPath))
             ->filter(function ($file) use ($viewsPath, $excludedDirectories) {
-                $relativePath = Str::of($file->getPathname())
+                $relative = Str::of($file->getPathname())
                     ->after(rtrim($viewsPath, DIRECTORY_SEPARATOR).DIRECTORY_SEPARATOR)
                     ->replace('\\', '/')
                     ->toString();
 
-                if (! Str::endsWith($relativePath, '.blade.php')) {
-                    return false;
-                }
-
-                return ! collect($excludedDirectories)
-                    ->contains(fn (string $directory) => Str::startsWith($relativePath, $directory));
+                return Str::endsWith($relative, '.blade.php')
+                    && ! collect($excludedDirectories)->contains(
+                        fn ($directory) => Str::startsWith($relative, $directory)
+                    );
             })
-            ->map(fn ($file) => $file->getPathname())
+            ->take(300)
+            ->map(function ($file) {
+                try {
+                    $path = $file->getPathname();
+                    $contents = File::get($path);
+                    $relative = Str::of($path)
+                        ->after(resource_path('views').DIRECTORY_SEPARATOR)
+                        ->replace('\\', '/')
+                        ->replace('.blade.php', '')
+                        ->toString();
+
+                    $title = $this->extractTitle($contents)
+                        ?: Str::headline(basename($path, '.blade.php'));
+
+                    $snippets = $this->extractSnippets($contents);
+                    $isAdmin = Str::startsWith($relative, 'admin/');
+
+                    return [
+                        'title' => $title,
+                        'keywords' => array_values(array_unique(array_filter(array_merge(
+                            [$title, Str::headline(str_replace('/', ' ', $relative))],
+                            $snippets['keywords']
+                        )))),
+                        'answer' => $snippets['answer']
+                            ?: ($isAdmin
+                                ? "The {$title} screen is part of the authorized website management area."
+                                : "The {$title} page is available on the MMACI Library website."),
+                        'pageUrl' => $isAdmin ? null : $this->guessPageUrl($relative),
+                        'suggestions' => $snippets['suggestions'],
+                    ];
+                } catch (Throwable) {
+                    return null;
+                }
+            })
+            ->filter()
             ->values()
             ->all();
-
-        $entries = [];
-
-        foreach ($paths as $path) {
-            if (! File::exists($path)) {
-                continue;
-            }
-
-            $contents = File::get($path);
-            $title = $this->extractTitle($contents) ?: Str::headline(basename($path, '.blade.php'));
-            $snippets = $this->extractSnippets($contents);
-
-            $keywords = array_filter(array_unique(array_merge(
-                [Str::lower($title)],
-                $snippets['keywords']
-            )));
-
-            $answer = $snippets['answer'] ?: "The {$title} page is available on the public site and follows the MMACI Library design system.";
-            $pageUrl = $this->guessPageUrl($path);
-
-            $entries[] = [
-                'title' => $title,
-                'keywords' => $keywords,
-                'answer' => $this->publicFacingAnswer($answer),
-                'pageUrl' => $pageUrl,
-                'suggestions' => $snippets['suggestions'],
-            ];
-        }
-
-        return $entries;
     }
 
     protected function extractTitle(string $contents): ?string
     {
-        if (preg_match('/@section\\([\'"]title[\'"]\\s*,\\s*[\'"]([^\'"]+)[\'"]\\)/', $contents, $matches)) {
+        if (preg_match('/@section\\([\'\"](?:title|page-title)[\'\"]\\s*,\\s*[\'\"]([^\'\"]+)[\'\"]\\)/', $contents, $matches)) {
             return trim($matches[1]);
         }
 
-        if (preg_match('/<h1[^>]*>(.*?)<\\/h1>/si', $contents, $matches)) {
-            return trim(strip_tags($matches[1]));
+        if (preg_match('/<h[12][^>]*>(.*?)<\\/h[12]>/si', $contents, $matches)) {
+            $text = $this->cleanBladeText($matches[1]);
+            return $text !== '' ? $text : null;
         }
 
         return null;
@@ -404,78 +431,139 @@ class LisaAssistant
     protected function extractSnippets(string $contents): array
     {
         $keywords = [];
-        $suggestions = [];
+        $paragraphs = [];
 
-        if (preg_match_all('/<h[12][^>]*>(.*?)<\\/h[12]>/si', $contents, $matches)) {
+        if (preg_match_all('/<h[1-4][^>]*>(.*?)<\\/h[1-4]>/si', $contents, $matches)) {
             foreach ($matches[1] as $heading) {
-                $text = trim(strip_tags($heading));
+                $text = $this->cleanBladeText($heading);
                 if ($text !== '') {
-                    $keywords[] = Str::lower($text);
+                    $keywords[] = $text;
                 }
             }
         }
 
         if (preg_match_all('/<p[^>]*>(.*?)<\\/p>/si', $contents, $matches)) {
-            foreach (array_slice($matches[1], 0, 3) as $paragraph) {
-                $text = trim(preg_replace('/\\s+/', ' ', strip_tags($paragraph)));
-                if ($text !== '') {
-                    $suggestions[] = Str::of($text)->limit(110)->toString();
+            foreach ($matches[1] as $paragraph) {
+                $text = $this->cleanBladeText($paragraph);
+                if (mb_strlen($text) >= 20) {
+                    $paragraphs[] = Str::limit($text, 220);
                 }
             }
         }
 
         return [
-            'keywords' => array_slice($keywords, 0, 8),
-            'suggestions' => array_slice($suggestions, 0, 3),
-            'answer' => $suggestions[0] ?? null,
+            'keywords' => array_slice(array_unique($keywords), 0, 12),
+            'suggestions' => collect($keywords)
+                ->take(3)
+                ->map(fn ($item) => "Tell me about {$item}")
+                ->all(),
+            'answer' => $paragraphs[0] ?? null,
         ];
     }
 
-    protected function guessPageUrl(string $path): ?string
+    protected function cleanBladeText(string $text): string
     {
-        $relative = Str::of($path)
-            ->after(resource_path('views').DIRECTORY_SEPARATOR)
-            ->replace('\\', '/')
-            ->replace('.blade.php', '')
-            ->toString();
+        $text = preg_replace('/\\{\\{.*?\\}\\}|\\{!!.*?!!\\}|@\\w+(?:\\([^)]*\\))?/s', ' ', $text) ?? $text;
+        $text = html_entity_decode(strip_tags($text));
+        return preg_replace('/\\s+/', ' ', trim($text)) ?? trim($text);
+    }
 
+    protected function guessPageUrl(string $relative): ?string
+    {
         $map = [
-            'home' => url('/'),
-            'welcome' => url('/'),
-            'about' => url('/about'),
-            'collection/printed' => url('/collection/printed'),
-            'collection/ebooks' => url('/collection/ebooks'),
-            'collection/open-access' => url('/collection/open-access'),
-            'collection/theses' => url('/collection/theses'),
-            'collection/donated-books' => url('/collection/donated-books'),
-            'collection/periodicals' => url('/collection/periodicals'),
-            'collection/subscribed-database' => url('/collection/subscribed-database'),
-            'more/gallery' => url('/more/gallery'),
-            'more/online-book-recommendation' => url('/more/online-book-recommendation'),
-            'more/reserve-avr' => url('/more/reserve-avr'),
-            'more/visiting-users' => url('/more/visiting-users'),
-            'more/ask-librarian' => url('/more/ask-librarian'),
-            'services/index' => url('/services'),
-            'services/facilities' => url('/services/facilities'),
+            'home' => '/',
+            'welcome' => '/',
+            'about' => '/about',
+            'collection/printed' => '/collection/printed',
+            'collection/ebooks' => '/collection/ebooks',
+            'collection/open-access' => '/collection/open-access',
+            'collection/theses' => '/collection/theses',
+            'collection/donated-books' => '/collection/donated-books',
+            'collection/periodicals' => '/collection/periodicals',
+            'collection/subscribed-database' => '/collection/subscribed-database',
+            'more/gallery' => '/more/gallery',
+            'more/online-book-recommendation' => '/more/online-book-recommendation',
+            'more/reserve-avr' => '/more/reserve-avr',
+            'more/visiting-users' => '/more/visiting-users',
+            'more/ask-librarian' => '/more/ask-librarian',
+            'services/index' => '/services',
+            'services/facilities' => '/services/facilities',
         ];
 
-        return $map[$relative] ?? null;
+        return isset($map[$relative]) ? url($map[$relative]) : null;
+    }
+
+    protected function relatedSuggestions(array $entries): array
+    {
+        return collect($entries)
+            ->map(fn ($entry) => isset($entry['title']) ? "Tell me about {$entry['title']}" : null)
+            ->filter()
+            ->all();
+    }
+
+    protected function fallbackResponse(?string $question = null): array
+    {
+        return [
+            'answer' => $question
+                ? "I couldn’t find a reliable system entry for “{$question}.” Try mentioning the specific page, program, collection, service, facility, event, or form you need. For information not published on the website, please contact the library staff."
+                : 'Ask me about a collection, academic program, service, facility, event, form, or website page.',
+            'title' => 'Let me help you find it',
+            'pageUrl' => url('/more/ask-librarian'),
+            'suggestions' => $this->defaultSuggestions(),
+        ];
+    }
+
+    protected function defaultSuggestions(): array
+    {
+        return [
+            'Where can I find E-books for my program?',
+            'What services and facilities are available?',
+            'How do I contact the librarian?',
+            'How do I reserve the AVR?',
+        ];
+    }
+
+    protected function varyAnswer(string $answer, int $historyCount): string
+    {
+        $prefixes = ['', 'Here’s what I found: ', 'Based on the library website: '];
+        return $prefixes[$historyCount % count($prefixes)].$answer;
     }
 
     protected function publicFacingAnswer(string $answer): string
     {
         $replacements = [
-            '/\badmin(?:s)?\b/i' => 'site team',
-            '/\badmin workflows?\b/i' => 'site management',
-            '/\badmin panel\b/i' => 'site management area',
-            '/\badmins can\b/i' => 'the site team can',
-            '/\bcan do\b/i' => 'can manage',
+            '/\\badmins?\\b/i' => 'authorized staff',
+            '/\\badmin panel\\b/i' => 'website management area',
+            '/\\badmins can\\b/i' => 'authorized staff can',
         ];
 
         foreach ($replacements as $pattern => $replacement) {
             $answer = preg_replace($pattern, $replacement, $answer) ?? $answer;
         }
 
-        return preg_replace('/\s+/', ' ', trim($answer)) ?? $answer;
+        return preg_replace('/\\s+/', ' ', trim($answer)) ?? trim($answer);
+    }
+
+    protected function isGreeting(string $message): bool
+    {
+        return in_array($message, ['hi', 'hello', 'hey', 'good morning', 'good afternoon', 'good evening'], true);
+    }
+
+    protected function normalizeText(string $text): string
+    {
+        $text = Str::lower($text);
+        $text = preg_replace('/[^\\pL\\pN\\s-]+/u', ' ', $text) ?? $text;
+        return preg_replace('/\\s+/', ' ', trim($text)) ?? trim($text);
+    }
+
+    protected function words(string $text): array
+    {
+        $stopWords = ['a', 'an', 'the', 'is', 'are', 'was', 'were', 'do', 'does', 'did', 'how', 'where', 'what', 'which', 'can', 'could', 'i', 'me', 'my', 'to', 'of', 'for', 'in', 'on', 'at', 'and', 'or', 'please'];
+
+        return collect(explode(' ', $this->normalizeText($text)))
+            ->filter(fn ($word) => mb_strlen($word) >= 2 && ! in_array($word, $stopWords, true))
+            ->unique()
+            ->values()
+            ->all();
     }
 }
