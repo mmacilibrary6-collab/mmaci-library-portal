@@ -214,9 +214,9 @@
             </p>
         </header>
 
-        <div class="row g-4">
+        <div class="arrivals-scroll" aria-label="New arrivals">
             @forelse($arrivals ?? [] as $book)
-                <div class="col-xl-3 col-lg-4 col-md-6" data-aos="fade-up">
+                <div class="arrival-item" data-aos="fade-up">
                     <article class="arrival-card">
                         <div class="arrival-cover">
                             <img
@@ -234,16 +234,11 @@
                                     80
                                 ) }}
                             </p>
-
-                            <a href="{{ url('/collection/printed') }}">
-                                View Collection
-                                <i class="bi bi-arrow-right" aria-hidden="true"></i>
-                            </a>
                         </div>
                     </article>
                 </div>
             @empty
-                <div class="col-12">
+                <div class="arrival-empty">
                     <div class="empty-state empty-state-wide">
                         <h4>No new arrivals available</h4>
                         <p>Newly added library resources will appear here.</p>
@@ -1106,8 +1101,49 @@ document.addEventListener('DOMContentLoaded', function () {
     text-align: center;
 }
 
+.arrivals-scroll {
+    display: flex;
+    gap: 24px;
+    padding: 4px 4px 18px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scroll-snap-type: x proximity;
+    scroll-behavior: smooth;
+    overscroll-behavior-inline: contain;
+    scrollbar-width: thin;
+    scrollbar-color: var(--home-blue) var(--home-bg);
+    -webkit-overflow-scrolling: touch;
+}
+
+.arrivals-scroll::-webkit-scrollbar {
+    height: 9px;
+}
+
+.arrivals-scroll::-webkit-scrollbar-track {
+    background: var(--home-bg);
+    border-radius: 999px;
+}
+
+.arrivals-scroll::-webkit-scrollbar-thumb {
+    background: var(--home-blue);
+    border: 2px solid var(--home-bg);
+    border-radius: 999px;
+}
+
+.arrival-item {
+    flex: 0 0 clamp(270px, 23vw, 345px);
+    scroll-snap-align: start;
+}
+
+.arrival-empty {
+    flex: 0 0 100%;
+}
+
+
 .arrival-card {
     height: 100%;
+    display: flex;
+    flex-direction: column;
     overflow: hidden;
     background: var(--home-white);
     border: 1px solid var(--home-line);
@@ -1134,6 +1170,7 @@ document.addEventListener('DOMContentLoaded', function () {
 }
 
 .arrival-body {
+    flex: 1;
     padding: 23px;
 }
 
@@ -1158,7 +1195,6 @@ document.addEventListener('DOMContentLoaded', function () {
     line-height: 1.7;
 }
 
-.arrival-body a,
 .service-card a,
 .text-action {
     display: inline-flex;
@@ -1753,6 +1789,10 @@ document.addEventListener('DOMContentLoaded', function () {
         border-radius: 18px;
     }
 
+    .arrival-item {
+        flex-basis: min(82vw, 320px);
+    }
+
     .arrival-cover {
         height: 350px;
     }
@@ -1856,5 +1896,4 @@ document.addEventListener('DOMContentLoaded', function () {
     @include('components.lisa-chatbox')
 
 @endsection
-
 
