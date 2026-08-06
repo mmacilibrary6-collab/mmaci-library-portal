@@ -97,8 +97,17 @@
                             </td>
 
                             <td class="time-cell">
+                                @php
+                                    $start = optional($event->event_date);
+                                    $end = optional($event->event_end_date);
+                                @endphp
+
                                 <strong>
-                                    {{ optional($event->event_date)->format('M d, Y') }}
+                                    @if($end && $start && $end->gt($start))
+                                        {{ $start->format('M d') }} — {{ $end->format('M d, Y') }}
+                                    @else
+                                        {{ $start->format('M d, Y') }}
+                                    @endif
                                 </strong>
 
                                 <span>

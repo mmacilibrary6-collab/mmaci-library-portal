@@ -16,6 +16,7 @@ return new class extends Migration
                     $table->string('title');
                     $table->text('description')->nullable();
                     $table->date('event_date');
+                    $table->date('event_end_date')->nullable();
                     $table->time('start_time')->nullable();
                     $table->time('end_time')->nullable();
                     $table->string('location')->nullable();
@@ -28,6 +29,7 @@ return new class extends Migration
                 'title' => fn (Blueprint $table) => $table->string('title')->nullable(),
                 'description' => fn (Blueprint $table) => $table->text('description')->nullable(),
                 'event_date' => fn (Blueprint $table) => $table->date('event_date')->nullable(),
+                'event_end_date' => fn (Blueprint $table) => $table->date('event_end_date')->nullable(),
                 'start_time' => fn (Blueprint $table) => $table->time('start_time')->nullable(),
                 'end_time' => fn (Blueprint $table) => $table->time('end_time')->nullable(),
                 'location' => fn (Blueprint $table) => $table->string('location')->nullable(),

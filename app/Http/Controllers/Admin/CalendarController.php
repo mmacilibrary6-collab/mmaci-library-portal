@@ -89,6 +89,12 @@ class CalendarController extends Controller
                 'date',
             ],
 
+            'event_end_date' => [
+                'nullable',
+                'date',
+                'after_or_equal:event_date',
+            ],
+
             'start_time' => [
                 'nullable',
                 'date_format:H:i',
@@ -153,6 +159,12 @@ class CalendarController extends Controller
             'event_date' => [
                 'required',
                 'date',
+            ],
+
+            'event_end_date' => [
+                'nullable',
+                'date',
+                'after_or_equal:event_date',
             ],
 
             'start_time' => [

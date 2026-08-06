@@ -20,8 +20,14 @@ class HomeController extends Controller
         }
 
         if (Schema::hasColumn($eventTable, 'event_date')) {
-            $eventsQuery->whereDate('event_date', '>=', today())
-                ->orderBy('event_date');
+            $eventsQuery->where(function ($query) use ($eventTable) {
+                $query->whereDate('event_date', '>=', today());
+
+                if (Schema::hasColumn($eventTable, 'event_end_date')) {
+                    $query->orWhereDate('event_end_date', '>=', today());
+                }
+            })
+            ->orderBy('event_date');
         }
 
         if (Schema::hasColumn($eventTable, 'start_time')) {

@@ -50,20 +50,29 @@
 
                     <div class="event-list">
                         @forelse($events ?? [] as $event)
+                            @php
+                                $eventStart = optional($event->event_date);
+                                $eventEnd = optional($event->event_end_date);
+                            @endphp
+
                             <div class="event-item">
                                 <time class="event-date" datetime="{{ $event->event_date }}">
                                     <span>
-                                        {{ \Carbon\Carbon::parse($event->event_date)->format('M') }}
+                                        {{ $eventStart->format('M') }}
                                     </span>
                                     <strong>
-                                        {{ \Carbon\Carbon::parse($event->event_date)->format('d') }}
+                                        {{ $eventStart->format('d') }}
                                     </strong>
                                 </time>
 
                                 <div class="event-copy">
                                     <h4>{{ $event->title }}</h4>
                                     <span>
-                                        {{ \Carbon\Carbon::parse($event->event_date)->format('F d, Y') }}
+                                        @if($eventEnd && $eventStart && $eventEnd->gt($eventStart))
+                                            {{ $eventStart->format('F d') }} — {{ $eventEnd->format('F d, Y') }}
+                                        @else
+                                            {{ $eventStart->format('F d, Y') }}
+                                        @endif
                                     </span>
                                     <p>{{ $event->description }}</p>
                                 </div>
@@ -648,6 +657,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 id: @json($event->id ?? ''),
                 title: @json($event->title ?? 'Untitled Event'),
                 start: @json($event->event_date ?? null),
+                end: @json($event->event_end_date ? \Carbon\Carbon::parse($event->event_end_date)->addDay()->format('Y-m-d') : null),
                 allDay: true,
                 extendedProps: {
                     description: @json($event->description ?? ''),
@@ -688,12 +698,23 @@ document.addEventListener('DOMContentLoaded', function () {
             const event = info.event;
             const properties = event.extendedProps;
             const formattedDate = event.start
-                ? event.start.toLocaleDateString('en-PH', {
-                    weekday: 'long',
-                    year: 'numeric',
-                    month: 'long',
-                    day: 'numeric'
-                })
+                ? (() => {
+                    const options = {
+                        weekday: 'long',
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric'
+                    };
+
+                    const startDate = event.start.toLocaleDateString('en-PH', options);
+
+                    if (event.end) {
+                        const endDate = new Date(event.end.getTime() - 86400000);
+                        return `${startDate} — ${endDate.toLocaleDateString('en-PH', options)}`;
+                    }
+
+                    return startDate;
+                })()
                 : 'Date not specified';
 
             document.getElementById('eventModalTitle').textContent =

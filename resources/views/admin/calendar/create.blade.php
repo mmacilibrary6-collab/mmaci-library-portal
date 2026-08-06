@@ -150,14 +150,14 @@
 
                         <div>
                             <h5>Event Schedule</h5>
-                            <p>Select the event date and optional time range.</p>
+                            <p>Select the event date or optionally choose an end date and time range.</p>
                         </div>
 
                     </div>
 
                     <div class="row g-4">
 
-                        <div class="col-lg-4">
+                        <div class="col-lg-3">
 
                             <label for="event_date" class="form-label">
                                 Event Date <span>*</span>
@@ -179,7 +179,32 @@
 
                         </div>
 
-                        <div class="col-lg-4">
+                        <div class="col-lg-3">
+
+                            <label for="event_end_date" class="form-label">
+                                Event End Date
+                            </label>
+
+                            <input
+                                type="date"
+                                id="event_end_date"
+                                name="event_end_date"
+                                value="{{ old('event_end_date') }}"
+                                class="form-control @error('event_end_date') is-invalid @enderror">
+
+                            <div class="calendar-field-help">
+                                Optional
+                            </div>
+
+                            @error('event_end_date')
+                                <div class="invalid-feedback">
+                                    {{ $message }}
+                                </div>
+                            @enderror
+
+                        </div>
+
+                        <div class="col-lg-3">
 
                             <label for="start_time" class="form-label">
                                 Start Time
@@ -204,7 +229,7 @@
 
                         </div>
 
-                        <div class="col-lg-4">
+                        <div class="col-lg-3">
 
                             <label for="end_time" class="form-label">
                                 End Time

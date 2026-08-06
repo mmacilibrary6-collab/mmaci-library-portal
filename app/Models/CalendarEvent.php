@@ -16,6 +16,7 @@ class CalendarEvent extends Model
         'title',
         'description',
         'event_date',
+        'event_end_date',
         'start_time',
         'end_time',
         'location',
@@ -29,6 +30,7 @@ class CalendarEvent extends Model
 
     protected $casts = [
         'event_date' => 'date',
+        'event_end_date' => 'date',
         'start_time' => 'datetime:H:i',
         'end_time' => 'datetime:H:i',
     ];
