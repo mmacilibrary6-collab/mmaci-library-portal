@@ -4,7 +4,7 @@
 @section('page-title', 'Add Library Update')
 
 @section('content')
-<div class="container-fluid library-update-form-page">
+<div class="container-fluid library-updates-page">
     <section class="updates-hero">
         <div class="hero-copy">
             <span class="hero-icon">
@@ -27,14 +27,16 @@
         </a>
     </section>
 
-    <form
-        action="{{ route('admin.library-updates.store') }}"
-        method="POST"
-        enctype="multipart/form-data">
+    <section class="updates-panel">
+        <form
+            action="{{ route('admin.library-updates.store') }}"
+            method="POST"
+            enctype="multipart/form-data">
 
-        @csrf
+            @csrf
 
-        @include('admin.library-updates._form')
-    </form>
+            @include('admin.library-updates._form')
+        </form>
+    </section>
 </div>
 @endsection
