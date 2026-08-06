@@ -98,12 +98,12 @@
 
                             <td class="time-cell">
                                 @php
-                                    $start = optional($event->event_date);
-                                    $end = optional($event->event_end_date);
+                                    $start = $event->event_date;
+                                    $end = $event->event_end_date;
                                 @endphp
 
                                 <strong>
-                                    @if($end && $start && $end->gt($start))
+                                    @if($end && $start && $end > $start)
                                         {{ $start->format('M d') }} — {{ $end->format('M d, Y') }}
                                     @else
                                         {{ $start->format('M d, Y') }}

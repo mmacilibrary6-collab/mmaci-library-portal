@@ -51,8 +51,8 @@
                     <div class="event-list">
                         @forelse($events ?? [] as $event)
                             @php
-                                $eventStart = optional($event->event_date);
-                                $eventEnd = optional($event->event_end_date);
+                                $eventStart = $event->event_date;
+                                $eventEnd = $event->event_end_date;
                             @endphp
 
                             <div class="event-item">
@@ -68,7 +68,7 @@
                                 <div class="event-copy">
                                     <h4>{{ $event->title }}</h4>
                                     <span>
-                                        @if($eventEnd && $eventStart && $eventEnd->gt($eventStart))
+                                        @if($eventEnd && $eventStart && $eventEnd > $eventStart)
                                             {{ $eventStart->format('F d') }} — {{ $eventEnd->format('F d, Y') }}
                                         @else
                                             {{ $eventStart->format('F d, Y') }}
