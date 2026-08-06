@@ -17,7 +17,6 @@ class NewArrival extends Model
         'author',
         'isbn',
         'category',
-        'resource_type',
         'publication_year',
         'publisher',
         'description',

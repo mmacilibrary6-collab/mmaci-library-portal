@@ -55,10 +55,12 @@
 }
 
 .arrival-editor-hero {
+    position: relative;
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 24px;
+    min-height: 150px;
     margin-bottom: 22px;
     padding: 28px 30px;
     overflow: hidden;
@@ -74,7 +76,20 @@
     box-shadow: 0 16px 36px rgba(11, 46, 89, 0.16);
 }
 
+.arrival-editor-hero::after {
+    content: "";
+    position: absolute;
+    right: 12%;
+    bottom: -70px;
+    width: 180px;
+    height: 180px;
+    border: 28px solid rgba(255, 255, 255, 0.05);
+    border-radius: 50%;
+}
+
 .arrival-editor-hero .hero-copy {
+    position: relative;
+    z-index: 1;
     display: flex;
     align-items: center;
     gap: 18px;
@@ -90,6 +105,7 @@
     background: #f4b400;
     border-radius: 18px;
     font-size: 27px;
+    box-shadow: 0 12px 25px rgba(0, 0, 0, 0.14);
 }
 
 .arrival-editor-hero .hero-eyebrow {
@@ -119,6 +135,8 @@
 }
 
 .btn-back-list {
+    position: relative;
+    z-index: 1;
     min-height: 46px;
     padding: 0 18px;
     display: inline-flex;
@@ -131,11 +149,14 @@
     font-size: 12px;
     font-weight: 800;
     text-decoration: none;
+    box-shadow: 0 10px 22px rgba(0, 0, 0, 0.15);
+    transition: 0.2s ease;
 }
 
 .btn-back-list:hover {
     color: #0b2e59;
     background: #ffc62b;
+    transform: translateY(-2px);
 }
 
 @media (max-width: 767.98px) {

@@ -15,7 +15,7 @@ class NewArrivalController extends Controller
     public function index(Request $request): View
     {
         $search = trim((string) $request->input('search'));
-        $resourceType = $request->input('resource_type');
+
         $availabilityStatus = $request->input(
             'availability_status'
         );
@@ -51,13 +51,6 @@ class NewArrivalController extends Controller
                         );
                 });
             })
-            ->when(
-                filled($resourceType),
-                fn ($query) => $query->where(
-                    'resource_type',
-                    $resourceType
-                )
-            )
             ->when(
                 filled($availabilityStatus),
                 fn ($query) => $query->where(
@@ -200,11 +193,6 @@ class NewArrivalController extends Controller
                 'string',
             ],
 
-            'resource_type' => [
-                'required',
-                'in:printed,ebook',
-            ],
-
             'availability_status' => [
                 'required',
                 'in:available,unavailable',
@@ -254,12 +242,6 @@ class NewArrivalController extends Controller
 
             'arrival_date.date' =>
                 'The date of arrival must be a valid date.',
-
-            'resource_type.required' =>
-                'Please select a resource type.',
-
-            'resource_type.in' =>
-                'The selected resource type is invalid.',
 
             'availability_status.required' =>
                 'Please select an availability status.',
@@ -314,9 +296,6 @@ class NewArrivalController extends Controller
                 ? trim($validated['description'])
                 : null,
 
-            'resource_type' =>
-                $validated['resource_type'],
-
             'availability_status' =>
                 $validated['availability_status'],
 
@@ -324,9 +303,6 @@ class NewArrivalController extends Controller
                 $validated['arrival_date'],
         ];
 
-        /*
-         * An uploaded image takes priority over an external URL.
-         */
         if ($request->hasFile('image_file')) {
             $data['image'] = DatabaseMedia::store(
                 $request->file('image_file')

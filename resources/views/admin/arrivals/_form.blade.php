@@ -38,7 +38,7 @@
 
                 <p>
                     Enter the accession number, publication details,
-                    and current availability.
+                    and availability.
                 </p>
             </div>
         </div>
@@ -76,7 +76,7 @@
                     </div>
                 @else
                     <div class="field-note">
-                        This number must be unique for every material.
+                        Every material must have a unique accession number.
                     </div>
                 @enderror
             </div>
@@ -113,7 +113,7 @@
                     id="author"
                     value="{{ old('author', $arrival?->author) }}"
                     class="form-control @error('author') is-invalid @enderror"
-                    placeholder="Enter author name">
+                    placeholder="Enter the author name">
 
                 @error('author')
                     <div class="invalid-feedback">
@@ -142,7 +142,7 @@
                 @enderror
             </div>
 
-            <div class="col-md-4">
+            <div class="col-md-6">
                 <label for="arrival_date" class="form-label">
                     Date of Arrival <span>*</span>
                 </label>
@@ -162,50 +162,7 @@
                 @enderror
             </div>
 
-            <div class="col-md-4">
-                <label for="resource_type" class="form-label">
-                    Resource Type <span>*</span>
-                </label>
-
-                <select
-                    name="resource_type"
-                    id="resource_type"
-                    class="form-select @error('resource_type') is-invalid @enderror"
-                    required>
-
-                    <option
-                        value="printed"
-                        @selected(
-                            old(
-                                'resource_type',
-                                $arrival?->resource_type ?? 'printed'
-                            ) === 'printed'
-                        )>
-
-                        Printed Material
-                    </option>
-
-                    <option
-                        value="ebook"
-                        @selected(
-                            old(
-                                'resource_type',
-                                $arrival?->resource_type
-                            ) === 'ebook'
-                        )>
-
-                        E-Book
-                    </option>
-                </select>
-
-                @error('resource_type')
-                    <div class="invalid-feedback">
-                        {{ $message }}
-                    </div>
-                @enderror
-            </div>
-
-            <div class="col-md-4">
+            <div class="col-md-6">
                 <label
                     for="availability_status"
                     class="form-label">
@@ -282,7 +239,7 @@
                 <h5>Cover Image</h5>
 
                 <p>
-                    Upload a cover or provide a direct external image link.
+                    Upload a cover image or provide a direct external image link.
                 </p>
             </div>
         </div>

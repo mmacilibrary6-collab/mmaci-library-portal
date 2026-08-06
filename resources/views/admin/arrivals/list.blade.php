@@ -19,7 +19,7 @@
                 <h2>New Arrivals</h2>
 
                 <p>
-                    Manage newly acquired printed materials and electronic resources.
+                    Manage newly acquired printed library materials.
                 </p>
             </div>
         </div>
@@ -42,10 +42,12 @@
 
                 <p>
                     {{ $arrivals->total() }}
+
                     {{ \Illuminate\Support\Str::plural(
                         'material',
                         $arrivals->total()
                     ) }}
+
                     found
                 </p>
             </div>
@@ -65,33 +67,6 @@
                         placeholder="Search title, author or accession no..."
                         aria-label="Search by title, author, or accession number">
                 </div>
-
-                <select
-                    name="resource_type"
-                    aria-label="Resource type">
-
-                    <option value="">
-                        All Types
-                    </option>
-
-                    <option
-                        value="printed"
-                        @selected(
-                            request('resource_type') === 'printed'
-                        )>
-
-                        Printed
-                    </option>
-
-                    <option
-                        value="ebook"
-                        @selected(
-                            request('resource_type') === 'ebook'
-                        )>
-
-                        E-Book
-                    </option>
-                </select>
 
                 <select
                     name="availability_status"
@@ -130,7 +105,6 @@
 
                 @if(request()->hasAny([
                     'search',
-                    'resource_type',
                     'availability_status'
                 ]))
                     <a
@@ -150,13 +124,22 @@
                 <thead>
                     <tr>
                         <th class="number-column">#</th>
+
                         <th>Accession No.</th>
+
                         <th>Material</th>
+
                         <th>Category</th>
-                        <th class="text-center">Type</th>
-                        <th class="text-center">Availability</th>
+
+                        <th class="text-center">
+                            Availability
+                        </th>
+
                         <th>Arrival Date</th>
-                        <th class="text-end">Actions</th>
+
+                        <th class="text-end">
+                            Actions
+                        </th>
                     </tr>
                 </thead>
 
@@ -205,18 +188,6 @@
 
                             <td class="category-cell">
                                 {{ $arrival->category ?: 'Uncategorized' }}
-                            </td>
-
-                            <td class="text-center">
-                                <span class="type-badge {{ $arrival->resource_type }}">
-                                    <i class="bi {{ $arrival->resource_type === 'ebook'
-                                        ? 'bi-tablet'
-                                        : 'bi-book' }}"></i>
-
-                                    {{ $arrival->resource_type === 'ebook'
-                                        ? 'E-Book'
-                                        : 'Printed' }}
-                                </span>
                             </td>
 
                             <td class="text-center">
@@ -278,7 +249,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="8">
+                            <td colspan="7">
                                 <div class="empty-state">
                                     <span>
                                         <i class="bi bi-journal-x"></i>
@@ -289,7 +260,6 @@
                                     <p>
                                         @if(request()->hasAny([
                                             'search',
-                                            'resource_type',
                                             'availability_status'
                                         ]))
                                             Try adjusting or clearing your filters.
@@ -301,7 +271,6 @@
                                     <a
                                         href="{{ request()->hasAny([
                                             'search',
-                                            'resource_type',
                                             'availability_status'
                                         ])
                                             ? route('admin.new-arrivals.index')
@@ -309,7 +278,6 @@
 
                                         <i class="bi {{ request()->hasAny([
                                             'search',
-                                            'resource_type',
                                             'availability_status'
                                         ])
                                             ? 'bi-x-lg'
@@ -317,7 +285,6 @@
 
                                         {{ request()->hasAny([
                                             'search',
-                                            'resource_type',
                                             'availability_status'
                                         ])
                                             ? 'Clear Filters'
@@ -362,6 +329,7 @@
 }
 
 .arrivals-hero {
+    position: relative;
     min-height: 150px;
     margin-bottom: 22px;
     padding: 28px 30px;
@@ -382,7 +350,20 @@
     box-shadow: 0 16px 36px rgba(11, 46, 89, 0.16);
 }
 
+.arrivals-hero::after {
+    content: "";
+    position: absolute;
+    right: 12%;
+    bottom: -70px;
+    width: 180px;
+    height: 180px;
+    border: 28px solid rgba(255, 255, 255, 0.05);
+    border-radius: 50%;
+}
+
 .hero-copy {
+    position: relative;
+    z-index: 1;
     display: flex;
     align-items: center;
     gap: 18px;
@@ -398,6 +379,7 @@
     background: var(--gold);
     border-radius: 18px;
     font-size: 27px;
+    box-shadow: 0 12px 25px rgba(0, 0, 0, 0.14);
 }
 
 .hero-eyebrow {
@@ -423,6 +405,8 @@
 }
 
 .btn-add-arrival {
+    position: relative;
+    z-index: 1;
     min-height: 46px;
     padding: 0 18px;
     display: inline-flex;
@@ -435,11 +419,14 @@
     font-size: 12px;
     font-weight: 800;
     text-decoration: none;
+    box-shadow: 0 10px 22px rgba(0, 0, 0, 0.15);
+    transition: 0.2s ease;
 }
 
 .btn-add-arrival:hover {
     color: var(--navy);
     background: #ffc62b;
+    transform: translateY(-2px);
 }
 
 .arrivals-panel {
@@ -457,6 +444,10 @@
     justify-content: space-between;
     gap: 20px;
     border-bottom: 1px solid var(--line);
+}
+
+.toolbar-title {
+    flex: 0 0 auto;
 }
 
 .toolbar-title h5 {
@@ -481,7 +472,7 @@
 
 .search-field {
     position: relative;
-    width: min(100%, 330px);
+    width: min(100%, 340px);
 }
 
 .search-field i {
@@ -509,8 +500,14 @@
 }
 
 .filter-form select {
-    width: 125px;
+    width: 145px;
     padding: 0 30px 0 11px;
+}
+
+.search-field input:focus,
+.filter-form select:focus {
+    border-color: var(--blue);
+    box-shadow: 0 0 0 3px rgba(24, 75, 140, 0.09);
 }
 
 .filter-button,
@@ -533,6 +530,10 @@
     font-weight: 700;
 }
 
+.filter-button:hover {
+    background: var(--blue);
+}
+
 .reset-button {
     width: 41px;
     color: #7b8797;
@@ -540,8 +541,13 @@
     border: 1px solid var(--line);
 }
 
+.reset-button:hover {
+    color: var(--navy);
+    background: #f3f6f9;
+}
+
 .arrivals-table {
-    min-width: 1180px;
+    min-width: 1030px;
 }
 
 .arrivals-table thead th {
@@ -617,6 +623,7 @@
     background: #f4f6f8;
     border: 1px solid #e3e8ee;
     border-radius: 8px;
+    box-shadow: 0 5px 12px rgba(28, 49, 72, 0.08);
 }
 
 .material-identity strong,
@@ -649,7 +656,6 @@
     color: var(--muted) !important;
 }
 
-.type-badge,
 .status-badge {
     padding: 6px 9px;
     display: inline-flex;
@@ -660,16 +666,6 @@
     font-size: 9px;
     font-weight: 800;
     white-space: nowrap;
-}
-
-.type-badge.printed {
-    color: var(--blue);
-    background: #eaf1f9;
-}
-
-.type-badge.ebook {
-    color: #9a7000;
-    background: #fff3ce;
 }
 
 .status-badge > span {
@@ -726,6 +722,7 @@
     border-radius: 9px;
     font-size: 12px;
     text-decoration: none;
+    transition: 0.2s ease;
 }
 
 .action-button.edit {
@@ -738,6 +735,18 @@
     color: #c53e3e;
     background: #fff5f5;
     border-color: #f3d8d8;
+}
+
+.action-button.edit:hover {
+    color: #ffffff;
+    background: var(--blue);
+    transform: translateY(-1px);
+}
+
+.action-button.delete:hover {
+    color: #ffffff;
+    background: #d64a4a;
+    transform: translateY(-1px);
 }
 
 .empty-state {
