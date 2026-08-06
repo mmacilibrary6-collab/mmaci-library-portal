@@ -122,77 +122,29 @@
         </header>
 
         @if(($libraryUpdates ?? collect())->isNotEmpty())
-            <div
-                id="libraryUpdatesCarousel"
-                class="carousel slide library-updates-carousel"
-                data-bs-ride="carousel"
-                data-bs-interval="5000"
-                data-bs-pause="hover">
-
-                <div class="carousel-indicators">
-                    @foreach($libraryUpdates as $update)
-                        <button
-                            type="button"
-                            data-bs-target="#libraryUpdatesCarousel"
-                            data-bs-slide-to="{{ $loop->index }}"
-                            class="{{ $loop->first ? 'active' : '' }}"
-                            aria-current="{{ $loop->first ? 'true' : 'false' }}"
-                            aria-label="Show library update {{ $loop->iteration }}">
-                        </button>
-                    @endforeach
-                </div>
-
-                <div class="carousel-inner">
-                    @foreach($libraryUpdates as $update)
-                        <div class="carousel-item {{ $loop->first ? 'active' : '' }}">
-                            <div class="library-update-slide">
-                                <img
-                                    src="{{ $update->image_url }}"
-                                    alt="{{ $update->title }}"
-                                    loading="{{ $loop->first ? 'eager' : 'lazy' }}"
-                                    onerror="this.onerror=null;this.src='{{ asset('images/readingarea.jpg') }}';">
-
-                                <div class="library-update-overlay"></div>
-
-                                <div class="library-update-copy">
-                                    <span>Library Update</span>
-                                    <h3>{{ $update->title }}</h3>
-
-                                    @if(filled($update->description))
-                                        <p>
-                                            {{ \Illuminate\Support\Str::limit(
-                                                $update->description,
-                                                160
-                                            ) }}
-                                        </p>
-                                    @endif
-                                </div>
-                            </div>
+            <div class="library-updates-grid">
+                @foreach($libraryUpdates as $update)
+                    <article class="update-card">
+                        <div class="update-card-image">
+                            <img
+                                src="{{ $update->image_url }}"
+                                alt="{{ $update->title }}"
+                                loading="{{ $loop->first ? 'eager' : 'lazy' }}"
+                                onerror="this.onerror=null;this.src='{{ asset('images/readingarea.jpg') }}';">
                         </div>
-                    @endforeach
-                </div>
 
-                <button
-                    class="carousel-control-prev"
-                    type="button"
-                    data-bs-target="#libraryUpdatesCarousel"
-                    data-bs-slide="prev">
-                    <span class="carousel-arrow">
-                        <i class="bi bi-chevron-left" aria-hidden="true"></i>
-                    </span>
-                    <span class="visually-hidden">Previous update</span>
-                </button>
+                        <div class="update-card-body">
+                            <span>Library Update</span>
+                            <h3>{{ $update->title }}</h3>
 
-                <button
-                    class="carousel-control-next"
-                    type="button"
-                    data-bs-target="#libraryUpdatesCarousel"
-                    data-bs-slide="next">
-                    <span class="carousel-arrow">
-                        <i class="bi bi-chevron-right" aria-hidden="true"></i>
-                    </span>
-                    <span class="visually-hidden">Next update</span>
-                </button>
+                            @if(filled($update->description))
+                                <p>
+                                    {{ \Illuminate\Support\Str::limit($update->description, 160) }}
+                                </p>
+                            @endif
+                        </div>
+                    </article>
+                @endforeach
             </div>
         @else
             <div class="empty-state empty-state-wide">
@@ -875,51 +827,54 @@ document.addEventListener('DOMContentLoaded', function () {
     box-shadow: 0 10px 25px rgba(0, 0, 0, .17);
 }
 
-.library-updates-carousel {
-    position: relative;
+.library-updates-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 22px;
+    margin-top: 32px;
 }
 
-.library-update-slide {
-    position: relative;
-    min-height: 420px;
+.update-card {
+    display: flex;
+    flex-direction: column;
+    background: #ffffff;
+    border: 1px solid #e8edf3;
+    border-radius: 22px;
     overflow: hidden;
-    border-radius: 28px;
-    background: linear-gradient(135deg, rgba(11, 46, 89, .94), rgba(24, 75, 140, .84));
-    box-shadow: 0 18px 42px rgba(11, 46, 89, .12);
+    box-shadow: 0 14px 28px rgba(11, 46, 89, 0.08);
+    transition: transform .2s ease, box-shadow .2s ease;
 }
 
-.library-update-slide img {
+.update-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 18px 32px rgba(11, 46, 89, 0.12);
+}
+
+.update-card-image {
     width: 100%;
-    height: 420px;
+    min-height: 180px;
+    overflow: hidden;
+    background: #f4f7fb;
+}
+
+.update-card-image img {
+    width: 100%;
+    height: 100%;
     object-fit: cover;
     display: block;
 }
 
-.library-update-overlay {
-    position: absolute;
-    inset: 0;
-    background:
-        linear-gradient(180deg, rgba(6, 22, 44, .08), rgba(6, 22, 44, .72)),
-        radial-gradient(circle at 20% 20%, rgba(244, 180, 0, .12), transparent 30%);
+.update-card-body {
+    padding: 18px 20px 22px;
 }
 
-.library-update-copy {
-    position: absolute;
-    left: 32px;
-    right: 32px;
-    bottom: 30px;
-    z-index: 1;
-    max-width: 720px;
-    color: #fff;
-}
-
-.library-update-copy span {
+.update-card-body span {
     display: inline-flex;
     align-items: center;
     margin-bottom: 10px;
     padding: 6px 12px;
     border-radius: 999px;
-    background: rgba(244, 180, 0, .92);
+    background: rgba(244, 180, 0, .12);
     color: #0b2e59;
     font-size: 11px;
     font-weight: 800;
@@ -927,19 +882,29 @@ document.addEventListener('DOMContentLoaded', function () {
     text-transform: uppercase;
 }
 
-.library-update-copy h3 {
-    margin: 0 0 8px;
-    font-size: clamp(28px, 4vw, 46px);
-    font-weight: 900;
-    line-height: 1.06;
+.update-card-body h3 {
+    margin: 0 0 10px;
+    font-size: 1.15rem;
+    line-height: 1.3;
+    color: #0b2e59;
+    font-weight: 800;
 }
 
-.library-update-copy p {
+.update-card-body p {
     margin: 0;
-    max-width: 640px;
-    color: rgba(255, 255, 255, .86);
-    font-size: 15px;
-    line-height: 1.75;
+    color: #556983;
+    font-size: .94rem;
+    line-height: 1.7;
+}
+
+@media (max-width: 767.98px) {
+    .library-updates-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .update-card-image {
+        min-height: 220px;
+    }
 }
 
 .home-section {
