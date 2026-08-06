@@ -46,7 +46,9 @@ class HomeController extends Controller
 
         $libraryUpdates = LibraryUpdate::query()
             ->where('status', true)
-            ->orderBy('sort_order')
+            ->when(Schema::hasColumn((new LibraryUpdate())->getTable(), 'sort_order'), function ($query) {
+                $query->orderBy('sort_order');
+            })
             ->orderByDesc('created_at')
             ->take(8)
             ->get();
