@@ -8,9 +8,9 @@
 
     <div class="container">
 
-        <div class="row justify-content-center align-items-center min-vh-100">
+        <div class="row justify-content-center align-items-center login-row">
 
-            <div class="col-lg-5 col-md-8">
+            <div class="col-lg-4 col-md-6 col-sm-8 col-11">
 
                 <div class="login-card">
 
@@ -167,23 +167,35 @@
 
 }
 
+.login-row{
+
+    min-height:calc(100vh - 80px);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+}
+
 .login-card{
 
     background:white;
 
-    border-radius:25px;
+    border-radius:20px;
 
-    padding:45px;
+    padding:24px;
 
-    box-shadow:0 25px 70px rgba(0,0,0,.20);
+    max-width:380px;
+    width:100%;
+    margin:auto;
+    box-shadow:0 16px 40px rgba(0,0,0,.12);
 
 }
 
 .login-logo{
 
-    width:90px;
+    width:56px;
 
-    height:90px;
+    height:56px;
 
     object-fit:contain;
 
@@ -193,17 +205,21 @@
 
     color:#0B2E59;
 
+    font-size:1.75rem;
     font-weight:800;
+    margin-bottom:.5rem;
 
 }
 
 .form-control{
 
-    height:55px;
+    height:44px;
 
     border-radius:12px;
 
     border:1px solid #d8dce3;
+    padding:0 14px;
+    font-size:.92rem;
 
 }
 
@@ -228,6 +244,50 @@
 .back-home:hover{
 
     color:#F4B400;
+
+}
+
+@media (max-width:768px){
+
+    .login-card{
+
+        padding:20px;
+        border-radius:16px;
+        max-width:100%;
+
+    }
+
+    .login-card h2{
+
+        font-size:1.6rem;
+
+    }
+
+    .login-logo{
+
+        width:52px;
+        height:52px;
+
+    }
+
+    .login-row{
+
+        min-height:auto;
+        padding:18px 0;
+
+    }
+
+    .form-control{
+
+        height:42px;
+
+    }
+
+    .btn{
+
+        min-height:44px;
+
+    }
 
 }
 
