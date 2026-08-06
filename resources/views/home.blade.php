@@ -124,10 +124,14 @@
         @if(($libraryUpdates ?? collect())->isNotEmpty())
             <div class="library-updates-scroll" aria-label="Library updates">
                 @foreach($libraryUpdates as $update)
-                    <article
+                    <button
+                        type="button"
                         class="library-update-card"
-                        data-aos="fade-up"
-                        data-aos-delay="{{ min($loop->index * 60, 240) }}">
+                        data-update-index="{{ $loop->index }}"
+                        data-update-title='@json($update->title)'
+                        data-update-description='@json($update->description ?? "No description provided.")'
+                        data-update-image='@json($update->image_url)'
+                        aria-label="View {{ $update->title }}">
 
                         <div class="library-update-image">
                             <img
@@ -139,17 +143,20 @@
 
                         <div class="library-update-content">
                             <span class="library-update-badge">Library Update</span>
-
                             <h3>{{ $update->title }}</h3>
-
                             <p>
                                 {{ \Illuminate\Support\Str::limit(
                                     $update->description ?? 'No description provided.',
                                     100
                                 ) }}
                             </p>
+
+                            <span class="view-update-text">
+                                View update
+                                <i class="bi bi-arrow-up-right" aria-hidden="true"></i>
+                            </span>
                         </div>
-                    </article>
+                    </button>
                 @endforeach
             </div>
         @else
@@ -833,10 +840,7 @@ document.addEventListener('DOMContentLoaded', function () {
     box-shadow: 0 10px 25px rgba(0, 0, 0, .17);
 }
 
-/* =========================================================
-   LIBRARY UPDATES
-========================================================= */
-
+/* Library updates */
 .library-updates-section {
     overflow: hidden;
 }
@@ -873,21 +877,28 @@ document.addEventListener('DOMContentLoaded', function () {
 }
 
 .library-update-card {
-    flex: 0 0 clamp(240px, 21vw, 285px);
+    flex: 0 0 clamp(235px, 21vw, 285px);
     scroll-snap-align: start;
-    display: flex;
-    flex-direction: column;
+    padding: 0;
     overflow: hidden;
+    color: inherit;
+    text-align: left;
     background: var(--home-white);
     border: 1px solid var(--home-line);
     border-radius: 18px;
     box-shadow: 0 10px 24px rgba(11, 46, 89, .08);
+    cursor: pointer;
     transition: transform .25s ease, box-shadow .25s ease;
 }
 
 .library-update-card:hover {
     transform: translateY(-4px);
     box-shadow: 0 16px 30px rgba(11, 46, 89, .13);
+}
+
+.library-update-card:focus-visible {
+    outline: 3px solid rgba(244, 180, 0, .55);
+    outline-offset: 3px;
 }
 
 .library-update-image {
@@ -911,13 +922,11 @@ document.addEventListener('DOMContentLoaded', function () {
 }
 
 .library-update-content {
-    flex: 1;
-    padding: 16px 17px 19px;
+    padding: 16px 17px 18px;
 }
 
 .library-update-badge {
     display: inline-flex;
-    align-items: center;
     margin-bottom: 9px;
     padding: 5px 10px;
     color: var(--home-navy);
@@ -944,17 +953,246 @@ document.addEventListener('DOMContentLoaded', function () {
 .library-update-content p {
     display: -webkit-box;
     overflow: hidden;
-    margin: 0;
+    min-height: 58px;
+    margin: 0 0 14px;
     color: #556983;
     font-size: 12px;
-    line-height: 1.65;
+    line-height: 1.6;
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 3;
+}
+
+.view-update-text {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--home-blue);
+    font-size: 11px;
+    font-weight: 800;
+}
+
+/* Library update modal viewer */
+.library-update-viewer {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 22px;
+}
+
+.library-update-viewer.is-open {
+    display: flex;
+}
+
+.library-update-viewer-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(3, 14, 29, .88);
+    backdrop-filter: blur(8px);
+}
+
+.library-update-viewer-dialog {
+    position: relative;
+    z-index: 1;
+    width: min(1180px, 100%);
+    max-height: min(820px, calc(100vh - 44px));
+    display: grid;
+    grid-template-columns: minmax(0, 1.55fr) minmax(310px, .75fr);
+    overflow: hidden;
+    background: #0a1524;
+    border: 1px solid rgba(255, 255, 255, .14);
+    border-radius: 22px;
+    box-shadow: 0 30px 90px rgba(0, 0, 0, .42);
+}
+
+.viewer-image-panel {
+    min-width: 0;
+    min-height: 520px;
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+    background: #050a12;
+}
+
+.viewer-image-panel img {
+    width: 100%;
+    height: 100%;
+    max-height: min(820px, calc(100vh - 44px));
+    display: block;
+    object-fit: contain;
+}
+
+.viewer-content-panel {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    padding: 28px;
+    color: var(--home-white);
+    background: linear-gradient(165deg, #0b2e59, #071f3e);
+    overflow-y: auto;
+}
+
+.viewer-brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid rgba(255, 255, 255, .12);
+}
+
+.viewer-brand img {
+    width: 46px;
+    height: 46px;
+    object-fit: contain;
+    background: #fff;
+    border-radius: 50%;
+}
+
+.viewer-brand strong,
+.viewer-brand span {
+    display: block;
+}
+
+.viewer-brand strong {
+    font-size: 13px;
+    font-weight: 800;
+}
+
+.viewer-brand span {
+    margin-top: 2px;
+    color: rgba(255, 255, 255, .58);
+    font-size: 10px;
+}
+
+.viewer-copy {
+    padding: 28px 0;
+}
+
+.viewer-eyebrow {
+    display: inline-flex;
+    margin-bottom: 13px;
+    padding: 6px 10px;
+    color: var(--home-navy);
+    background: var(--home-gold);
+    border-radius: 999px;
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+}
+
+.viewer-copy h3 {
+    margin: 0 0 16px;
+    color: #fff;
+    font-size: clamp(24px, 3vw, 38px);
+    font-weight: 900;
+    line-height: 1.12;
+}
+
+.viewer-copy p {
+    margin: 0;
+    color: rgba(255, 255, 255, .76);
+    font-size: 14px;
+    line-height: 1.8;
+    white-space: pre-line;
+}
+
+.viewer-footer {
+    margin-top: auto;
+    padding-top: 20px;
+    border-top: 1px solid rgba(255, 255, 255, .12);
+}
+
+.viewer-footer span,
+.viewer-footer small {
+    display: block;
+}
+
+.viewer-footer span {
+    color: var(--home-gold);
+    font-size: 11px;
+    font-weight: 800;
+}
+
+.viewer-footer small {
+    margin-top: 4px;
+    color: rgba(255, 255, 255, .5);
+    font-size: 9px;
+}
+
+.viewer-close-button,
+.viewer-navigation {
+    position: absolute;
+    z-index: 3;
+    display: grid;
+    place-items: center;
+    color: #fff;
+    background: rgba(7, 31, 62, .78);
+    border: 1px solid rgba(255, 255, 255, .18);
+    cursor: pointer;
+}
+
+.viewer-close-button {
+    top: 16px;
+    right: 16px;
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
+}
+
+.viewer-navigation {
+    top: 50%;
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    transform: translateY(-50%);
+}
+
+.viewer-previous {
+    left: 16px;
+}
+
+.viewer-next {
+    right: calc(37% + 16px);
+}
+
+.viewer-navigation:disabled {
+    opacity: .32;
+    cursor: not-allowed;
+}
+
+body.update-viewer-open {
+    overflow: hidden;
 }
 
 @media (max-width: 991.98px) {
     .library-update-card {
         flex-basis: 250px;
+    }
+
+    .library-update-viewer-dialog {
+        grid-template-columns: 1fr;
+        max-height: calc(100vh - 32px);
+        overflow-y: auto;
+    }
+
+    .viewer-image-panel {
+        min-height: 0;
+        height: min(58vh, 560px);
+    }
+
+    .viewer-image-panel img {
+        max-height: none;
+    }
+
+    .viewer-content-panel {
+        overflow: visible;
+    }
+
+    .viewer-next {
+        right: 16px;
     }
 }
 
@@ -970,22 +1208,56 @@ document.addEventListener('DOMContentLoaded', function () {
         border-radius: 16px;
     }
 
-    .library-update-content {
-        padding: 14px 15px 17px;
+    .library-update-viewer {
+        padding: 10px;
     }
 
-    .library-update-content h3 {
-        font-size: 15px;
+    .library-update-viewer-dialog {
+        max-height: calc(100vh - 20px);
+        border-radius: 16px;
     }
 
-    .library-update-content p {
-        font-size: 11px;
+    .viewer-image-panel {
+        height: 48vh;
+        min-height: 300px;
+    }
+
+    .viewer-content-panel {
+        padding: 22px 18px;
+    }
+
+    .viewer-close-button {
+        top: 10px;
+        right: 10px;
+    }
+
+    .viewer-navigation {
+        top: 24vh;
+        width: 40px;
+        height: 40px;
+    }
+
+    .viewer-previous {
+        left: 10px;
+    }
+
+    .viewer-next {
+        right: 10px;
     }
 }
 
 @media (max-width: 480px) {
     .library-update-card {
         flex-basis: min(78vw, 230px);
+    }
+
+    .viewer-image-panel {
+        height: 44vh;
+        min-height: 260px;
+    }
+
+    .viewer-copy h3 {
+        font-size: 24px;
     }
 }
 
@@ -1939,6 +2211,199 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 }
 </style>
+
+<div class="library-update-viewer" id="libraryUpdateViewer" aria-hidden="true">
+    <div class="library-update-viewer-backdrop" data-close-update-viewer></div>
+
+    <div
+        class="library-update-viewer-dialog"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="libraryUpdateViewerTitle">
+
+        <button
+            type="button"
+            class="viewer-close-button"
+            data-close-update-viewer
+            aria-label="Close library update">
+            <i class="bi bi-x-lg" aria-hidden="true"></i>
+        </button>
+
+        <button
+            type="button"
+            class="viewer-navigation viewer-previous"
+            id="libraryUpdatePrevious"
+            aria-label="Previous library update">
+            <i class="bi bi-chevron-left" aria-hidden="true"></i>
+        </button>
+
+        <div class="viewer-image-panel">
+            <img
+                id="libraryUpdateViewerImage"
+                src="{{ asset('images/readingarea.jpg') }}"
+                alt="Library update">
+        </div>
+
+        <aside class="viewer-content-panel">
+            <div class="viewer-brand">
+                <img
+                    src="{{ asset('images/logomml.png') }}"
+                    alt="MMACI logo"
+                    onerror="this.style.display='none';">
+
+                <div>
+                    <strong>MMACI Library Services Office</strong>
+                    <span>Library Update</span>
+                </div>
+            </div>
+
+            <div class="viewer-copy">
+                <span class="viewer-eyebrow">Latest from the Library</span>
+                <h3 id="libraryUpdateViewerTitle"></h3>
+                <p id="libraryUpdateViewerDescription"></p>
+            </div>
+
+            <div class="viewer-footer">
+                <span id="libraryUpdateViewerCounter"></span>
+                <small>Use the arrow buttons or keyboard keys to browse.</small>
+            </div>
+        </aside>
+
+        <button
+            type="button"
+            class="viewer-navigation viewer-next"
+            id="libraryUpdateNext"
+            aria-label="Next library update">
+            <i class="bi bi-chevron-right" aria-hidden="true"></i>
+        </button>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const viewer = document.getElementById('libraryUpdateViewer');
+    const cards = Array.from(document.querySelectorAll('.library-update-card'));
+
+    if (!viewer || cards.length === 0) {
+        return;
+    }
+
+    const image = document.getElementById('libraryUpdateViewerImage');
+    const title = document.getElementById('libraryUpdateViewerTitle');
+    const description = document.getElementById('libraryUpdateViewerDescription');
+    const counter = document.getElementById('libraryUpdateViewerCounter');
+    const previousButton = document.getElementById('libraryUpdatePrevious');
+    const nextButton = document.getElementById('libraryUpdateNext');
+    const closeButtons = viewer.querySelectorAll('[data-close-update-viewer]');
+
+    let currentIndex = 0;
+    let lastFocusedElement = null;
+
+    function readCard(card) {
+        const parseJson = function (value, fallback) {
+            try {
+                return JSON.parse(value);
+            } catch (error) {
+                return fallback;
+            }
+        };
+
+        return {
+            title: parseJson(card.dataset.updateTitle, 'Library Update'),
+            description: parseJson(card.dataset.updateDescription, 'No description provided.'),
+            image: parseJson(card.dataset.updateImage, '')
+        };
+    }
+
+    function renderUpdate(index) {
+        currentIndex = Math.max(0, Math.min(index, cards.length - 1));
+
+        const update = readCard(cards[currentIndex]);
+
+        image.src = update.image;
+        image.alt = update.title;
+        title.textContent = update.title;
+        description.textContent = update.description;
+        counter.textContent = `${currentIndex + 1} of ${cards.length}`;
+
+        previousButton.disabled = cards.length <= 1;
+        nextButton.disabled = cards.length <= 1;
+    }
+
+    function openViewer(index, trigger) {
+        lastFocusedElement = trigger;
+        renderUpdate(index);
+        viewer.classList.add('is-open');
+        viewer.setAttribute('aria-hidden', 'false');
+        document.body.classList.add('update-viewer-open');
+
+        window.setTimeout(function () {
+            viewer.querySelector('.viewer-close-button')?.focus();
+        }, 20);
+    }
+
+    function closeViewer() {
+        viewer.classList.remove('is-open');
+        viewer.setAttribute('aria-hidden', 'true');
+        document.body.classList.remove('update-viewer-open');
+
+        if (lastFocusedElement) {
+            lastFocusedElement.focus();
+        }
+    }
+
+    function showPrevious() {
+        const previousIndex = currentIndex === 0
+            ? cards.length - 1
+            : currentIndex - 1;
+
+        renderUpdate(previousIndex);
+    }
+
+    function showNext() {
+        const nextIndex = currentIndex === cards.length - 1
+            ? 0
+            : currentIndex + 1;
+
+        renderUpdate(nextIndex);
+    }
+
+    cards.forEach(function (card, index) {
+        card.addEventListener('click', function () {
+            openViewer(index, card);
+        });
+    });
+
+    closeButtons.forEach(function (button) {
+        button.addEventListener('click', closeViewer);
+    });
+
+    previousButton.addEventListener('click', showPrevious);
+    nextButton.addEventListener('click', showNext);
+
+    image.addEventListener('error', function () {
+        image.src = @json(asset('images/readingarea.jpg'));
+    });
+
+    document.addEventListener('keydown', function (event) {
+        if (!viewer.classList.contains('is-open')) {
+            return;
+        }
+
+        if (event.key === 'Escape') {
+            closeViewer();
+        }
+
+        if (event.key === 'ArrowLeft') {
+            showPrevious();
+        }
+
+        if (event.key === 'ArrowRight') {
+            showNext();
+        }
+    });
+});
+</script>
 
     @include('components.lisa-chatbox')
 
