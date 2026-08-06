@@ -110,7 +110,7 @@
     </div>
 </section>
 
-<section class="home-section">
+<section class="home-section library-updates-section">
     <div class="container">
         <header class="section-heading">
             <span class="eyebrow">Latest from the Library</span>
@@ -122,10 +122,14 @@
         </header>
 
         @if(($libraryUpdates ?? collect())->isNotEmpty())
-            <div class="library-updates-grid">
+            <div class="library-updates-scroll" aria-label="Library updates">
                 @foreach($libraryUpdates as $update)
-                    <article class="update-card">
-                        <div class="update-card-image">
+                    <article
+                        class="library-update-card"
+                        data-aos="fade-up"
+                        data-aos-delay="{{ min($loop->index * 60, 240) }}">
+
+                        <div class="library-update-image">
                             <img
                                 src="{{ $update->image_url }}"
                                 alt="{{ $update->title }}"
@@ -133,15 +137,17 @@
                                 onerror="this.onerror=null;this.src='{{ asset('images/readingarea.jpg') }}';">
                         </div>
 
-                        <div class="update-card-body">
-                            <span>Library Update</span>
+                        <div class="library-update-content">
+                            <span class="library-update-badge">Library Update</span>
+
                             <h3>{{ $update->title }}</h3>
 
-                            @if(filled($update->description))
-                                <p>
-                                    {{ \Illuminate\Support\Str::limit($update->description, 160) }}
-                                </p>
-                            @endif
+                            <p>
+                                {{ \Illuminate\Support\Str::limit(
+                                    $update->description ?? 'No description provided.',
+                                    100
+                                ) }}
+                            </p>
                         </div>
                     </article>
                 @endforeach
@@ -149,7 +155,7 @@
         @else
             <div class="empty-state empty-state-wide">
                 <h4>No library updates yet</h4>
-                <p>Admin-added library update slides will appear here.</p>
+                <p>Admin-added library updates will appear here.</p>
             </div>
         @endif
     </div>
@@ -827,83 +833,159 @@ document.addEventListener('DOMContentLoaded', function () {
     box-shadow: 0 10px 25px rgba(0, 0, 0, .17);
 }
 
-.library-updates-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-    gap: 22px;
-    margin-top: 32px;
+/* =========================================================
+   LIBRARY UPDATES
+========================================================= */
+
+.library-updates-section {
+    overflow: hidden;
 }
 
-.update-card {
+.library-updates-scroll {
+    display: flex;
+    gap: 20px;
+    width: 100%;
+    margin-top: 26px;
+    padding: 4px 4px 18px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scroll-behavior: smooth;
+    scroll-snap-type: x mandatory;
+    overscroll-behavior-inline: contain;
+    scrollbar-width: thin;
+    scrollbar-color: var(--home-blue) var(--home-bg);
+    -webkit-overflow-scrolling: touch;
+}
+
+.library-updates-scroll::-webkit-scrollbar {
+    height: 8px;
+}
+
+.library-updates-scroll::-webkit-scrollbar-track {
+    background: var(--home-bg);
+    border-radius: 999px;
+}
+
+.library-updates-scroll::-webkit-scrollbar-thumb {
+    background: var(--home-blue);
+    border: 2px solid var(--home-bg);
+    border-radius: 999px;
+}
+
+.library-update-card {
+    flex: 0 0 clamp(240px, 21vw, 285px);
+    scroll-snap-align: start;
     display: flex;
     flex-direction: column;
-    background: #ffffff;
-    border: 1px solid #e8edf3;
-    border-radius: 22px;
     overflow: hidden;
-    box-shadow: 0 14px 28px rgba(11, 46, 89, 0.08);
-    transition: transform .2s ease, box-shadow .2s ease;
+    background: var(--home-white);
+    border: 1px solid var(--home-line);
+    border-radius: 18px;
+    box-shadow: 0 10px 24px rgba(11, 46, 89, .08);
+    transition: transform .25s ease, box-shadow .25s ease;
 }
 
-.update-card:hover {
+.library-update-card:hover {
     transform: translateY(-4px);
-    box-shadow: 0 18px 32px rgba(11, 46, 89, 0.12);
+    box-shadow: 0 16px 30px rgba(11, 46, 89, .13);
 }
 
-.update-card-image {
+.library-update-image {
     width: 100%;
-    min-height: 180px;
+    aspect-ratio: 3 / 4;
     overflow: hidden;
-    background: #f4f7fb;
+    background: var(--home-bg);
 }
 
-.update-card-image img {
+.library-update-image img {
     width: 100%;
     height: 100%;
-    object-fit: cover;
     display: block;
+    object-fit: cover;
+    object-position: center;
+    transition: transform .35s ease;
 }
 
-.update-card-body {
-    padding: 18px 20px 22px;
+.library-update-card:hover .library-update-image img {
+    transform: scale(1.025);
 }
 
-.update-card-body span {
+.library-update-content {
+    flex: 1;
+    padding: 16px 17px 19px;
+}
+
+.library-update-badge {
     display: inline-flex;
     align-items: center;
-    margin-bottom: 10px;
-    padding: 6px 12px;
+    margin-bottom: 9px;
+    padding: 5px 10px;
+    color: var(--home-navy);
+    background: rgba(244, 180, 0, .14);
     border-radius: 999px;
-    background: rgba(244, 180, 0, .12);
-    color: #0b2e59;
-    font-size: 11px;
+    font-size: 9px;
     font-weight: 800;
     letter-spacing: .08em;
     text-transform: uppercase;
 }
 
-.update-card-body h3 {
-    margin: 0 0 10px;
-    font-size: 1.15rem;
-    line-height: 1.3;
-    color: #0b2e59;
+.library-update-content h3 {
+    display: -webkit-box;
+    overflow: hidden;
+    margin: 0 0 8px;
+    color: var(--home-navy);
+    font-size: 16px;
     font-weight: 800;
+    line-height: 1.35;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
 }
 
-.update-card-body p {
+.library-update-content p {
+    display: -webkit-box;
+    overflow: hidden;
     margin: 0;
     color: #556983;
-    font-size: .94rem;
-    line-height: 1.7;
+    font-size: 12px;
+    line-height: 1.65;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+}
+
+@media (max-width: 991.98px) {
+    .library-update-card {
+        flex-basis: 250px;
+    }
 }
 
 @media (max-width: 767.98px) {
-    .library-updates-grid {
-        grid-template-columns: 1fr;
+    .library-updates-scroll {
+        gap: 15px;
+        margin-top: 21px;
+        padding-right: 15px;
     }
 
-    .update-card-image {
-        min-height: 220px;
+    .library-update-card {
+        flex-basis: min(72vw, 245px);
+        border-radius: 16px;
+    }
+
+    .library-update-content {
+        padding: 14px 15px 17px;
+    }
+
+    .library-update-content h3 {
+        font-size: 15px;
+    }
+
+    .library-update-content p {
+        font-size: 11px;
+    }
+}
+
+@media (max-width: 480px) {
+    .library-update-card {
+        flex-basis: min(78vw, 230px);
     }
 }
 
@@ -1861,4 +1943,3 @@ document.addEventListener('DOMContentLoaded', function () {
     @include('components.lisa-chatbox')
 
 @endsection
-
