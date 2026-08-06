@@ -11,62 +11,204 @@ class LisaAssistant
     /**
      * Produce a free, local response without any external API.
      */
-    public function reply(string $message): array
+    public function reply(string $message, array $history = []): array
     {
-        $message = trim(Str::lower($message));
+        $originalMessage = trim($message);
+        $message = $this->normalize($originalMessage);
+        $history = $this->cleanHistory($history);
 
+        if ($this->isGreeting($message)) {
+            return [
+                'answer' => 'Hi! I’m Lisa, the MMACI Library Guide. I can help you find collections, services, facilities, reservations, library contact information, and pages on this website.',
+                'title' => 'Welcome to MMACI Library',
+                'pageUrl' => url('/'),
+                'suggestions' => $this->defaultSuggestions(),
+            ];
+        }
+
+        if ($this->isThanks($message)) {
+            return [
+                'answer' => 'You’re welcome! You can ask me another question about the MMACI Library whenever you need help.',
+                'title' => null,
+                'pageUrl' => null,
+                'suggestions' => $this->defaultSuggestions(),
+            ];
+        }
+
+        $contextMessage = $this->withConversationContext($message, $history);
         $entries = $this->knowledgeEntries();
-        $bestMatch = null;
-        $bestScore = 0;
+        $ranked = [];
 
         foreach ($entries as $entry) {
-            $score = $this->score($message, $entry['keywords'] ?? []);
+            $score = $this->score($contextMessage, $entry);
 
-            if ($score > $bestScore) {
-                $bestScore = $score;
-                $bestMatch = $entry;
+            if ($score > 0) {
+                $ranked[] = [
+                    'score' => $score,
+                    'entry' => $entry,
+                ];
             }
         }
 
-        if ($bestMatch && $bestScore > 0) {
+        usort($ranked, fn (array $a, array $b) => $b['score'] <=> $a['score']);
+        $bestMatch = $ranked[0]['entry'] ?? null;
+        $bestScore = $ranked[0]['score'] ?? 0;
+
+        if ($bestMatch && $bestScore >= 4) {
+            $answer = $this->publicFacingAnswer($bestMatch['answer']);
+            $answer = $this->avoidRepeatedAnswer($answer, $history, $bestMatch['title']);
+
             return [
-                'answer' => $this->publicFacingAnswer($bestMatch['answer']),
+                'answer' => $answer,
                 'title' => $bestMatch['title'],
-                'suggestions' => $bestMatch['suggestions'] ?? [],
+                'suggestions' => $this->uniqueSuggestions(
+                    $bestMatch['suggestions'] ?? [],
+                    $history
+                ),
                 'pageUrl' => $bestMatch['pageUrl'] ?? null,
             ];
         }
 
         return [
-            'answer' => "I can help with the MMACI Library website, public collection pages, services, reservations, and site content. Try asking about E-books, thesis folders, gallery uploads, the Reserve AVR form, or how to find a page.",
-            'title' => 'Need a quick guide?',
+            'answer' => "I’m not fully sure what you’re asking about yet. I can answer questions about MMACI Library collections, E-books, theses, periodicals, donated books, services, facilities, AVR reservations, visiting users, gallery, and contacting the librarian. Please mention the specific service or page you need.",
+            'title' => 'How can I guide you?',
             'pageUrl' => null,
-            'suggestions' => [
-                'How do I open the E-books page?',
-                'Where do I reserve the AVR?',
-                'How do gallery uploads work?',
-            ],
+            'suggestions' => $this->defaultSuggestions(),
         ];
     }
 
-    protected function score(string $message, array $keywords): int
+    protected function score(string $message, array $entry): int
     {
         $score = 0;
+        $title = $this->normalize((string) ($entry['title'] ?? ''));
+        $keywords = $entry['keywords'] ?? [];
+
+        if ($title !== '' && Str::contains($message, $title)) {
+            $score += 10;
+        }
+
+        $messageWords = collect(preg_split('/\s+/', $message) ?: [])
+            ->filter(fn ($word) => mb_strlen($word) >= 3)
+            ->unique()
+            ->values();
 
         foreach ($keywords as $keyword) {
-            $keyword = Str::lower($keyword);
+            $keyword = $this->normalize((string) $keyword);
 
-            if ($keyword !== '' && Str::contains($message, $keyword)) {
-                $score += 3;
+            if ($keyword === '') {
+                continue;
             }
+
+            if (Str::contains($message, $keyword)) {
+                $score += str_contains($keyword, ' ') ? 8 : 5;
+            }
+
+            $keywordWords = collect(preg_split('/\s+/', $keyword) ?: [])
+                ->filter(fn ($word) => mb_strlen($word) >= 3)
+                ->unique();
+
+            $score += $keywordWords->intersect($messageWords)->count() * 2;
         }
 
         return $score;
     }
 
+    protected function normalize(string $text): string
+    {
+        $text = Str::lower(strip_tags($text));
+        $text = preg_replace('/[^\pL\pN\s\-]/u', ' ', $text) ?? $text;
+
+        return preg_replace('/\s+/', ' ', trim($text)) ?? trim($text);
+    }
+
+    protected function cleanHistory(array $history): array
+    {
+        return collect($history)
+            ->filter(fn ($entry) => is_array($entry) && isset($entry['role'], $entry['text']))
+            ->map(fn ($entry) => [
+                'role' => in_array($entry['role'], ['user', 'assistant'], true)
+                    ? $entry['role']
+                    : 'user',
+                'text' => Str::limit(trim((string) $entry['text']), 1500, ''),
+            ])
+            ->filter(fn ($entry) => $entry['text'] !== '' && $entry['text'] !== 'Lisa is thinking…')
+            ->take(-10)
+            ->values()
+            ->all();
+    }
+
+    protected function withConversationContext(string $message, array $history): string
+    {
+        $followUpWords = ['it', 'that', 'there', 'this', 'how about', 'what about', 'where is it', 'tell me more'];
+        $looksLikeFollowUp = Str::contains($message, $followUpWords) || str_word_count($message) <= 4;
+
+        if (! $looksLikeFollowUp) {
+            return $message;
+        }
+
+        $previousUserMessage = collect($history)
+            ->reverse()
+            ->first(fn ($entry) => $entry['role'] === 'user')['text'] ?? null;
+
+        return $previousUserMessage
+            ? $this->normalize($previousUserMessage.' '.$message)
+            : $message;
+    }
+
+    protected function avoidRepeatedAnswer(string $answer, array $history, string $title): string
+    {
+        $previousAnswers = collect($history)
+            ->where('role', 'assistant')
+            ->pluck('text')
+            ->map(fn ($text) => $this->normalize((string) $text));
+
+        if ($previousAnswers->contains($this->normalize($answer))) {
+            return "You’re still asking about {$title}. The page link below will take you directly there. Tell me which detail you want clarified so I can give a more specific answer.";
+        }
+
+        return $answer;
+    }
+
+    protected function uniqueSuggestions(array $suggestions, array $history): array
+    {
+        $asked = collect($history)
+            ->where('role', 'user')
+            ->pluck('text')
+            ->map(fn ($text) => $this->normalize((string) $text));
+
+        return collect($suggestions)
+            ->map(fn ($suggestion) => trim((string) $suggestion))
+            ->filter()
+            ->unique(fn ($suggestion) => $this->normalize($suggestion))
+            ->reject(fn ($suggestion) => $asked->contains($this->normalize($suggestion)))
+            ->take(4)
+            ->values()
+            ->all();
+    }
+
+    protected function isGreeting(string $message): bool
+    {
+        return preg_match('/^(hi|hello|hey|good morning|good afternoon|good evening|maayong buntag|maayong hapon)\b/u', $message) === 1;
+    }
+
+    protected function isThanks(string $message): bool
+    {
+        return preg_match('/\b(thank you|thanks|salamat|ty)\b/u', $message) === 1;
+    }
+
+    protected function defaultSuggestions(): array
+    {
+        return [
+            'What services does the library offer?',
+            'How can I access the E-books?',
+            'Where can I reserve the AVR?',
+            'How can I contact the librarian?',
+        ];
+    }
+
     protected function knowledgeEntries(): array
     {
-        return Cache::remember('lisa.knowledge.entries.v2', now()->addMinutes(10), function () {
+        return Cache::remember('lisa.knowledge.entries.v3', now()->addMinutes(10), function () {
             $entries = [
                 [
                     'title' => 'Home page',

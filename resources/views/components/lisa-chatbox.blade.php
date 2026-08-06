@@ -365,6 +365,14 @@
                 line-height: 1;
             }
 
+
+
+            #lisa-chatbot-widget #lisa-chat-form button:disabled {
+                cursor: not-allowed;
+                opacity: .55;
+                box-shadow: none;
+            }
+
             #lisa-chatbot-widget .sr-only {
                 position: absolute;
                 width: 1px;
@@ -455,9 +463,10 @@
                     const storageKey = 'lisa.chat.history';
                     const openKey = 'lisa.chat.open';
                     const quickReplies = [
-                        'How do I use the E-books page?',
-                        'Where is Reserve AVR?',
-                        'How do gallery uploads work?'
+                        'What services does the library offer?',
+                        'How can I access the E-books?',
+                        'What are the library hours?',
+                        'How can I contact the librarian?'
                     ];
 
                     const welcomeMessage = {
@@ -510,7 +519,13 @@
                     function renderChips(items) {
                         chips.innerHTML = '';
 
-                        (items || []).slice(0, 4).forEach((item) => {
+                        const uniqueItems = [...new Set(
+                            (items || [])
+                                .map((item) => String(item).trim())
+                                .filter(Boolean)
+                        )];
+
+                        uniqueItems.slice(0, 4).forEach((item) => {
                             const chip = document.createElement('button');
                             chip.type = 'button';
                             chip.className = 'lisa-chip';
@@ -518,6 +533,7 @@
                             chip.addEventListener('click', () => {
                                 input.value = item;
                                 input.focus();
+                                form.requestSubmit();
                             });
                             chips.appendChild(chip);
                         });
@@ -538,13 +554,38 @@
                         panel.hidden = true;
                     }
 
+                    let isSending = false;
+
                     async function sendMessage(text) {
-                        history.push({ role: 'user', text });
+                        if (isSending) {
+                            return;
+                        }
+
+                        isSending = true;
+                        const submitButton = form.querySelector('button[type="submit"]');
+                        submitButton.disabled = true;
+                        input.disabled = true;
+
+                        const cleanText = String(text || '').trim();
+
+                        const recentHistory = history
+                            .filter((entry) => entry.text && entry.text !== 'Lisa is thinking…')
+                            .slice(-10)
+                            .map((entry) => ({
+                                role: entry.role,
+                                text: entry.text
+                            }));
+
+                        history.push({ role: 'user', text: cleanText });
                         renderMessages();
                         saveHistory();
 
                         const typingId = `typing-${Date.now()}`;
-                        history.push({ role: 'assistant', text: 'Lisa is thinking…', id: typingId });
+                        history.push({
+                            role: 'assistant',
+                            text: 'Lisa is thinking…',
+                            id: typingId
+                        });
                         renderMessages();
 
                         try {
@@ -555,15 +596,35 @@
                                     'Accept': 'application/json',
                                     'X-CSRF-TOKEN': csrfToken
                                 },
-                                body: JSON.stringify({ message: text })
+                                body: JSON.stringify({
+                                    message: cleanText,
+                                    history: recentHistory
+                                })
                             });
 
-                            const data = await response.json();
+                            if (!response.ok) {
+                                throw new Error(`Request failed with status ${response.status}`);
+                            }
 
+                            const data = await response.json();
                             history = history.filter((entry) => entry.id !== typingId);
+
+                            let answer = String(
+                                data.answer ||
+                                'I’m sorry, I could not find an answer right now.'
+                            ).trim();
+
+                            const previousAssistantReplies = history
+                                .filter((entry) => entry.role === 'assistant')
+                                .map((entry) => String(entry.text).trim().toLowerCase());
+
+                            if (previousAssistantReplies.includes(answer.toLowerCase())) {
+                                answer = 'I may have already mentioned that. Which specific part would you like me to explain further?';
+                            }
+
                             history.push({
                                 role: 'assistant',
-                                text: data.answer || 'I’m sorry, I could not find an answer right now.',
+                                text: answer,
                                 pageUrl: data.pageUrl || null,
                                 pageLabel: data.title ? `Open ${data.title}` : 'Open page'
                             });
@@ -575,10 +636,15 @@
                             history = history.filter((entry) => entry.id !== typingId);
                             history.push({
                                 role: 'assistant',
-                                text: 'Sorry, Lisa could not reach the local knowledge engine just now. Please try again.'
+                                text: 'Sorry, I could not reach the library knowledge service. Please try again in a moment.'
                             });
                             renderMessages();
                             saveHistory();
+                        } finally {
+                            isSending = false;
+                            submitButton.disabled = false;
+                            input.disabled = false;
+                            input.focus();
                         }
                     }
 
