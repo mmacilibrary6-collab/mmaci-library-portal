@@ -24,8 +24,6 @@
         </a>
     </section>
 
-    @include('partials.flash-messages')
-
     <section class="calendar-panel">
         <div class="panel-toolbar">
             <div class="toolbar-title">
