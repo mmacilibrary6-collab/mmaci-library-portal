@@ -12,6 +12,7 @@ class NewArrival extends Model
     use HasFactory;
 
     protected $fillable = [
+        'accession_number',
         'title',
         'author',
         'isbn',

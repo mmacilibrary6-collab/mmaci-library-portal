@@ -3,6 +3,7 @@
 @php
     $arrival = $newArrival ?? null;
     $isEditing = $arrival !== null;
+
     $fallbackImage = asset('images/readingarea.jpg');
     $currentImage = $arrival?->image_url ?? $fallbackImage;
     $storedImage = $arrival?->image;
@@ -18,7 +19,9 @@
     $arrivalDate = old(
         'arrival_date',
         filled($arrival?->arrival_date)
-            ? \Illuminate\Support\Carbon::parse($arrival->arrival_date)->format('Y-m-d')
+            ? \Illuminate\Support\Carbon::parse(
+                $arrival->arrival_date
+            )->format('Y-m-d')
             : now()->format('Y-m-d')
     );
 @endphp
@@ -32,12 +35,53 @@
 
             <div>
                 <h5>Material Information</h5>
-                <p>Enter the publication details and current availability.</p>
+
+                <p>
+                    Enter the accession number, publication details,
+                    and current availability.
+                </p>
             </div>
         </div>
 
         <div class="row g-4">
-            <div class="col-lg-8">
+            <div class="col-md-4">
+                <label
+                    for="accession_number"
+                    class="form-label">
+
+                    Accession Number <span>*</span>
+                </label>
+
+                <div class="input-with-icon">
+                    <i class="bi bi-upc-scan"></i>
+
+                    <input
+                        type="text"
+                        name="accession_number"
+                        id="accession_number"
+                        value="{{ old(
+                            'accession_number',
+                            $arrival?->accession_number
+                        ) }}"
+                        class="form-control text-uppercase @error('accession_number') is-invalid @enderror"
+                        placeholder="Example: ACC-2026-0001"
+                        maxlength="100"
+                        autocomplete="off"
+                        required>
+                </div>
+
+                @error('accession_number')
+                    <div class="invalid-feedback d-block">
+                        {{ $message }}
+                    </div>
+                @else
+                    <div class="field-note">
+                        This number must be unique for every material.
+                    </div>
+                @enderror
+            </div>
+
+            <div class="col-md-8">
                 <label for="title" class="form-label">
                     Material Title <span>*</span>
                 </label>
@@ -52,11 +96,13 @@
                     required>
 
                 @error('title')
-                    <div class="invalid-feedback">{{ $message }}</div>
+                    <div class="invalid-feedback">
+                        {{ $message }}
+                    </div>
                 @enderror
             </div>
 
-            <div class="col-lg-4">
+            <div class="col-md-6">
                 <label for="author" class="form-label">
                     Author <small>Optional</small>
                 </label>
@@ -67,10 +113,12 @@
                     id="author"
                     value="{{ old('author', $arrival?->author) }}"
                     class="form-control @error('author') is-invalid @enderror"
-                    placeholder="No author">
+                    placeholder="Enter author name">
 
                 @error('author')
-                    <div class="invalid-feedback">{{ $message }}</div>
+                    <div class="invalid-feedback">
+                        {{ $message }}
+                    </div>
                 @enderror
             </div>
 
@@ -88,11 +136,13 @@
                     placeholder="Example: Information Technology">
 
                 @error('category')
-                    <div class="invalid-feedback">{{ $message }}</div>
+                    <div class="invalid-feedback">
+                        {{ $message }}
+                    </div>
                 @enderror
             </div>
 
-            <div class="col-md-6">
+            <div class="col-md-4">
                 <label for="arrival_date" class="form-label">
                     Date of Arrival <span>*</span>
                 </label>
@@ -106,11 +156,13 @@
                     required>
 
                 @error('arrival_date')
-                    <div class="invalid-feedback">{{ $message }}</div>
+                    <div class="invalid-feedback">
+                        {{ $message }}
+                    </div>
                 @enderror
             </div>
 
-            <div class="col-md-6">
+            <div class="col-md-4">
                 <label for="resource_type" class="form-label">
                     Resource Type <span>*</span>
                 </label>
@@ -120,26 +172,44 @@
                     id="resource_type"
                     class="form-select @error('resource_type') is-invalid @enderror"
                     required>
+
                     <option
                         value="printed"
-                        @selected(old('resource_type', $arrival?->resource_type ?? 'printed') === 'printed')>
+                        @selected(
+                            old(
+                                'resource_type',
+                                $arrival?->resource_type ?? 'printed'
+                            ) === 'printed'
+                        )>
+
                         Printed Material
                     </option>
 
                     <option
                         value="ebook"
-                        @selected(old('resource_type', $arrival?->resource_type) === 'ebook')>
+                        @selected(
+                            old(
+                                'resource_type',
+                                $arrival?->resource_type
+                            ) === 'ebook'
+                        )>
+
                         E-Book
                     </option>
                 </select>
 
                 @error('resource_type')
-                    <div class="invalid-feedback">{{ $message }}</div>
+                    <div class="invalid-feedback">
+                        {{ $message }}
+                    </div>
                 @enderror
             </div>
 
-            <div class="col-md-6">
-                <label for="availability_status" class="form-label">
+            <div class="col-md-4">
+                <label
+                    for="availability_status"
+                    class="form-label">
+
                     Availability <span>*</span>
                 </label>
 
@@ -148,21 +218,36 @@
                     id="availability_status"
                     class="form-select @error('availability_status') is-invalid @enderror"
                     required>
+
                     <option
                         value="available"
-                        @selected(old('availability_status', $arrival?->availability_status ?? 'available') === 'available')>
+                        @selected(
+                            old(
+                                'availability_status',
+                                $arrival?->availability_status ?? 'available'
+                            ) === 'available'
+                        )>
+
                         Available
                     </option>
 
                     <option
                         value="unavailable"
-                        @selected(old('availability_status', $arrival?->availability_status) === 'unavailable')>
+                        @selected(
+                            old(
+                                'availability_status',
+                                $arrival?->availability_status
+                            ) === 'unavailable'
+                        )>
+
                         Unavailable
                     </option>
                 </select>
 
                 @error('availability_status')
-                    <div class="invalid-feedback">{{ $message }}</div>
+                    <div class="invalid-feedback">
+                        {{ $message }}
+                    </div>
                 @enderror
             </div>
 
@@ -179,7 +264,9 @@
                     placeholder="Add a short description of this material...">{{ old('description', $arrival?->description) }}</textarea>
 
                 @error('description')
-                    <div class="invalid-feedback">{{ $message }}</div>
+                    <div class="invalid-feedback">
+                        {{ $message }}
+                    </div>
                 @enderror
             </div>
         </div>
@@ -193,7 +280,10 @@
 
             <div>
                 <h5>Cover Image</h5>
-                <p>Upload a cover or provide a direct external image link.</p>
+
+                <p>
+                    Upload a cover or provide a direct external image link.
+                </p>
             </div>
         </div>
 
@@ -201,23 +291,35 @@
             <div class="col-lg-7">
                 <div class="image-fields">
                     <div>
-                        <label for="image_file" class="form-label">
-                            Upload Cover <small>Recommended</small>
+                        <label
+                            for="image_file"
+                            class="form-label">
+
+                            Upload Cover
+                            <small>Recommended</small>
                         </label>
 
                         <label
                             for="image_file"
                             class="upload-area @error('image_file') upload-error @enderror">
+
                             <span class="upload-icon">
                                 <i class="bi bi-cloud-arrow-up"></i>
                             </span>
 
                             <span class="upload-copy">
-                                <strong id="arrivalFileName">Choose a cover image</strong>
-                                <small>JPG, PNG or WEBP · Maximum 5 MB</small>
+                                <strong id="arrivalFileName">
+                                    Choose a cover image
+                                </strong>
+
+                                <small>
+                                    JPG, PNG or WEBP · Maximum 5 MB
+                                </small>
                             </span>
 
-                            <span class="browse-button">Browse</span>
+                            <span class="browse-button">
+                                Browse
+                            </span>
                         </label>
 
                         <input
@@ -228,7 +330,9 @@
                             class="visually-hidden">
 
                         @error('image_file')
-                            <div class="invalid-feedback d-block">{{ $message }}</div>
+                            <div class="invalid-feedback d-block">
+                                {{ $message }}
+                            </div>
                         @enderror
                     </div>
 
@@ -237,12 +341,17 @@
                     </div>
 
                     <div>
-                        <label for="image_url" class="form-label">
-                            External Image URL <small>Optional</small>
+                        <label
+                            for="image_url"
+                            class="form-label">
+
+                            External Image URL
+                            <small>Optional</small>
                         </label>
 
                         <div class="input-with-icon">
                             <i class="bi bi-link-45deg"></i>
+
                             <input
                                 type="url"
                                 name="image_url"
@@ -253,7 +362,9 @@
                         </div>
 
                         @error('image_url')
-                            <div class="invalid-feedback d-block">{{ $message }}</div>
+                            <div class="invalid-feedback d-block">
+                                {{ $message }}
+                            </div>
                         @else
                             <div class="field-note">
                                 An uploaded image takes priority over an image link.
@@ -267,7 +378,10 @@
                 <div class="preview-panel">
                     <div class="preview-label">
                         <span>Cover Preview</span>
-                        <small id="arrivalPreviewStatus">Current image</small>
+
+                        <small id="arrivalPreviewStatus">
+                            Current image
+                        </small>
                     </div>
 
                     <div class="arrival-cover-preview">
@@ -289,13 +403,17 @@
     </section>
 
     <div class="form-actions">
-        <a href="{{ route('admin.new-arrivals.index') }}" class="btn-cancel">
+        <a
+            href="{{ route('admin.new-arrivals.index') }}"
+            class="btn-cancel">
+
             <i class="bi bi-arrow-left"></i>
             Cancel
         </a>
 
         <button type="submit" class="btn-save">
             <i class="bi {{ $isEditing ? 'bi-check-lg' : 'bi-plus-lg' }}"></i>
+
             {{ $isEditing ? 'Update Arrival' : 'Create Arrival' }}
         </button>
     </div>
@@ -316,18 +434,18 @@
             .arrival-form .form-section {
                 margin-bottom: 18px;
                 padding: 24px;
+                background: #ffffff;
                 border: 1px solid var(--line);
                 border-radius: 18px;
-                background: #fff;
-                box-shadow: 0 8px 24px rgba(11, 46, 89, .05);
+                box-shadow: 0 8px 24px rgba(11, 46, 89, 0.05);
             }
 
             .arrival-form .section-heading {
-                margin-bottom: 22px;
-                padding-bottom: 17px;
                 display: flex;
                 align-items: center;
                 gap: 12px;
+                margin-bottom: 22px;
+                padding-bottom: 17px;
                 border-bottom: 1px solid #edf1f5;
             }
 
@@ -337,15 +455,15 @@
                 flex: 0 0 42px;
                 display: grid;
                 place-items: center;
-                border-radius: 12px;
-                background: #eaf1f9;
                 color: var(--blue);
+                background: #eaf1f9;
+                border-radius: 12px;
                 font-size: 18px;
             }
 
             .arrival-form .section-icon.cover-icon {
-                background: #fff5d7;
                 color: #b98500;
+                background: #fff5d7;
             }
 
             .arrival-form .section-heading h5 {
@@ -384,12 +502,13 @@
             .arrival-form .form-select {
                 min-height: 46px;
                 padding: 10px 13px;
+                color: var(--text);
+                background: #ffffff;
                 border: 1px solid var(--line);
                 border-radius: 11px;
-                color: var(--text);
-                font-size: 12px;
                 box-shadow: none;
-                transition: .2s ease;
+                font-size: 12px;
+                transition: 0.2s ease;
             }
 
             .arrival-form textarea.form-control {
@@ -400,104 +519,11 @@
             .arrival-form .form-control:focus,
             .arrival-form .form-select:focus {
                 border-color: var(--blue);
-                box-shadow: 0 0 0 3px rgba(24, 75, 140, .1);
+                box-shadow: 0 0 0 3px rgba(24, 75, 140, 0.10);
             }
 
             .arrival-form .form-control::placeholder {
                 color: #adb6c2;
-            }
-
-            .arrival-form .image-fields {
-                height: 100%;
-                display: flex;
-                flex-direction: column;
-                justify-content: center;
-            }
-
-            .arrival-form .upload-area {
-                min-height: 88px;
-                padding: 15px;
-                display: flex;
-                align-items: center;
-                gap: 13px;
-                border: 1.5px dashed #c9d4e1;
-                border-radius: 13px;
-                background: #f9fbfd;
-                cursor: pointer;
-                transition: .2s ease;
-            }
-
-            .arrival-form .upload-area:hover {
-                border-color: var(--blue);
-                background: #f3f7fc;
-            }
-
-            .arrival-form .upload-area.upload-error {
-                border-color: #dc3545;
-                background: #fff8f8;
-            }
-
-            .arrival-form .upload-icon {
-                width: 44px;
-                height: 44px;
-                flex: 0 0 44px;
-                display: grid;
-                place-items: center;
-                border-radius: 11px;
-                background: #e6eef8;
-                color: var(--blue);
-                font-size: 20px;
-            }
-
-            .arrival-form .upload-copy {
-                min-width: 0;
-                flex: 1;
-            }
-
-            .arrival-form .upload-copy strong,
-            .arrival-form .upload-copy small {
-                display: block;
-            }
-
-            .arrival-form .upload-copy strong {
-                overflow: hidden;
-                color: var(--navy);
-                font-size: 12px;
-                text-overflow: ellipsis;
-                white-space: nowrap;
-            }
-
-            .arrival-form .upload-copy small {
-                margin-top: 3px;
-                color: var(--muted);
-                font-size: 9px;
-            }
-
-            .arrival-form .browse-button {
-                padding: 7px 11px;
-                border-radius: 8px;
-                background: var(--navy);
-                color: #fff;
-                font-size: 10px;
-                font-weight: 700;
-            }
-
-            .arrival-form .image-divider {
-                margin: 17px 0;
-                display: flex;
-                align-items: center;
-                gap: 10px;
-                color: #9aa6b5;
-                font-size: 9px;
-                text-transform: uppercase;
-            }
-
-            .arrival-form .image-divider::before,
-            .arrival-form .image-divider::after {
-                content: "";
-                height: 1px;
-                flex: 1;
-                background: #e8edf2;
             }
 
             .arrival-form .input-with-icon {
@@ -528,19 +554,112 @@
                 color: var(--muted);
             }
 
+            .arrival-form .image-fields {
+                height: 100%;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+            }
+
+            .arrival-form .upload-area {
+                min-height: 88px;
+                padding: 15px;
+                display: flex;
+                align-items: center;
+                gap: 13px;
+                background: #f9fbfd;
+                border: 1.5px dashed #c9d4e1;
+                border-radius: 13px;
+                cursor: pointer;
+                transition: 0.2s ease;
+            }
+
+            .arrival-form .upload-area:hover {
+                background: #f3f7fc;
+                border-color: var(--blue);
+            }
+
+            .arrival-form .upload-area.upload-error {
+                background: #fff8f8;
+                border-color: #dc3545;
+            }
+
+            .arrival-form .upload-icon {
+                width: 44px;
+                height: 44px;
+                flex: 0 0 44px;
+                display: grid;
+                place-items: center;
+                color: var(--blue);
+                background: #e6eef8;
+                border-radius: 11px;
+                font-size: 20px;
+            }
+
+            .arrival-form .upload-copy {
+                min-width: 0;
+                flex: 1;
+            }
+
+            .arrival-form .upload-copy strong,
+            .arrival-form .upload-copy small {
+                display: block;
+            }
+
+            .arrival-form .upload-copy strong {
+                overflow: hidden;
+                color: var(--navy);
+                font-size: 12px;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+            }
+
+            .arrival-form .upload-copy small {
+                margin-top: 3px;
+                color: var(--muted);
+                font-size: 9px;
+            }
+
+            .arrival-form .browse-button {
+                padding: 7px 11px;
+                color: #ffffff;
+                background: var(--navy);
+                border-radius: 8px;
+                font-size: 10px;
+                font-weight: 700;
+            }
+
+            .arrival-form .image-divider {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                margin: 17px 0;
+                color: #9aa6b5;
+                font-size: 9px;
+                text-transform: uppercase;
+            }
+
+            .arrival-form .image-divider::before,
+            .arrival-form .image-divider::after {
+                content: "";
+                height: 1px;
+                flex: 1;
+                background: #e8edf2;
+            }
+
             .arrival-form .preview-panel {
                 min-height: 340px;
                 height: 100%;
                 padding: 14px;
+                background: #f8fafc;
                 border: 1px solid #e5eaf0;
                 border-radius: 15px;
-                background: #f8fafc;
             }
 
             .arrival-form .preview-label {
-                margin-bottom: 10px;
                 display: flex;
                 justify-content: space-between;
+                margin-bottom: 10px;
             }
 
             .arrival-form .preview-label span {
@@ -556,13 +675,13 @@
 
             .arrival-form .arrival-cover-preview {
                 position: relative;
-                overflow: hidden;
                 width: min(100%, 225px);
                 height: 290px;
                 margin: 0 auto;
-                border-radius: 12px;
+                overflow: hidden;
                 background: #e9eef4;
-                box-shadow: 0 10px 24px rgba(11, 46, 89, .12);
+                border-radius: 12px;
+                box-shadow: 0 10px 24px rgba(11, 46, 89, 0.12);
             }
 
             .arrival-form .arrival-cover-preview img {
@@ -580,18 +699,18 @@
                 display: inline-flex;
                 align-items: center;
                 gap: 5px;
+                color: #ffffff;
+                background: rgba(11, 46, 89, 0.82);
                 border-radius: 8px;
-                background: rgba(11, 46, 89, .82);
-                color: #fff;
                 font-size: 9px;
                 font-weight: 700;
             }
 
             .arrival-form .form-actions {
-                padding: 20px 4px 4px;
                 display: flex;
                 justify-content: flex-end;
                 gap: 10px;
+                padding: 20px 4px 4px;
             }
 
             .arrival-form .btn-cancel,
@@ -606,30 +725,30 @@
                 font-size: 12px;
                 font-weight: 750;
                 text-decoration: none;
-                transition: .2s ease;
+                transition: 0.2s ease;
             }
 
             .arrival-form .btn-cancel {
-                border: 1px solid var(--line);
-                background: #fff;
                 color: #66758a;
+                background: #ffffff;
+                border: 1px solid var(--line);
             }
 
             .arrival-form .btn-save {
-                border: 0;
+                color: #ffffff;
                 background: var(--navy);
-                color: #fff;
-                box-shadow: 0 8px 18px rgba(11, 46, 89, .18);
+                border: 0;
+                box-shadow: 0 8px 18px rgba(11, 46, 89, 0.18);
             }
 
             .arrival-form .btn-cancel:hover {
-                background: #f8fafc;
                 color: var(--navy);
+                background: #f8fafc;
             }
 
             .arrival-form .btn-save:hover {
+                color: #ffffff;
                 background: var(--blue);
-                color: #fff;
                 transform: translateY(-1px);
             }
 
@@ -664,11 +783,32 @@
     @push('scripts')
         <script>
             document.addEventListener('DOMContentLoaded', function () {
-                const fileInput = document.getElementById('image_file');
-                const urlInput = document.getElementById('image_url');
-                const preview = document.getElementById('arrivalImagePreview');
-                const fileName = document.getElementById('arrivalFileName');
-                const previewStatus = document.getElementById('arrivalPreviewStatus');
+                const fileInput =
+                    document.getElementById('image_file');
+
+                const urlInput =
+                    document.getElementById('image_url');
+
+                const preview =
+                    document.getElementById('arrivalImagePreview');
+
+                const fileName =
+                    document.getElementById('arrivalFileName');
+
+                const previewStatus =
+                    document.getElementById('arrivalPreviewStatus');
+
+                const accessionInput =
+                    document.getElementById('accession_number');
+
+                if (accessionInput) {
+                    accessionInput.addEventListener(
+                        'input',
+                        function () {
+                            this.value = this.value.toUpperCase();
+                        }
+                    );
+                }
 
                 if (!fileInput || !urlInput || !preview) {
                     return;
@@ -676,7 +816,13 @@
 
                 const originalImage = preview.dataset.original;
                 const fallbackImage = preview.dataset.fallback;
-                const allowedTypes = ['image/jpeg', 'image/png', 'image/webp'];
+
+                const allowedTypes = [
+                    'image/jpeg',
+                    'image/png',
+                    'image/webp'
+                ];
+
                 let objectUrl = null;
 
                 function releaseObjectUrl() {
@@ -692,47 +838,81 @@
                     }
 
                     releaseObjectUrl();
-                    preview.src = urlInput.value.trim() || originalImage;
-                    previewStatus.textContent = urlInput.value.trim()
-                        ? 'Image link'
-                        : 'Current image';
+
+                    preview.src =
+                        urlInput.value.trim() || originalImage;
+
+                    previewStatus.textContent =
+                        urlInput.value.trim()
+                            ? 'Image link'
+                            : 'Current image';
                 }
 
-                fileInput.addEventListener('change', function () {
-                    const file = fileInput.files[0];
+                fileInput.addEventListener(
+                    'change',
+                    function () {
+                        const file = fileInput.files[0];
 
-                    if (!file) {
-                        fileName.textContent = 'Choose a cover image';
-                        displayUrlImage();
-                        return;
+                        if (!file) {
+                            fileName.textContent =
+                                'Choose a cover image';
+
+                            displayUrlImage();
+                            return;
+                        }
+
+                        if (!allowedTypes.includes(file.type)) {
+                            fileInput.value = '';
+
+                            fileName.textContent =
+                                'Choose a cover image';
+
+                            preview.src = fallbackImage;
+
+                            previewStatus.textContent =
+                                'Invalid image';
+
+                            alert(
+                                'Please select a JPG, PNG, or WEBP image.'
+                            );
+
+                            return;
+                        }
+
+                        releaseObjectUrl();
+
+                        objectUrl =
+                            URL.createObjectURL(file);
+
+                        preview.src = objectUrl;
+                        fileName.textContent = file.name;
+
+                        previewStatus.textContent =
+                            'New upload';
                     }
+                );
 
-                    if (!allowedTypes.includes(file.type)) {
-                        fileInput.value = '';
-                        fileName.textContent = 'Choose a cover image';
-                        preview.src = fallbackImage;
-                        previewStatus.textContent = 'Invalid image';
-                        alert('Please select a JPG, PNG, or WEBP image.');
-                        return;
+                urlInput.addEventListener(
+                    'input',
+                    displayUrlImage
+                );
+
+                preview.addEventListener(
+                    'error',
+                    function () {
+                        if (preview.src !== fallbackImage) {
+                            preview.src = fallbackImage;
+
+                            previewStatus.textContent =
+                                'Fallback image';
+                        }
                     }
+                );
 
-                    releaseObjectUrl();
-                    objectUrl = URL.createObjectURL(file);
-                    preview.src = objectUrl;
-                    fileName.textContent = file.name;
-                    previewStatus.textContent = 'New upload';
-                });
-
-                urlInput.addEventListener('input', displayUrlImage);
-
-                preview.addEventListener('error', function () {
-                    if (preview.src !== fallbackImage) {
-                        preview.src = fallbackImage;
-                        previewStatus.textContent = 'Fallback image';
-                    }
-                });
-
-                window.addEventListener('beforeunload', releaseObjectUrl);
+                window.addEventListener(
+                    'beforeunload',
+                    releaseObjectUrl
+                );
             });
         </script>
     @endpush

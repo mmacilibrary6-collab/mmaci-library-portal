@@ -12,13 +12,22 @@
             </span>
 
             <div>
-                <span class="hero-eyebrow">Collection Management</span>
+                <span class="hero-eyebrow">
+                    Collection Management
+                </span>
+
                 <h2>New Arrivals</h2>
-                <p>Manage newly acquired printed materials and electronic resources.</p>
+
+                <p>
+                    Manage newly acquired printed materials and electronic resources.
+                </p>
             </div>
         </div>
 
-        <a href="{{ route('admin.new-arrivals.create') }}" class="btn-add-arrival">
+        <a
+            href="{{ route('admin.new-arrivals.create') }}"
+            class="btn-add-arrival">
+
             <i class="bi bi-plus-lg"></i>
             Add New Arrival
         </a>
@@ -30,9 +39,13 @@
         <div class="panel-toolbar">
             <div class="toolbar-title">
                 <h5>Arrival Records</h5>
+
                 <p>
                     {{ $arrivals->total() }}
-                    {{ \Illuminate\Support\Str::plural('material', $arrivals->total()) }}
+                    {{ \Illuminate\Support\Str::plural(
+                        'material',
+                        $arrivals->total()
+                    ) }}
                     found
                 </p>
             </div>
@@ -41,51 +54,91 @@
                 action="{{ route('admin.new-arrivals.index') }}"
                 method="GET"
                 class="filter-form">
+
                 <div class="search-field">
                     <i class="bi bi-search"></i>
+
                     <input
                         type="search"
                         name="search"
                         value="{{ request('search') }}"
-                        placeholder="Search title, author or category..."
-                        aria-label="Search arrivals">
+                        placeholder="Search title, author or accession no..."
+                        aria-label="Search by title, author, or accession number">
                 </div>
 
-                <select name="resource_type" aria-label="Resource type">
-                    <option value="">All Types</option>
-                    <option value="printed" @selected(request('resource_type') === 'printed')>
+                <select
+                    name="resource_type"
+                    aria-label="Resource type">
+
+                    <option value="">
+                        All Types
+                    </option>
+
+                    <option
+                        value="printed"
+                        @selected(
+                            request('resource_type') === 'printed'
+                        )>
+
                         Printed
                     </option>
-                    <option value="ebook" @selected(request('resource_type') === 'ebook')>
+
+                    <option
+                        value="ebook"
+                        @selected(
+                            request('resource_type') === 'ebook'
+                        )>
+
                         E-Book
                     </option>
                 </select>
 
-                <select name="availability_status" aria-label="Availability">
-                    <option value="">All Statuses</option>
+                <select
+                    name="availability_status"
+                    aria-label="Availability">
+
+                    <option value="">
+                        All Statuses
+                    </option>
+
                     <option
                         value="available"
-                        @selected(request('availability_status') === 'available')>
+                        @selected(
+                            request('availability_status') === 'available'
+                        )>
+
                         Available
                     </option>
+
                     <option
                         value="unavailable"
-                        @selected(request('availability_status') === 'unavailable')>
+                        @selected(
+                            request('availability_status') === 'unavailable'
+                        )>
+
                         Unavailable
                     </option>
                 </select>
 
-                <button type="submit" class="filter-button">
+                <button
+                    type="submit"
+                    class="filter-button">
+
                     <i class="bi bi-funnel"></i>
                     Filter
                 </button>
 
-                @if(request()->hasAny(['search', 'resource_type', 'availability_status']))
+                @if(request()->hasAny([
+                    'search',
+                    'resource_type',
+                    'availability_status'
+                ]))
                     <a
                         href="{{ route('admin.new-arrivals.index') }}"
                         class="reset-button"
                         title="Clear filters"
                         aria-label="Clear filters">
+
                         <i class="bi bi-x-lg"></i>
                     </a>
                 @endif
@@ -97,6 +150,7 @@
                 <thead>
                     <tr>
                         <th class="number-column">#</th>
+                        <th>Accession No.</th>
                         <th>Material</th>
                         <th>Category</th>
                         <th class="text-center">Type</th>
@@ -113,6 +167,12 @@
                                 {{ ($arrivals->firstItem() ?? 1) + $loop->index }}
                             </td>
 
+                            <td class="accession-cell">
+                                <span class="accession-number">
+                                    {{ $arrival->accession_number ?: 'Not assigned' }}
+                                </span>
+                            </td>
+
                             <td>
                                 <div class="material-identity">
                                     <img
@@ -121,7 +181,10 @@
                                         onerror="this.onerror=null;this.src='{{ asset('images/readingarea.jpg') }}';">
 
                                     <div>
-                                        <strong>{{ $arrival->title }}</strong>
+                                        <strong>
+                                            {{ $arrival->title }}
+                                        </strong>
+
                                         <span>
                                             {{ filled($arrival->author)
                                                 ? $arrival->author
@@ -159,6 +222,7 @@
                             <td class="text-center">
                                 <span class="status-badge {{ $arrival->availability_status }}">
                                     <span></span>
+
                                     {{ $arrival->availability_status === 'available'
                                         ? 'Available'
                                         : 'Unavailable' }}
@@ -167,6 +231,7 @@
 
                             <td class="date-cell">
                                 <i class="bi bi-calendar3"></i>
+
                                 {{ filled($arrival->arrival_date)
                                     ? \Illuminate\Support\Carbon::parse(
                                         $arrival->arrival_date
@@ -177,17 +242,25 @@
                             <td>
                                 <div class="table-actions">
                                     <a
-                                        href="{{ route('admin.new-arrivals.edit', $arrival) }}"
+                                        href="{{ route(
+                                            'admin.new-arrivals.edit',
+                                            $arrival
+                                        ) }}"
                                         class="action-button edit"
                                         title="Edit {{ $arrival->title }}"
                                         aria-label="Edit {{ $arrival->title }}">
+
                                         <i class="bi bi-pencil"></i>
                                     </a>
 
                                     <form
-                                        action="{{ route('admin.new-arrivals.destroy', $arrival) }}"
+                                        action="{{ route(
+                                            'admin.new-arrivals.destroy',
+                                            $arrival
+                                        ) }}"
                                         method="POST"
                                         onsubmit="return confirm('Delete this new-arrival record? This cannot be undone.');">
+
                                         @csrf
                                         @method('DELETE')
 
@@ -196,6 +269,7 @@
                                             class="action-button delete"
                                             title="Delete {{ $arrival->title }}"
                                             aria-label="Delete {{ $arrival->title }}">
+
                                             <i class="bi bi-trash3"></i>
                                         </button>
                                     </form>
@@ -204,10 +278,14 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="7">
+                            <td colspan="8">
                                 <div class="empty-state">
-                                    <span><i class="bi bi-journal-x"></i></span>
+                                    <span>
+                                        <i class="bi bi-journal-x"></i>
+                                    </span>
+
                                     <h5>No arrivals found</h5>
+
                                     <p>
                                         @if(request()->hasAny([
                                             'search',
@@ -220,24 +298,30 @@
                                         @endif
                                     </p>
 
-                                    <a href="{{ request()->hasAny([
+                                    <a
+                                        href="{{ request()->hasAny([
                                             'search',
                                             'resource_type',
                                             'availability_status'
                                         ])
                                             ? route('admin.new-arrivals.index')
                                             : route('admin.new-arrivals.create') }}">
+
                                         <i class="bi {{ request()->hasAny([
                                             'search',
                                             'resource_type',
                                             'availability_status'
-                                        ]) ? 'bi-x-lg' : 'bi-plus-lg' }}"></i>
+                                        ])
+                                            ? 'bi-x-lg'
+                                            : 'bi-plus-lg' }}"></i>
 
                                         {{ request()->hasAny([
                                             'search',
                                             'resource_type',
                                             'availability_status'
-                                        ]) ? 'Clear Filters' : 'Add New Arrival' }}
+                                        ])
+                                            ? 'Clear Filters'
+                                            : 'Add New Arrival' }}
                                     </a>
                                 </div>
                             </td>
@@ -250,11 +334,14 @@
         @if($arrivals->hasPages())
             <div class="panel-footer">
                 <p>
-                    Showing {{ $arrivals->firstItem() }}–{{ $arrivals->lastItem() }}
+                    Showing
+                    {{ $arrivals->firstItem() }}–{{ $arrivals->lastItem() }}
                     of {{ $arrivals->total() }}
                 </p>
 
-                <div>{{ $arrivals->withQueryString()->links() }}</div>
+                <div>
+                    {{ $arrivals->withQueryString()->links() }}
+                </div>
             </div>
         @endif
     </section>
@@ -263,592 +350,519 @@
 
 @push('styles')
 <style>
-    .arrivals-page {
-        --navy: #0b2e59;
-        --blue: #184b8c;
-        --gold: #f4b400;
-        --ink: #253851;
-        --muted: #778599;
-        --line: #e4eaf1;
-        padding: 24px;
-    }
+.arrivals-page {
+    --navy: #0b2e59;
+    --blue: #184b8c;
+    --gold: #f4b400;
+    --ink: #253851;
+    --muted: #778599;
+    --line: #e4eaf1;
 
-    .arrivals-hero {
-        position: relative;
-        overflow: hidden;
-        min-height: 150px;
-        margin-bottom: 22px;
-        padding: 28px 30px;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 24px;
-        border-radius: 22px;
-        background:
-            radial-gradient(circle at 90% 10%, rgba(244, 180, 0, .2), transparent 28%),
-            linear-gradient(125deg, var(--navy), var(--blue));
-        color: #fff;
-        box-shadow: 0 16px 36px rgba(11, 46, 89, .16);
-    }
+    padding: 24px;
+}
 
-    .arrivals-hero::after {
-        content: "";
-        position: absolute;
-        right: 12%;
-        bottom: -70px;
-        width: 180px;
-        height: 180px;
-        border: 28px solid rgba(255, 255, 255, .05);
-        border-radius: 50%;
-    }
+.arrivals-hero {
+    min-height: 150px;
+    margin-bottom: 22px;
+    padding: 28px 30px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    overflow: hidden;
+    color: #ffffff;
+    background:
+        radial-gradient(
+            circle at 90% 10%,
+            rgba(244, 180, 0, 0.20),
+            transparent 28%
+        ),
+        linear-gradient(125deg, var(--navy), var(--blue));
+    border-radius: 22px;
+    box-shadow: 0 16px 36px rgba(11, 46, 89, 0.16);
+}
 
-    .hero-copy {
-        position: relative;
-        z-index: 1;
-        display: flex;
-        align-items: center;
-        gap: 18px;
-    }
+.hero-copy {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+}
 
-    .hero-icon {
-        width: 62px;
-        height: 62px;
-        flex: 0 0 62px;
-        display: grid;
-        place-items: center;
-        border-radius: 18px;
-        background: var(--gold);
-        color: var(--navy);
-        font-size: 27px;
-        box-shadow: 0 12px 25px rgba(0, 0, 0, .14);
-    }
+.hero-icon {
+    width: 62px;
+    height: 62px;
+    flex: 0 0 62px;
+    display: grid;
+    place-items: center;
+    color: var(--navy);
+    background: var(--gold);
+    border-radius: 18px;
+    font-size: 27px;
+}
 
-    .hero-eyebrow {
-        display: block;
-        margin-bottom: 4px;
-        color: #ffd96d;
-        font-size: 10px;
-        font-weight: 800;
-        letter-spacing: .14em;
-        text-transform: uppercase;
-    }
+.hero-eyebrow {
+    display: block;
+    margin-bottom: 4px;
+    color: #ffd96d;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+}
 
-    .arrivals-hero h2 {
-        margin: 0 0 5px;
-        font-size: clamp(24px, 3vw, 32px);
-        font-weight: 800;
-    }
+.arrivals-hero h2 {
+    margin: 0 0 5px;
+    font-size: clamp(24px, 3vw, 32px);
+    font-weight: 800;
+}
 
-    .arrivals-hero p {
-        margin: 0;
-        color: rgba(255, 255, 255, .72);
-        font-size: 12px;
-    }
+.arrivals-hero p {
+    margin: 0;
+    color: rgba(255, 255, 255, 0.72);
+    font-size: 12px;
+}
 
-    .btn-add-arrival {
-        position: relative;
-        z-index: 1;
-        min-height: 46px;
-        padding: 0 18px;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        gap: 9px;
-        border-radius: 12px;
-        background: var(--gold);
-        color: var(--navy);
-        font-size: 12px;
-        font-weight: 800;
-        text-decoration: none;
-        box-shadow: 0 10px 22px rgba(0, 0, 0, .15);
-        transition: .2s ease;
-    }
+.btn-add-arrival {
+    min-height: 46px;
+    padding: 0 18px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
+    color: var(--navy);
+    background: var(--gold);
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 800;
+    text-decoration: none;
+}
 
-    .btn-add-arrival:hover {
-        background: #ffc62b;
-        color: var(--navy);
-        transform: translateY(-2px);
-    }
+.btn-add-arrival:hover {
+    color: var(--navy);
+    background: #ffc62b;
+}
 
-    .page-alert {
-        position: relative;
-        margin-bottom: 18px;
-        padding: 13px 48px 13px 14px;
-        display: flex;
-        align-items: center;
-        gap: 11px;
-        border-radius: 13px;
-    }
+.arrivals-panel {
+    overflow: hidden;
+    background: #ffffff;
+    border: 1px solid var(--line);
+    border-radius: 20px;
+    box-shadow: 0 12px 30px rgba(25, 50, 80, 0.07);
+}
 
-    .page-alert > span {
-        width: 34px;
-        height: 34px;
-        flex: 0 0 34px;
-        display: grid;
-        place-items: center;
-        border-radius: 9px;
-    }
+.panel-toolbar {
+    padding: 20px 22px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    border-bottom: 1px solid var(--line);
+}
 
-    .page-alert strong,
-    .page-alert small {
-        display: block;
-    }
+.toolbar-title h5 {
+    margin: 0 0 3px;
+    color: var(--navy);
+    font-size: 16px;
+    font-weight: 800;
+}
 
-    .page-alert strong {
-        font-size: 12px;
-    }
+.toolbar-title p {
+    margin: 0;
+    color: var(--muted);
+    font-size: 10px;
+}
 
-    .page-alert small {
-        font-size: 10px;
-    }
+.filter-form {
+    flex: 1;
+    display: flex;
+    justify-content: flex-end;
+    gap: 7px;
+}
 
-    .page-alert.success {
-        border: 1px solid #bde7d0;
-        background: #f0fbf5;
-        color: #17643b;
-    }
+.search-field {
+    position: relative;
+    width: min(100%, 330px);
+}
 
-    .page-alert.success > span {
-        background: #d8f4e4;
-    }
+.search-field i {
+    position: absolute;
+    top: 50%;
+    left: 13px;
+    color: #95a1b1;
+    transform: translateY(-50%);
+}
 
-    .page-alert.danger {
-        border: 1px solid #f1caca;
-        background: #fff7f7;
-        color: #963f3f;
-    }
+.search-field input,
+.filter-form select {
+    height: 41px;
+    color: var(--ink);
+    background: #ffffff;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    outline: none;
+    font-size: 11px;
+}
 
-    .page-alert.danger > span {
-        background: #fde4e4;
-    }
+.search-field input {
+    width: 100%;
+    padding: 0 13px 0 38px;
+}
 
-    .arrivals-panel {
-        overflow: hidden;
-        border: 1px solid var(--line);
-        border-radius: 20px;
-        background: #fff;
-        box-shadow: 0 12px 30px rgba(25, 50, 80, .07);
-    }
+.filter-form select {
+    width: 125px;
+    padding: 0 30px 0 11px;
+}
 
+.filter-button,
+.reset-button {
+    height: 41px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    font-size: 11px;
+    text-decoration: none;
+}
+
+.filter-button {
+    padding: 0 14px;
+    gap: 6px;
+    color: #ffffff;
+    background: var(--navy);
+    border: 0;
+    font-weight: 700;
+}
+
+.reset-button {
+    width: 41px;
+    color: #7b8797;
+    background: #ffffff;
+    border: 1px solid var(--line);
+}
+
+.arrivals-table {
+    min-width: 1180px;
+}
+
+.arrivals-table thead th {
+    padding: 13px 17px;
+    color: #7b8798;
+    background: #f8fafc;
+    border: 0;
+    border-bottom: 1px solid var(--line);
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+.arrivals-table tbody td {
+    padding: 14px 17px;
+    color: var(--ink);
+    border-color: #edf0f4;
+    font-size: 11px;
+}
+
+.arrivals-table tbody tr:hover {
+    background: #fbfcfe;
+}
+
+.number-column,
+.row-number {
+    width: 54px;
+    color: #99a5b4 !important;
+    text-align: center;
+}
+
+.accession-cell {
+    min-width: 145px;
+}
+
+.accession-number {
+    display: inline-flex;
+    align-items: center;
+    padding: 7px 10px;
+    color: var(--navy);
+    background: #edf4fb;
+    border: 1px solid #d8e4f2;
+    border-radius: 9px;
+    font-family:
+        ui-monospace,
+        SFMono-Regular,
+        Menlo,
+        Monaco,
+        Consolas,
+        "Liberation Mono",
+        "Courier New",
+        monospace;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.03em;
+    white-space: nowrap;
+}
+
+.material-identity {
+    min-width: 285px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.material-identity img {
+    width: 50px;
+    height: 68px;
+    flex: 0 0 50px;
+    object-fit: cover;
+    background: #f4f6f8;
+    border: 1px solid #e3e8ee;
+    border-radius: 8px;
+}
+
+.material-identity strong,
+.material-identity span,
+.material-identity small {
+    display: block;
+}
+
+.material-identity strong {
+    margin-bottom: 3px;
+    color: var(--navy);
+    font-size: 12px;
+    font-weight: 800;
+}
+
+.material-identity span {
+    color: #6f7e91;
+    font-size: 10px;
+}
+
+.material-identity small {
+    max-width: 300px;
+    margin-top: 3px;
+    color: #9aa5b3;
+    font-size: 9px;
+}
+
+.category-cell {
+    max-width: 165px;
+    color: var(--muted) !important;
+}
+
+.type-badge,
+.status-badge {
+    padding: 6px 9px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    border-radius: 20px;
+    font-size: 9px;
+    font-weight: 800;
+    white-space: nowrap;
+}
+
+.type-badge.printed {
+    color: var(--blue);
+    background: #eaf1f9;
+}
+
+.type-badge.ebook {
+    color: #9a7000;
+    background: #fff3ce;
+}
+
+.status-badge > span {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+}
+
+.status-badge.available {
+    color: #1b7548;
+    background: #eaf8f0;
+}
+
+.status-badge.available > span {
+    background: #27a866;
+}
+
+.status-badge.unavailable {
+    color: #687589;
+    background: #f0f2f5;
+}
+
+.status-badge.unavailable > span {
+    background: #8995a6;
+}
+
+.date-cell {
+    color: #6f7e91 !important;
+    white-space: nowrap;
+}
+
+.date-cell i {
+    margin-right: 5px;
+    color: #9aa5b3;
+}
+
+.table-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 7px;
+}
+
+.table-actions form {
+    margin: 0;
+}
+
+.action-button {
+    width: 34px;
+    height: 34px;
+    padding: 0;
+    display: inline-grid;
+    place-items: center;
+    border: 1px solid transparent;
+    border-radius: 9px;
+    font-size: 12px;
+    text-decoration: none;
+}
+
+.action-button.edit {
+    color: var(--blue);
+    background: #f2f7fc;
+    border-color: #d8e4f2;
+}
+
+.action-button.delete {
+    color: #c53e3e;
+    background: #fff5f5;
+    border-color: #f3d8d8;
+}
+
+.empty-state {
+    padding: 58px 20px;
+    text-align: center;
+}
+
+.empty-state > span {
+    width: 62px;
+    height: 62px;
+    margin: 0 auto 14px;
+    display: grid;
+    place-items: center;
+    color: var(--blue);
+    background: #edf3f9;
+    border-radius: 17px;
+    font-size: 25px;
+}
+
+.empty-state h5 {
+    margin-bottom: 5px;
+    color: var(--navy);
+    font-size: 15px;
+    font-weight: 800;
+}
+
+.empty-state p {
+    margin-bottom: 14px;
+    color: var(--muted);
+    font-size: 11px;
+}
+
+.empty-state a {
+    min-height: 39px;
+    padding: 0 13px;
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    color: #ffffff;
+    background: var(--navy);
+    border-radius: 9px;
+    font-size: 10px;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.panel-footer {
+    padding: 14px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    background: #fbfcfd;
+    border-top: 1px solid var(--line);
+}
+
+.panel-footer p {
+    margin: 0;
+    color: var(--muted);
+    font-size: 10px;
+}
+
+.panel-footer .pagination {
+    margin: 0;
+}
+
+@media (max-width: 991.98px) {
     .panel-toolbar {
-        padding: 20px 22px;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 20px;
-        border-bottom: 1px solid var(--line);
-    }
-
-    .toolbar-title {
-        flex: 0 0 auto;
-    }
-
-    .toolbar-title h5 {
-        margin: 0 0 3px;
-        color: var(--navy);
-        font-size: 16px;
-        font-weight: 800;
-    }
-
-    .toolbar-title p {
-        margin: 0;
-        color: var(--muted);
-        font-size: 10px;
+        align-items: flex-start;
+        flex-direction: column;
     }
 
     .filter-form {
-        flex: 1;
-        display: flex;
-        justify-content: flex-end;
-        gap: 7px;
+        width: 100%;
+        justify-content: flex-start;
+        flex-wrap: wrap;
     }
 
     .search-field {
-        position: relative;
-        width: min(100%, 290px);
-    }
-
-    .search-field i {
-        position: absolute;
-        top: 50%;
-        left: 13px;
-        color: #95a1b1;
-        transform: translateY(-50%);
-    }
-
-    .search-field input,
-    .filter-form select {
-        height: 41px;
-        border: 1px solid var(--line);
-        border-radius: 10px;
-        outline: none;
-        background: #fff;
-        color: var(--ink);
-        font-size: 11px;
-    }
-
-    .search-field input {
         width: 100%;
-        padding: 0 13px 0 38px;
     }
 
     .filter-form select {
-        width: 125px;
-        padding: 0 30px 0 11px;
+        flex: 1;
+    }
+}
+
+@media (max-width: 767.98px) {
+    .arrivals-page {
+        padding: 16px 10px;
     }
 
-    .search-field input:focus,
-    .filter-form select:focus {
-        border-color: var(--blue);
-        box-shadow: 0 0 0 3px rgba(24, 75, 140, .09);
+    .arrivals-hero {
+        padding: 24px 20px;
+        align-items: flex-start;
+        flex-direction: column;
     }
 
-    .filter-button,
-    .reset-button {
-        height: 41px;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        border: 0;
-        border-radius: 10px;
-        font-size: 11px;
-        text-decoration: none;
+    .hero-icon {
+        width: 52px;
+        height: 52px;
+        flex-basis: 52px;
+        font-size: 22px;
     }
 
-    .filter-button {
-        padding: 0 14px;
-        gap: 6px;
-        background: var(--navy);
-        color: #fff;
-        font-weight: 700;
-    }
-
-    .reset-button {
-        width: 41px;
-        border: 1px solid var(--line);
-        background: #fff;
-        color: #7b8797;
-    }
-
-    .filter-button:hover {
-        background: var(--blue);
-    }
-
-    .reset-button:hover {
-        background: #f3f6f9;
-        color: var(--navy);
-    }
-
-    .arrivals-table {
-        min-width: 1030px;
-    }
-
-    .arrivals-table thead th {
-        padding: 13px 17px;
-        border: 0;
-        border-bottom: 1px solid var(--line);
-        background: #f8fafc;
-        color: #7b8798;
-        font-size: 9px;
-        font-weight: 800;
-        letter-spacing: .08em;
-        text-transform: uppercase;
-        white-space: nowrap;
-    }
-
-    .arrivals-table tbody td {
-        padding: 14px 17px;
-        border-color: #edf0f4;
-        color: var(--ink);
-        font-size: 11px;
-    }
-
-    .arrivals-table tbody tr:hover {
-        background: #fbfcfe;
-    }
-
-    .number-column,
-    .row-number {
-        width: 54px;
-        color: #99a5b4 !important;
-        text-align: center;
-    }
-
-    .material-identity {
-        min-width: 285px;
-        display: flex;
-        align-items: center;
-        gap: 12px;
-    }
-
-    .material-identity img {
-        width: 50px;
-        height: 68px;
-        flex: 0 0 50px;
-        object-fit: cover;
-        border: 1px solid #e3e8ee;
-        border-radius: 8px;
-        background: #f4f6f8;
-        box-shadow: 0 5px 12px rgba(28, 49, 72, .08);
-    }
-
-    .material-identity strong,
-    .material-identity span,
-    .material-identity small {
-        display: block;
-    }
-
-    .material-identity strong {
-        margin-bottom: 3px;
-        color: var(--navy);
-        font-size: 12px;
-        font-weight: 800;
-    }
-
-    .material-identity span {
-        color: #6f7e91;
-        font-size: 10px;
-    }
-
-    .material-identity small {
-        max-width: 300px;
-        margin-top: 3px;
-        color: #9aa5b3;
-        font-size: 9px;
-    }
-
-    .category-cell {
-        max-width: 165px;
-        color: var(--muted) !important;
-    }
-
-    .type-badge,
-    .status-badge {
-        padding: 6px 9px;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        gap: 5px;
-        border-radius: 20px;
-        font-size: 9px;
-        font-weight: 800;
-        white-space: nowrap;
-    }
-
-    .type-badge.printed {
-        background: #eaf1f9;
-        color: var(--blue);
-    }
-
-    .type-badge.ebook {
-        background: #fff3ce;
-        color: #9a7000;
-    }
-
-    .status-badge > span {
-        width: 6px;
-        height: 6px;
-        border-radius: 50%;
-    }
-
-    .status-badge.available {
-        background: #eaf8f0;
-        color: #1b7548;
-    }
-
-    .status-badge.available > span {
-        background: #27a866;
-    }
-
-    .status-badge.unavailable {
-        background: #f0f2f5;
-        color: #687589;
-    }
-
-    .status-badge.unavailable > span {
-        background: #8995a6;
-    }
-
-    .date-cell {
-        color: #6f7e91 !important;
-        white-space: nowrap;
-    }
-
-    .date-cell i {
-        margin-right: 5px;
-        color: #9aa5b3;
-    }
-
-    .table-actions {
-        display: flex;
-        justify-content: flex-end;
-        gap: 7px;
-    }
-
-    .table-actions form {
-        margin: 0;
-    }
-
-    .action-button {
-        width: 34px;
-        height: 34px;
-        padding: 0;
-        display: inline-grid;
-        place-items: center;
-        border: 1px solid transparent;
-        border-radius: 9px;
-        font-size: 12px;
-        text-decoration: none;
-        transition: .2s ease;
-    }
-
-    .action-button.edit {
-        border-color: #d8e4f2;
-        background: #f2f7fc;
-        color: var(--blue);
-    }
-
-    .action-button.delete {
-        border-color: #f3d8d8;
-        background: #fff5f5;
-        color: #c53e3e;
-    }
-
-    .action-button.edit:hover {
-        background: var(--blue);
-        color: #fff;
-        transform: translateY(-1px);
-    }
-
-    .action-button.delete:hover {
-        background: #d64a4a;
-        color: #fff;
-        transform: translateY(-1px);
-    }
-
-    .empty-state {
-        padding: 58px 20px;
-        text-align: center;
-    }
-
-    .empty-state > span {
-        width: 62px;
-        height: 62px;
-        margin: 0 auto 14px;
-        display: grid;
-        place-items: center;
-        border-radius: 17px;
-        background: #edf3f9;
-        color: var(--blue);
-        font-size: 25px;
-    }
-
-    .empty-state h5 {
-        margin-bottom: 5px;
-        color: var(--navy);
-        font-size: 15px;
-        font-weight: 800;
-    }
-
-    .empty-state p {
-        margin-bottom: 14px;
-        color: var(--muted);
-        font-size: 11px;
-    }
-
-    .empty-state a {
-        min-height: 39px;
-        padding: 0 13px;
-        display: inline-flex;
-        align-items: center;
-        gap: 7px;
-        border-radius: 9px;
-        background: var(--navy);
-        color: #fff;
-        font-size: 10px;
-        font-weight: 700;
-        text-decoration: none;
+    .btn-add-arrival {
+        width: 100%;
     }
 
     .panel-footer {
-        padding: 14px 20px;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 20px;
-        border-top: 1px solid var(--line);
-        background: #fbfcfd;
+        align-items: flex-start;
+        flex-direction: column;
+    }
+}
+
+@media (max-width: 480px) {
+    .hero-copy {
+        align-items: flex-start;
     }
 
-    .panel-footer p {
-        margin: 0;
-        color: var(--muted);
-        font-size: 10px;
+    .filter-form select,
+    .filter-button {
+        width: 100%;
+        flex: 0 0 100%;
     }
-
-    .panel-footer .pagination {
-        margin: 0;
-    }
-
-    @media (max-width: 991.98px) {
-        .panel-toolbar {
-            align-items: flex-start;
-            flex-direction: column;
-        }
-
-        .filter-form {
-            width: 100%;
-            justify-content: flex-start;
-            flex-wrap: wrap;
-        }
-
-        .search-field {
-            width: 100%;
-        }
-
-        .filter-form select {
-            flex: 1;
-        }
-    }
-
-    @media (max-width: 767.98px) {
-        .arrivals-page {
-            padding: 16px 10px;
-        }
-
-        .arrivals-hero {
-            padding: 24px 20px;
-            align-items: flex-start;
-            flex-direction: column;
-        }
-
-        .hero-icon {
-            width: 52px;
-            height: 52px;
-            flex-basis: 52px;
-            font-size: 22px;
-        }
-
-        .btn-add-arrival {
-            width: 100%;
-        }
-
-        .panel-footer {
-            align-items: flex-start;
-            flex-direction: column;
-        }
-    }
-
-    @media (max-width: 480px) {
-        .hero-copy {
-            align-items: flex-start;
-        }
-
-        .filter-form select,
-        .filter-button {
-            width: 100%;
-            flex: 0 0 100%;
-        }
-    }
+}
 </style>
 @endpush

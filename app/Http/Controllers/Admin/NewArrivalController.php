@@ -7,6 +7,7 @@ use App\Models\NewArrival;
 use App\Support\DatabaseMedia;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 use Illuminate\View\View;
 
 class NewArrivalController extends Controller
@@ -23,10 +24,31 @@ class NewArrivalController extends Controller
             ->when($search !== '', function ($query) use ($search) {
                 $query->where(function ($subQuery) use ($search) {
                     $subQuery
-                        ->where('title', 'like', "%{$search}%")
-                        ->orWhere('author', 'like', "%{$search}%")
-                        ->orWhere('category', 'like', "%{$search}%")
-                        ->orWhere('description', 'like', "%{$search}%");
+                        ->where(
+                            'accession_number',
+                            'like',
+                            "%{$search}%"
+                        )
+                        ->orWhere(
+                            'title',
+                            'like',
+                            "%{$search}%"
+                        )
+                        ->orWhere(
+                            'author',
+                            'like',
+                            "%{$search}%"
+                        )
+                        ->orWhere(
+                            'category',
+                            'like',
+                            "%{$search}%"
+                        )
+                        ->orWhere(
+                            'description',
+                            'like',
+                            "%{$search}%"
+                        );
                 });
             })
             ->when(
@@ -61,7 +83,9 @@ class NewArrivalController extends Controller
 
     public function store(Request $request): RedirectResponse
     {
-        DatabaseMedia::ensureBlobColumns(['new_arrivals']);
+        DatabaseMedia::ensureBlobColumns([
+            'new_arrivals',
+        ]);
 
         $validated = $request->validate(
             $this->validationRules(),
@@ -95,14 +119,14 @@ class NewArrivalController extends Controller
         Request $request,
         NewArrival $newArrival
     ): RedirectResponse {
-        DatabaseMedia::ensureBlobColumns(['new_arrivals']);
+        DatabaseMedia::ensureBlobColumns([
+            'new_arrivals',
+        ]);
 
         $validated = $request->validate(
-            $this->validationRules(),
+            $this->validationRules($newArrival),
             $this->validationMessages()
         );
-
-        $oldImage = $newArrival->image;
 
         $data = $this->prepareArrivalData(
             $request,
@@ -133,9 +157,21 @@ class NewArrivalController extends Controller
             );
     }
 
-    private function validationRules(): array
-    {
+    private function validationRules(
+        ?NewArrival $newArrival = null
+    ): array {
         return [
+            'accession_number' => [
+                'required',
+                'string',
+                'max:100',
+
+                Rule::unique(
+                    'new_arrivals',
+                    'accession_number'
+                )->ignore($newArrival?->id),
+            ],
+
             'title' => [
                 'required',
                 'string',
@@ -192,6 +228,15 @@ class NewArrivalController extends Controller
     private function validationMessages(): array
     {
         return [
+            'accession_number.required' =>
+                'The accession number is required.',
+
+            'accession_number.unique' =>
+                'This accession number is already assigned to another material.',
+
+            'accession_number.max' =>
+                'The accession number must not exceed 100 characters.',
+
             'title.required' =>
                 'The title is required.',
 
@@ -245,13 +290,21 @@ class NewArrivalController extends Controller
         ?NewArrival $newArrival = null
     ): array {
         $data = [
+            'accession_number' => strtoupper(
+                trim($validated['accession_number'])
+            ),
+
             'title' => trim($validated['title']),
 
-            'author' => filled($validated['author'] ?? null)
+            'author' => filled(
+                $validated['author'] ?? null
+            )
                 ? trim($validated['author'])
                 : null,
 
-            'category' => filled($validated['category'] ?? null)
+            'category' => filled(
+                $validated['category'] ?? null
+            )
                 ? trim($validated['category'])
                 : null,
 
@@ -287,16 +340,5 @@ class NewArrivalController extends Controller
         }
 
         return $data;
-    }
-
-    private function isLocalImage(?string $image): bool
-    {
-        if (blank($image)) {
-            return false;
-        }
-
-        return !str_starts_with($image, 'http://') &&
-            !str_starts_with($image, 'https://') &&
-            !str_starts_with($image, 'data:');
     }
 }
