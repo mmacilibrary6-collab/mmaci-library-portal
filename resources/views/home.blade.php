@@ -179,10 +179,40 @@
             </p>
         </header>
 
+        @if(($arrivals ?? collect())->isNotEmpty())
+            <div class="arrival-search-wrap">
+                <label for="arrivalSearch" class="visually-hidden">
+                    Search new arrivals by title, accession number, or author
+                </label>
+
+                <div class="arrival-search-field">
+                    <i class="bi bi-search" aria-hidden="true"></i>
+                    <input
+                        type="search"
+                        id="arrivalSearch"
+                        placeholder="Search title, accession number, or author..."
+                        autocomplete="off"
+                        aria-label="Search new arrivals by title, accession number, or author">
+                </div>
+            </div>
+        @endif
+
         <div class="arrivals-scroll" aria-label="New arrivals">
             @forelse($arrivals ?? [] as $book)
                 <div class="arrival-item" data-aos="fade-up">
-                    <article class="arrival-card">
+                    <button
+                        type="button"
+                        class="arrival-card arrival-card-button"
+                        data-arrival-index="{{ $loop->index }}"
+                        data-arrival-title='@json($book->title)'
+                        data-arrival-author='@json($book->author ?? "Unknown Author")'
+                        data-arrival-accession='@json($book->accession_number ?? "Not assigned")'
+                        data-arrival-category='@json($book->category ?? "Uncategorized")'
+                        data-arrival-year='@json($book->publication_year ?? null)'
+                        data-arrival-publisher='@json($book->publisher ?? null)'
+                        data-arrival-description='@json($book->description ?? "No description available.")'
+                        data-arrival-image='@json($book->image_url)'
+                        aria-label="View {{ $book->title }}">
                         <div class="arrival-cover">
                             <img
                                 src="{{ $book->image_url }}"
@@ -200,7 +230,7 @@
                                 ) }}
                             </p>
                         </div>
-                    </article>
+                    </button>
                 </div>
             @empty
                 <div class="arrival-empty">
@@ -211,6 +241,15 @@
                 </div>
             @endforelse
         </div>
+
+        @if(($arrivals ?? collect())->isNotEmpty())
+            <div class="arrival-no-results d-none" id="arrivalNoResults">
+                <div class="empty-state empty-state-wide">
+                    <h4>No matching arrivals found</h4>
+                    <p>Try searching by title, accession number, or author.</p>
+                </div>
+            </div>
+        @endif
     </div>
 </section>
 
@@ -1524,6 +1563,42 @@ body.update-viewer-open {
     -webkit-overflow-scrolling: touch;
 }
 
+.arrival-search-wrap {
+    display: flex;
+    justify-content: flex-end;
+    margin: 10px 0 20px;
+}
+
+.arrival-search-field {
+    width: min(100%, 480px);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 18px;
+    border: 1px solid var(--home-line);
+    border-radius: 18px;
+    background: var(--home-white);
+    box-shadow: 0 10px 28px rgba(11, 46, 89, .05);
+}
+
+.arrival-search-field i {
+    color: var(--home-blue);
+    font-size: 17px;
+}
+
+.arrival-search-field input {
+    width: 100%;
+    border: 0;
+    outline: none;
+    background: transparent;
+    color: var(--home-text);
+    font-size: 14px;
+}
+
+.arrival-search-field input::placeholder {
+    color: #8c97a8;
+}
+
 .arrivals-scroll::-webkit-scrollbar {
     height: 9px;
 }
@@ -1559,6 +1634,19 @@ body.update-viewer-open {
     border-radius: 19px;
     box-shadow: 0 10px 28px rgba(11, 46, 89, .06);
     transition: transform .3s ease, box-shadow .3s ease;
+}
+
+.arrival-card-button {
+    width: 100%;
+    padding: 0;
+    border: 0;
+    text-align: left;
+    cursor: pointer;
+}
+
+.arrival-card-button:focus-visible {
+    outline: 3px solid rgba(244, 180, 0, .45);
+    outline-offset: 3px;
 }
 
 .arrival-card:hover {
@@ -2299,6 +2387,16 @@ body.update-viewer-open {
     .primary-action {
         width: 100%;
     }
+
+    .arrival-search-wrap {
+        justify-content: stretch;
+    }
+
+    .arrival-search-field {
+        width: 100%;
+        padding: 13px 16px;
+        border-radius: 16px;
+    }
 }
 </style>
 
@@ -2366,6 +2464,58 @@ body.update-viewer-open {
             aria-label="Next library update">
             <i class="bi bi-chevron-right" aria-hidden="true"></i>
         </button>
+    </div>
+</div>
+
+<div class="library-update-viewer" id="arrivalViewer" aria-hidden="true">
+    <div class="library-update-viewer-backdrop" data-close-arrival-viewer></div>
+
+    <div
+        class="library-update-viewer-dialog"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="arrivalViewerTitle">
+
+        <button
+            type="button"
+            class="viewer-close-button"
+            data-close-arrival-viewer
+            aria-label="Close arrival details">
+            <i class="bi bi-x-lg" aria-hidden="true"></i>
+        </button>
+
+        <div class="viewer-image-panel">
+            <img
+                id="arrivalViewerImage"
+                src="{{ asset('images/readingarea.jpg') }}"
+                alt="New arrival">
+        </div>
+
+        <aside class="viewer-content-panel">
+            <div class="viewer-brand">
+                <img
+                    src="{{ asset('images/logomml.png') }}"
+                    alt="MMACI logo"
+                    onerror="this.style.display='none';">
+
+                <div>
+                    <strong>MMACI Library Services Office</strong>
+                    <span>New Arrival</span>
+                </div>
+            </div>
+
+            <div class="viewer-copy">
+                <span class="viewer-eyebrow">Recently Added</span>
+                <h3 id="arrivalViewerTitle"></h3>
+                <p id="arrivalViewerAuthor"></p>
+                <p id="arrivalViewerDetails"></p>
+            </div>
+
+            <div class="viewer-footer">
+                <span id="arrivalViewerCounter"></span>
+                <small>Click outside the card or press Escape to close.</small>
+            </div>
+        </aside>
     </div>
 </div>
 
@@ -2492,6 +2642,144 @@ document.addEventListener('DOMContentLoaded', function () {
             showNext();
         }
     });
+});
+
+document.addEventListener('DOMContentLoaded', function () {
+    const searchInput = document.getElementById('arrivalSearch');
+    const arrivalCards = Array.from(document.querySelectorAll('.arrival-card-button'));
+    const noResults = document.getElementById('arrivalNoResults');
+    const viewer = document.getElementById('arrivalViewer');
+
+    if (!viewer || arrivalCards.length === 0) {
+        return;
+    }
+
+    const image = document.getElementById('arrivalViewerImage');
+    const title = document.getElementById('arrivalViewerTitle');
+    const author = document.getElementById('arrivalViewerAuthor');
+    const details = document.getElementById('arrivalViewerDetails');
+    const counter = document.getElementById('arrivalViewerCounter');
+    const closeButtons = viewer.querySelectorAll('[data-close-arrival-viewer]');
+
+    let currentIndex = 0;
+    let lastFocusedElement = null;
+
+    function readCard(card) {
+        const parseJson = function (value, fallback) {
+            try {
+                return JSON.parse(value);
+            } catch (error) {
+                return fallback;
+            }
+        };
+
+        return {
+            title: parseJson(card.dataset.arrivalTitle, 'New Arrival'),
+            author: parseJson(card.dataset.arrivalAuthor, 'Unknown Author'),
+            accession: parseJson(card.dataset.arrivalAccession, 'Not assigned'),
+            category: parseJson(card.dataset.arrivalCategory, 'Uncategorized'),
+            year: parseJson(card.dataset.arrivalYear, ''),
+            publisher: parseJson(card.dataset.arrivalPublisher, ''),
+            description: parseJson(card.dataset.arrivalDescription, 'No description available.'),
+            image: parseJson(card.dataset.arrivalImage, '')
+        };
+    }
+
+    function renderArrival(index) {
+        currentIndex = Math.max(0, Math.min(index, arrivalCards.length - 1));
+        const arrival = readCard(arrivalCards[currentIndex]);
+
+        image.src = arrival.image;
+        image.alt = arrival.title;
+        title.textContent = arrival.title;
+        author.textContent = arrival.author;
+        details.textContent = [
+            `Accession No: ${arrival.accession}`,
+            arrival.category ? `Category: ${arrival.category}` : null,
+            arrival.year ? `Publication Year: ${arrival.year}` : null,
+            arrival.publisher ? `Publisher: ${arrival.publisher}` : null,
+            arrival.description
+        ].filter(Boolean).join(' • ');
+        counter.textContent = `${currentIndex + 1} of ${arrivalCards.length}`;
+    }
+
+    function openViewer(index, trigger) {
+        lastFocusedElement = trigger;
+        renderArrival(index);
+        viewer.classList.add('is-open');
+        viewer.setAttribute('aria-hidden', 'false');
+        document.body.classList.add('update-viewer-open');
+
+        window.setTimeout(function () {
+            viewer.querySelector('.viewer-close-button')?.focus();
+        }, 20);
+    }
+
+    function closeViewer() {
+        viewer.classList.remove('is-open');
+        viewer.setAttribute('aria-hidden', 'true');
+        document.body.classList.remove('update-viewer-open');
+
+        if (lastFocusedElement) {
+            lastFocusedElement.focus();
+        }
+    }
+
+    function filterArrivals() {
+        const term = (searchInput?.value || '').trim().toLowerCase();
+        let visibleCount = 0;
+
+        arrivalCards.forEach(function (card) {
+            const haystack = [
+                card.dataset.arrivalTitle,
+                card.dataset.arrivalAuthor,
+                card.dataset.arrivalAccession
+            ].join(' ').toLowerCase();
+
+            const match = !term || haystack.includes(term);
+            const item = card.closest('.arrival-item');
+
+            if (item) {
+                item.style.display = match ? '' : 'none';
+            }
+
+            if (match) {
+                visibleCount += 1;
+            }
+        });
+
+        if (noResults) {
+            noResults.classList.toggle('d-none', visibleCount !== 0);
+        }
+    }
+
+    arrivalCards.forEach(function (card, index) {
+        card.addEventListener('click', function () {
+            openViewer(index, card);
+        });
+    });
+
+    closeButtons.forEach(function (button) {
+        button.addEventListener('click', closeViewer);
+    });
+
+    searchInput?.addEventListener('input', filterArrivals);
+
+    image.addEventListener('error', function () {
+        image.src = @json(asset('images/readingarea.jpg'));
+    });
+
+    document.addEventListener('keydown', function (event) {
+        if (!viewer.classList.contains('is-open')) {
+            return;
+        }
+
+        if (event.key === 'Escape') {
+            closeViewer();
+        }
+    });
+
+    filterArrivals();
 });
 </script>
 
