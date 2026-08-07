@@ -33,7 +33,6 @@
         </a>
     </section>
 
-    @include('partials.flash-messages')
 
     <section class="arrivals-panel">
         <div class="panel-toolbar">
