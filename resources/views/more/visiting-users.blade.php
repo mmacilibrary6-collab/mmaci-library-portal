@@ -238,15 +238,7 @@
 
                     </div>
 
-                    <a
-                        href="{{ $appointmentFormUrl }}"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        class="appointment-open-link">
-
-                        Open Form
-
-                    </a>
+                  
 
                 </div>
 
