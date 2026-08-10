@@ -1207,6 +1207,16 @@
     border: 0;
     border-radius: 24px;
     box-shadow: 0 25px 70px rgba(11, 46, 89, 0.28);
+    pointer-events: auto;
+}
+
+.modal.show .collection-modal,
+.modal.show .new-arrivals-modal {
+    pointer-events: auto;
+}
+
+.modal-dialog {
+    z-index: 2;
 }
 
 .modal-close {
@@ -1246,6 +1256,7 @@
     border: 0;
     border-radius: 24px;
     box-shadow: 0 25px 70px rgba(11, 46, 89, 0.28);
+    pointer-events: auto;
 }
 
 .new-arrivals-modal-header {
@@ -1291,6 +1302,7 @@
     background: #f4f7fc;
     max-height: min(72vh, 860px);
     overflow-y: auto;
+    overscroll-behavior: contain;
 }
 
 .new-arrivals-grid {

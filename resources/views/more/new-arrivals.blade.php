@@ -1316,7 +1316,7 @@
 
     inset: 0;
 
-    z-index: 10000;
+    z-index: 1065;
 
     display: flex;
 
@@ -1376,7 +1376,7 @@
 
     position: relative;
 
-    z-index: 1;
+    z-index: 2;
 
     width:
         min(850px, 100%);
@@ -1400,6 +1400,7 @@
     box-shadow:
         0 30px 90px
         rgba(0, 0, 0, .38);
+    pointer-events: auto;
 
     transform:
         translateY(15px)
@@ -1552,6 +1553,7 @@
         calc(100dvh - 48px);
 
     overflow-y: auto;
+    overscroll-behavior: contain;
 
     padding:
         32px 32px 25px;
