@@ -1600,6 +1600,15 @@ document.addEventListener('DOMContentLoaded', function () {
         modal.hide();
     }
 
+    function cleanupModalState() {
+        document.body.classList.remove('modal-open');
+        document.body.style.removeProperty('padding-right');
+
+        document.querySelectorAll('.modal-backdrop').forEach(function (backdrop) {
+            backdrop.remove();
+        });
+    }
+
     document.addEventListener('click', function (event) {
         const trigger = event.target.closest('.program-folder-toggle');
 
@@ -1619,8 +1628,21 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }, true);
 
+    modalEl.addEventListener('click', function (event) {
+        if (event.target === modalEl) {
+            closeModal();
+        }
+    });
+
+    document.addEventListener('keydown', function (event) {
+        if (event.key === 'Escape' && modalEl.classList.contains('show')) {
+            closeModal();
+        }
+    });
+
     modalEl.addEventListener('hidden.bs.modal', function () {
         bodyEl.innerHTML = '';
+        cleanupModalState();
         if (lastFocused) {
             lastFocused.focus();
         }
