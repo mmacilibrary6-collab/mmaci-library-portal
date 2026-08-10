@@ -16,7 +16,7 @@
                 <h1>E-Book Collection</h1>
 
                 <p>
-                    Browse e-book programs, open the titles under each program,
+                    Browse e-book programs, open the folders under each program,
                     and access the drive links provided by the library admin.
                 </p>
 
@@ -37,8 +37,8 @@
                 <span class="eyebrow">Explore by Program</span>
                 <h2>Start with a program, then open its e-books</h2>
                 <p>
-                    Choose a program below to view the ebook titles linked to
-                    it. Each title opens directly to its Google Drive location.
+                    Choose a program below to view the ebook folders linked to
+                    it. Each folder opens directly to its Google Drive location.
                 </p>
             </header>
 
@@ -91,18 +91,18 @@
 
                                     <span class="ebook-count">
                                         {{ $folderCount }}
-                                        {{ \Illuminate\Support\Str::plural('Title', $folderCount) }}
+                                        {{ \Illuminate\Support\Str::plural('Folder', $folderCount) }}
                                     </span>
                                 </div>
 
                                 <div class="ebook-content">
                                     <h3>{{ $program->title }}</h3>
                                     <p>
-                                        {{ $program->description ?: 'Browse available e-book titles for this program.' }}
+                                        {{ $program->description ?: 'Browse available e-book folders for this program.' }}
                                     </p>
 
                                     <span class="ebook-action">
-                                        {{ $program->folders->isNotEmpty() ? 'View ebook folders' : 'No titles available' }}
+                                        {{ $program->folders->isNotEmpty() ? 'View ebook folders' : 'No folders available' }}
                                         <i class="bi bi-arrow-right" aria-hidden="true"></i>
                                     </span>
                                 </div>
@@ -137,11 +137,11 @@
                                                 <i class="bi bi-search" aria-hidden="true"></i>
                                                 <input type="search"
                                                     class="folder-search-input"
-                                                    placeholder="Search ebook titles..."
-                                                    aria-label="Search ebook titles in {{ $program->title }}">
+                                                    placeholder="Search ebook folders..."
+                                                    aria-label="Search ebook folders in {{ $program->title }}">
                                                 <button type="button"
                                                     class="folder-search-clear"
-                                                    aria-label="Clear ebook title search">
+                                                    aria-label="Clear ebook folder search">
                                                     <i class="bi bi-x-lg" aria-hidden="true"></i>
                                                 </button>
                                             </div>
@@ -157,7 +157,7 @@
                                                         <span class="folder-link-copy">
                                                             <strong>{{ $folder->title }}</strong>
                                                             <small>
-                                                                {{ $folder->description ?: 'Open this ebook title in Google Drive' }}
+                                                                {{ $folder->description ?: 'Open this e-book folder in Google Drive' }}
                                                             </small>
                                                         </span>
 
@@ -167,14 +167,14 @@
                                             </div>
 
                                             <div class="folder-search-empty" hidden>
-                                                <h5>No matching ebook titles</h5>
-                                                <p>Try a different title or clear the search.</p>
+                                                <h5>No matching ebook folders</h5>
+                                                <p>Try a different folder name or clear the search.</p>
                                             </div>
                                         @else
                                             <div class="folder-empty">
-                                                <h5>No ebook titles available</h5>
+                                                <h5>No ebook folders available</h5>
                                                 <p>
-                                                    This program does not have any published e-book titles yet.
+                                                    This program does not have any published e-book folders yet.
                                                 </p>
                                             </div>
                                         @endif
@@ -183,7 +183,7 @@
                                     <div class="modal-footer">
                                         <span>
                                             {{ $folderCount }}
-                                            {{ \Illuminate\Support\Str::plural('title', $folderCount) }}
+                                            {{ \Illuminate\Support\Str::plural('folder', $folderCount) }}
                                             available
                                         </span>
 
@@ -203,7 +203,7 @@
                             <h3>No e-book programs available</h3>
 
                             <p>
-                                Once the admin publishes e-book programs and titles,
+                                Once the admin publishes e-book programs and folders,
                                 they will appear here automatically.
                             </p>
                         </div>
