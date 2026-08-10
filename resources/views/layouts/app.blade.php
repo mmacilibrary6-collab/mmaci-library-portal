@@ -581,6 +581,135 @@
 
         }
 
+        /*
+         * Shared CSS-only entrance motion for public pages.
+         * This avoids depending on JavaScript to make content visible.
+         */
+
+        @keyframes appSectionEnter {
+
+            from {
+
+                opacity: 0;
+                transform: translate3d(0, 22px, 0);
+
+            }
+
+            to {
+
+                opacity: 1;
+                transform: translate3d(0, 0, 0);
+
+            }
+
+        }
+
+        @keyframes appSectionEnterLeft {
+
+            from {
+
+                opacity: 0;
+                transform: translate3d(-22px, 0, 0);
+
+            }
+
+            to {
+
+                opacity: 1;
+                transform: translate3d(0, 0, 0);
+
+            }
+
+        }
+
+        @keyframes appSectionEnterRight {
+
+            from {
+
+                opacity: 0;
+                transform: translate3d(22px, 0, 0);
+
+            }
+
+            to {
+
+                opacity: 1;
+                transform: translate3d(0, 0, 0);
+
+            }
+
+        }
+
+        @keyframes appSectionEnterScale {
+
+            from {
+
+                opacity: 0;
+                transform: scale(.97);
+
+            }
+
+            to {
+
+                opacity: 1;
+                transform: scale(1);
+
+            }
+
+        }
+
+        main > .page-hero,
+        main > section,
+        main .modern-card,
+        main .content-panel,
+        main .service-card,
+        main .gallery-card,
+        main .library-update-card,
+        main .arrival-card,
+        main .summary-panel,
+        main .contact-panel,
+        main .video-frame,
+        main .about-carousel,
+        main .about-copy,
+        main .cta-panel {
+
+            animation: appSectionEnter .6s cubic-bezier(.22, 1, .36, 1) both;
+
+        }
+
+        main > section:nth-of-type(3n + 1),
+        main .content-panel:nth-child(3n + 1),
+        main .service-card:nth-child(3n + 1),
+        main .gallery-card:nth-child(3n + 1),
+        main .library-update-card:nth-child(3n + 1),
+        main .arrival-card:nth-child(3n + 1) {
+
+            animation-name: appSectionEnterLeft;
+
+        }
+
+        main > section:nth-of-type(3n + 2),
+        main .content-panel:nth-child(3n + 2),
+        main .service-card:nth-child(3n + 2),
+        main .gallery-card:nth-child(3n + 2),
+        main .library-update-card:nth-child(3n + 2),
+        main .arrival-card:nth-child(3n + 2) {
+
+            animation-name: appSectionEnterRight;
+
+        }
+
+        main > section:nth-of-type(3n),
+        main .content-panel:nth-child(3n),
+        main .service-card:nth-child(3n),
+        main .gallery-card:nth-child(3n),
+        main .library-update-card:nth-child(3n),
+        main .arrival-card:nth-child(3n) {
+
+            animation-name: appSectionEnterScale;
+
+        }
+
 
         @media (max-width: 991px) {
 
@@ -907,6 +1036,131 @@
                 aosElements.forEach(function (element) {
 
                     aosObserver.observe(element);
+
+                });
+
+
+                /*
+                 * Shared public-page reveal fallback.
+                 * This gives non-AOS sections a consistent entrance animation.
+                 */
+
+                const appRevealTargets =
+                    Array.from(
+                        document.querySelectorAll(
+                            'main .page-hero, main section, main .modern-card, main .content-panel, main .service-card, main .gallery-card, main .library-update-card, main .arrival-card, main .summary-panel, main .contact-panel, main .video-frame, main .about-carousel, main .about-copy, main .cta-panel'
+                        )
+                    ).filter(function (element) {
+
+                        return !element.hasAttribute('data-aos');
+
+                    });
+
+
+                if (
+                    appRevealTargets.length === 0
+                ) {
+
+                    return;
+
+                }
+
+
+                appRevealTargets.forEach(function (element, index) {
+
+                    if (
+                        element.classList.contains('app-reveal')
+                    ) {
+
+                        return;
+
+                    }
+
+
+                    element.classList.add('app-reveal');
+
+                    if (
+                        element.classList.contains('page-hero') ||
+                        index === 0
+                    ) {
+
+                        element.classList.add('app-reveal-down');
+
+                    } else if (
+                        index % 4 === 1
+                    ) {
+
+                        element.classList.add('app-reveal-left');
+
+                    } else if (
+                        index % 4 === 2
+                    ) {
+
+                        element.classList.add('app-reveal-right');
+
+                    } else if (
+                        index % 4 === 3
+                    ) {
+
+                        element.classList.add('app-reveal-scale');
+
+                    } else {
+
+                        element.classList.add('app-reveal-up');
+
+                    }
+
+                });
+
+
+                if (
+                    reducedMotion ||
+                    !('IntersectionObserver' in window)
+                ) {
+
+                    appRevealTargets.forEach(function (element) {
+
+                        element.classList.add('is-visible');
+
+                    });
+
+                    return;
+
+                }
+
+
+                const appRevealObserver =
+                    new IntersectionObserver(
+                        function (entries, observer) {
+
+                            entries.forEach(function (entry) {
+
+                                if (
+                                    !entry.isIntersecting
+                                ) {
+
+                                    return;
+
+                                }
+
+
+                                entry.target.classList.add('is-visible');
+                                observer.unobserve(entry.target);
+
+                            });
+
+                        },
+                        {
+                            root: null,
+                            threshold: 0.12,
+                            rootMargin: '0px 0px -40px 0px'
+                        }
+                    );
+
+
+                appRevealTargets.forEach(function (element) {
+
+                    appRevealObserver.observe(element);
 
                 });
 
