@@ -306,7 +306,7 @@
 
                     </a>
 
-                    <ul class="dropdown-menu shadow border-0 rounded-4">
+                    <ul class="dropdown-menu dropdown-menu-end shadow border-0 rounded-4 more-dropdown-menu">
 
 
                         <!-- Ask the Librarian -->
@@ -388,22 +388,10 @@
                 </li>
 
 
-                <!-- Explore -->
-
-                <li class="nav-item ms-lg-3">
-
-                    <a
-                        href="{{ route('collection.printed') }}"
-                        class="btn btn-warning rounded-pill px-4 fw-semibold">
-
-                        Explore
-
-                    </a>
-
-                </li>
+          
 
 
-                <!-- Hidden Admin Login -->
+                
 
             </ul>
 
@@ -771,6 +759,44 @@
 
         font-size: 9px;
 
+    }
+
+}
+
+
+
+/* =========================================
+   FIX RIGHT-SIDE DROPDOWN CUT-OFF
+========================================= */
+
+@media (min-width: 992px) {
+
+    .mmaci-navbar .more-dropdown-menu {
+        right: 0;
+        left: auto;
+        width: max-content;
+        min-width: 290px;
+        max-width: min(360px, calc(100vw - 32px));
+    }
+
+    .mmaci-navbar .more-dropdown-menu .dropdown-item {
+        white-space: normal;
+        overflow-wrap: anywhere;
+        line-height: 1.35;
+    }
+
+}
+
+/* Extra protection on narrower desktop/laptop widths */
+@media (min-width: 992px) and (max-width: 1200px) {
+
+    .mmaci-navbar .dropdown-menu {
+        max-width: calc(100vw - 24px);
+    }
+
+    .mmaci-navbar .more-dropdown-menu {
+        min-width: 270px;
+        max-width: 320px;
     }
 
 }
