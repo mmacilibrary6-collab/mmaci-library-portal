@@ -205,22 +205,6 @@ Route::prefix('more')
 
         /*
         |--------------------------------------------------------------------------
-        | New Arrivals
-        |--------------------------------------------------------------------------
-        */
-
-        Route::get('/new-arrivals', function () {
-
-            $arrivals = NewArrival::orderByDesc('arrival_date')
-                ->orderByDesc('id')
-                ->get();
-
-            return view('more.new-arrivals', compact('arrivals'));
-
-        })->name('new-arrivals');
-
-        /*
-        |--------------------------------------------------------------------------
         | Visiting Researchers
         |--------------------------------------------------------------------------
         */
@@ -252,7 +236,29 @@ Route::prefix('more')
             [MoreController::class, 'reserveAvr']
         )->name('reserve-avr');
 
+        Route::redirect(
+            '/new-arrivals',
+            '/collection/new-arrivals',
+            301
+        )->name('new-arrivals');
+
     });
+
+/*
+|--------------------------------------------------------------------------
+| Collection New Arrivals
+|--------------------------------------------------------------------------
+*/
+
+Route::get('/collection/new-arrivals', function () {
+
+    $arrivals = NewArrival::orderByDesc('arrival_date')
+        ->orderByDesc('id')
+        ->get();
+
+    return view('collection.new-arrivals', compact('arrivals'));
+
+})->name('collection.new-arrivals');
 
 /*
 |--------------------------------------------------------------------------

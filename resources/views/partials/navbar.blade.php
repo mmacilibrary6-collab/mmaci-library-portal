@@ -297,8 +297,8 @@
                         <li>
 
                             <a
-                                class="dropdown-item {{ request()->routeIs('more.new-arrivals') ? 'active' : '' }}"
-                                href="{{ route('more.new-arrivals') }}">
+                                class="dropdown-item {{ request()->routeIs('collection.new-arrivals') ? 'active' : '' }}"
+                                href="{{ route('collection.new-arrivals') }}">
 
                                 New Arrivals
 
