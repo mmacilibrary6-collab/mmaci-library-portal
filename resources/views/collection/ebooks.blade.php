@@ -1786,6 +1786,1271 @@ document.addEventListener('DOMContentLoaded', function () {
 </script>
 
 
+
+<!-- =========================================================
+     E-BOOK COMPACT MODAL POPUP
+     Uses existing per-program folder panels as hidden data sources.
+========================================================= -->
+
+<div
+    id="ebookFolderModal"
+    class="ebook-folder-modal"
+    aria-hidden="true">
+
+    <div
+        class="ebook-folder-modal-backdrop"
+        data-ebook-modal-close>
+    </div>
+
+    <div
+        class="ebook-folder-modal-dialog"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="ebookFolderModalTitle">
+
+        <div class="ebook-folder-modal-header">
+
+            <div>
+
+                <span>
+                    Electronic Book Collection
+                </span>
+
+                <h3 id="ebookFolderModalTitle">
+                    E-Book Folders
+                </h3>
+
+            </div>
+
+            <button
+                type="button"
+                class="ebook-folder-modal-close"
+                data-ebook-modal-close
+                aria-label="Close E-Book folders">
+
+                <i
+                    class="bi bi-x-lg"
+                    aria-hidden="true">
+                </i>
+
+            </button>
+
+        </div>
+
+        <div
+            id="ebookFolderModalBody"
+            class="ebook-folder-modal-body">
+        </div>
+
+        <div class="ebook-folder-modal-footer">
+
+            <span id="ebookFolderModalCount">
+                0 folders available
+            </span>
+
+            <button
+                type="button"
+                class="ebook-folder-modal-close-text"
+                data-ebook-modal-close>
+
+                Close
+
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<style>
+
+    /*
+     * The existing inline folder panels remain in the Blade only as
+     * data sources. They are never displayed to the user.
+     */
+    .program-folder-panel {
+        display: none !important;
+    }
+
+
+    /* =========================================================
+       MODAL ROOT
+    ========================================================= */
+
+    .ebook-folder-modal {
+
+        position:
+            fixed;
+
+        inset:
+            0;
+
+        z-index:
+            11000;
+
+        display:
+            grid;
+
+        place-items:
+            center;
+
+        padding:
+            18px;
+
+        visibility:
+            hidden;
+
+        opacity:
+            0;
+
+        pointer-events:
+            none;
+
+        transition:
+
+            opacity
+            .22s ease,
+
+            visibility
+            .22s ease;
+
+    }
+
+
+    .ebook-folder-modal.is-open {
+
+        visibility:
+            visible;
+
+        opacity:
+            1;
+
+        pointer-events:
+            auto;
+
+    }
+
+
+    .ebook-folder-modal-backdrop {
+
+        position:
+            absolute;
+
+        inset:
+            0;
+
+        background:
+            rgba(
+                3,
+                14,
+                29,
+                .62
+            );
+
+        backdrop-filter:
+            blur(4px);
+
+        -webkit-backdrop-filter:
+            blur(4px);
+
+    }
+
+
+    /* =========================================================
+       DIALOG
+    ========================================================= */
+
+    .ebook-folder-modal-dialog {
+
+        position:
+            relative;
+
+        z-index:
+            2;
+
+        width:
+            min(
+                650px,
+                calc(
+                    100vw - 36px
+                )
+            );
+
+        max-height:
+            calc(
+                100dvh - 36px
+            );
+
+        display:
+            flex;
+
+        flex-direction:
+            column;
+
+        overflow:
+            hidden;
+
+        background:
+            #ffffff;
+
+        border:
+            1px solid
+            rgba(
+                11,
+                46,
+                89,
+                .09
+            );
+
+        border-radius:
+            18px;
+
+        box-shadow:
+            0 28px 80px
+            rgba(
+                0,
+                0,
+                0,
+                .30
+            );
+
+        transform:
+            translateY(12px)
+            scale(.985);
+
+        transition:
+            transform
+            .26s
+            cubic-bezier(
+                .22,
+                1,
+                .36,
+                1
+            );
+
+    }
+
+
+    .ebook-folder-modal.is-open
+    .ebook-folder-modal-dialog {
+
+        transform:
+            translateY(0)
+            scale(1);
+
+    }
+
+
+    /* =========================================================
+       HEADER
+    ========================================================= */
+
+    .ebook-folder-modal-header {
+
+        flex:
+            0 0 auto;
+
+        display:
+            flex;
+
+        align-items:
+            flex-start;
+
+        justify-content:
+            space-between;
+
+        gap:
+            18px;
+
+        padding:
+            20px 22px;
+
+        color:
+            #ffffff;
+
+        background:
+
+            radial-gradient(
+                circle at 100% 0,
+                rgba(
+                    244,
+                    180,
+                    0,
+                    .17
+                ),
+                transparent 35%
+            ),
+
+            linear-gradient(
+                135deg,
+                #0b2e59,
+                #184b8c
+            );
+
+    }
+
+
+    .ebook-folder-modal-header
+    > div {
+
+        min-width:
+            0;
+
+    }
+
+
+    .ebook-folder-modal-header
+    span {
+
+        display:
+            block;
+
+        margin-bottom:
+            5px;
+
+        color:
+            #f4b400;
+
+        font-size:
+            9px;
+
+        font-weight:
+            800;
+
+        letter-spacing:
+            .1em;
+
+        text-transform:
+            uppercase;
+
+    }
+
+
+    .ebook-folder-modal-header
+    h3 {
+
+        margin:
+            0;
+
+        color:
+            #ffffff;
+
+        font-size:
+            clamp(
+                20px,
+                3vw,
+                25px
+            );
+
+        font-weight:
+            800;
+
+        line-height:
+            1.3;
+
+        letter-spacing:
+            -.02em;
+
+        overflow-wrap:
+            anywhere;
+
+    }
+
+
+    .ebook-folder-modal-close {
+
+        width:
+            38px;
+
+        height:
+            38px;
+
+        flex:
+            0 0 38px;
+
+        display:
+            grid;
+
+        place-items:
+            center;
+
+        padding:
+            0;
+
+        color:
+            #ffffff;
+
+        background:
+            rgba(
+                255,
+                255,
+                255,
+                .12
+            );
+
+        border:
+            1px solid
+            rgba(
+                255,
+                255,
+                255,
+                .22
+            );
+
+        border-radius:
+            10px;
+
+        cursor:
+            pointer;
+
+        transition:
+
+            transform
+            .2s ease,
+
+            background
+            .2s ease;
+
+    }
+
+
+    .ebook-folder-modal-close:hover {
+
+        transform:
+            scale(1.04);
+
+        background:
+            rgba(
+                255,
+                255,
+                255,
+                .20
+            );
+
+    }
+
+
+    /* =========================================================
+       BODY / FOLDER LIST
+    ========================================================= */
+
+    .ebook-folder-modal-body {
+
+        flex:
+            1 1 auto;
+
+        min-height:
+            0;
+
+        padding:
+            14px;
+
+        overflow-y:
+            auto;
+
+        overflow-x:
+            hidden;
+
+        background:
+            #f5f7fb;
+
+        overscroll-behavior:
+            contain;
+
+        scrollbar-width:
+            thin;
+
+        scrollbar-color:
+            rgba(
+                24,
+                75,
+                140,
+                .42
+            )
+            transparent;
+
+    }
+
+
+    .ebook-folder-modal-body
+    .folder-list {
+
+        display:
+            grid;
+
+        gap:
+            9px;
+
+    }
+
+
+    .ebook-folder-modal-body
+    .folder-link {
+
+        display:
+            grid;
+
+        grid-template-columns:
+            minmax(
+                0,
+                1fr
+            )
+            auto;
+
+        align-items:
+            center;
+
+        gap:
+            12px;
+
+        min-width:
+            0;
+
+        padding:
+            13px 14px;
+
+        color:
+            inherit;
+
+        background:
+            #ffffff;
+
+        border:
+            1px solid
+            #dfe6ef;
+
+        border-radius:
+            11px;
+
+        text-decoration:
+            none;
+
+        transition:
+
+            transform
+            .2s ease,
+
+            border-color
+            .2s ease,
+
+            box-shadow
+            .2s ease;
+
+    }
+
+
+    .ebook-folder-modal-body
+    .folder-link:hover {
+
+        color:
+            inherit;
+
+        transform:
+            translateY(-2px);
+
+        border-color:
+            rgba(
+                24,
+                75,
+                140,
+                .30
+            );
+
+        box-shadow:
+            0 9px 22px
+            rgba(
+                11,
+                46,
+                89,
+                .09
+            );
+
+    }
+
+
+    .ebook-folder-modal-body
+    .folder-link-copy {
+
+        min-width:
+            0;
+
+    }
+
+
+    .ebook-folder-modal-body
+    .folder-link strong {
+
+        display:
+            block;
+
+        color:
+            #0b2e59;
+
+        font-size:
+            13px;
+
+        font-weight:
+            800;
+
+        line-height:
+            1.45;
+
+        white-space:
+            normal;
+
+        overflow-wrap:
+            anywhere;
+
+    }
+
+
+    /*
+     * Show the FULL folder description instead of clipping it.
+     */
+    .ebook-folder-modal-body
+    .folder-link small {
+
+        display:
+            block;
+
+        margin-top:
+            3px;
+
+        color:
+            #6a778a;
+
+        font-size:
+            10px;
+
+        line-height:
+            1.5;
+
+        white-space:
+            normal;
+
+        overflow-wrap:
+            anywhere;
+
+    }
+
+
+    .ebook-folder-modal-body
+    .folder-link-action {
+
+        display:
+            inline-flex;
+
+        align-items:
+            center;
+
+        gap:
+            6px;
+
+        flex:
+            0 0 auto;
+
+        padding:
+            8px 10px;
+
+        color:
+            #184b8c;
+
+        background:
+            rgba(
+                24,
+                75,
+                140,
+                .08
+            );
+
+        border-radius:
+            8px;
+
+        font-size:
+            10px;
+
+        font-weight:
+            800;
+
+    }
+
+
+    /* =========================================================
+       EMPTY STATE
+    ========================================================= */
+
+    .ebook-folder-modal-body
+    .folder-empty {
+
+        padding:
+            38px 20px;
+
+        text-align:
+            center;
+
+        background:
+            #ffffff;
+
+        border:
+            1px solid
+            #dfe6ef;
+
+        border-radius:
+            12px;
+
+    }
+
+
+    .ebook-folder-modal-body
+    .folder-empty-icon {
+
+        width:
+            52px;
+
+        height:
+            52px;
+
+        display:
+            grid;
+
+        place-items:
+            center;
+
+        margin:
+            0 auto 12px;
+
+        color:
+            #184b8c;
+
+        background:
+            rgba(
+                244,
+                180,
+                0,
+                .18
+            );
+
+        border-radius:
+            14px;
+
+        font-size:
+            22px;
+
+    }
+
+
+    /* =========================================================
+       FOOTER
+    ========================================================= */
+
+    .ebook-folder-modal-footer {
+
+        flex:
+            0 0 auto;
+
+        display:
+            flex;
+
+        align-items:
+            center;
+
+        justify-content:
+            space-between;
+
+        gap:
+            12px;
+
+        padding:
+            11px 14px;
+
+        background:
+            #ffffff;
+
+        border-top:
+            1px solid
+            #e2e8f0;
+
+    }
+
+
+    .ebook-folder-modal-footer
+    > span {
+
+        color:
+            #778598;
+
+        font-size:
+            10px;
+
+        font-weight:
+            600;
+
+    }
+
+
+    .ebook-folder-modal-close-text {
+
+        min-width:
+            88px;
+
+        padding:
+            9px 15px;
+
+        color:
+            #ffffff;
+
+        background:
+            #0b2e59;
+
+        border:
+            0;
+
+        border-radius:
+            8px;
+
+        font-size:
+            11px;
+
+        font-weight:
+            700;
+
+        cursor:
+            pointer;
+
+    }
+
+
+    .ebook-folder-modal-close-text:hover {
+
+        background:
+            #184b8c;
+
+    }
+
+
+    /* =========================================================
+       MOBILE
+    ========================================================= */
+
+    @media (
+        max-width:
+        575.98px
+    ) {
+
+        .ebook-folder-modal {
+
+            padding:
+                10px;
+
+        }
+
+
+        .ebook-folder-modal-dialog {
+
+            width:
+                calc(
+                    100vw - 20px
+                );
+
+            max-height:
+                calc(
+                    100dvh - 20px
+                );
+
+            border-radius:
+                15px;
+
+        }
+
+
+        .ebook-folder-modal-header {
+
+            padding:
+                16px;
+
+        }
+
+
+        .ebook-folder-modal-header
+        h3 {
+
+            font-size:
+                18px;
+
+        }
+
+
+        .ebook-folder-modal-close {
+
+            width:
+                36px;
+
+            height:
+                36px;
+
+            flex-basis:
+                36px;
+
+        }
+
+
+        .ebook-folder-modal-body {
+
+            padding:
+                10px;
+
+        }
+
+
+        .ebook-folder-modal-body
+        .folder-link {
+
+            grid-template-columns:
+                1fr;
+
+            gap:
+                9px;
+
+            padding:
+                11px;
+
+        }
+
+
+        .ebook-folder-modal-body
+        .folder-link-action {
+
+            width:
+                100%;
+
+            justify-content:
+                center;
+
+        }
+
+
+        .ebook-folder-modal-footer {
+
+            align-items:
+                stretch;
+
+            flex-direction:
+                column;
+
+            padding:
+                10px 12px;
+
+        }
+
+
+        .ebook-folder-modal-close-text {
+
+            width:
+                100%;
+
+        }
+
+    }
+
+
+    @media (
+        prefers-reduced-motion:
+        reduce
+    ) {
+
+        .ebook-folder-modal,
+        .ebook-folder-modal-dialog,
+        .ebook-folder-modal-body
+        .folder-link {
+
+            transition:
+                none !important;
+
+        }
+
+    }
+
+</style>
+
+
+<script>
+
+document.addEventListener(
+    'DOMContentLoaded',
+    function () {
+
+        const modal =
+            document.getElementById(
+                'ebookFolderModal'
+            );
+
+        const modalTitle =
+            document.getElementById(
+                'ebookFolderModalTitle'
+            );
+
+        const modalBody =
+            document.getElementById(
+                'ebookFolderModalBody'
+            );
+
+        const modalCount =
+            document.getElementById(
+                'ebookFolderModalCount'
+            );
+
+
+        if (
+            !modal ||
+            !modalTitle ||
+            !modalBody ||
+            !modalCount
+        ) {
+
+            return;
+
+        }
+
+
+        let lastFocusedElement =
+            null;
+
+
+        function openEbookModal(
+            sourcePanel,
+            trigger
+        ) {
+
+            if (!sourcePanel) {
+                return;
+            }
+
+
+            lastFocusedElement =
+                trigger;
+
+
+            const sourceTitle =
+                sourcePanel.querySelector(
+                    '.program-folder-panel-header h4'
+                );
+
+
+            const sourceBody =
+                sourcePanel.querySelector(
+                    '.program-folder-panel-body'
+                );
+
+
+            const sourceCount =
+                sourcePanel.querySelector(
+                    '.program-folder-panel-footer > span'
+                );
+
+
+            modalTitle.textContent =
+                sourceTitle
+                    ? sourceTitle.textContent.trim()
+                    : 'E-Book Folders';
+
+
+            modalBody.innerHTML =
+                sourceBody
+                    ? sourceBody.innerHTML
+                    : '';
+
+
+            modalCount.textContent =
+                sourceCount
+                    ? sourceCount.textContent.trim()
+                    : '';
+
+
+            modal.classList.add(
+                'is-open'
+            );
+
+
+            modal.setAttribute(
+                'aria-hidden',
+                'false'
+            );
+
+
+            document.body.style.overflow =
+                'hidden';
+
+
+            const closeButton =
+                modal.querySelector(
+                    '.ebook-folder-modal-close'
+                );
+
+
+            if (closeButton) {
+
+                window.setTimeout(
+                    function () {
+
+                        closeButton.focus();
+
+                    },
+                    30
+                );
+
+            }
+
+        }
+
+
+        function closeEbookModal() {
+
+            modal.classList.remove(
+                'is-open'
+            );
+
+
+            modal.setAttribute(
+                'aria-hidden',
+                'true'
+            );
+
+
+            modalBody.innerHTML =
+                '';
+
+
+            document.body.style.removeProperty(
+                'overflow'
+            );
+
+
+            if (
+                lastFocusedElement
+            ) {
+
+                lastFocusedElement.focus();
+
+            }
+
+        }
+
+
+        /*
+         * Capture phase is intentional.
+         * It overrides the previous inline-expansion click handler.
+         */
+        document.addEventListener(
+            'click',
+            function (event) {
+
+                const trigger =
+                    event.target.closest(
+                        '.program-folder-toggle'
+                    );
+
+
+                if (trigger) {
+
+                    event.preventDefault();
+                    event.stopPropagation();
+                    event.stopImmediatePropagation();
+
+
+                    const panelId =
+                        trigger.getAttribute(
+                            'data-folder-target'
+                        );
+
+
+                    const sourcePanel =
+                        document.getElementById(
+                            panelId
+                        );
+
+
+                    openEbookModal(
+                        sourcePanel,
+                        trigger
+                    );
+
+
+                    return;
+
+                }
+
+
+                const closeControl =
+                    event.target.closest(
+                        '[data-ebook-modal-close]'
+                    );
+
+
+                if (closeControl) {
+
+                    event.preventDefault();
+
+                    closeEbookModal();
+
+                }
+
+            },
+            true
+        );
+
+
+        document.addEventListener(
+            'keydown',
+            function (event) {
+
+                if (
+                    event.key === 'Escape' &&
+                    modal.classList.contains(
+                        'is-open'
+                    )
+                ) {
+
+                    closeEbookModal();
+
+                }
+
+            }
+        );
+
+
+        /*
+         * Kill any old Bootstrap backdrop/body state.
+         */
+        document
+            .querySelectorAll(
+                '.modal-backdrop'
+            )
+            .forEach(
+                function (backdrop) {
+
+                    backdrop.remove();
+
+                }
+            );
+
+
+        document.body.classList.remove(
+            'modal-open'
+        );
+
+
+        document.body.style.removeProperty(
+            'padding-right'
+        );
+
+    }
+);
+
+</script>
+
+
 @include('components.lisa-chatbox')
 
 @endsection
