@@ -17,9 +17,7 @@
 
             <div class="donated-hero-content">
 
-                <span class="donated-eyebrow">
-                    MMACI Library Collection
-                </span>
+
 
                 <h1>
                     Donated Books

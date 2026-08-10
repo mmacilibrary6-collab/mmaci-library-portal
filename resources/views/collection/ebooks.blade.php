@@ -11,7 +11,7 @@
 
         <div class="container">
             <div class="ebooks-hero-content">
-                <span class="ebooks-eyebrow">MMACI Library Collection</span>
+
 
                 <h1>E-Book Collection</h1>
 
@@ -82,7 +82,7 @@
                                 class="ebook-card-button"
                                 data-bs-toggle="modal"
                                 data-bs-target="#{{ $offcanvasId }}"
-                                aria-label="View ebook titles for {{ $program->title }}">
+                                aria-label="View ebook folders for {{ $program->title }}">
                                 <div class="ebook-image">
                                     <img src="{{ $programImage }}"
                                         alt="{{ $program->title }}"
@@ -102,7 +102,7 @@
                                     </p>
 
                                     <span class="ebook-action">
-                                        {{ $program->folders->isNotEmpty() ? 'View ebook titles' : 'No titles available' }}
+                                        {{ $program->folders->isNotEmpty() ? 'View ebook folders' : 'No titles available' }}
                                         <i class="bi bi-arrow-right" aria-hidden="true"></i>
                                     </span>
                                 </div>
@@ -133,13 +133,27 @@
 
                                     <div class="modal-body">
                                         @if($program->folders->isNotEmpty())
+                                            <div class="folder-search">
+                                                <i class="bi bi-search" aria-hidden="true"></i>
+                                                <input type="search"
+                                                    class="folder-search-input"
+                                                    placeholder="Search ebook titles..."
+                                                    aria-label="Search ebook titles in {{ $program->title }}">
+                                                <button type="button"
+                                                    class="folder-search-clear"
+                                                    aria-label="Clear ebook title search">
+                                                    <i class="bi bi-x-lg" aria-hidden="true"></i>
+                                                </button>
+                                            </div>
+
                                             <div class="folder-list">
                                                 @foreach($program->folders->sortBy('title', SORT_NATURAL | SORT_FLAG_CASE) as $folder)
                                                         <a href="{{ $folder->drive_link }}"
                                                         role="button"
                                                         target="_blank"
                                                         rel="noopener noreferrer"
-                                                        class="folder-link">
+                                                        class="folder-link"
+                                                        data-folder-title="{{ strtolower($folder->title) }}">
                                                         <span class="folder-link-copy">
                                                             <strong>{{ $folder->title }}</strong>
                                                             <small>
@@ -150,6 +164,11 @@
                                                         <i class="bi bi-box-arrow-up-right" aria-hidden="true"></i>
                                                     </a>
                                                 @endforeach
+                                            </div>
+
+                                            <div class="folder-search-empty" hidden>
+                                                <h5>No matching ebook titles</h5>
+                                                <p>Try a different title or clear the search.</p>
                                             </div>
                                         @else
                                             <div class="folder-empty">
@@ -395,7 +414,12 @@
     background: var(--ebooks-bg);
 }
 
+.ebook-item {
+    display: flex;
+}
+
 .ebook-card {
+    width: 100%;
     height: 100%;
     overflow: hidden;
     background: var(--ebooks-white);
@@ -445,6 +469,8 @@
 
 .ebook-content {
     flex: 1;
+    display: flex;
+    flex-direction: column;
     padding: 26px 28px 28px;
 }
 
@@ -456,6 +482,7 @@
 }
 
 .ebook-content p {
+    flex: 1;
     margin: 0 0 18px;
     color: var(--ebooks-muted);
     font-size: 15px;
@@ -463,6 +490,7 @@
 }
 
 .ebook-action {
+    margin-top: auto;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -476,6 +504,65 @@
 .folder-list {
     display: grid;
     gap: 12px;
+}
+
+.folder-search {
+    position: relative;
+    display: flex;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.folder-search > i {
+    position: absolute;
+    left: 16px;
+    color: var(--ebooks-blue);
+}
+
+.folder-search-input {
+    width: 100%;
+    padding: 13px 44px 13px 44px;
+    color: var(--ebooks-text);
+    background: #f8fafc;
+    border: 1px solid var(--ebooks-border);
+    border-radius: 12px;
+    outline: 0;
+}
+
+.folder-search-input:focus {
+    border-color: var(--ebooks-blue);
+    box-shadow: 0 0 0 3px rgba(24, 75, 140, .12);
+}
+
+.folder-search-clear {
+    position: absolute;
+    right: 10px;
+    display: grid;
+    width: 30px;
+    height: 30px;
+    place-items: center;
+    color: var(--ebooks-muted);
+    background: transparent;
+    border: 0;
+}
+
+.folder-search-empty {
+    padding: 36px 20px;
+    text-align: center;
+    background: #f8fafc;
+    border: 1px dashed #c9d3e1;
+    border-radius: 14px;
+}
+
+.folder-search-empty h5 {
+    margin: 0 0 8px;
+    color: var(--ebooks-navy);
+    font-weight: 800;
+}
+
+.folder-search-empty p {
+    margin: 0;
+    color: var(--ebooks-muted);
 }
 
 .folder-link {
@@ -745,6 +832,13 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function () {
+    // Keep Bootstrap modals outside the animated <main> stacking context.
+    document.querySelectorAll('.ebook-modal').forEach(function (modal) {
+        if (modal.parentElement !== document.body) {
+            document.body.appendChild(modal);
+        }
+    });
+
     const revealElements = document.querySelectorAll('.ebooks-motion-reveal');
     const searchInput = document.getElementById('ebookProgramSearch');
     const clearButton = document.getElementById('clearEbookProgramSearch');
@@ -788,6 +882,43 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
+    document.querySelectorAll('.ebook-modal').forEach(function (modal) {
+        const titleInput = modal.querySelector('.folder-search-input');
+        const clearTitleSearch = modal.querySelector('.folder-search-clear');
+        const folderLinks = modal.querySelectorAll('.folder-link');
+        const noMatches = modal.querySelector('.folder-search-empty');
+
+        if (!titleInput) {
+            return;
+        }
+
+        const applyTitleSearch = function () {
+            const searchValue = titleInput.value.trim().toLowerCase();
+            let visibleTitles = 0;
+
+            folderLinks.forEach(function (folderLink) {
+                const matches = (folderLink.dataset.folderTitle || '').includes(searchValue);
+                folderLink.hidden = !matches;
+
+                if (matches) {
+                    visibleTitles++;
+                }
+            });
+
+            if (noMatches) {
+                noMatches.hidden = visibleTitles !== 0;
+            }
+        };
+
+        titleInput.addEventListener('input', applyTitleSearch);
+
+        clearTitleSearch?.addEventListener('click', function () {
+            titleInput.value = '';
+            titleInput.focus();
+            applyTitleSearch();
+        });
+    });
+
     if (!('IntersectionObserver' in window)) {
         revealElements.forEach(function (element) {
             element.classList.add('is-visible');
@@ -815,4 +946,5 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 </script>
 
+@include('components.lisa-chatbox')
 @endsection

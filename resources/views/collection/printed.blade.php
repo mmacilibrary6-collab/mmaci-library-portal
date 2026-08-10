@@ -548,9 +548,10 @@
 
                 <button
                     type="button"
-                    class="btn-close btn-close-white"
+                    class="new-arrivals-close"
                     data-bs-dismiss="modal"
                     aria-label="Close">
+                    <i class="bi bi-x-lg" aria-hidden="true"></i>
                 </button>
 
             </div>
@@ -2705,5 +2706,93 @@ document.addEventListener('DOMContentLoaded', function () {
 
 @include('components.lisa-chatbox')
 
-@endsection
 
+<style>
+/* =========================================================
+   FINAL NEW ARRIVALS CLOSE BUTTON FIX
+   Uses its own class so Bootstrap/global .btn-close rules
+   cannot move or recolor the button.
+========================================================= */
+
+#newArrivalsModal .new-arrivals-modal-header {
+    position: relative !important;
+    padding-right: 76px !important;
+}
+
+#newArrivalsModal .new-arrivals-close {
+    position: absolute !important;
+    top: 20px !important;
+    right: 22px !important;
+    z-index: 20 !important;
+
+    width: 38px !important;
+    height: 38px !important;
+    min-width: 38px !important;
+    flex: none !important;
+
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+
+    color: #ffffff !important;
+    background: transparent !important;
+    border: 0 !important;
+    border-radius: 50% !important;
+    box-shadow: none !important;
+    outline: none !important;
+
+    font-size: 20px !important;
+    line-height: 1 !important;
+    opacity: .92 !important;
+    cursor: pointer !important;
+
+    transform: none !important;
+}
+
+#newArrivalsModal .new-arrivals-close i {
+    display: block !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    color: inherit !important;
+    font-size: inherit !important;
+    line-height: 1 !important;
+    pointer-events: none !important;
+}
+
+#newArrivalsModal .new-arrivals-close:hover,
+#newArrivalsModal .new-arrivals-close:focus-visible {
+    color: #ffffff !important;
+    background: rgba(255, 255, 255, .12) !important;
+    box-shadow: none !important;
+    opacity: 1 !important;
+}
+
+/* Tablet */
+@media (max-width: 991.98px) {
+    #newArrivalsModal .new-arrivals-close {
+        top: 18px !important;
+        right: 18px !important;
+    }
+}
+
+/* Mobile */
+@media (max-width: 575.98px) {
+    #newArrivalsModal .new-arrivals-modal-header {
+        padding-right: 58px !important;
+    }
+
+    #newArrivalsModal .new-arrivals-close {
+        top: 14px !important;
+        right: 14px !important;
+        width: 34px !important;
+        height: 34px !important;
+        min-width: 34px !important;
+        font-size: 18px !important;
+    }
+}
+</style>
+
+@endsection

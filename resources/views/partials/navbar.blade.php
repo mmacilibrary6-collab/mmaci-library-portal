@@ -227,6 +227,8 @@
                                 class="dropdown-item {{ request()->routeIs('collection.new-arrivals') ? 'active' : '' }}"
                                 href="{{ route('collection.new-arrivals') }}">
 
+                                <i class="bi bi-stars me-2" aria-hidden="true"></i>
+
                                 New Arrivals
 
                             </a>

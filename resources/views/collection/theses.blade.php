@@ -123,7 +123,7 @@
                         aria-labelledby="{{ $modalId }}-label"
                         aria-hidden="true">
 
-                        <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-xl thesis-modal-dialog">
                             <div class="modal-content">
                                 <div class="modal-header">
                                     <div>
@@ -135,14 +135,20 @@
 
                                     <button
                                         type="button"
-                                        class="btn-close"
+                                        class="thesis-modal-close"
                                         data-bs-dismiss="modal"
                                         aria-label="Close">
+                                        <i class="bi bi-x-lg" aria-hidden="true"></i>
                                     </button>
                                 </div>
 
                                 <div class="modal-body">
                                     @if($program->folders->isNotEmpty())
+                                        <div class="collection-folder-search">
+                                            <i class="bi bi-search" aria-hidden="true"></i>
+                                            <input type="search" class="collection-folder-search-input" placeholder="Search titles..." aria-label="Search thesis titles">
+                                            <button type="button" class="collection-folder-search-clear" aria-label="Clear title search"><i class="bi bi-x-lg" aria-hidden="true"></i></button>
+                                        </div>
                                         <div class="folder-list">
                                             @foreach(
                                                 $program->folders->sortBy(
@@ -154,7 +160,8 @@
                                                     href="{{ $folder->drive_link }}"
                                                     target="_blank"
                                                     rel="noopener noreferrer"
-                                                    class="folder-link">
+                                                    class="folder-link"
+                                                    data-folder-title="{{ strtolower($folder->title) }}">
 
                                                     <span class="folder-link-copy">
                                                         <strong>{{ $folder->title }}</strong>
@@ -170,6 +177,10 @@
                                                     </i>
                                                 </a>
                                             @endforeach
+                                        </div>
+                                        <div class="collection-folder-search-empty" hidden>
+                                            <h5>No matching titles</h5>
+                                            <p>Try a different title or clear the search.</p>
                                         </div>
                                     @else
                                         <div class="folder-empty">
@@ -915,10 +926,248 @@
         width: 100%;
     }
 }
+
+
+/* =========================================================
+   THESIS & DISSERTATION POPUP
+   Same large responsive popup behavior as E-Books
+========================================================= */
+
+.folder-modal .modal-content {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    border: 0;
+    border-radius: 22px;
+    box-shadow: 0 24px 54px rgba(11, 46, 89, .18);
+}
+
+.folder-modal .modal-header {
+    flex: 0 0 auto;
+    align-items: center;
+    padding: 22px 24px 18px;
+    background: #ffffff;
+    border-bottom: 1px solid var(--thesis-line);
+}
+
+.folder-modal .modal-header > div {
+    min-width: 0;
+}
+
+.folder-modal .modal-header span {
+    display: block;
+    color: var(--thesis-blue);
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+}
+
+.folder-modal .modal-title {
+    margin: 6px 0 0;
+    color: var(--thesis-navy);
+    font-size: 22px;
+    font-weight: 800;
+    line-height: 1.3;
+}
+
+.folder-modal .btn-close {
+    flex: 0 0 auto;
+    margin: 0 0 0 20px;
+    box-shadow: none !important;
+}
+
+.folder-modal .modal-body {
+    flex: 1 1 auto;
+    min-height: 0;
+    max-height: none;
+    padding: 22px 24px;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    background: #ffffff;
+}
+
+.folder-modal .folder-list {
+    display: grid;
+    gap: 12px;
+}
+
+.folder-modal .folder-link {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+    padding: 16px 18px;
+    color: var(--thesis-ink);
+    background: #f8fafc;
+    border: 1px solid var(--thesis-line);
+    border-radius: 14px;
+    text-decoration: none;
+    pointer-events: auto;
+}
+
+.folder-modal .folder-link:hover {
+    color: var(--thesis-ink);
+    background: #eef4fb;
+    border-color: #b8c9dd;
+}
+
+.folder-modal .folder-link-copy {
+    min-width: 0;
+    flex: 1;
+}
+
+.folder-modal .folder-link strong {
+    display: block;
+    margin-bottom: 4px;
+    overflow: visible;
+    color: var(--thesis-navy);
+    font-size: 15px;
+    font-weight: 800;
+    text-overflow: clip;
+    white-space: normal;
+    overflow-wrap: anywhere;
+}
+
+.folder-modal .folder-link small {
+    display: block;
+    margin-top: 0;
+    overflow: visible;
+    color: var(--thesis-muted);
+    font-size: 13px;
+    line-height: 1.45;
+    text-overflow: clip;
+    white-space: normal;
+    overflow-wrap: anywhere;
+}
+
+.folder-modal .folder-link > i {
+    flex-shrink: 0;
+    color: var(--thesis-blue);
+    font-size: 16px;
+}
+
+.folder-modal .modal-footer {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 18px 24px 22px;
+    background: #ffffff;
+    border-top: 1px solid var(--thesis-line);
+}
+
+.folder-modal .modal-footer > span {
+    color: var(--thesis-muted);
+    font-size: 14px;
+}
+
+.folder-modal .modal-close-button {
+    width: auto;
+    padding: 10px 16px;
+    color: var(--thesis-white);
+    background: var(--thesis-blue);
+    border: 0;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.folder-modal .modal-close-button:hover {
+    background: var(--thesis-navy);
+}
+
+/* Desktop / tablet: large popup like E-Books */
+@media (min-width: 768px) {
+    .folder-modal .modal-dialog {
+        width: min(calc(100vw - 32px), 1140px);
+        max-width: min(calc(100vw - 32px), 1140px);
+        height: calc(100vh - 2rem);
+        margin: 1rem auto;
+    }
+
+    .folder-modal .modal-content {
+        width: 100%;
+        height: 100%;
+        max-height: calc(100vh - 2rem);
+    }
+
+    .folder-modal .modal-body {
+        overflow-y: auto;
+    }
+}
+
+/* Mobile: popup becomes full screen just like E-Books */
+@media (max-width: 767.98px) {
+    .folder-modal .modal-dialog {
+        width: 100%;
+        max-width: 100%;
+        height: 100%;
+        margin: 0;
+    }
+
+    .folder-modal .modal-content {
+        width: 100%;
+        height: 100dvh;
+        max-height: 100dvh;
+        border-radius: 0;
+    }
+
+    .folder-modal .modal-header {
+        padding: 18px;
+    }
+
+    .folder-modal .modal-title {
+        font-size: 20px;
+    }
+
+    .folder-modal .modal-body {
+        padding: 18px 18px 20px;
+        overflow-y: auto;
+    }
+
+    .folder-modal .modal-footer {
+        align-items: center;
+        flex-direction: row;
+        padding: 16px 18px;
+    }
+
+    .folder-modal .modal-close-button {
+        width: auto;
+    }
+}
+
+@media (max-width: 575.98px) {
+    .folder-modal .folder-link {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .folder-modal .folder-link > i {
+        align-self: flex-end;
+    }
+
+    .folder-modal .modal-footer > span {
+        font-size: 12px;
+    }
+}
+
 </style>
 
 <script>
 document.addEventListener('DOMContentLoaded', function () {
+    // Keep Thesis & Dissertation modals outside animated/content stacking contexts,
+    // matching the E-Book popup behavior.
+    document.querySelectorAll('.folder-modal').forEach(function (modal) {
+        if (modal.parentElement !== document.body) {
+            document.body.appendChild(modal);
+        }
+    });
+
+
     const searchInput = document.getElementById('programSearch');
     const clearButton = document.getElementById('clearProgramSearch');
     const programItems = document.querySelectorAll('.program-item');
@@ -1263,6 +1512,33 @@ document.addEventListener('DOMContentLoaded', function () {
 <script>
 document.addEventListener('DOMContentLoaded', function () {
 
+    document.querySelectorAll('.folder-modal').forEach(function (modal) {
+        const input = modal.querySelector('.collection-folder-search-input');
+        const clear = modal.querySelector('.collection-folder-search-clear');
+        const links = modal.querySelectorAll('.folder-link');
+        const empty = modal.querySelector('.collection-folder-search-empty');
+
+        if (!input) return;
+
+        const filter = function () {
+            const query = input.value.trim().toLowerCase();
+            let visible = 0;
+            links.forEach(function (link) {
+                const matches = (link.dataset.folderTitle || '').includes(query);
+                link.hidden = !matches;
+                if (matches) visible++;
+            });
+            if (empty) empty.hidden = visible !== 0;
+        };
+
+        input.addEventListener('input', filter);
+        clear?.addEventListener('click', function () {
+            input.value = '';
+            input.focus();
+            filter();
+        });
+    });
+
     const revealGroups = [
         { selector: '.theses-intro .section-heading', mode: '' },
         { selector: '.program-search', mode: '' },
@@ -1327,7 +1603,96 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 });
 </script>
+
+<style>
+/* =========================================================
+   FINAL THESIS MODAL CLOSE BUTTON POSITION FIX
+========================================================= */
+
+.folder-modal .modal-header {
+    position: relative !important;
+    padding-right: 78px !important;
+}
+
+.folder-modal .thesis-modal-close {
+    position: absolute !important;
+    top: 18px !important;
+    right: 20px !important;
+    z-index: 30 !important;
+
+    width: 38px !important;
+    height: 38px !important;
+    min-width: 38px !important;
+    flex: none !important;
+
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+
+    color: #647187 !important;
+    background: transparent !important;
+    border: 0 !important;
+    border-radius: 50% !important;
+    box-shadow: none !important;
+    outline: none !important;
+
+    font-size: 22px !important;
+    line-height: 1 !important;
+    cursor: pointer !important;
+    opacity: .9 !important;
+
+    transform: none !important;
+}
+
+.folder-modal .thesis-modal-close i {
+    display: block !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    color: inherit !important;
+    font-size: inherit !important;
+    line-height: 1 !important;
+    pointer-events: none !important;
+}
+
+.folder-modal .thesis-modal-close:hover,
+.folder-modal .thesis-modal-close:focus-visible {
+    color: var(--thesis-navy) !important;
+    background: rgba(11, 46, 89, .07) !important;
+    box-shadow: none !important;
+    opacity: 1 !important;
+}
+
+/* Mobile */
+@media (max-width: 575.98px) {
+    .folder-modal .modal-header {
+        padding-right: 62px !important;
+    }
+
+    .folder-modal .thesis-modal-close {
+        top: 13px !important;
+        right: 13px !important;
+        width: 34px !important;
+        height: 34px !important;
+        min-width: 34px !important;
+        font-size: 19px !important;
+    }
+}
+</style>
+
+<style>
+.collection-folder-search { position: relative; display: flex; align-items: center; margin-bottom: 16px; }
+.collection-folder-search > i { position: absolute; left: 16px; color: var(--thesis-blue); }
+.collection-folder-search-input { width: 100%; padding: 13px 44px; color: var(--thesis-ink); background: var(--thesis-bg); border: 1px solid var(--thesis-line); border-radius: 12px; outline: 0; }
+.collection-folder-search-input:focus { border-color: var(--thesis-blue); box-shadow: 0 0 0 3px rgba(24, 75, 140, .12); }
+.collection-folder-search-clear { position: absolute; right: 10px; display: grid; width: 30px; height: 30px; place-items: center; color: var(--thesis-muted); background: transparent; border: 0; }
+.collection-folder-search-empty { padding: 36px 20px; text-align: center; background: var(--thesis-bg); border: 1px dashed var(--thesis-line); border-radius: 14px; }
+.collection-folder-search-empty h5 { margin: 0 0 8px; color: var(--thesis-navy); font-weight: 800; }
+.collection-folder-search-empty p { margin: 0; color: var(--thesis-muted); }
+</style>
+
 @include('components.lisa-chatbox')
 
 @endsection
-
