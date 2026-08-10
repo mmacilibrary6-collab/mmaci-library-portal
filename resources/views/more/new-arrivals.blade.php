@@ -481,7 +481,7 @@
                 <div class="book-modal-brand">
 
                     <img
-                        src="{{ asset('images/logomml.png') }}"
+                        src="{{ asset('images/logomml.webp') }}"
                         alt="MMACI Logo"
                         onerror="this.style.display='none';">
 

@@ -24,6 +24,12 @@
           href="https://fonts.gstatic.com"
           crossorigin>
 
+    <link rel="preconnect"
+          href="https://cdn.jsdelivr.net">
+
+    <link rel="preconnect"
+          href="https://unpkg.com">
+
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap"
           rel="stylesheet">
 
@@ -894,12 +900,12 @@
 
     <!-- Bootstrap JavaScript -->
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js">
+    <script defer src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js">
     </script>
 
     <!-- AOS JavaScript -->
 
-    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js">
+    <script defer src="https://unpkg.com/aos@2.3.1/dist/aos.js">
     </script>
 
     <script>

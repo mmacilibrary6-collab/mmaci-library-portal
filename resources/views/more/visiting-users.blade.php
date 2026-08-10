@@ -71,7 +71,7 @@
                 <div class="visitor-placeholder">
 
                     <img
-                        src="{{ asset('images/libraryservicess.jpg') }}"
+                        src="{{ asset('images/libraryservicess.webp') }}"
                         alt="MMACI Library visiting researchers"
                         onerror="this.onerror=null; this.src='{{ asset('images/Door.jpg') }}';">
 

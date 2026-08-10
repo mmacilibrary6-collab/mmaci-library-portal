@@ -9,7 +9,7 @@
 
             <div class="logo-box">
 
-                <img src="{{ asset('images/logomml.png') }}"
+                <img src="{{ asset('images/logomml.webp') }}"
                      alt="MMACI Logo"
                      class="logo-image">
 

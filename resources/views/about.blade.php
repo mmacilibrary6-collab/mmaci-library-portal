@@ -51,7 +51,7 @@
                     <div class="about-image-wrap">
                         <div class="image-accent"></div>
                         <img
-                            src="{{ asset('images/logomml.png') }}"
+                            src="{{ asset('images/logomml-large.webp') }}"
                             class="about-image"
                             alt="MMACI Library logo">
                         <div class="image-note">
@@ -269,7 +269,7 @@
 
             <div class="chart-card" data-aos="zoom-in">
                 <img
-                    src="{{ asset('images/organizationalchart.png') }}"
+                    src="{{ asset('images/organizationalchart.webp') }}"
                     class="chart-image"
                     alt="MMACI Library Services Office organizational chart">
             </div>

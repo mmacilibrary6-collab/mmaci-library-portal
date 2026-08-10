@@ -2542,7 +2542,7 @@ body.update-viewer-open {
         <aside class="viewer-content-panel">
             <div class="viewer-brand">
                 <img
-                    src="{{ asset('images/logomml.png') }}"
+                    src="{{ asset('images/logomml.webp') }}"
                     alt="MMACI logo"
                     onerror="this.style.display='none';">
 
@@ -2601,7 +2601,7 @@ body.update-viewer-open {
         <aside class="viewer-content-panel">
             <div class="viewer-brand">
                 <img
-                    src="{{ asset('images/logomml.png') }}"
+                    src="{{ asset('images/logomml.webp') }}"
                     alt="MMACI logo"
                     onerror="this.style.display='none';">
 

@@ -10,7 +10,7 @@
             <div class="sidebar-logo">
 
                 <img
-                    src="{{ asset('images/logomml.png') }}"
+                    src="{{ asset('images/logomml.webp') }}"
                     alt="MMACI Logo">
 
             </div>
