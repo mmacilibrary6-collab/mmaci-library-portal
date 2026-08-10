@@ -973,43 +973,10 @@
     .researcher-form-card .btn:hover i {
         transform: translate(3px, -3px);
     }
-
-    @media (prefers-reduced-motion: reduce) {
-        .ask-hero-content,
-        .ask-hero::before {
-            animation: none !important;
-        }
-
-        .ask-motion-reveal,
-        .ask-motion-reveal.ask-motion-left,
-        .ask-motion-reveal.ask-motion-right,
-        .ask-motion-reveal.ask-motion-scale {
-            opacity: 1 !important;
-            transform: none !important;
-            transition: none !important;
-        }
-
-        .library-contact-card,
-        .library-contact-icon,
-        .library-contact-link i,
-        .tutorial-card,
-        .tutorial-icon,
-        .tutorial-arrow,
-        .survey-card,
-        .survey-button,
-        .survey-button i,
-        .researcher-form-card,
-        .researcher-form-icon,
-        .researcher-form-card .btn i {
-            transition: none !important;
-            animation: none !important;
-        }
-    }
 </style>
 
 <script>
 document.addEventListener('DOMContentLoaded', function () {
-    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     const revealGroups = [
         { selector: '.contact-heading', mode: '' },
@@ -1046,7 +1013,7 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
-    if (reducedMotion || !('IntersectionObserver' in window)) {
+    if (!('IntersectionObserver' in window)) {
         revealElements.forEach(function (element) {
             element.classList.add('is-visible');
         });
@@ -1074,3 +1041,5 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
 @endsection
+
+

@@ -2318,49 +2318,10 @@ document.addEventListener('DOMContentLoaded', function () {
         transform: translateY(-2px);
         box-shadow: 0 8px 18px rgba(244, 180, 0, .18);
     }
-
-    @media (prefers-reduced-motion: reduce) {
-        .collection-hero-content,
-        .collection-hero::after,
-        .modal.show .collection-modal,
-        .modal.show .new-arrivals-modal {
-            animation: none !important;
-        }
-
-        .collection-motion-reveal,
-        .collection-motion-reveal.collection-motion-left,
-        .collection-motion-reveal.collection-motion-right,
-        .collection-motion-reveal.collection-motion-scale {
-            opacity: 1 !important;
-            transform: none !important;
-            transition: none !important;
-        }
-
-        .collection-search-box,
-        .collection-card,
-        .collection-image,
-        .collection-icon,
-        .collection-link i,
-        .no-results,
-        .no-results-icon,
-        .information-list,
-        .information-item,
-        .information-icon,
-        .collection-cta-box,
-        .collection-cta-box .btn-light i,
-        .modal-collection-image,
-        .new-arrival-card,
-        .new-arrival-cover,
-        .new-arrival-badge {
-            transition: none !important;
-            animation: none !important;
-        }
-    }
 </style>
 
 <script>
 document.addEventListener('DOMContentLoaded', function () {
-    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     const revealGroups = [
         { selector: '.collection-introduction .col-xl-9', mode: '' },
@@ -2400,7 +2361,7 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
-    if (reducedMotion || !('IntersectionObserver' in window)) {
+    if (!('IntersectionObserver' in window)) {
         revealElements.forEach(function (element) {
             element.classList.add('is-visible');
         });
@@ -2430,3 +2391,5 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
 @endsection
+
+

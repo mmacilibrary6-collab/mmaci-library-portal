@@ -1389,52 +1389,10 @@ html {
     .help-button:hover i {
         transform: translateX(5px);
     }
-
-    @media (prefers-reduced-motion: reduce) {
-        .services-hero-content,
-        .services-hero::after {
-            animation: none !important;
-        }
-
-        .services-motion-reveal,
-        .services-motion-reveal.services-motion-left,
-        .services-motion-reveal.services-motion-right,
-        .services-motion-reveal.services-motion-scale {
-            opacity: 1 !important;
-            transform: none !important;
-            transition: none !important;
-        }
-
-        .hours-panel,
-        .hours-row,
-        .hours-time,
-        .status-closed,
-        .service-card,
-        .service-card-photo img,
-        .feature-list li,
-        .feature-list i,
-        .borrowing-card,
-        .borrowing-stats > div,
-        .borrowing-stats strong,
-        .policy-list li,
-        .borrowing-note,
-        .rules-note,
-        .rule-item,
-        .rule-number,
-        .electronic-card,
-        .electronic-photo img,
-        .electronic-content li,
-        .help-card,
-        .help-button i {
-            transition: none !important;
-            animation: none !important;
-        }
-    }
 </style>
 
 <script>
 document.addEventListener('DOMContentLoaded', function () {
-    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     const revealGroups = [
         { selector: '.services-intro .section-heading', mode: '' },
@@ -1476,7 +1434,7 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
-    if (reducedMotion || !('IntersectionObserver' in window)) {
+    if (!('IntersectionObserver' in window)) {
         revealElements.forEach(function (element) {
             element.classList.add('is-visible');
         });
@@ -1506,4 +1464,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
 @endsection
+
+
 

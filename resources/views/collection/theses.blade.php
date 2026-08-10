@@ -1219,49 +1219,10 @@ document.addEventListener('DOMContentLoaded', function () {
     .cta-panel > a:hover i {
         transform: translateX(5px);
     }
-
-    @media (prefers-reduced-motion: reduce) {
-        .theses-hero-content,
-        .theses-hero::after,
-        .folder-modal.show .modal-content {
-            animation: none !important;
-        }
-
-        .thesis-motion-reveal,
-        .thesis-motion-reveal.thesis-motion-left,
-        .thesis-motion-reveal.thesis-motion-right,
-        .thesis-motion-reveal.thesis-motion-scale {
-            opacity: 1 !important;
-            transform: none !important;
-            transition: none !important;
-        }
-
-        .program-search,
-        .program-search button,
-        .program-card,
-        .program-image img,
-        .folder-count,
-        .program-action i,
-        .program-empty,
-        .search-empty,
-        .folder-link,
-        .folder-link > i,
-        .modal-close-button,
-        .text-action i,
-        .guide-step,
-        .guide-step > span,
-        .cta-panel,
-        .cta-panel > a,
-        .cta-panel > a i {
-            transition: none !important;
-            animation: none !important;
-        }
-    }
 </style>
 
 <script>
 document.addEventListener('DOMContentLoaded', function () {
-    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     const revealGroups = [
         { selector: '.theses-intro .section-heading', mode: '' },
@@ -1300,7 +1261,7 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
-    if (reducedMotion || !('IntersectionObserver' in window)) {
+    if (!('IntersectionObserver' in window)) {
         revealElements.forEach(function (element) {
             element.classList.add('is-visible');
         });
@@ -1330,4 +1291,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
 @endsection
+
+
 

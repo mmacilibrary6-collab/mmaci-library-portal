@@ -415,15 +415,6 @@
                     min-width: 48px;
                 }
             }
-
-            @media (prefers-reduced-motion: reduce) {
-                #lisa-chatbot-widget #lisa-chat-launcher {
-                    animation: none;
-                }
-                #lisa-chatbot-widget #lisa-chat-panel {
-                    transition: none;
-                }
-            }
         </style>
     @endpush
 

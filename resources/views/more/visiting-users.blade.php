@@ -1160,44 +1160,10 @@
             animation: none;
         }
     }
-
-    @media (prefers-reduced-motion: reduce) {
-        .visiting-hero::before,
-        .visitor-placeholder,
-        .appointment-icon {
-            animation: none !important;
-        }
-
-        .visitor-motion-reveal,
-        .visitor-motion-reveal.visitor-motion-left,
-        .visitor-motion-reveal.visitor-motion-right,
-        .visitor-motion-reveal.visitor-motion-scale {
-            opacity: 1 !important;
-            transform: none !important;
-            transition: none !important;
-        }
-
-        .visiting-hero-actions .btn i,
-        .appointment-card .btn i,
-        .visitor-placeholder,
-        .visitor-step-card,
-        .visitor-step-icon,
-        .visitor-step-number,
-        .appointment-card,
-        .appointment-embed-wrap,
-        .appointment-embed iframe,
-        .visitor-reminder-list,
-        .visitor-reminder-item,
-        .visitor-reminder-item > i {
-            transition: none !important;
-            animation: none !important;
-        }
-    }
 </style>
 
 <script>
 document.addEventListener('DOMContentLoaded', function () {
-    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     const revealGroups = [
         { selector: '.visiting-introduction .col-xl-8', mode: '' },
@@ -1232,7 +1198,7 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
-    if (reducedMotion || !('IntersectionObserver' in window)) {
+    if (!('IntersectionObserver' in window)) {
         revealElements.forEach(function (element) {
             element.classList.add('is-visible');
         });
@@ -1260,4 +1226,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
 @endsection
+
+
 
