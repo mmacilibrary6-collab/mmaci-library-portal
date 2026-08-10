@@ -526,6 +526,61 @@
 
         }
 
+        /*
+         * Local scroll-reveal fallback for data-aos elements.
+         * This keeps animations working even if the CDN script fails to load.
+         */
+
+        [data-aos] {
+
+            opacity: 0;
+            will-change: opacity, transform;
+            transition:
+                opacity .75s cubic-bezier(.22, 1, .36, 1),
+                transform .75s cubic-bezier(.22, 1, .36, 1);
+
+        }
+
+        [data-aos="fade-up"] {
+
+            transform: translate3d(0, 26px, 0);
+
+        }
+
+        [data-aos="fade-down"] {
+
+            transform: translate3d(0, -26px, 0);
+
+        }
+
+        [data-aos="fade-left"] {
+
+            transform: translate3d(26px, 0, 0);
+
+        }
+
+        [data-aos="fade-right"] {
+
+            transform: translate3d(-26px, 0, 0);
+
+        }
+
+        [data-aos].aos-visible {
+
+            opacity: 1;
+            transform: translate3d(0, 0, 0);
+
+        }
+
+        [data-aos].aos-visible[data-aos="fade-up"],
+        [data-aos].aos-visible[data-aos="fade-down"],
+        [data-aos].aos-visible[data-aos="fade-left"],
+        [data-aos].aos-visible[data-aos="fade-right"] {
+
+            transform: translate3d(0, 0, 0);
+
+        }
+
 
         @media (max-width: 991px) {
 
@@ -779,6 +834,81 @@
                     });
 
                 }
+
+
+                /*
+                 * Fallback reveal observer for any element tagged with data-aos.
+                 * If AOS is available, this still works as a safe backup; if it
+                 * is blocked, elements will still animate into view.
+                 */
+
+                const aosElements =
+                    Array.from(
+                        document.querySelectorAll('[data-aos]')
+                    );
+
+
+                if (
+                    aosElements.length === 0
+                ) {
+
+                    return;
+
+                }
+
+
+                if (
+                    reducedMotion ||
+                    !('IntersectionObserver' in window)
+                ) {
+
+                    aosElements.forEach(function (element) {
+
+                        element.classList.add('aos-visible');
+
+                    });
+
+                    return;
+
+                }
+
+
+                const aosObserver =
+                    new IntersectionObserver(
+                        function (entries, observer) {
+
+                            entries.forEach(function (entry) {
+
+                                if (
+                                    !entry.isIntersecting
+                                ) {
+
+                                    return;
+
+                                }
+
+
+                                entry.target.classList.add(
+                                    'aos-visible'
+                                );
+                                observer.unobserve(entry.target);
+
+                            });
+
+                        },
+                        {
+                            root: null,
+                            threshold: 0.12,
+                            rootMargin: '0px 0px -40px 0px'
+                        }
+                    );
+
+
+                aosElements.forEach(function (element) {
+
+                    aosObserver.observe(element);
+
+                });
 
 
                 /*
