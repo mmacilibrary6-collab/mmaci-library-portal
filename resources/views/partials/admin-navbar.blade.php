@@ -1,546 +1,386 @@
-<nav class="admin-navbar navbar navbar-expand-lg">
+<nav class="admin-navbar">
+    <div class="admin-navbar-inner">
 
-    <div class="container-fluid">
-
-        <!-- ================= LEFT SIDE ================= -->
-
-        <div class="navbar-left">
-
-            <!-- Mobile Sidebar Button -->
-
+        <!-- LEFT -->
+        <div class="admin-navbar-left">
             <button
                 class="sidebar-toggle d-lg-none"
                 id="sidebarToggle"
                 type="button"
                 aria-label="Toggle sidebar">
-
                 <i class="bi bi-list"></i>
-
             </button>
 
-            <!-- Page Information -->
-
-            <div class="page-information">
-            </div>
-
+            <h1 class="admin-navbar-title">Library Services Office</h1>
         </div>
 
-        <!-- ================= RIGHT SIDE ================= -->
-
-        <div class="navbar-right">
-
-            <!-- Date -->
+        <!-- RIGHT -->
+        <div class="admin-navbar-right">
 
             <div class="navbar-date d-none d-md-flex">
-
-                <div class="date-icon">
-
-                    <i class="bi bi-calendar3"></i>
-
-                </div>
+                <i class="bi bi-calendar3"></i>
 
                 <div>
-
-                    <strong>
-                        {{ now()->format('F d, Y') }}
-                    </strong>
-
-                    <small>
-                        {{ now()->format('l') }}
-                    </small>
-
+                    <strong>{{ now()->format('M d, Y') }}</strong>
+                    <small>{{ now()->format('l') }}</small>
                 </div>
-
             </div>
 
-            <!-- Divider -->
-
-            <div class="navbar-divider d-none d-md-block"></div>
-
-            <!-- Administrator Dropdown -->
-
             <div class="dropdown">
-
                 <button
                     class="admin-profile"
                     type="button"
                     data-bs-toggle="dropdown"
                     aria-expanded="false">
 
-                    <div class="admin-avatar">
-
+                    <span class="admin-avatar">
                         <i class="bi bi-person-fill"></i>
+                    </span>
 
-                    </div>
-
-                    <div class="admin-details d-none d-sm-block">
-                        <small>
-                            {{ Auth::user()->email ?? 'admin@mmaci.edu.ph' }}
-                        </small>
-
-                    </div>
+                    <span class="admin-details d-none d-sm-flex">
+                        <strong>Administrator</strong>
+                        <small>{{ Auth::user()->email ?? 'admin@mmaci.edu.ph' }}</small>
+                    </span>
 
                     <i class="bi bi-chevron-down profile-arrow d-none d-sm-block"></i>
-
                 </button>
-
-                <!-- Dropdown Menu -->
 
                 <ul class="dropdown-menu dropdown-menu-end admin-dropdown">
 
-                    <!-- User Information -->
-
                     <li>
-
                         <div class="dropdown-profile">
-
-                            <div class="dropdown-avatar">
-
+                            <span class="dropdown-avatar">
                                 <i class="bi bi-person-fill"></i>
-
-                            </div>
+                            </span>
 
                             <div>
-                                <small>
-                                    {{ Auth::user()->email ?? 'admin@mmaci.edu.ph' }}
-                                </small>
-
+                                <strong>Administrator</strong>
+                                <small>{{ Auth::user()->email ?? 'admin@mmaci.edu.ph' }}</small>
                             </div>
-
                         </div>
-
                     </li>
 
-                    <li>
-                        <hr class="dropdown-divider">
-                    </li>
-
-                    <!-- Dashboard -->
+                    <li><hr class="dropdown-divider"></li>
 
                     <li>
-
-                        <a class="dropdown-item"
-                           href="{{ route('admin.dashboard') }}">
-
+                        <a class="dropdown-item" href="{{ route('admin.dashboard') }}">
                             <span class="dropdown-item-icon">
-
                                 <i class="bi bi-grid-fill"></i>
-
                             </span>
-
                             <span>Dashboard</span>
-
                         </a>
-
                     </li>
 
-                    <!-- View Website -->
-
                     <li>
-
-                        <a class="dropdown-item"
-                           href="{{ route('home') }}"
-                           target="_blank"
-                           rel="noopener noreferrer">
-
+                        <a
+                            class="dropdown-item"
+                            href="{{ route('home') }}"
+                            target="_blank"
+                            rel="noopener noreferrer">
                             <span class="dropdown-item-icon">
-
                                 <i class="bi bi-globe2"></i>
-
                             </span>
-
                             <span>View Website</span>
-
                             <i class="bi bi-box-arrow-up-right external-link-icon"></i>
-
                         </a>
-
                     </li>
 
-                    <li>
-                        <hr class="dropdown-divider">
-                    </li>
-
-                    <!-- Logout -->
+                    <li><hr class="dropdown-divider"></li>
 
                     <li>
-
-                        <form action="{{ route('logout') }}"
-                              method="POST">
-
+                        <form action="{{ route('logout') }}" method="POST">
                             @csrf
-
-                            <button
-                                type="submit"
-                                class="dropdown-item logout-item">
-
+                            <button type="submit" class="dropdown-item logout-item">
                                 <span class="dropdown-item-icon">
-
                                     <i class="bi bi-box-arrow-right"></i>
-
                                 </span>
-
                                 <span>Logout</span>
-
                             </button>
-
                         </form>
-
                     </li>
 
                 </ul>
-
             </div>
 
         </div>
-
     </div>
-
 </nav>
 
 <style>
-
 :root {
     --navbar-navy: #0B2E59;
     --navbar-blue: #184B8C;
     --navbar-yellow: #F4B400;
-    --navbar-background: #FFFFFF;
-    --navbar-border: #E4EAF2;
-    --navbar-muted: #748094;
+    --navbar-border: #E5EAF1;
+    --navbar-muted: #7A8798;
     --navbar-red: #DC3545;
 }
-
-/* ================= NAVBAR ================= */
 
 .admin-navbar {
     position: sticky;
     top: 0;
     z-index: 1020;
-    min-height: 78px;
-    padding: 0 25px;
-    background: rgba(255, 255, 255, 0.96);
+    width: 100%;
+    min-height: 72px;
+    padding: 0 28px;
+    background: rgba(255,255,255,.97);
     border-bottom: 1px solid var(--navbar-border);
-    box-shadow: 0 5px 22px rgba(11, 46, 89, 0.07);
+    box-shadow: 0 4px 18px rgba(11,46,89,.045);
     backdrop-filter: blur(14px);
 }
 
-.admin-navbar .container-fluid {
-    min-height: 78px;
-    padding: 0;
-}
-
-/* ================= LEFT SIDE ================= */
-
-.navbar-left {
+.admin-navbar-inner {
+    min-height: 72px;
     display: flex;
     align-items: center;
-    gap: 15px;
+    justify-content: space-between;
+    gap: 20px;
+}
+
+.admin-navbar-left,
+.admin-navbar-right {
+    display: flex;
+    align-items: center;
+}
+
+.admin-navbar-left {
+    min-width: 0;
+    gap: 12px;
+}
+
+.admin-navbar-right {
+    margin-left: auto;
+    gap: 14px;
+}
+
+.admin-navbar-title {
+    margin: 0;
+    color: var(--navbar-navy);
+    font-size: 20px;
+    font-weight: 800;
+    line-height: 1.2;
+    letter-spacing: -.02em;
 }
 
 .sidebar-toggle {
-    width: 43px;
-    height: 43px;
-    flex-shrink: 0;
+    width: 40px;
+    height: 40px;
+    flex: 0 0 40px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
     padding: 0;
     color: var(--navbar-navy);
-    background: #F1F5FA;
-    border: 1px solid #DDE5EF;
-    border-radius: 11px;
-    font-size: 23px;
-    cursor: pointer;
-    transition:
-        color 0.22s ease,
-        background 0.22s ease,
-        border-color 0.22s ease;
+    background: #F5F8FC;
+    border: 1px solid #DFE6EF;
+    border-radius: 10px;
+    font-size: 21px;
 }
 
 .sidebar-toggle:hover {
-    color: var(--navbar-navy);
     background: var(--navbar-yellow);
     border-color: var(--navbar-yellow);
 }
 
-/* ================= PAGE INFORMATION ================= */
-
-.page-information {
-    min-width: 0;
+/* Date */
+.navbar-date {
+    align-items: center;
+    gap: 9px;
+    padding-right: 16px;
+    border-right: 1px solid var(--navbar-border);
 }
 
-.page-eyebrow {
-    display: block;
-    margin-bottom: 2px;
+.navbar-date > i {
     color: var(--navbar-blue);
-    font-size: 9px;
-    font-weight: 800;
-    letter-spacing: 0.13em;
-    line-height: 1.2;
-    text-transform: uppercase;
+    font-size: 15px;
 }
 
-.page-title {
-    margin: 0;
-    overflow: hidden;
-    color: var(--navbar-navy);
-    font-size: 20px;
-    font-weight: 800;
-    line-height: 1.25;
-    letter-spacing: -0.02em;
-    text-overflow: ellipsis;
+.navbar-date strong,
+.navbar-date small {
+    display: block;
     white-space: nowrap;
 }
 
-/* ================= RIGHT SIDE ================= */
+.navbar-date strong {
+    color: var(--navbar-navy);
+    font-size: 11px;
+    font-weight: 800;
+    line-height: 1.3;
+}
 
-.navbar-right {
+.navbar-date small {
+    margin-top: 1px;
+    color: var(--navbar-muted);
+    font-size: 9px;
+    line-height: 1.3;
+}
+
+/* Profile */
+.admin-profile {
     display: flex;
     align-items: center;
-    gap: 18px;
-    margin-left: auto;
+    gap: 9px;
+    padding: 4px 6px 4px 4px;
+    color: inherit;
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: 12px;
+    cursor: pointer;
+    text-align: left;
 }
 
-/* ================= DATE ================= */
-
-.navbar-date {
-    align-items: center;
-    gap: 11px;
+.admin-profile:hover,
+.admin-profile[aria-expanded="true"] {
+    background: #F6F8FB;
+    border-color: #E2E8F0;
 }
 
-.date-icon {
+.admin-avatar {
     width: 40px;
     height: 40px;
-    flex-shrink: 0;
-    display: flex;
+    flex: 0 0 40px;
+    display: inline-flex;
     align-items: center;
     justify-content: center;
-    color: var(--navbar-blue);
-    background: rgba(24, 75, 140, 0.08);
-    border: 1px solid rgba(24, 75, 140, 0.10);
+    color: var(--navbar-navy);
+    background: var(--navbar-yellow);
     border-radius: 10px;
     font-size: 16px;
 }
 
-.navbar-date strong {
-    display: block;
-    color: var(--navbar-navy);
-    font-size: 12px;
-    font-weight: 700;
-    line-height: 1.4;
-}
-
-.navbar-date small {
-    display: block;
-    color: var(--navbar-muted);
-    font-size: 10px;
-    line-height: 1.4;
-}
-
-/* ================= DIVIDER ================= */
-
-.navbar-divider {
-    width: 1px;
-    height: 36px;
-    background: var(--navbar-border);
-}
-
-/* ================= ADMIN PROFILE ================= */
-
-.admin-profile {
-    min-width: 0;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 6px 9px 6px 6px;
-    color: inherit;
-    background: transparent;
-    border: 1px solid transparent;
-    border-radius: 13px;
-    cursor: pointer;
-    text-align: left;
-    transition:
-        background 0.22s ease,
-        border-color 0.22s ease;
-}
-
-.admin-profile:hover,
-.admin-profile.show {
-    background: #F4F7FB;
-    border-color: var(--navbar-border);
-}
-
-.admin-avatar {
-    width: 43px;
-    height: 43px;
-    flex-shrink: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: var(--navbar-navy);
-    background: linear-gradient(
-        145deg,
-        #FFD45A,
-        var(--navbar-yellow)
-    );
-    border-radius: 12px;
-    font-size: 18px;
-    box-shadow: 0 7px 16px rgba(244, 180, 0, 0.20);
-}
-
 .admin-details {
-    max-width: 170px;
+    max-width: 180px;
     min-width: 0;
+    flex-direction: column;
+}
+
+.admin-details strong,
+.admin-details small {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .admin-details strong {
-    display: block;
-    overflow: hidden;
     color: var(--navbar-navy);
-    font-size: 12px;
-    font-weight: 700;
-    line-height: 1.4;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+    font-size: 11px;
+    font-weight: 800;
+    line-height: 1.3;
 }
 
 .admin-details small {
-    display: block;
-    overflow: hidden;
     color: var(--navbar-muted);
     font-size: 9px;
-    line-height: 1.4;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+    line-height: 1.3;
 }
 
 .profile-arrow {
-    color: #929EAF;
-    font-size: 10px;
-    transition: transform 0.22s ease;
+    color: #9AA5B3;
+    font-size: 9px;
+    transition: transform .2s ease;
 }
 
 .admin-profile[aria-expanded="true"] .profile-arrow {
     transform: rotate(180deg);
 }
 
-/* ================= DROPDOWN ================= */
-
+/* Dropdown */
 .admin-dropdown {
-    width: 290px;
-    padding: 9px;
-    margin-top: 10px !important;
-    overflow: hidden;
-    background: #FFFFFF;
+    width: 285px;
+    padding: 8px;
+    margin-top: 9px !important;
+    background: #fff;
     border: 1px solid var(--navbar-border);
-    border-radius: 15px;
-    box-shadow: 0 18px 48px rgba(11, 46, 89, 0.16);
+    border-radius: 14px;
+    box-shadow: 0 18px 45px rgba(11,46,89,.14);
 }
-
-/* Dropdown Profile */
 
 .dropdown-profile {
     display: flex;
     align-items: center;
-    gap: 12px;
-    padding: 12px;
-    background: linear-gradient(
-        135deg,
-        rgba(24, 75, 140, 0.07),
-        rgba(244, 180, 0, 0.06)
-    );
-    border: 1px solid #E7ECF3;
-    border-radius: 11px;
+    gap: 10px;
+    padding: 11px;
+    background: #F7F9FC;
+    border-radius: 10px;
 }
 
 .dropdown-avatar {
-    width: 42px;
-    height: 42px;
-    flex-shrink: 0;
-    display: flex;
+    width: 38px;
+    height: 38px;
+    flex: 0 0 38px;
+    display: inline-flex;
     align-items: center;
     justify-content: center;
     color: var(--navbar-navy);
     background: var(--navbar-yellow);
-    border-radius: 11px;
-    font-size: 17px;
+    border-radius: 9px;
+    font-size: 15px;
 }
 
-.dropdown-profile div:last-child {
+.dropdown-profile > div {
     min-width: 0;
 }
 
-.dropdown-profile strong {
-    display: block;
-    overflow: hidden;
-    color: var(--navbar-navy);
-    font-size: 12px;
-    line-height: 1.4;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-}
-
+.dropdown-profile strong,
 .dropdown-profile small {
     display: block;
     overflow: hidden;
-    color: var(--navbar-muted);
-    font-size: 9px;
-    line-height: 1.4;
     text-overflow: ellipsis;
     white-space: nowrap;
 }
 
-/* Dropdown Divider */
+.dropdown-profile strong {
+    color: var(--navbar-navy);
+    font-size: 11px;
+    font-weight: 800;
+}
+
+.dropdown-profile small {
+    margin-top: 2px;
+    color: var(--navbar-muted);
+    font-size: 9px;
+}
 
 .admin-dropdown .dropdown-divider {
-    margin: 8px 4px;
+    margin: 7px 4px;
     border-color: #E9EDF3;
 }
 
-/* Dropdown Items */
-
 .admin-dropdown .dropdown-item {
+    min-height: 42px;
     display: flex;
     align-items: center;
-    gap: 11px;
-    min-height: 44px;
-    padding: 8px 10px;
+    gap: 10px;
+    padding: 7px 9px;
     color: #405169;
-    background: transparent;
-    border: 0;
-    border-radius: 9px;
-    font-size: 12px;
+    border-radius: 8px;
+    font-size: 11px;
     font-weight: 600;
-    transition:
-        color 0.2s ease,
-        background 0.2s ease;
 }
 
 .admin-dropdown .dropdown-item:hover {
     color: var(--navbar-navy);
-    background: #F1F5FA;
+    background: #F2F5F9;
 }
 
 .dropdown-item-icon {
-    width: 31px;
-    height: 31px;
-    flex-shrink: 0;
-    display: flex;
+    width: 29px;
+    height: 29px;
+    flex: 0 0 29px;
+    display: inline-flex;
     align-items: center;
     justify-content: center;
     color: var(--navbar-blue);
-    background: rgba(24, 75, 140, 0.08);
-    border-radius: 8px;
-    font-size: 13px;
+    background: rgba(24,75,140,.08);
+    border-radius: 7px;
+    font-size: 12px;
 }
 
 .external-link-icon {
     margin-left: auto;
     color: #A2ACBA;
-    font-size: 10px;
+    font-size: 9px;
 }
-
-/* Logout */
 
 .admin-dropdown form {
     margin: 0;
@@ -551,75 +391,62 @@
     color: var(--navbar-red);
 }
 
+.logout-item .dropdown-item-icon {
+    color: var(--navbar-red);
+    background: rgba(220,53,69,.08);
+}
+
 .admin-dropdown .logout-item:hover {
-    color: #FFFFFF;
+    color: #fff;
     background: var(--navbar-red);
 }
 
-.logout-item .dropdown-item-icon {
-    color: var(--navbar-red);
-    background: rgba(220, 53, 69, 0.09);
+.admin-dropdown .logout-item:hover .dropdown-item-icon {
+    color: #fff;
+    background: rgba(255,255,255,.16);
 }
 
-.logout-item:hover .dropdown-item-icon {
-    color: #FFFFFF;
-    background: rgba(255, 255, 255, 0.16);
-}
-
-/* ================= RESPONSIVE ================= */
-
+/* Responsive */
 @media (max-width: 767.98px) {
-
     .admin-navbar {
-        min-height: 70px;
-        padding: 0 16px;
+        min-height: 66px;
+        padding: 0 14px;
     }
 
-    .admin-navbar .container-fluid {
-        min-height: 70px;
+    .admin-navbar-inner {
+        min-height: 66px;
     }
 
-    .navbar-right {
-        gap: 8px;
-    }
-
-    .page-title {
-        max-width: 200px;
+    .admin-navbar-title {
         font-size: 17px;
     }
 
-    .page-eyebrow {
-        display: none;
+    .admin-navbar-right {
+        gap: 7px;
     }
 
     .admin-profile {
-        padding: 4px;
+        padding: 3px;
     }
 
     .admin-avatar {
-        width: 40px;
-        height: 40px;
-        border-radius: 10px;
+        width: 38px;
+        height: 38px;
+        flex-basis: 38px;
     }
-
 }
 
 @media (max-width: 480px) {
-
-    .page-title {
+    .admin-navbar-title {
         max-width: 145px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
         font-size: 15px;
     }
 
-    .sidebar-toggle {
-        width: 40px;
-        height: 40px;
-    }
-
     .admin-dropdown {
-        width: min(285px, calc(100vw - 24px));
+        width: min(285px, calc(100vw - 20px));
     }
-
 }
-
 </style>
