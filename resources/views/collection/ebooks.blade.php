@@ -80,7 +80,7 @@
                         <article class="ebook-card">
                             <button type="button"
                                 class="ebook-card-button"
-                                data-bs-toggle="offcanvas"
+                                data-bs-toggle="modal"
                                 data-bs-target="#{{ $offcanvasId }}"
                                 aria-label="View ebook titles for {{ $program->title }}">
                                 <div class="ebook-image">
@@ -109,66 +109,71 @@
                             </button>
                         </article>
 
-                        <div class="offcanvas offcanvas-end ebook-panel"
-                            tabindex="-1"
+                        <div class="modal fade ebook-modal"
                             id="{{ $offcanvasId }}"
-                            aria-labelledby="{{ $offcanvasId }}-label">
-                            <div class="offcanvas-header">
-                                <div>
-                                    <span>E-Book Collection</span>
-                                    <h4 class="offcanvas-title" id="{{ $offcanvasId }}-label">
-                                        {{ $program->title }}
-                                    </h4>
+                            tabindex="-1"
+                            aria-labelledby="{{ $offcanvasId }}-label"
+                            aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered ebook-modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <div>
+                                            <span>E-Book Collection</span>
+                                            <h4 class="modal-title" id="{{ $offcanvasId }}-label">
+                                                {{ $program->title }}
+                                            </h4>
+                                        </div>
+
+                                        <button type="button"
+                                            class="btn-close"
+                                            data-bs-dismiss="modal"
+                                            aria-label="Close">
+                                        </button>
+                                    </div>
+
+                                    <div class="modal-body">
+                                        @if($program->folders->isNotEmpty())
+                                            <div class="folder-list">
+                                                @foreach($program->folders->sortBy('title', SORT_NATURAL | SORT_FLAG_CASE) as $folder)
+                                                    <a href="{{ $folder->drive_link }}"
+                                                        target="_blank"
+                                                        rel="noopener noreferrer"
+                                                        class="folder-link">
+                                                        <span class="folder-link-copy">
+                                                            <strong>{{ $folder->title }}</strong>
+                                                            <small>
+                                                                {{ $folder->description ?: 'Open this ebook title in Google Drive' }}
+                                                            </small>
+                                                        </span>
+
+                                                        <i class="bi bi-box-arrow-up-right" aria-hidden="true"></i>
+                                                    </a>
+                                                @endforeach
+                                            </div>
+                                        @else
+                                            <div class="folder-empty">
+                                                <h5>No ebook titles available</h5>
+                                                <p>
+                                                    This program does not have any published e-book titles yet.
+                                                </p>
+                                            </div>
+                                        @endif
+                                    </div>
+
+                                    <div class="modal-footer">
+                                        <span>
+                                            {{ $folderCount }}
+                                            {{ \Illuminate\Support\Str::plural('title', $folderCount) }}
+                                            available
+                                        </span>
+
+                                        <button type="button"
+                                            class="modal-close-button"
+                                            data-bs-dismiss="modal">
+                                            Close
+                                        </button>
+                                    </div>
                                 </div>
-
-                                <button type="button"
-                                    class="btn-close"
-                                    data-bs-dismiss="offcanvas"
-                                    aria-label="Close">
-                                </button>
-                            </div>
-
-                            <div class="offcanvas-body">
-                                @if($program->folders->isNotEmpty())
-                                    <div class="folder-list">
-                                        @foreach($program->folders->sortBy('title', SORT_NATURAL | SORT_FLAG_CASE) as $folder)
-                                            <a href="{{ $folder->drive_link }}"
-                                                target="_blank"
-                                                rel="noopener noreferrer"
-                                                class="folder-link">
-                                                <span class="folder-link-copy">
-                                                    <strong>{{ $folder->title }}</strong>
-                                                    <small>
-                                                        {{ $folder->description ?: 'Open this ebook title in Google Drive' }}
-                                                    </small>
-                                                </span>
-
-                                                <i class="bi bi-box-arrow-up-right" aria-hidden="true"></i>
-                                            </a>
-                                        @endforeach
-                                    </div>
-                                @else
-                                    <div class="folder-empty">
-                                        <h5>No ebook titles available</h5>
-                                        <p>
-                                            This program does not have any published e-book titles yet.
-                                        </p>
-                                    </div>
-                                @endif
-                            </div>
-
-                            <div class="offcanvas-footer">
-                                <span>
-                                    {{ $folderCount }}
-                                    {{ \Illuminate\Support\Str::plural('title', $folderCount) }}
-                                    available
-                                </span>
-
-                                <button type="button"
-                                    class="modal-close-button"
-                                    data-bs-dismiss="offcanvas">
-                                    Close
-                                </button>
                             </div>
                         </div>
                     </div>
@@ -541,19 +546,27 @@
     line-height: 1.75;
 }
 
-.ebook-panel {
-    width: min(100%, 520px);
-    background: #ffffff;
-    border-left: 1px solid var(--ebooks-border);
+.ebook-modal .modal-dialog {
+    width: min(calc(100vw - 24px), 1040px);
+    max-width: min(calc(100vw - 24px), 1040px);
+    margin: .75rem auto;
+}
+
+.ebook-modal .modal-content {
+    height: min(92vh, 900px);
+    border: 0;
+    border-radius: 22px;
+    overflow: hidden;
     box-shadow: 0 24px 54px rgba(11, 46, 89, .18);
 }
 
-.ebook-panel .offcanvas-header {
+.ebook-modal .modal-header {
+    flex: 0 0 auto;
     padding: 22px 24px 18px;
     border-bottom: 1px solid var(--ebooks-border);
 }
 
-.ebook-panel .offcanvas-header span {
+.ebook-modal .modal-header span {
     color: var(--ebooks-blue);
     font-size: 11px;
     font-weight: 800;
@@ -561,18 +574,21 @@
     text-transform: uppercase;
 }
 
-.ebook-panel .offcanvas-title {
+.ebook-modal .modal-title {
     margin: 6px 0 0;
     color: var(--ebooks-navy);
     font-size: 22px;
     font-weight: 850;
 }
 
-.ebook-panel .offcanvas-body {
+.ebook-modal .modal-body {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
     padding: 22px 24px;
 }
 
-.ebook-panel .offcanvas-footer {
+.ebook-modal .modal-footer {
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -581,19 +597,13 @@
     border-top: 1px solid var(--ebooks-border);
 }
 
-.ebook-panel .offcanvas-footer span {
+.ebook-modal .modal-footer span {
     color: var(--ebooks-muted);
     font-size: 14px;
 }
 
-.ebook-panel .btn-close {
+.ebook-modal .btn-close {
     box-shadow: none;
-}
-
-.ebook-modal .modal-content {
-    border: 0;
-    border-radius: 18px;
-    box-shadow: 0 24px 54px rgba(11, 46, 89, .18);
 }
 
 .ebook-modal .modal-header {
@@ -691,8 +701,27 @@
         max-width: none;
     }
 
-    .ebook-panel {
+    .ebook-modal .modal-dialog {
         width: 100%;
+        max-width: 100%;
+        margin: 0;
+        height: 100%;
+    }
+
+    .ebook-modal .modal-content {
+        height: 100vh;
+        max-height: 100vh;
+        border-radius: 0;
+    }
+
+    .ebook-modal .modal-body {
+        padding: 18px 18px 20px;
+    }
+
+    .ebook-modal .modal-header,
+    .ebook-modal .modal-footer {
+        padding-left: 18px;
+        padding-right: 18px;
     }
 }
 
