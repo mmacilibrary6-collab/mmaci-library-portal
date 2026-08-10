@@ -65,6 +65,8 @@
         html {
 
             scroll-behavior: smooth;
+            max-width: 100%;
+            overflow-x: hidden;
 
         }
 
@@ -75,6 +77,7 @@
             color: var(--mmaci-text);
             background: var(--mmaci-white);
             overflow-x: clip;
+            max-width: 100%;
 
         }
 

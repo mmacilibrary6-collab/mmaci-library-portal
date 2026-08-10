@@ -418,6 +418,8 @@
 
 .mmaci-navbar {
 
+    width: 100%;
+    max-width: 100%;
     background: #0B2E59;
 
     padding: 14px 0;
@@ -425,6 +427,12 @@
     box-shadow:
         0 10px 30px rgba(0, 0, 0, .15);
 
+}
+
+/* Give the public navigation more usable width on large screens. */
+.mmaci-navbar > .container {
+    width: calc(100% - 40px);
+    max-width: 1680px;
 }
 
 
@@ -602,6 +610,17 @@
 ========================================= */
 
 @media (max-width: 991px) {
+
+    .mmaci-navbar > .container {
+        max-width: none;
+        width: 100%;
+        padding-left: 14px;
+        padding-right: 14px;
+    }
+
+    .mmaci-navbar .navbar-collapse {
+        width: 100%;
+    }
 
     .navbar-nav {
 
