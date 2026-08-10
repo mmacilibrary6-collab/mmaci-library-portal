@@ -1,6 +1,15 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Storage;
+
+/*
+|--------------------------------------------------------------------------
+| Models
+|--------------------------------------------------------------------------
+*/
+
+use App\Models\NewArrival;
 
 /*
 |--------------------------------------------------------------------------
@@ -15,7 +24,6 @@ use App\Http\Controllers\LisaController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\MoreController;
 use App\Http\Controllers\ServiceController;
-use Illuminate\Support\Facades\Storage;
 
 /*
 |--------------------------------------------------------------------------
@@ -51,19 +59,45 @@ Route::get('/', [HomeController::class, 'index'])
 Route::redirect('/mmaci', '/', 301);
 Route::redirect('/library', '/', 301);
 
+/*
+|--------------------------------------------------------------------------
+| Public Media
+|--------------------------------------------------------------------------
+*/
+
 Route::get('/media', function () {
+
     $path = trim((string) request()->query('path', ''));
+
     $path = str_replace('\\', '/', $path);
+
     $path = ltrim($path, '/');
 
-    abort_unless($path !== '' && Storage::disk('public')->exists($path), 404);
+    abort_unless(
+        $path !== '' && Storage::disk('public')->exists($path),
+        404
+    );
 
-    return response()->file(Storage::disk('public')->path($path));
-})
-    ->name('public.media');
+    return response()->file(
+        Storage::disk('public')->path($path)
+    );
+
+})->name('public.media');
+
+/*
+|--------------------------------------------------------------------------
+| About
+|--------------------------------------------------------------------------
+*/
 
 Route::get('/about', [AboutController::class, 'index'])
     ->name('about');
+
+/*
+|--------------------------------------------------------------------------
+| Lisa AI Assistant
+|--------------------------------------------------------------------------
+*/
 
 Route::post('/lisa/message', [LisaController::class, 'message'])
     ->name('lisa.message');
@@ -112,6 +146,7 @@ Route::prefix('collection')
             '/periodicals',
             [CollectionController::class, 'periodicals']
         )->name('periodicals');
+
     });
 
 /*
@@ -133,6 +168,7 @@ Route::prefix('services')
             '/facilities',
             [ServiceController::class, 'facilities']
         )->name('facilities');
+
     });
 
 /*
@@ -149,9 +185,6 @@ Route::prefix('more')
         |--------------------------------------------------------------------------
         | Ask the Librarian
         |--------------------------------------------------------------------------
-        |
-        | Static public information page.
-        |
         */
 
         Route::get(
@@ -172,11 +205,24 @@ Route::prefix('more')
 
         /*
         |--------------------------------------------------------------------------
+        | New Arrivals
+        |--------------------------------------------------------------------------
+        */
+
+        Route::get('/new-arrivals', function () {
+
+            $arrivals = NewArrival::orderByDesc('arrival_date')
+                ->orderByDesc('id')
+                ->get();
+
+            return view('more.new-arrivals', compact('arrivals'));
+
+        })->name('new-arrivals');
+
+        /*
+        |--------------------------------------------------------------------------
         | Visiting Researchers
         |--------------------------------------------------------------------------
-        |
-        | Static public information page with Google Form link.
-        |
         */
 
         Route::get(
@@ -184,15 +230,28 @@ Route::prefix('more')
             [MoreController::class, 'visitingUsers']
         )->name('visiting-users');
 
+        /*
+        |--------------------------------------------------------------------------
+        | Online Book Recommendation
+        |--------------------------------------------------------------------------
+        */
+
         Route::get(
             '/online-book-recommendation',
             [MoreController::class, 'onlineBookRecommendation']
         )->name('online-book-recommendation');
 
+        /*
+        |--------------------------------------------------------------------------
+        | Reserve AVR
+        |--------------------------------------------------------------------------
+        */
+
         Route::get(
             '/reserve-avr',
             [MoreController::class, 'reserveAvr']
         )->name('reserve-avr');
+
     });
 
 /*
@@ -233,7 +292,14 @@ Route::middleware('guest')
             '/reset-password',
             [AuthController::class, 'resetPassword']
         )->name('password.update');
+
     });
+
+/*
+|--------------------------------------------------------------------------
+| Logout
+|--------------------------------------------------------------------------
+*/
 
 Route::post(
     '/logout',
@@ -264,10 +330,22 @@ Route::prefix('admin')
             [DashboardController::class, 'index']
         )->name('dashboard');
 
+        /*
+        |--------------------------------------------------------------------------
+        | Ask Librarian
+        |--------------------------------------------------------------------------
+        */
+
         Route::get(
             '/ask-librarian',
             [AskLibrarianController::class, 'index']
         )->name('ask-librarian.index');
+
+        /*
+        |--------------------------------------------------------------------------
+        | Visiting Users
+        |--------------------------------------------------------------------------
+        */
 
         Route::get(
             '/visiting-users',
@@ -307,13 +385,38 @@ Route::prefix('admin')
             GalleryController::class
         )->except(['show']);
 
+        /*
+        |--------------------------------------------------------------------------
+        | Donated Books
+        |--------------------------------------------------------------------------
+        */
+
         Route::resource(
             'donated-books',
             DonatedBookController::class
         )->except(['show']);
 
-        Route::resource('periodical-programs', PeriodicalProgramController::class)->except(['show']);
-        Route::resource('periodical-folders', PeriodicalFolderController::class)->except(['show']);
+        /*
+        |--------------------------------------------------------------------------
+        | Periodicals
+        |--------------------------------------------------------------------------
+        */
+
+        Route::resource(
+            'periodical-programs',
+            PeriodicalProgramController::class
+        )->except(['show']);
+
+        Route::resource(
+            'periodical-folders',
+            PeriodicalFolderController::class
+        )->except(['show']);
+
+        /*
+        |--------------------------------------------------------------------------
+        | Gallery Images
+        |--------------------------------------------------------------------------
+        */
 
         Route::post(
             'gallery/{gallery}/images',
@@ -322,7 +425,7 @@ Route::prefix('admin')
 
         /*
         |--------------------------------------------------------------------------
-        | E-Book Program Management
+        | E-Book Programs
         |--------------------------------------------------------------------------
         */
 
@@ -331,6 +434,12 @@ Route::prefix('admin')
             EbookProgramController::class
         )->except(['show']);
 
+        /*
+        |--------------------------------------------------------------------------
+        | Thesis Programs
+        |--------------------------------------------------------------------------
+        */
+
         Route::resource(
             'thesis-programs',
             ThesisProgramController::class
@@ -338,7 +447,7 @@ Route::prefix('admin')
 
         /*
         |--------------------------------------------------------------------------
-        | E-Book Folder Management
+        | E-Book Folders
         |--------------------------------------------------------------------------
         */
 
@@ -347,10 +456,22 @@ Route::prefix('admin')
             EbookFolderController::class
         )->except(['show']);
 
+        /*
+        |--------------------------------------------------------------------------
+        | Thesis Folders
+        |--------------------------------------------------------------------------
+        */
+
         Route::resource(
             'thesis-folders',
             ThesisFolderController::class
         )->except(['show']);
+
+        /*
+        |--------------------------------------------------------------------------
+        | Library Updates
+        |--------------------------------------------------------------------------
+        */
 
         Route::resource(
             'library-updates',
@@ -359,7 +480,7 @@ Route::prefix('admin')
 
         /*
         |--------------------------------------------------------------------------
-        | Open Access Resource Management
+        | Open Access Resources
         |--------------------------------------------------------------------------
         */
 
@@ -367,6 +488,7 @@ Route::prefix('admin')
             'open-access-resources',
             OpenAccessResourceController::class
         )->except(['show']);
+
     });
 
 /*
