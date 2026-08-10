@@ -942,9 +942,9 @@
             'html[data-motion="force"] *,' +
             'html[data-motion="force"] *::before,' +
             'html[data-motion="force"] *::after {' +
-            'animation-duration: .001ms !important;' +
-            'animation-iteration-count: 1 !important;' +
-            'transition-duration: .001ms !important;' +
+            'animation-duration: inherit !important;' +
+            'animation-iteration-count: initial !important;' +
+            'transition-duration: inherit !important;' +
             '}' +
             'html[data-motion="force"] [data-aos],' +
             'html[data-motion="force"] .app-reveal,' +
@@ -953,13 +953,33 @@
             'opacity: 1 !important;' +
             'transform: none !important;' +
             '}' +
+            'html[data-motion="force"] .btn,' +
+            'html[data-motion="force"] .btn-mmaci,' +
+            'html[data-motion="force"] .btn-outline-mmaci,' +
+            'html[data-motion="force"] .primary-action,' +
+            'html[data-motion="force"] .text-action,' +
+            'html[data-motion="force"] .service-card,' +
+            'html[data-motion="force"] .gallery-card,' +
+            'html[data-motion="force"] .content-panel,' +
+            'html[data-motion="force"] .library-update-card,' +
+            'html[data-motion="force"] .arrival-card,' +
+            'html[data-motion="force"] .summary-panel,' +
+            'html[data-motion="force"] .contact-panel,' +
+            'html[data-motion="force"] .video-frame,' +
+            'html[data-motion="force"] .about-image-wrap,' +
+            'html[data-motion="force"] .value-card,' +
+            'html[data-motion="force"] .objective-card,' +
+            'html[data-motion="force"] .schedule-card,' +
+            'html[data-motion="force"] .chart-card {' +
+            'transition-duration: .25s !important;' +
+            '}' +
             'html[data-motion="force"] .hero-orb-one,' +
             'html[data-motion="force"] .hero-orb-two,' +
             'html[data-motion="force"] .hero-image-glow,' +
             'html[data-motion="force"] .hero-image,' +
             'html[data-motion="force"] .home-hero::after,' +
             'html[data-motion="force"] .page-hero::after {' +
-            'animation-duration: inherit !important;' +
+            'animation-duration: 6s !important;' +
             'animation-iteration-count: infinite !important;' +
             '}' +
             '</style>'
