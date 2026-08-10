@@ -823,13 +823,6 @@
         }
     }
 
-    @media (prefers-reduced-motion: reduce) {
-        .recommendation-hero-content,
-        .recommendation-hero::after,
-        .form-loading span {
-            animation: none !important;
-        }
-
         .avr-motion-reveal,
         .avr-motion-reveal.avr-motion-left,
         .avr-motion-reveal.avr-motion-right,
@@ -855,7 +848,6 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function () {
-    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     const revealGroups = [
         { selector: '.recommendation-sidebar', mode: 'avr-motion-left' },
@@ -888,7 +880,7 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
-    if (reducedMotion || !('IntersectionObserver' in window)) {
+    if (!('IntersectionObserver' in window)) {
         revealElements.forEach(function (element) {
             element.classList.add('is-visible');
         });
@@ -918,3 +910,5 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
 @endsection
+
+

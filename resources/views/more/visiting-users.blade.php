@@ -1161,13 +1161,6 @@
         }
     }
 
-    @media (prefers-reduced-motion: reduce) {
-        .visiting-hero::before,
-        .visitor-placeholder,
-        .appointment-icon {
-            animation: none !important;
-        }
-
         .visitor-motion-reveal,
         .visitor-motion-reveal.visitor-motion-left,
         .visitor-motion-reveal.visitor-motion-right,
@@ -1197,7 +1190,6 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function () {
-    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     const revealGroups = [
         { selector: '.visiting-introduction .col-xl-8', mode: '' },
@@ -1232,7 +1224,7 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
-    if (reducedMotion || !('IntersectionObserver' in window)) {
+    if (!('IntersectionObserver' in window)) {
         revealElements.forEach(function (element) {
             element.classList.add('is-visible');
         });
@@ -1260,4 +1252,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
 @endsection
+
+
 

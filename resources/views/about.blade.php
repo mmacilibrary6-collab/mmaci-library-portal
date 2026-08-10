@@ -1222,54 +1222,10 @@
         transform: translateY(-5px);
         box-shadow: 0 30px 70px rgba(9, 40, 76, .24);
     }
-
-    /* Reduced motion accessibility */
-    @media (prefers-reduced-motion: reduce) {
-        .hero-orb-one,
-        .hero-orb-two,
-        .hero-image-glow,
-        .hero-image {
-            animation: none !important;
-        }
-
-        .about-motion-reveal,
-        .about-motion-reveal.about-motion-left,
-        .about-motion-reveal.about-motion-right,
-        .about-motion-reveal.about-motion-scale {
-            opacity: 1 !important;
-            transform: none !important;
-            transition: none !important;
-        }
-
-        .hero-button i,
-        .cta-button i,
-        .about-image-wrap,
-        .about-image,
-        .image-accent,
-        .image-note,
-        .about-point,
-        .about-point i,
-        .value-card,
-        .value-icon,
-        .objective-icon,
-        .clock-icon,
-        .objective-card,
-        .objective-number,
-        .schedule-card,
-        .schedule-item,
-        .schedule-item time,
-        .chart-card,
-        .chart-image,
-        .cta-panel {
-            transition: none !important;
-            animation: none !important;
-        }
-    }
 </style>
 
 <script>
 document.addEventListener('DOMContentLoaded', function () {
-    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     const revealGroups = [
         {
@@ -1340,7 +1296,7 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
-    if (reducedMotion || !('IntersectionObserver' in window)) {
+    if (!('IntersectionObserver' in window)) {
         revealElements.forEach(function (element) {
             element.classList.add('is-visible');
         });
@@ -1370,3 +1326,5 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
 @endsection
+
+

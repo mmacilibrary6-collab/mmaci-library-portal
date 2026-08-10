@@ -3154,59 +3154,10 @@ document.addEventListener('DOMContentLoaded', function () {
     .modal.show .event-modal {
         animation: homeViewerEnter .28s cubic-bezier(.22, 1, .36, 1) both;
     }
-
-    /* ---------- Reduced motion accessibility ---------- */
-    @media (prefers-reduced-motion: reduce) {
-        .home-hero-content,
-        .home-hero::after,
-        .library-update-viewer.is-open .library-update-viewer-dialog,
-        .modal.show .event-modal {
-            animation: none !important;
-        }
-
-        .home-motion-reveal,
-        .home-motion-reveal.home-motion-left,
-        .home-motion-reveal.home-motion-right,
-        .home-motion-reveal.home-motion-scale {
-            opacity: 1 !important;
-            transform: none !important;
-            transition: none !important;
-        }
-
-        .content-panel,
-        .event-item,
-        .event-date,
-        .library-update-card,
-        .library-update-image img,
-        .arrival-card,
-        .arrival-cover img,
-        .arrival-search-field,
-        .about-carousel,
-        .about-carousel .carousel-item img,
-        .summary-grid > div,
-        .summary-grid strong,
-        .service-card,
-        .gallery-card,
-        .gallery-card img,
-        .gallery-card figcaption,
-        .video-frame,
-        .contact-panel,
-        .cta-panel,
-        .summary-panel,
-        .primary-action i,
-        .text-action i,
-        .service-card a i,
-        .view-update-text i,
-        .home-cta a i {
-            transition: none !important;
-            animation: none !important;
-        }
-    }
 </style>
 
 <script>
 document.addEventListener('DOMContentLoaded', function () {
-    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     /*
      * Adds reveal classes at runtime instead of rewriting the existing Blade
@@ -3292,7 +3243,7 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
-    if (reducedMotion || !('IntersectionObserver' in window)) {
+    if (!('IntersectionObserver' in window)) {
         revealElements.forEach(function (element) {
             element.classList.add('is-visible');
         });
@@ -3321,3 +3272,4 @@ document.addEventListener('DOMContentLoaded', function () {
 </script>
 
 @endsection
+

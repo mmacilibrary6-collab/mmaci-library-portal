@@ -1218,13 +1218,6 @@ document.addEventListener('DOMContentLoaded', function () {
         transform: translateX(5px);
     }
 
-    @media (prefers-reduced-motion: reduce) {
-        .ebooks-hero-content,
-        .ebooks-hero::after,
-        .folder-modal.show .modal-content {
-            animation: none !important;
-        }
-
         .ebook-motion-reveal,
         .ebook-motion-reveal.ebook-motion-left,
         .ebook-motion-reveal.ebook-motion-right,
@@ -1259,7 +1252,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
 <script>
 document.addEventListener('DOMContentLoaded', function () {
-    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     const revealGroups = [
         { selector: '.ebooks-intro .section-heading', mode: '' },
@@ -1298,7 +1290,7 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
-    if (reducedMotion || !('IntersectionObserver' in window)) {
+    if (!('IntersectionObserver' in window)) {
         revealElements.forEach(function (element) {
             element.classList.add('is-visible');
         });
@@ -1328,3 +1320,4 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
 @endsection
+

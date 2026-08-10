@@ -1220,13 +1220,6 @@ document.addEventListener('DOMContentLoaded', function () {
         transform: translateX(5px);
     }
 
-    @media (prefers-reduced-motion: reduce) {
-        .theses-hero-content,
-        .theses-hero::after,
-        .folder-modal.show .modal-content {
-            animation: none !important;
-        }
-
         .thesis-motion-reveal,
         .thesis-motion-reveal.thesis-motion-left,
         .thesis-motion-reveal.thesis-motion-right,
@@ -1261,7 +1254,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
 <script>
 document.addEventListener('DOMContentLoaded', function () {
-    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     const revealGroups = [
         { selector: '.theses-intro .section-heading', mode: '' },
@@ -1300,7 +1292,7 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
-    if (reducedMotion || !('IntersectionObserver' in window)) {
+    if (!('IntersectionObserver' in window)) {
         revealElements.forEach(function (element) {
             element.classList.add('is-visible');
         });
@@ -1330,4 +1322,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
 @endsection
+
+
 

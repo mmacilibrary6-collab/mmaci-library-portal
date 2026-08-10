@@ -1390,12 +1390,6 @@ html {
         transform: translateX(5px);
     }
 
-    @media (prefers-reduced-motion: reduce) {
-        .services-hero-content,
-        .services-hero::after {
-            animation: none !important;
-        }
-
         .services-motion-reveal,
         .services-motion-reveal.services-motion-left,
         .services-motion-reveal.services-motion-right,
@@ -1434,7 +1428,6 @@ html {
 
 <script>
 document.addEventListener('DOMContentLoaded', function () {
-    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     const revealGroups = [
         { selector: '.services-intro .section-heading', mode: '' },
@@ -1476,7 +1469,7 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
-    if (reducedMotion || !('IntersectionObserver' in window)) {
+    if (!('IntersectionObserver' in window)) {
         revealElements.forEach(function (element) {
             element.classList.add('is-visible');
         });
@@ -1506,4 +1499,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
 @endsection
+
+
 

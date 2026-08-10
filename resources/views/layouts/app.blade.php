@@ -869,32 +869,6 @@
 
         }
 
-        /* Respect user's motion preferences */
-
-        @media (prefers-reduced-motion: reduce) {
-
-            * ,
-            *::before,
-            *::after {
-
-                animation-duration: 0.01ms !important;
-                animation-iteration-count: 1 !important;
-                transition-duration: 0.01ms !important;
-                scroll-behavior: auto !important;
-
-            }
-
-            main,
-            .page-hero::after,
-            .dropdown-menu.show,
-            .modal.show .modal-content {
-
-                animation: none !important;
-
-            }
-
-        }
-
     </style>
 
     @stack('styles')
@@ -927,73 +901,9 @@
 
     <script>
 
-        (function () {
-            const motionSetting = window.localStorage.getItem('mmaciMotion');
-            const forceMotion = motionSetting !== 'reduce';
-
-            if (forceMotion) {
-                document.documentElement.dataset.motion = 'force';
-            }
-        }());
-
-        document.head.insertAdjacentHTML(
-            'beforeend',
-            '<style id="mmaci-motion-override">' +
-            'html[data-motion="force"] *,' +
-            'html[data-motion="force"] *::before,' +
-            'html[data-motion="force"] *::after {' +
-            'animation-duration: inherit !important;' +
-            'animation-iteration-count: initial !important;' +
-            'transition-duration: inherit !important;' +
-            '}' +
-            'html[data-motion="force"] [data-aos],' +
-            'html[data-motion="force"] .app-reveal,' +
-            'html[data-motion="force"] .about-motion-reveal,' +
-            'html[data-motion="force"] .home-motion-reveal {' +
-            'opacity: 1 !important;' +
-            'transform: none !important;' +
-            '}' +
-            'html[data-motion="force"] .btn,' +
-            'html[data-motion="force"] .btn-mmaci,' +
-            'html[data-motion="force"] .btn-outline-mmaci,' +
-            'html[data-motion="force"] .primary-action,' +
-            'html[data-motion="force"] .text-action,' +
-            'html[data-motion="force"] .service-card,' +
-            'html[data-motion="force"] .gallery-card,' +
-            'html[data-motion="force"] .content-panel,' +
-            'html[data-motion="force"] .library-update-card,' +
-            'html[data-motion="force"] .arrival-card,' +
-            'html[data-motion="force"] .summary-panel,' +
-            'html[data-motion="force"] .contact-panel,' +
-            'html[data-motion="force"] .video-frame,' +
-            'html[data-motion="force"] .about-image-wrap,' +
-            'html[data-motion="force"] .value-card,' +
-            'html[data-motion="force"] .objective-card,' +
-            'html[data-motion="force"] .schedule-card,' +
-            'html[data-motion="force"] .chart-card {' +
-            'transition-duration: .25s !important;' +
-            '}' +
-            'html[data-motion="force"] .hero-orb-one,' +
-            'html[data-motion="force"] .hero-orb-two,' +
-            'html[data-motion="force"] .hero-image-glow,' +
-            'html[data-motion="force"] .hero-image,' +
-            'html[data-motion="force"] .home-hero::after,' +
-            'html[data-motion="force"] .page-hero::after {' +
-            'animation-duration: 6s !important;' +
-            'animation-iteration-count: infinite !important;' +
-            '}' +
-            '</style>'
-        );
-
         document.addEventListener(
             'DOMContentLoaded',
             function () {
-
-                const reducedMotion =
-                    window.matchMedia(
-                        '(prefers-reduced-motion: reduce)'
-                    ).matches;
-
 
                 if (
                     typeof AOS !== 'undefined'
@@ -1001,10 +911,7 @@
 
                     AOS.init({
 
-                        duration:
-                            reducedMotion
-                                ? 0
-                                : 800,
+                        duration: 800,
 
                         once:
                             true,
@@ -1015,8 +922,7 @@
                         easing:
                             'ease-out-cubic',
 
-                        disable:
-                            reducedMotion
+                        disable: false
 
                     });
 
@@ -1045,7 +951,6 @@
 
 
                 if (
-                    reducedMotion ||
                     !('IntersectionObserver' in window)
                 ) {
 
@@ -1172,7 +1077,6 @@
 
 
                 if (
-                    reducedMotion ||
                     !('IntersectionObserver' in window)
                 ) {
 
@@ -1234,8 +1138,7 @@
                     function () {
 
                         if (
-                            typeof AOS !== 'undefined' &&
-                            !reducedMotion
+                            typeof AOS !== 'undefined'
                         ) {
 
                             AOS.refreshHard();

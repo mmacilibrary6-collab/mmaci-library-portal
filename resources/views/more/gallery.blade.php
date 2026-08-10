@@ -621,13 +621,6 @@
 
 }
 
-@media (prefers-reduced-motion: reduce) {
-    .gallery-card {
-        opacity: 1;
-        transform: none;
-        transition: none;
-    }
-
     .gallery-image img,
     .view-image {
         transition: none;
@@ -941,14 +934,6 @@ document.addEventListener('DOMContentLoaded', function () {
         transform: rotate(4deg) scale(1.04);
     }
 
-    @media (prefers-reduced-motion: reduce) {
-        .gallery-hero-content,
-        .gallery-hero::after,
-        .modal.show .gallery-modal,
-        .modal.show .gallery-modal-image img {
-            animation: none !important;
-        }
-
         .gallery-motion-reveal,
         .gallery-motion-reveal.gallery-motion-left,
         .gallery-motion-reveal.gallery-motion-right,
@@ -976,7 +961,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
 <script>
 document.addEventListener('DOMContentLoaded', function () {
-    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     const revealGroups = [
         { selector: '.gallery-intro .section-heading', mode: 'gallery-motion-left' },
@@ -1009,7 +993,7 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
-    if (reducedMotion || !('IntersectionObserver' in window)) {
+    if (!('IntersectionObserver' in window)) {
         revealElements.forEach(function (element) {
             element.classList.add('is-visible');
         });
@@ -1039,3 +1023,4 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
 @endsection
+

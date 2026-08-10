@@ -855,12 +855,6 @@ document.addEventListener('DOMContentLoaded', function () {
         box-shadow: 0 24px 54px rgba(11, 46, 89, .2);
     }
 
-    @media (prefers-reduced-motion: reduce) {
-        .open-access-hero-content,
-        .open-access-hero::before {
-            animation: none !important;
-        }
-
         .open-access-motion-reveal,
         .open-access-motion-reveal.open-access-motion-left,
         .open-access-motion-reveal.open-access-motion-right,
@@ -887,7 +881,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
 <script>
 document.addEventListener('DOMContentLoaded', function () {
-    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     const revealGroups = [
         { selector: '.open-access-intro .col-xl-8', mode: '' },
@@ -925,7 +918,7 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
-    if (reducedMotion || !('IntersectionObserver' in window)) {
+    if (!('IntersectionObserver' in window)) {
         revealElements.forEach(function (element) {
             element.classList.add('is-visible');
         });
@@ -955,3 +948,4 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
 @endsection
+

@@ -1036,12 +1036,6 @@
         transform: translateX(5px);
     }
 
-    @media (prefers-reduced-motion: reduce) {
-        .facilities-hero-content,
-        .facilities-hero::after {
-            animation: none !important;
-        }
-
         .facilities-motion-reveal,
         .facilities-motion-reveal.facilities-motion-left,
         .facilities-motion-reveal.facilities-motion-right,
@@ -1074,7 +1068,6 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function () {
-    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     const revealGroups = [
         { selector: '.facilities-intro .section-heading', mode: '' },
@@ -1116,7 +1109,7 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
-    if (reducedMotion || !('IntersectionObserver' in window)) {
+    if (!('IntersectionObserver' in window)) {
         revealElements.forEach(function (element) {
             element.classList.add('is-visible');
         });
@@ -1146,4 +1139,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
 @endsection
+
+
 
