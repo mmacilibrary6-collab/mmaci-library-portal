@@ -2017,8 +2017,8 @@ document.addEventListener('DOMContentLoaded', function () {
             );
 
         transform:
-            translateY(12px)
-            scale(.985);
+            translateY(0)
+            scale(1);
 
         transition:
             transform
@@ -2639,10 +2639,10 @@ document.addEventListener('DOMContentLoaded', function () {
         575.98px
     ) {
 
-        .ebook-folder-modal {
+    .ebook-folder-modal {
 
-            padding:
-                10px;
+        padding:
+            8px;
 
         }
 
@@ -2656,7 +2656,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
             max-height:
                 calc(
-                    100dvh - 20px
+                    100dvh - 16px
                 );
 
             border-radius:
@@ -2668,7 +2668,7 @@ document.addEventListener('DOMContentLoaded', function () {
         .ebook-folder-modal-header {
 
             padding:
-                16px;
+                14px;
 
         }
 
@@ -2699,7 +2699,7 @@ document.addEventListener('DOMContentLoaded', function () {
         .ebook-folder-modal-body {
 
             padding:
-                10px;
+                8px;
 
         }
 
@@ -2740,7 +2740,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 column;
 
             padding:
-                10px 12px;
+                9px 11px;
 
         }
 
@@ -3122,16 +3122,16 @@ document.addEventListener(
     @media (min-width: 576px) and (max-height: 760px) {
 
         .ebook-folder-modal {
-            padding: 10px !important;
+            padding: 8px !important;
         }
 
         .ebook-folder-modal-dialog {
-            width: min(620px, calc(100vw - 20px)) !important;
-            max-height: calc(100dvh - 20px) !important;
+            width: min(620px, calc(100vw - 16px)) !important;
+            max-height: calc(100dvh - 16px) !important;
         }
 
         .ebook-folder-modal-header {
-            padding: 15px 18px !important;
+            padding: 14px 16px !important;
         }
 
         .ebook-folder-modal-header span {
@@ -3150,7 +3150,7 @@ document.addEventListener(
         }
 
         .ebook-folder-modal-body {
-            padding: 10px !important;
+            padding: 8px !important;
         }
 
         .ebook-folder-modal-body .folder-list {
@@ -3177,7 +3177,7 @@ document.addEventListener(
         }
 
         .ebook-folder-modal-footer {
-            padding: 9px 12px !important;
+            padding: 8px 11px !important;
         }
 
     }
@@ -3190,18 +3190,18 @@ document.addEventListener(
     @media (max-width: 575.98px) {
 
         .ebook-folder-modal {
-            padding: 8px !important;
+            padding: 6px !important;
         }
 
         .ebook-folder-modal-dialog {
-            width: calc(100vw - 16px) !important;
-            max-height: calc(100dvh - 16px) !important;
+            width: calc(100vw - 12px) !important;
+            max-height: calc(100dvh - 12px) !important;
 
             border-radius: 14px !important;
         }
 
         .ebook-folder-modal-header {
-            padding: 14px !important;
+            padding: 12px !important;
         }
 
         .ebook-folder-modal-header span {
