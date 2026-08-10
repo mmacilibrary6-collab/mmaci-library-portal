@@ -1329,9 +1329,11 @@ document.addEventListener('DOMContentLoaded', function () {
      E-BOOK MODAL
      Bootstrap-centered modal with one scrollable content area.
 ========================================================= -->
-<div class="modal fade ebook-folder-modal" id="ebookFolderModal" tabindex="-1" aria-labelledby="ebookFolderModalTitle" aria-hidden="true">
-    <div class="modal-dialog ebook-folder-modal-dialog">
-        <div class="modal-content ebook-folder-modal-content">
+<div id="ebookFolderModal" class="ebook-folder-overlay" hidden aria-hidden="true">
+    <button type="button" class="ebook-folder-overlay-backdrop" data-ebook-modal-close aria-label="Close overlay"></button>
+
+    <div class="ebook-folder-modal" role="dialog" aria-modal="true" aria-labelledby="ebookFolderModalTitle">
+        <div class="ebook-folder-modal-content">
             <div class="ebook-folder-modal-header">
                 <div>
                     <span>Electronic Book Collection</span>
@@ -1355,19 +1357,38 @@ document.addEventListener('DOMContentLoaded', function () {
 </div>
 
 <style>
-.ebook-folder-modal {
-    --bs-modal-margin: 0;
+.ebook-folder-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 1070;
+    display: grid;
+    place-items: center;
+    padding: 12px;
 }
 
-.ebook-folder-modal .modal-dialog {
+.ebook-folder-overlay[hidden] {
+    display: none;
+}
+
+.ebook-folder-overlay-backdrop {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    border: 0;
+    background: rgba(6, 18, 36, .58);
+}
+
+.ebook-folder-modal {
+    position: relative;
     width: min(650px, calc(100vw - 24px));
     max-width: none;
-    min-height: 100dvh;
-    margin: 0 auto;
-    padding: 12px;
+    max-height: calc(100dvh - 24px);
     display: flex;
     align-items: center;
     justify-content: center;
+    pointer-events: auto;
 }
 
 .ebook-folder-modal-content {
@@ -1506,11 +1527,12 @@ document.addEventListener('DOMContentLoaded', function () {
 }
 
 @media (max-width: 575.98px) {
-    .ebook-folder-modal .modal-dialog {
-        width: calc(100vw - 12px);
-        min-height: 100dvh;
+    .ebook-folder-overlay {
         padding: 6px;
-        margin: 0 auto;
+    }
+
+    .ebook-folder-modal {
+        width: calc(100vw - 12px);
     }
 
     .ebook-folder-modal-content {
@@ -1565,14 +1587,9 @@ document.addEventListener('DOMContentLoaded', function () {
     const bodyEl = document.getElementById('ebookFolderModalBody');
     const countEl = document.getElementById('ebookFolderModalCount');
 
-    if (!modalEl || !titleEl || !bodyEl || !countEl || typeof bootstrap === 'undefined') {
+    if (!modalEl || !titleEl || !bodyEl || !countEl) {
         return;
     }
-
-    const modal = bootstrap.Modal.getOrCreateInstance(modalEl, {
-        backdrop: true,
-        focus: true
-    });
 
     let lastFocused = null;
 
@@ -1589,7 +1606,10 @@ document.addEventListener('DOMContentLoaded', function () {
         bodyEl.innerHTML = panelBody ? panelBody.innerHTML : '';
         countEl.textContent = panelCount ? panelCount.textContent.trim() : '0 folders available';
 
-        modal.show();
+        modalEl.hidden = false;
+        modalEl.setAttribute('aria-hidden', 'false');
+        document.body.classList.add('modal-open');
+        document.body.style.overflow = 'hidden';
 
         window.setTimeout(function () {
             modalEl.querySelector('.ebook-folder-modal-close')?.focus();
@@ -1597,16 +1617,16 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function closeModal() {
-        modal.hide();
-    }
-
-    function cleanupModalState() {
+        modalEl.hidden = true;
+        modalEl.setAttribute('aria-hidden', 'true');
         document.body.classList.remove('modal-open');
-        document.body.style.removeProperty('padding-right');
+        document.body.style.removeProperty('overflow');
 
-        document.querySelectorAll('.modal-backdrop').forEach(function (backdrop) {
-            backdrop.remove();
-        });
+        bodyEl.innerHTML = '';
+
+        if (lastFocused) {
+            lastFocused.focus();
+        }
     }
 
     document.addEventListener('click', function (event) {
@@ -1629,22 +1649,14 @@ document.addEventListener('DOMContentLoaded', function () {
     }, true);
 
     modalEl.addEventListener('click', function (event) {
-        if (event.target === modalEl) {
+        if (event.target === modalEl || event.target.classList.contains('ebook-folder-overlay-backdrop')) {
             closeModal();
         }
     });
 
     document.addEventListener('keydown', function (event) {
-        if (event.key === 'Escape' && modalEl.classList.contains('show')) {
+        if (event.key === 'Escape' && !modalEl.hidden) {
             closeModal();
-        }
-    });
-
-    modalEl.addEventListener('hidden.bs.modal', function () {
-        bodyEl.innerHTML = '';
-        cleanupModalState();
-        if (lastFocused) {
-            lastFocused.focus();
         }
     });
 });
