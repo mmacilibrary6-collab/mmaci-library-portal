@@ -81,9 +81,10 @@
                     <article class="program-card">
                         <button
                             type="button"
-                            class="program-card-button"
-                            data-bs-toggle="modal"
-                            data-bs-target="#{{ $modalId }}"
+                            class="program-card-button program-folder-toggle"
+                            data-folder-target="{{ $modalId }}"
+                            aria-controls="{{ $modalId }}"
+                            aria-expanded="false"
                             aria-label="View folders for {{ $program->title }}">
 
                             <div class="program-image">
@@ -117,88 +118,117 @@
                     </article>
 
                     <div
-                        class="modal fade folder-modal"
+                        class="program-folder-panel"
                         id="{{ $modalId }}"
-                        tabindex="-1"
-                        aria-labelledby="{{ $modalId }}-label"
                         aria-hidden="true">
 
-                        <div class="modal-dialog modal-dialog-centered">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <div>
-                                        <span>Electronic Book Collection</span>
-                                        <h4 class="modal-title" id="{{ $modalId }}-label">
-                                            {{ $program->title }}
-                                        </h4>
-                                    </div>
+                        <div class="program-folder-panel-inner">
 
-                                    <button
-                                        type="button"
-                                        class="btn-close"
-                                        data-bs-dismiss="modal"
-                                        aria-label="Close">
-                                    </button>
+                            <div class="program-folder-panel-header">
+
+                                <div>
+                                    <span>Electronic Book Collection</span>
+                                    <h4>{{ $program->title }}</h4>
                                 </div>
 
-                                <div class="modal-body">
-                                    @if($program->folders->isNotEmpty())
-                                        <div class="folder-list">
-                                            @foreach(
-                                                $program->folders->sortBy(
-                                                    'title',
-                                                    SORT_NATURAL | SORT_FLAG_CASE
-                                                ) as $folder
-                                            )
-                                                <a
-                                                    href="{{ $folder->drive_link }}"
-                                                    target="_blank"
-                                                    rel="noopener noreferrer"
-                                                    class="folder-link">
+                                <button
+                                    type="button"
+                                    class="program-folder-panel-close"
+                                    data-folder-close="{{ $modalId }}"
+                                    aria-label="Close {{ $program->title }} folders">
+                                    <i class="bi bi-x-lg" aria-hidden="true"></i>
+                                </button>
 
-                                                    <span class="folder-link-copy">
-                                                        <strong>{{ $folder->title }}</strong>
-                                                        <small>
-                                                            {{ $folder->description
-                                                                ?: 'Open this electronic book folder' }}
-                                                        </small>
-                                                    </span>
+                            </div>
 
+                            <div class="program-folder-panel-body">
+
+                                @if($program->folders->isNotEmpty())
+
+                                    <div class="folder-list">
+
+                                        @foreach(
+                                            $program->folders->sortBy(
+                                                'title',
+                                                SORT_NATURAL | SORT_FLAG_CASE
+                                            ) as $folder
+                                        )
+
+                                            <a
+                                                href="{{ $folder->drive_link }}"
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                class="folder-link">
+
+                                                <span class="folder-link-copy">
+
+                                                    <strong>
+                                                        {{ $folder->title }}
+                                                    </strong>
+
+                                                    <small>
+                                                        {{ $folder->description
+                                                            ?: 'Open this electronic book folder' }}
+                                                    </small>
+
+                                                </span>
+
+                                                <span class="folder-link-action">
+                                                    Open
                                                     <i
                                                         class="bi bi-box-arrow-up-right"
                                                         aria-hidden="true">
                                                     </i>
-                                                </a>
-                                            @endforeach
-                                        </div>
-                                    @else
-                                        <div class="folder-empty">
-                                            <h5>No folders available</h5>
-                                            <p>
-                                                Electronic book folders for this
-                                                program have not been added yet.
-                                            </p>
-                                        </div>
-                                    @endif
-                                </div>
+                                                </span>
 
-                                <div class="modal-footer">
-                                    <span>
-                                        {{ $folderCount }}
-                                        {{ \Illuminate\Support\Str::plural('folder', $folderCount) }}
-                                        available
-                                    </span>
+                                            </a>
 
-                                    <button
-                                        type="button"
-                                        class="modal-close-button"
-                                        data-bs-dismiss="modal">
-                                        Close
-                                    </button>
-                                </div>
+                                        @endforeach
+
+                                    </div>
+
+                                @else
+
+                                    <div class="folder-empty">
+
+                                        <div class="folder-empty-icon">
+                                            <i class="bi bi-folder-x" aria-hidden="true"></i>
+                                        </div>
+
+                                        <h5>No folders available</h5>
+
+                                        <p>
+                                            Electronic book folders for this
+                                            program have not been added yet.
+                                        </p>
+
+                                    </div>
+
+                                @endif
+
                             </div>
+
+                            <div class="program-folder-panel-footer">
+
+                                <span>
+                                    {{ $folderCount }}
+                                    {{ \Illuminate\Support\Str::plural('folder', $folderCount) }}
+                                    available
+                                </span>
+
+                                <button
+                                    type="button"
+                                    class="program-folder-panel-close-text"
+                                    data-folder-close="{{ $modalId }}">
+                                    Close
+                                </button>
+
+                            </div>
+
                         </div>
+
                     </div>
+
                 </div>
             @empty
                 <div class="col-12">
@@ -1325,7 +1355,437 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 });
 </script>
+
+<!-- =========================================================
+     E-BOOK INLINE FOLDER BROWSER
+     No Bootstrap backdrop = no blur/frozen page.
+========================================================= -->
+<style>
+
+    .program-card-button {
+        cursor: pointer;
+    }
+
+    .program-card-button:focus-visible {
+        outline: 3px solid rgba(244, 180, 0, .55);
+        outline-offset: 3px;
+    }
+
+    .program-action {
+        width: 100%;
+        justify-content: space-between;
+        padding-top: 15px;
+        border-top: 1px solid var(--ebook-line);
+    }
+
+    .program-folder-toggle[aria-expanded="true"] .program-action {
+        color: var(--ebook-navy);
+    }
+
+    .program-folder-toggle[aria-expanded="true"] .program-action i {
+        transform: rotate(90deg);
+    }
+
+    .program-folder-panel {
+        display: grid;
+        grid-template-rows: 0fr;
+        margin-top: 0;
+        overflow: hidden;
+        opacity: 0;
+        transition:
+            grid-template-rows .35s cubic-bezier(.22, 1, .36, 1),
+            opacity .25s ease,
+            margin-top .35s ease;
+    }
+
+    .program-folder-panel.is-open {
+        grid-template-rows: 1fr;
+        margin-top: 14px;
+        opacity: 1;
+    }
+
+    .program-folder-panel-inner {
+        min-height: 0;
+        overflow: hidden;
+        background: #fff;
+        border: 1px solid var(--ebook-line);
+        border-radius: 18px;
+        box-shadow: 0 18px 42px rgba(11, 46, 89, .11);
+    }
+
+    .program-folder-panel-header {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 16px;
+        padding: 18px;
+        color: #fff;
+        background:
+            radial-gradient(circle at 100% 0, rgba(244, 180, 0, .17), transparent 34%),
+            linear-gradient(135deg, var(--ebook-navy), var(--ebook-blue));
+    }
+
+    .program-folder-panel-header > div {
+        min-width: 0;
+    }
+
+    .program-folder-panel-header span {
+        display: block;
+        margin-bottom: 4px;
+        color: var(--ebook-gold);
+        font-size: 8px;
+        font-weight: 800;
+        letter-spacing: .1em;
+        text-transform: uppercase;
+    }
+
+    .program-folder-panel-header h4 {
+        margin: 0;
+        color: #fff;
+        font-size: 17px;
+        font-weight: 800;
+        line-height: 1.35;
+        overflow-wrap: anywhere;
+    }
+
+    .program-folder-panel-close {
+        width: 36px;
+        height: 36px;
+        flex: 0 0 36px;
+        display: grid;
+        place-items: center;
+        padding: 0;
+        color: #fff;
+        background: rgba(255, 255, 255, .12);
+        border: 1px solid rgba(255, 255, 255, .2);
+        border-radius: 10px;
+        cursor: pointer;
+    }
+
+    .program-folder-panel-body {
+        max-height: 380px;
+        padding: 12px;
+        overflow-y: auto;
+        overflow-x: hidden;
+        background: #f5f7fb;
+        overscroll-behavior: contain;
+        scrollbar-width: thin;
+    }
+
+    .folder-list {
+        display: grid;
+        gap: 9px;
+    }
+
+    .folder-link {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        align-items: center;
+        gap: 12px;
+        min-width: 0;
+        padding: 13px 14px;
+        color: inherit;
+        background: #fff;
+        border: 1px solid #dfe6ef;
+        border-radius: 11px;
+        text-decoration: none;
+        transition:
+            transform .2s ease,
+            border-color .2s ease,
+            box-shadow .2s ease;
+    }
+
+    .folder-link:hover {
+        color: inherit;
+        transform: translateY(-2px);
+        border-color: rgba(24, 75, 140, .3);
+        box-shadow: 0 9px 22px rgba(11, 46, 89, .09);
+    }
+
+    .folder-link-copy {
+        min-width: 0;
+    }
+
+    .folder-link strong {
+        display: block;
+        color: var(--ebook-navy);
+        font-size: 13px;
+        font-weight: 800;
+        line-height: 1.45;
+        white-space: normal;
+        overflow-wrap: anywhere;
+    }
+
+    .folder-link small {
+        display: -webkit-box;
+        margin-top: 3px;
+        overflow: hidden;
+        color: var(--ebook-muted);
+        font-size: 10px;
+        line-height: 1.5;
+        white-space: normal;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 2;
+    }
+
+    .folder-link-action {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        flex: 0 0 auto;
+        padding: 8px 10px;
+        color: var(--ebook-blue);
+        background: rgba(24, 75, 140, .08);
+        border-radius: 8px;
+        font-size: 10px;
+        font-weight: 800;
+    }
+
+    .folder-empty {
+        padding: 34px 18px;
+        text-align: center;
+        background: #fff;
+        border: 1px solid #dfe6ef;
+        border-radius: 12px;
+    }
+
+    .folder-empty-icon {
+        width: 52px;
+        height: 52px;
+        display: grid;
+        place-items: center;
+        margin: 0 auto 12px;
+        color: var(--ebook-blue);
+        background: rgba(244, 180, 0, .18);
+        border-radius: 14px;
+        font-size: 22px;
+    }
+
+    .folder-empty h5 {
+        margin: 0 0 5px;
+        color: var(--ebook-navy);
+        font-size: 16px;
+        font-weight: 800;
+    }
+
+    .folder-empty p {
+        margin: 0;
+        color: var(--ebook-muted);
+        font-size: 11px;
+        line-height: 1.6;
+    }
+
+    .program-folder-panel-footer {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 10px 13px;
+        background: #fff;
+        border-top: 1px solid var(--ebook-line);
+    }
+
+    .program-folder-panel-footer > span {
+        color: #7b8797;
+        font-size: 10px;
+        font-weight: 600;
+    }
+
+    .program-folder-panel-close-text {
+        padding: 8px 13px;
+        color: #fff;
+        background: var(--ebook-navy);
+        border: 0;
+        border-radius: 8px;
+        font-size: 10px;
+        font-weight: 700;
+        cursor: pointer;
+    }
+
+    @media (min-width: 992px) {
+        .program-item.folder-panel-open {
+            width: 100%;
+            flex: 0 0 100%;
+            max-width: 100%;
+        }
+
+        .program-item.folder-panel-open .program-card {
+            display: grid;
+            grid-template-columns: 290px minmax(0, 1fr);
+        }
+
+        .program-item.folder-panel-open .program-card-button {
+            display: contents;
+        }
+
+        .program-item.folder-panel-open .program-image {
+            height: 100%;
+            min-height: 250px;
+        }
+
+        .program-item.folder-panel-open .program-content {
+            min-height: 250px;
+        }
+
+        .program-item.folder-panel-open .program-folder-panel {
+            grid-column: 1 / -1;
+        }
+
+        .program-item.folder-panel-open .program-folder-panel-body {
+            max-height: 430px;
+        }
+    }
+
+    @media (max-width: 991.98px) {
+        .program-item.folder-panel-open {
+            width: 100%;
+            flex: 0 0 100%;
+            max-width: 100%;
+        }
+    }
+
+    @media (max-width: 575.98px) {
+        .program-folder-panel-header {
+            padding: 15px;
+        }
+
+        .program-folder-panel-header h4 {
+            font-size: 15px;
+        }
+
+        .program-folder-panel-body {
+            max-height: 55vh;
+            padding: 9px;
+        }
+
+        .folder-link {
+            grid-template-columns: minmax(0, 1fr);
+            gap: 8px;
+            padding: 11px;
+        }
+
+        .folder-link-action {
+            width: 100%;
+            justify-content: center;
+        }
+
+        .program-folder-panel-footer {
+            align-items: stretch;
+            flex-direction: column;
+        }
+
+        .program-folder-panel-close-text {
+            width: 100%;
+        }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .program-folder-panel,
+        .folder-link {
+            transition: none !important;
+        }
+    }
+
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+
+    const toggles = document.querySelectorAll('.program-folder-toggle');
+
+    function closePanel(panel, toggle) {
+        if (!panel) return;
+
+        panel.classList.remove('is-open');
+        panel.setAttribute('aria-hidden', 'true');
+
+        const item = panel.closest('.program-item');
+        if (item) {
+            item.classList.remove('folder-panel-open');
+        }
+
+        if (toggle) {
+            toggle.setAttribute('aria-expanded', 'false');
+        }
+    }
+
+    function closeAllExcept(targetPanel) {
+        document.querySelectorAll('.program-folder-panel.is-open').forEach(function (panel) {
+            if (panel === targetPanel) return;
+
+            const toggle = document.querySelector(
+                '.program-folder-toggle[data-folder-target="' + panel.id + '"]'
+            );
+
+            closePanel(panel, toggle);
+        });
+    }
+
+    toggles.forEach(function (toggle) {
+        toggle.addEventListener('click', function () {
+
+            const panelId = toggle.getAttribute('data-folder-target');
+            const panel = document.getElementById(panelId);
+
+            if (!panel) return;
+
+            const isOpen = panel.classList.contains('is-open');
+
+            if (isOpen) {
+                closePanel(panel, toggle);
+                return;
+            }
+
+            closeAllExcept(panel);
+
+            panel.classList.add('is-open');
+            panel.setAttribute('aria-hidden', 'false');
+            toggle.setAttribute('aria-expanded', 'true');
+
+            const item = panel.closest('.program-item');
+            if (item) {
+                item.classList.add('folder-panel-open');
+            }
+
+            setTimeout(function () {
+                panel.scrollIntoView({
+                    behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches
+                        ? 'auto'
+                        : 'smooth',
+                    block: 'nearest'
+                });
+            }, 120);
+        });
+    });
+
+    document.querySelectorAll('[data-folder-close]').forEach(function (button) {
+        button.addEventListener('click', function () {
+
+            const panelId = button.getAttribute('data-folder-close');
+            const panel = document.getElementById(panelId);
+
+            const toggle = document.querySelector(
+                '.program-folder-toggle[data-folder-target="' + panelId + '"]'
+            );
+
+            closePanel(panel, toggle);
+        });
+    });
+
+    /*
+     * Clear any stale Bootstrap state left by the old modal implementation.
+     */
+    document.querySelectorAll('.modal-backdrop').forEach(function (backdrop) {
+        backdrop.remove();
+    });
+
+    document.body.classList.remove('modal-open');
+    document.body.style.removeProperty('overflow');
+    document.body.style.removeProperty('padding-right');
+});
+</script>
+
+
 @include('components.lisa-chatbox')
 
 @endsection
-
