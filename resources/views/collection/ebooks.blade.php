@@ -1891,13 +1891,19 @@ document.addEventListener('DOMContentLoaded', function () {
             11000;
 
         display:
-            grid;
+            flex;
 
-        place-items:
+        align-items:
+            center;
+
+        justify-content:
             center;
 
         padding:
             18px;
+
+        box-sizing:
+            border-box;
 
         visibility:
             hidden;
@@ -1982,6 +1988,9 @@ document.addEventListener('DOMContentLoaded', function () {
             calc(
                 100dvh - 36px
             );
+
+        align-self:
+            center;
 
         display:
             flex;
@@ -3125,10 +3134,11 @@ document.addEventListener(
             padding: 8px !important;
         }
 
-        .ebook-folder-modal-dialog {
-            width: min(620px, calc(100vw - 16px)) !important;
-            max-height: calc(100dvh - 16px) !important;
-        }
+    .ebook-folder-modal-dialog {
+        width: min(620px, calc(100vw - 16px)) !important;
+        max-height: calc(100dvh - 16px) !important;
+        align-self: center !important;
+    }
 
         .ebook-folder-modal-header {
             padding: 14px 16px !important;
@@ -3198,6 +3208,7 @@ document.addEventListener(
             max-height: calc(100dvh - 12px) !important;
 
             border-radius: 14px !important;
+            align-self: center !important;
         }
 
         .ebook-folder-modal-header {
