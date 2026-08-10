@@ -3065,25 +3065,28 @@ document.addEventListener(
 <style>
 
     .ebook-folder-modal {
-        padding: 14px !important;
+        position: fixed !important;
+        inset: 0 !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        padding: 12px !important;
+        box-sizing: border-box !important;
         overflow: hidden !important;
     }
 
     .ebook-folder-modal-dialog {
-        width: min(650px, calc(100vw - 28px)) !important;
-
-        /*
-         * Never allow the modal shell to exceed the visible viewport.
-         */
+        position: relative !important;
+        top: auto !important;
+        left: auto !important;
+        transform: none !important;
+        margin: 0 !important;
+        width: min(650px, calc(100vw - 24px)) !important;
         height: auto !important;
-        max-height: calc(100dvh - 28px) !important;
-
+        max-height: calc(100dvh - 24px) !important;
         display: grid !important;
         grid-template-rows: auto minmax(0, 1fr) auto !important;
-
         overflow: hidden !important;
-
-        margin: 0 !important;
     }
 
     .ebook-folder-modal-header {
@@ -3093,16 +3096,11 @@ document.addEventListener(
     }
 
     .ebook-folder-modal-body {
-        /*
-         * This is now the ONLY scrolling area.
-         */
         min-height: 0 !important;
         height: auto !important;
         max-height: none !important;
-
         overflow-y: auto !important;
         overflow-x: hidden !important;
-
         scrollbar-gutter: stable !important;
         overscroll-behavior: contain !important;
     }
@@ -3131,13 +3129,10 @@ document.addEventListener(
             padding: 8px !important;
         }
 
-    .ebook-folder-modal-dialog {
-        width: min(620px, calc(100vw - 16px)) !important;
-        max-height: calc(100dvh - 16px) !important;
-        top: 50% !important;
-        left: 50% !important;
-        transform: translate(-50%, -50%) scale(1) !important;
-    }
+        .ebook-folder-modal-dialog {
+            width: min(620px, calc(100vw - 16px)) !important;
+            max-height: calc(100dvh - 16px) !important;
+        }
 
         .ebook-folder-modal-header {
             padding: 14px 16px !important;
@@ -3205,11 +3200,7 @@ document.addEventListener(
         .ebook-folder-modal-dialog {
             width: calc(100vw - 12px) !important;
             max-height: calc(100dvh - 12px) !important;
-
             border-radius: 14px !important;
-            top: 50% !important;
-            left: 50% !important;
-            transform: translate(-50%, -50%) scale(1) !important;
         }
 
         .ebook-folder-modal-header {
