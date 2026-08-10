@@ -15,9 +15,7 @@
 
             <div class="arrivals-hero-content" data-aos="fade-up">
 
-                <span class="arrivals-eyebrow">
-                    MMACI Library
-                </span>
+               
 
                 <h1>
                     New Arrivals
@@ -2220,6 +2218,21 @@ document.addEventListener(
     'DOMContentLoaded',
     function () {
 
+        /* =====================================================
+           MOBILE-SAFE MODAL PLACEMENT
+           Keep the modal outside transformed/AOS containers.
+        ====================================================== */
+
+        const arrivalViewerElement =
+            document.getElementById('arrivalViewer');
+
+        if (
+            arrivalViewerElement &&
+            arrivalViewerElement.parentElement !== document.body
+        ) {
+            document.body.appendChild(arrivalViewerElement);
+        }
+
 
         /* =====================================================
            ELEMENTS
@@ -2701,7 +2714,9 @@ document.addEventListener(
 
                 card.addEventListener(
                     'click',
-                    function () {
+                    function (event) {
+
+                        event.preventDefault();
 
                         openViewer(
                             card,
@@ -3099,7 +3114,139 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 });
 </script>
+
+
+<style>
+/* =============================================================
+   FINAL MOBILE NEW-ARRIVALS MODAL FIX
+============================================================= */
+
+#arrivalViewer {
+    position: fixed !important;
+    inset: 0 !important;
+    z-index: 99999 !important;
+}
+
+#arrivalViewer.is-open {
+    display: flex !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    pointer-events: auto !important;
+}
+
+#arrivalViewer .book-modal-backdrop {
+    position: absolute !important;
+    inset: 0 !important;
+    z-index: 0 !important;
+    pointer-events: auto !important;
+}
+
+#arrivalViewer .book-modal-dialog {
+    position: relative !important;
+    z-index: 1 !important;
+    pointer-events: auto !important;
+}
+
+.arrival-card-button {
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+}
+
+@media (max-width: 650px) {
+
+    #arrivalViewer {
+        width: 100vw !important;
+        height: 100dvh !important;
+        min-height: 100dvh !important;
+
+        align-items: flex-end !important;
+        justify-content: center !important;
+
+        padding: 8px !important;
+
+        overflow: hidden !important;
+    }
+
+    #arrivalViewer .book-modal-dialog {
+        width: 100% !important;
+        max-width: 100% !important;
+
+        height: auto !important;
+        max-height: calc(100dvh - 16px) !important;
+
+        display: block !important;
+
+        overflow-x: hidden !important;
+        overflow-y: auto !important;
+
+        border-radius: 18px !important;
+
+        -webkit-overflow-scrolling: touch;
+        overscroll-behavior: contain;
+    }
+
+    #arrivalViewer .book-modal-cover {
+        width: 100% !important;
+        height: 245px !important;
+        min-height: 245px !important;
+
+        padding: 18px 42px 16px !important;
+
+        overflow: hidden !important;
+    }
+
+    #arrivalViewer .book-modal-cover img {
+        width: auto !important;
+        max-width: 170px !important;
+        max-height: 215px !important;
+
+        object-fit: contain !important;
+    }
+
+    #arrivalViewer .book-modal-content {
+        width: 100% !important;
+        max-height: none !important;
+
+        padding: 20px 17px 18px !important;
+
+        overflow: visible !important;
+    }
+
+    #arrivalViewer .book-modal-close {
+        position: absolute !important;
+        top: 12px !important;
+        right: 12px !important;
+        z-index: 50 !important;
+
+        width: 36px !important;
+        height: 36px !important;
+
+        pointer-events: auto !important;
+        touch-action: manipulation;
+    }
+
+    #arrivalViewer .book-information-grid {
+        grid-template-columns: 1fr !important;
+    }
+
+    #arrivalViewer .book-date-item {
+        grid-column: auto !important;
+    }
+}
+
+@media (max-width: 400px) {
+
+    #arrivalViewer .book-modal-cover {
+        height: 220px !important;
+        min-height: 220px !important;
+    }
+
+    #arrivalViewer .book-modal-cover img {
+        max-height: 190px !important;
+    }
+}
+</style>
+
 @include('components.lisa-chatbox')
 
 @endsection
-

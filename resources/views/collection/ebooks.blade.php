@@ -187,11 +187,7 @@
                                             available
                                         </span>
 
-                                        <button type="button"
-                                            class="modal-close-button"
-                                            data-bs-dismiss="modal">
-                                            Close
-                                        </button>
+                                        
                                     </div>
                                 </div>
                             </div>

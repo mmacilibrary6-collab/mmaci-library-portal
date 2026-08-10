@@ -72,6 +72,12 @@
                     </li>
 
                     <li>
+                        <a href="{{ route('services.facilities') }}">
+                            Facilities
+                        </a>
+                    </li>
+
+                    <li>
                         <a href="{{ route('more.gallery') }}">
                             Gallery
                         </a>
@@ -98,6 +104,30 @@
                     </li>
 
                     <li>
+                        <a href="{{ route('collection.theses') }}">
+                            Thesis &amp; Dissertation
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="{{ route('collection.periodicals') }}">
+                            Periodicals
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="{{ route('collection.donated-books') }}">
+                            Donated Books
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="{{ route('collection.subscribed-database') }}">
+                            Subscribed Databases
+                        </a>
+                    </li>
+
+                    <li>
                         <a href="{{ route('collection.open-access') }}">
                             Open Access
                         </a>
@@ -118,6 +148,18 @@
                     <li>
                         <a href="{{ route('more.online-book-recommendation') }}">
                             Online Book Recommendation
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="{{ route('more.reserve-avr') }}">
+                            Reserve AVR
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="{{ route('collection.new-arrivals') }}">
+                            New Arrivals
                         </a>
                     </li>
 

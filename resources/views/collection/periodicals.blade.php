@@ -118,7 +118,7 @@
                                 </div>
                                 <div class="modal-footer">
                                     <span>{{ $folderCount }} {{ \Illuminate\Support\Str::plural('folder', $folderCount) }} available</span>
-                                    <button type="button" class="modal-close-button" data-bs-dismiss="modal">Close</button>
+                                    
                                 </div>
                             </div>
                         </div>
