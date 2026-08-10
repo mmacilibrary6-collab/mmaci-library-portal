@@ -49,12 +49,15 @@
                 position: fixed !important;
                 right: 24px !important;
                 bottom: 24px !important;
+                top: auto !important;
+                left: auto !important;
                 z-index: 2147483000 !important;
                 width: auto !important;
                 height: auto !important;
                 margin: 0 !important;
                 padding: 0 !important;
                 isolation: isolate !important;
+                transform: none !important;
                 pointer-events: auto !important;
             }
 
@@ -106,6 +109,8 @@
                 position: fixed;
                 right: 24px;
                 bottom: 92px;
+                top: auto;
+                left: auto;
                 width: 380px;
                 height: 520px;
                 max-width: calc(100vw - 32px);

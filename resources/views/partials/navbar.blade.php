@@ -218,6 +218,21 @@
 
                         </li>
 
+
+                        <!-- New Arrivals -->
+
+                        <li>
+
+                            <a
+                                class="dropdown-item {{ request()->routeIs('collection.new-arrivals') ? 'active' : '' }}"
+                                href="{{ route('collection.new-arrivals') }}">
+
+                                New Arrivals
+
+                            </a>
+
+                        </li>
+
                     </ul>
 
                 </li>
@@ -290,21 +305,6 @@
                     </a>
 
                     <ul class="dropdown-menu shadow border-0 rounded-4">
-
-
-                        <!-- New Arrivals -->
-
-                        <li>
-
-                            <a
-                                class="dropdown-item {{ request()->routeIs('collection.new-arrivals') ? 'active' : '' }}"
-                                href="{{ route('collection.new-arrivals') }}">
-
-                                New Arrivals
-
-                            </a>
-
-                        </li>
 
 
                         <!-- Ask the Librarian -->
