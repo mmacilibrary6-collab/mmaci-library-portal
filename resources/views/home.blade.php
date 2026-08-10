@@ -114,7 +114,7 @@
     <div class="container">
         <header class="section-heading">
             <span class="eyebrow">Latest from the Library</span>
-            <h2>Library updates</h2>
+            <h2 id="library-updates-heading">Library updates</h2>
             <p>
                 Stay informed with announcements, highlights, and new
                 moments from the MMACI Library Services Office.
@@ -122,7 +122,7 @@
         </header>
 
         @if(($libraryUpdates ?? collect())->isNotEmpty())
-            <div class="library-updates-scroll" aria-label="Library updates">
+            <section class="library-updates-scroll" aria-labelledby="library-updates-heading">
                 @foreach($libraryUpdates as $update)
                     <button
                         type="button"
@@ -158,7 +158,7 @@
                         </div>
                     </button>
                 @endforeach
-            </div>
+            </section>
         @else
             <div class="empty-state empty-state-wide">
                 <h4>No library updates yet</h4>
@@ -172,7 +172,7 @@
     <div class="container">
         <header class="section-heading">
             <span class="eyebrow">Recently Added</span>
-            <h2>New arrivals</h2>
+            <h2 id="new-arrivals-heading">New arrivals</h2>
             <p>
                 Discover the newest printed books and learning resources
                 available in the library.
@@ -197,7 +197,7 @@
             </div>
         @endif
 
-        <div class="arrivals-scroll" aria-label="New arrivals">
+        <section class="arrivals-scroll" aria-labelledby="new-arrivals-heading">
             @forelse($arrivals ?? [] as $book)
                 <div class="arrival-item" data-aos="fade-up">
                     <button
@@ -240,7 +240,7 @@
                     </div>
                 </div>
             @endforelse
-        </div>
+        </section>
 
         @if(($arrivals ?? collect())->isNotEmpty())
             <div class="arrival-no-results d-none" id="arrivalNoResults">
@@ -344,7 +344,7 @@
                         academic resources for students, faculty, and staff.
                     </p>
 
-                    <a href="{{ url('/about') }}" class="text-action">
+                    <a href="{{ url('/about') }}" class="text-action" aria-label="Learn more about the library">
                         Learn More
                         <i class="bi bi-arrow-right" aria-hidden="true"></i>
                     </a>
@@ -404,7 +404,7 @@
                         Borrow printed books and learning materials for
                         academic and research use.
                     </p>
-                    <a href="{{ url('/services') }}">
+                    <a href="{{ url('/services') }}" aria-label="Learn more about book borrowing services">
                         Learn More
                         <i class="bi bi-arrow-right" aria-hidden="true"></i>
                     </a>

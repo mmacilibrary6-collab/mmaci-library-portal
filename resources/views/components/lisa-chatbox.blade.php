@@ -26,7 +26,7 @@
 
         <div class="lisa-body">
             <div id="lisa-chat-messages" aria-live="polite"></div>
-            <div id="lisa-chat-chips" aria-label="Suggested questions"></div>
+            <div id="lisa-chat-chips" role="region" aria-label="Suggested questions"></div>
         </div>
 
         <form id="lisa-chat-form" autocomplete="off">
@@ -365,14 +365,6 @@
                 line-height: 1;
             }
 
-
-
-            #lisa-chatbot-widget #lisa-chat-form button:disabled {
-                cursor: not-allowed;
-                opacity: .55;
-                box-shadow: none;
-            }
-
             #lisa-chatbot-widget .sr-only {
                 position: absolute;
                 width: 1px;
@@ -463,10 +455,10 @@
                     const storageKey = 'lisa.chat.history';
                     const openKey = 'lisa.chat.open';
                     const quickReplies = [
-                        'What services does the library offer?',
-                        'How can I access the E-books?',
-                        'What are the library hours?',
-                        'How can I contact the librarian?'
+                        'Where can I find E-books for my program?',
+                        'What services and facilities are available?',
+                        'How do I contact the librarian?',
+                        'How do I reserve the AVR?'
                     ];
 
                     const welcomeMessage = {
@@ -532,7 +524,6 @@
                             chip.textContent = item;
                             chip.addEventListener('click', () => {
                                 input.value = item;
-                                input.focus();
                                 form.requestSubmit();
                             });
                             chips.appendChild(chip);
@@ -563,29 +554,23 @@
 
                         isSending = true;
                         const submitButton = form.querySelector('button[type="submit"]');
-                        submitButton.disabled = true;
-                        input.disabled = true;
-
-                        const cleanText = String(text || '').trim();
-
-                        const recentHistory = history
-                            .filter((entry) => entry.text && entry.text !== 'Lisa is thinking…')
+                        const requestHistory = history
+                            .filter((entry) => entry.text && !entry.id)
                             .slice(-10)
                             .map((entry) => ({
                                 role: entry.role,
                                 text: entry.text
                             }));
 
-                        history.push({ role: 'user', text: cleanText });
+                        history.push({ role: 'user', text });
                         renderMessages();
                         saveHistory();
 
+                        input.disabled = true;
+                        if (submitButton) submitButton.disabled = true;
+
                         const typingId = `typing-${Date.now()}`;
-                        history.push({
-                            role: 'assistant',
-                            text: 'Lisa is thinking…',
-                            id: typingId
-                        });
+                        history.push({ role: 'assistant', text: 'Lisa is checking the library system…', id: typingId });
                         renderMessages();
 
                         try {
@@ -597,34 +582,21 @@
                                     'X-CSRF-TOKEN': csrfToken
                                 },
                                 body: JSON.stringify({
-                                    message: cleanText,
-                                    history: recentHistory
+                                    message: text,
+                                    history: requestHistory
                                 })
                             });
 
-                            if (!response.ok) {
-                                throw new Error(`Request failed with status ${response.status}`);
-                            }
-
                             const data = await response.json();
-                            history = history.filter((entry) => entry.id !== typingId);
 
-                            let answer = String(
-                                data.answer ||
-                                'I’m sorry, I could not find an answer right now.'
-                            ).trim();
-
-                            const previousAssistantReplies = history
-                                .filter((entry) => entry.role === 'assistant')
-                                .map((entry) => String(entry.text).trim().toLowerCase());
-
-                            if (previousAssistantReplies.includes(answer.toLowerCase())) {
-                                answer = 'I may have already mentioned that. Which specific part would you like me to explain further?';
+                            if (!response.ok) {
+                                throw new Error(data.message || 'Request failed.');
                             }
 
+                            history = history.filter((entry) => entry.id !== typingId);
                             history.push({
                                 role: 'assistant',
-                                text: answer,
+                                text: data.answer || 'I’m sorry, I could not find an answer right now.',
                                 pageUrl: data.pageUrl || null,
                                 pageLabel: data.title ? `Open ${data.title}` : 'Open page'
                             });
@@ -636,14 +608,14 @@
                             history = history.filter((entry) => entry.id !== typingId);
                             history.push({
                                 role: 'assistant',
-                                text: 'Sorry, I could not reach the library knowledge service. Please try again in a moment.'
+                                text: 'Sorry, I could not check the library information right now. Please try again.'
                             });
                             renderMessages();
                             saveHistory();
                         } finally {
                             isSending = false;
-                            submitButton.disabled = false;
                             input.disabled = false;
+                            if (submitButton) submitButton.disabled = false;
                             input.focus();
                         }
                     }

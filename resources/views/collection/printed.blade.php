@@ -548,10 +548,11 @@
             </button>
 
             <img
-                src=""
+                src="{{ asset('images/readingarea.jpg') }}"
                 id="modalCollectionImage"
                 class="modal-collection-image"
-                alt="Collection preview">
+                alt="Collection preview"
+                onerror="this.onerror=null;this.src='{{ asset('images/readingarea.jpg') }}';">
 
             <div class="modal-body p-4 p-md-5">
 

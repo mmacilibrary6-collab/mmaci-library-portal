@@ -4,7 +4,7 @@
 
 @section('content')
 
-<main class="about-page">
+<div class="about-page">
 
     <!-- Hero -->
     <section class="about-hero">
@@ -293,7 +293,7 @@
         </div>
     </section>
 
-</main>
+</div>
 
 <style>
     :root {

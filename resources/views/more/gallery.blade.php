@@ -112,7 +112,7 @@
             </button>
 
             <div class="gallery-modal-image">
-                <img src="" id="galleryModalImage" alt="Gallery preview">
+                <img src="{{ asset('images/readingarea.jpg') }}" id="galleryModalImage" alt="Gallery preview" onerror="this.onerror=null;this.src='{{ asset('images/readingarea.jpg') }}';">
                 <button type="button" class="gallery-modal-nav gallery-modal-prev" id="galleryModalPrev" aria-label="Previous image">
                     <i class="bi bi-chevron-left"></i>
                 </button>
