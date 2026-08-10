@@ -3092,7 +3092,159 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 });
 </script>
+
+<!-- =========================================================
+     BOOK MODAL VIEWPORT / CLIPPING FIX
+========================================================= -->
+<style>
+    /*
+     * The global app layout animates <main> using transform.
+     * A transformed ancestor changes how position: fixed behaves,
+     * which is why the modal can appear pushed down / clipped.
+     */
+    main {
+        transform: none !important;
+    }
+
+    .book-modal {
+        position: fixed !important;
+        inset: 0 !important;
+        width: 100vw !important;
+        height: 100vh !important;
+        height: 100dvh !important;
+
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+
+        padding:
+            clamp(12px, 2.5vh, 24px)
+            clamp(12px, 2vw, 24px) !important;
+
+        overflow-y: auto !important;
+        overflow-x: hidden !important;
+
+        z-index: 99999 !important;
+        isolation: isolate;
+    }
+
+    .book-modal-backdrop {
+        position: fixed !important;
+        inset: 0 !important;
+        width: 100vw !important;
+        height: 100vh !important;
+        height: 100dvh !important;
+    }
+
+    .book-modal-dialog {
+        position: relative !important;
+        width: min(850px, 100%) !important;
+        max-height: calc(100dvh - 48px) !important;
+        margin: auto !important;
+        overflow: hidden !important;
+    }
+
+    .book-modal-content {
+        max-height: calc(100dvh - 48px) !important;
+        overflow-y: auto !important;
+        overscroll-behavior: contain;
+        scrollbar-gutter: stable;
+    }
+
+    .book-modal-cover {
+        min-height: 0 !important;
+        height: auto;
+    }
+
+    @media (min-width: 651px) {
+        .book-modal-cover {
+            min-height: 100% !important;
+        }
+
+        .book-modal-cover img {
+            max-height: min(400px, calc(100dvh - 150px)) !important;
+        }
+    }
+
+    @media (min-width: 651px) and (max-height: 760px) {
+        .book-modal {
+            padding-top: 14px !important;
+            padding-bottom: 14px !important;
+        }
+
+        .book-modal-dialog {
+            max-height: calc(100dvh - 28px) !important;
+            grid-template-columns: 240px minmax(0, 1fr) !important;
+        }
+
+        .book-modal-content {
+            max-height: calc(100dvh - 28px) !important;
+            padding: 24px 26px 20px !important;
+        }
+
+        .book-modal-cover {
+            padding: 22px !important;
+        }
+
+        .book-modal-cover img {
+            max-width: 190px !important;
+            max-height: calc(100dvh - 105px) !important;
+        }
+
+        .book-information-grid {
+            margin: 18px 0 !important;
+        }
+
+        .book-modal-footer {
+            padding-top: 18px !important;
+        }
+    }
+
+    @media (max-width: 650px) {
+        .book-modal {
+            align-items: flex-end !important;
+            padding: 10px !important;
+        }
+
+        .book-modal-dialog {
+            width: 100% !important;
+            max-height: calc(100dvh - 20px) !important;
+            display: block !important;
+            overflow-y: auto !important;
+            overflow-x: hidden !important;
+            border-radius: 20px !important;
+        }
+
+        .book-modal-cover {
+            min-height: 0 !important;
+            height: 260px !important;
+            padding: 20px 44px 16px !important;
+        }
+
+        .book-modal-cover img {
+            width: auto !important;
+            max-width: 175px !important;
+            max-height: 225px !important;
+        }
+
+        .book-modal-content {
+            max-height: none !important;
+            overflow: visible !important;
+        }
+    }
+
+    @media (max-width: 400px) {
+        .book-modal-cover {
+            height: 235px !important;
+        }
+
+        .book-modal-cover img {
+            max-height: 200px !important;
+        }
+    }
+</style>
+
+
 @include('components.lisa-chatbox')
 
 @endsection
-
