@@ -666,6 +666,58 @@ document.addEventListener('DOMContentLoaded', function () {
         @endforeach
     ];
 
+    function formatEventDateRange(event) {
+        if (!event || !event.start) {
+            return 'Date not specified';
+        }
+
+        const options = {
+            weekday: 'long',
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        };
+
+        const startDate = event.start.toLocaleDateString('en-PH', options);
+
+        if (event.end) {
+            const endDate = new Date(event.end.getTime() - 86400000);
+            return `${startDate} — ${endDate.toLocaleDateString('en-PH', options)}`;
+        }
+
+        return startDate;
+    }
+
+    function openEventModal(event) {
+        const modalElement = document.getElementById('eventDetailsModal');
+
+        if (!modalElement) {
+            return;
+        }
+
+        const properties = event.extendedProps || {};
+
+        document.getElementById('eventModalTitle').textContent =
+            event.title || 'Untitled Event';
+        document.getElementById('eventModalDate').textContent =
+            formatEventDateRange(event);
+        document.getElementById('eventModalLocation').textContent =
+            properties.location || 'Location not specified';
+        document.getElementById('eventModalDescription').textContent =
+            properties.description || 'No description provided.';
+
+        if (typeof bootstrap !== 'undefined' && bootstrap.Modal) {
+            bootstrap.Modal.getOrCreateInstance(modalElement).show();
+            return;
+        }
+
+        modalElement.hidden = false;
+        modalElement.classList.add('show');
+        modalElement.style.display = 'block';
+        modalElement.setAttribute('aria-hidden', 'false');
+        document.body.classList.add('modal-open');
+    }
+
     const calendar = new FullCalendar.Calendar(calendarElement, {
         initialView: 'dayGridMonth',
         height: 'auto',
@@ -693,48 +745,26 @@ document.addEventListener('DOMContentLoaded', function () {
 
         eventClick: function (info) {
             info.jsEvent.preventDefault();
+            openEventModal(info.event);
+        },
 
-            const event = info.event;
-            const properties = event.extendedProps;
-            const formattedDate = event.start
-                ? (() => {
-                    const options = {
-                        weekday: 'long',
-                        year: 'numeric',
-                        month: 'long',
-                        day: 'numeric'
-                    };
+        dateClick: function (info) {
+            const clickedTime = info.date.getTime();
+            const event = calendar.getEvents().find(function (calendarEvent) {
+                if (!calendarEvent.start) {
+                    return false;
+                }
 
-                    const startDate = event.start.toLocaleDateString('en-PH', options);
+                const startTime = calendarEvent.start.getTime();
+                const endTime = calendarEvent.end
+                    ? calendarEvent.end.getTime() - 86400000
+                    : startTime;
 
-                    if (event.end) {
-                        const endDate = new Date(event.end.getTime() - 86400000);
-                        return `${startDate} — ${endDate.toLocaleDateString('en-PH', options)}`;
-                    }
+                return clickedTime >= startTime && clickedTime <= endTime;
+            });
 
-                    return startDate;
-                })()
-                : 'Date not specified';
-
-            document.getElementById('eventModalTitle').textContent =
-                event.title || 'Untitled Event';
-            document.getElementById('eventModalDate').textContent =
-                formattedDate;
-            document.getElementById('eventModalLocation').textContent =
-                properties.location || 'Location not specified';
-            document.getElementById('eventModalDescription').textContent =
-                properties.description || 'No description provided.';
-
-            const modalElement = document.getElementById('eventDetailsModal');
-
-            if (typeof bootstrap !== 'undefined' && modalElement) {
-                bootstrap.Modal.getOrCreateInstance(modalElement).show();
-            } else if (modalElement) {
-                modalElement.hidden = false;
-                modalElement.classList.add('show');
-                modalElement.style.display = 'block';
-                modalElement.setAttribute('aria-hidden', 'false');
-                document.body.classList.add('modal-open');
+            if (event) {
+                openEventModal(event);
             }
         }
     });
@@ -3303,4 +3333,5 @@ document.addEventListener('DOMContentLoaded', function () {
 @include('components.lisa-chatbox')
 
 @endsection
+
 
