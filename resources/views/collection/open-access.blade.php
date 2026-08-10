@@ -689,6 +689,269 @@ document.addEventListener('DOMContentLoaded', function () {
 
     @include('components.lisa-chatbox')
 
+
+<!-- =========================================================
+     OPEN ACCESS RESOURCES PAGE ANIMATIONS
+     Additive only: existing layout/functionality is untouched.
+========================================================= -->
+<style>
+    @keyframes openAccessHeroEnter {
+        from {
+            opacity: 0;
+            transform: translate3d(0, 28px, 0);
+        }
+        to {
+            opacity: 1;
+            transform: translate3d(0, 0, 0);
+        }
+    }
+
+    @keyframes openAccessHeroRingFloat {
+        0%, 100% {
+            transform: translate3d(0, 0, 0) rotate(0deg);
+        }
+        50% {
+            transform: translate3d(-14px, 12px, 0) rotate(4deg);
+        }
+    }
+
+    .open-access-hero-content {
+        animation: openAccessHeroEnter .85s cubic-bezier(.22, 1, .36, 1) both;
+    }
+
+    .open-access-hero::before {
+        animation: openAccessHeroRingFloat 8s ease-in-out infinite;
+        will-change: transform;
+    }
+
+    /* Scroll reveal */
+    .open-access-motion-reveal {
+        opacity: 0;
+        transform: translate3d(0, 30px, 0);
+        transition:
+            opacity .72s cubic-bezier(.22, 1, .36, 1),
+            transform .72s cubic-bezier(.22, 1, .36, 1);
+        transition-delay: var(--open-access-motion-delay, 0ms);
+        will-change: opacity, transform;
+    }
+
+    .open-access-motion-reveal.open-access-motion-left {
+        transform: translate3d(-36px, 0, 0);
+    }
+
+    .open-access-motion-reveal.open-access-motion-right {
+        transform: translate3d(36px, 0, 0);
+    }
+
+    .open-access-motion-reveal.open-access-motion-scale {
+        transform: scale(.965);
+    }
+
+    .open-access-motion-reveal.is-visible {
+        opacity: 1;
+        transform: translate3d(0, 0, 0) scale(1);
+    }
+
+    /* Toolbar / search */
+    .resources-toolbar {
+        transition:
+            transform .28s ease,
+            box-shadow .28s ease,
+            border-color .28s ease;
+    }
+
+    .resources-toolbar:focus-within {
+        transform: translateY(-3px);
+        box-shadow: 0 16px 36px rgba(11, 46, 89, .1);
+        border-color: rgba(24, 75, 140, .18);
+    }
+
+    .resource-search-wrapper input {
+        transition:
+            border-color .22s ease,
+            box-shadow .22s ease,
+            background .22s ease;
+    }
+
+    .resource-search-wrapper input:focus {
+        background: #fff;
+        border-color: rgba(24, 75, 140, .4);
+        box-shadow: 0 0 0 4px rgba(24, 75, 140, .08);
+        outline: none;
+    }
+
+    /* Resource cards */
+    .public-resource-card {
+        transition:
+            transform .32s cubic-bezier(.22, 1, .36, 1),
+            box-shadow .32s ease,
+            border-color .32s ease;
+    }
+
+    .public-resource-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 22px 46px rgba(11, 46, 89, .14);
+        border-color: rgba(24, 75, 140, .18);
+    }
+
+    .public-resource-logo img {
+        transition:
+            transform .5s cubic-bezier(.22, 1, .36, 1),
+            filter .5s ease;
+    }
+
+    .public-resource-card:hover .public-resource-logo img {
+        transform: scale(1.075);
+        filter: saturate(1.04);
+    }
+
+    .public-resource-link i {
+        transition: transform .24s ease;
+    }
+
+    .public-resource-card:hover .public-resource-link i {
+        transform: translate(3px, -3px);
+    }
+
+    .public-resource-category {
+        transition: transform .22s ease;
+    }
+
+    .public-resource-card:hover .public-resource-category {
+        transform: translateY(-1px);
+    }
+
+    /* Empty states */
+    .resources-empty {
+        transition:
+            transform .28s ease,
+            box-shadow .28s ease,
+            border-color .28s ease;
+    }
+
+    .resources-empty:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 16px 34px rgba(11, 46, 89, .09);
+        border-color: rgba(24, 75, 140, .16);
+    }
+
+    .resources-empty > i {
+        transition: transform .25s ease;
+    }
+
+    .resources-empty:hover > i {
+        transform: scale(1.07);
+    }
+
+    /* Notice */
+    .resource-notice {
+        transition:
+            transform .35s cubic-bezier(.22, 1, .36, 1),
+            box-shadow .35s ease;
+    }
+
+    .resource-notice:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 24px 54px rgba(11, 46, 89, .2);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .open-access-hero-content,
+        .open-access-hero::before {
+            animation: none !important;
+        }
+
+        .open-access-motion-reveal,
+        .open-access-motion-reveal.open-access-motion-left,
+        .open-access-motion-reveal.open-access-motion-right,
+        .open-access-motion-reveal.open-access-motion-scale {
+            opacity: 1 !important;
+            transform: none !important;
+            transition: none !important;
+        }
+
+        .resources-toolbar,
+        .resource-search-wrapper input,
+        .public-resource-card,
+        .public-resource-logo img,
+        .public-resource-link i,
+        .public-resource-category,
+        .resources-empty,
+        .resources-empty > i,
+        .resource-notice {
+            transition: none !important;
+            animation: none !important;
+        }
+    }
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    const revealGroups = [
+        { selector: '.open-access-intro .col-xl-8', mode: '' },
+        { selector: '.resources-toolbar', mode: 'open-access-motion-scale' },
+        { selector: '.resources-empty', mode: 'open-access-motion-scale' },
+        { selector: '.resource-notice', mode: '' }
+    ];
+
+    const revealElements = [];
+
+    revealGroups.forEach(function (group) {
+        document.querySelectorAll(group.selector).forEach(function (element, index) {
+            /*
+             * Resource cards already use AOS. Keep those under AOS control.
+             */
+            if (element.hasAttribute('data-aos')) {
+                return;
+            }
+
+            const aosParent = element.closest('[data-aos]');
+            if (aosParent && aosParent !== element) {
+                return;
+            }
+
+            element.classList.add('open-access-motion-reveal');
+
+            if (group.mode) {
+                element.classList.add(group.mode);
+            }
+
+            const stagger = Math.min((index % 6) * 75, 375);
+            element.style.setProperty('--open-access-motion-delay', stagger + 'ms');
+
+            revealElements.push(element);
+        });
+    });
+
+    if (reducedMotion || !('IntersectionObserver' in window)) {
+        revealElements.forEach(function (element) {
+            element.classList.add('is-visible');
+        });
+        return;
+    }
+
+    const observer = new IntersectionObserver(function (entries, instance) {
+        entries.forEach(function (entry) {
+            if (!entry.isIntersecting) {
+                return;
+            }
+
+            entry.target.classList.add('is-visible');
+            instance.unobserve(entry.target);
+        });
+    }, {
+        root: null,
+        threshold: 0.12,
+        rootMargin: '0px 0px -40px 0px'
+    });
+
+    revealElements.forEach(function (element) {
+        observer.observe(element);
+    });
+});
+</script>
+
+
 @endsection
-
-

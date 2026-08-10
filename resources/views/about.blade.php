@@ -909,5 +909,464 @@
 
     @include('components.lisa-chatbox')
 
-@endsection
 
+<!-- =========================================================
+     ABOUT PAGE ANIMATIONS
+     Additive only: existing layout/functionality is untouched.
+========================================================= -->
+<style>
+    @keyframes aboutOrbFloatOne {
+        0%, 100% {
+            transform: translate3d(0, 0, 0) scale(1);
+        }
+        50% {
+            transform: translate3d(-18px, 14px, 0) scale(1.04);
+        }
+    }
+
+    @keyframes aboutOrbFloatTwo {
+        0%, 100% {
+            transform: translate3d(0, 0, 0) scale(1);
+        }
+        50% {
+            transform: translate3d(16px, -18px, 0) scale(1.035);
+        }
+    }
+
+    @keyframes aboutGlowPulse {
+        0%, 100% {
+            opacity: .82;
+            transform: scale(1);
+        }
+        50% {
+            opacity: 1;
+            transform: scale(1.045);
+        }
+    }
+
+    @keyframes aboutImageFloat {
+        0%, 100% {
+            translate: 0 0;
+        }
+        50% {
+            translate: 0 -8px;
+        }
+    }
+
+    @keyframes aboutIconPulse {
+        0%, 100% {
+            transform: scale(1) rotate(0deg);
+        }
+        50% {
+            transform: scale(1.06) rotate(2deg);
+        }
+    }
+
+    @keyframes aboutViewerEnter {
+        from {
+            opacity: 0;
+            transform: translate3d(0, 18px, 0) scale(.98);
+        }
+        to {
+            opacity: 1;
+            transform: translate3d(0, 0, 0) scale(1);
+        }
+    }
+
+    /* Decorative hero motion */
+    .hero-orb-one {
+        animation: aboutOrbFloatOne 8s ease-in-out infinite;
+        will-change: transform;
+    }
+
+    .hero-orb-two {
+        animation: aboutOrbFloatTwo 10s ease-in-out infinite;
+        will-change: transform;
+    }
+
+    .hero-image-glow {
+        animation: aboutGlowPulse 5.5s ease-in-out infinite;
+        will-change: transform, opacity;
+    }
+
+    .hero-image {
+        animation: aboutImageFloat 5.8s ease-in-out infinite;
+        will-change: translate;
+    }
+
+    /* Avoid overriding the translateX centering used on tablet/mobile. */
+    @media (max-width: 991.98px) {
+        .hero-image {
+            animation: none;
+        }
+    }
+
+    /* Scroll reveal */
+    .about-motion-reveal {
+        opacity: 0;
+        transform: translate3d(0, 30px, 0);
+        transition:
+            opacity .72s cubic-bezier(.22, 1, .36, 1),
+            transform .72s cubic-bezier(.22, 1, .36, 1);
+        transition-delay: var(--about-motion-delay, 0ms);
+        will-change: opacity, transform;
+    }
+
+    .about-motion-reveal.about-motion-left {
+        transform: translate3d(-38px, 0, 0);
+    }
+
+    .about-motion-reveal.about-motion-right {
+        transform: translate3d(38px, 0, 0);
+    }
+
+    .about-motion-reveal.about-motion-scale {
+        transform: scale(.965);
+    }
+
+    .about-motion-reveal.is-visible {
+        opacity: 1;
+        transform: translate3d(0, 0, 0) scale(1);
+    }
+
+    /* Hero / CTA arrows */
+    .hero-button i,
+    .cta-button i {
+        transition: transform .25s ease;
+    }
+
+    .hero-button:hover i {
+        transform: translateY(4px);
+    }
+
+    .cta-button:hover i {
+        transform: translateX(5px);
+    }
+
+    /* About image panel */
+    .about-image-wrap {
+        transition: transform .35s cubic-bezier(.22, 1, .36, 1);
+    }
+
+    .about-image-wrap:hover {
+        transform: translateY(-6px);
+    }
+
+    .about-image {
+        transition:
+            transform .42s cubic-bezier(.22, 1, .36, 1),
+            box-shadow .42s ease;
+    }
+
+    .about-image-wrap:hover .about-image {
+        transform: scale(1.012);
+        box-shadow: 0 24px 60px rgba(9, 40, 76, .14);
+    }
+
+    .image-accent {
+        transition:
+            transform .4s cubic-bezier(.22, 1, .36, 1),
+            opacity .4s ease;
+    }
+
+    .about-image-wrap:hover .image-accent {
+        transform: translate3d(6px, -6px, 0);
+    }
+
+    .image-note {
+        transition:
+            transform .32s cubic-bezier(.22, 1, .36, 1),
+            box-shadow .32s ease;
+    }
+
+    .about-image-wrap:hover .image-note {
+        transform: translateY(-4px);
+        box-shadow: 0 20px 36px rgba(9, 40, 76, .27);
+    }
+
+    /* About points */
+    .about-point {
+        transition:
+            transform .25s ease,
+            color .25s ease;
+    }
+
+    .about-point i {
+        transition:
+            transform .25s ease,
+            background .25s ease;
+    }
+
+    .about-point:hover {
+        transform: translateX(4px);
+        color: var(--mmaci-navy);
+    }
+
+    .about-point:hover i {
+        transform: scale(1.08);
+        background: var(--mmaci-gold);
+    }
+
+    /* Mission / vision cards */
+    .value-card {
+        transition:
+            transform .32s cubic-bezier(.22, 1, .36, 1),
+            box-shadow .32s ease,
+            border-color .32s ease;
+    }
+
+    .value-card:hover {
+        transform: translateY(-7px);
+        box-shadow: 0 24px 58px rgba(9, 40, 76, .13);
+        border-color: rgba(244, 180, 0, .34);
+    }
+
+    .value-icon,
+    .objective-icon,
+    .clock-icon {
+        transition:
+            transform .28s cubic-bezier(.22, 1, .36, 1),
+            box-shadow .28s ease;
+    }
+
+    .value-card:hover .value-icon,
+    .objective-card:hover .objective-icon,
+    .schedule-card:hover .clock-icon {
+        transform: translateY(-3px) scale(1.06);
+        box-shadow: 0 12px 24px rgba(244, 180, 0, .2);
+    }
+
+    /* Objective cards */
+    .objective-card {
+        transition:
+            transform .32s cubic-bezier(.22, 1, .36, 1),
+            box-shadow .32s ease,
+            border-color .32s ease;
+    }
+
+    .objective-number {
+        transition:
+            transform .32s ease,
+            color .32s ease;
+    }
+
+    .objective-card:hover .objective-number {
+        transform: translateY(-3px) scale(1.05);
+        color: #e4eaf1;
+    }
+
+    /* Schedule */
+    .schedule-card {
+        transition:
+            transform .34s cubic-bezier(.22, 1, .36, 1),
+            box-shadow .34s ease;
+    }
+
+    .schedule-card:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 34px 80px rgba(0, 0, 0, .29);
+    }
+
+    .schedule-item {
+        transition:
+            transform .24s ease,
+            background .24s ease,
+            padding-left .24s ease,
+            padding-right .24s ease;
+    }
+
+    .schedule-item:hover {
+        transform: translateX(4px);
+        background: rgba(18, 74, 134, .035);
+    }
+
+    .schedule-item time {
+        transition:
+            transform .24s ease,
+            box-shadow .24s ease;
+    }
+
+    .schedule-item:hover time {
+        transform: scale(1.035);
+        box-shadow: 0 8px 18px rgba(9, 40, 76, .08);
+    }
+
+    /* Organizational chart */
+    .chart-card {
+        transition:
+            transform .36s cubic-bezier(.22, 1, .36, 1),
+            box-shadow .36s ease;
+    }
+
+    .chart-image {
+        transition: transform .55s cubic-bezier(.22, 1, .36, 1);
+    }
+
+    .chart-card:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 28px 64px rgba(9, 40, 76, .14);
+    }
+
+    .chart-card:hover .chart-image {
+        transform: scale(1.012);
+    }
+
+    /* CTA */
+    .cta-panel {
+        transition:
+            transform .35s cubic-bezier(.22, 1, .36, 1),
+            box-shadow .35s ease;
+    }
+
+    .cta-panel:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 30px 70px rgba(9, 40, 76, .24);
+    }
+
+    /* Reduced motion accessibility */
+    @media (prefers-reduced-motion: reduce) {
+        .hero-orb-one,
+        .hero-orb-two,
+        .hero-image-glow,
+        .hero-image {
+            animation: none !important;
+        }
+
+        .about-motion-reveal,
+        .about-motion-reveal.about-motion-left,
+        .about-motion-reveal.about-motion-right,
+        .about-motion-reveal.about-motion-scale {
+            opacity: 1 !important;
+            transform: none !important;
+            transition: none !important;
+        }
+
+        .hero-button i,
+        .cta-button i,
+        .about-image-wrap,
+        .about-image,
+        .image-accent,
+        .image-note,
+        .about-point,
+        .about-point i,
+        .value-card,
+        .value-icon,
+        .objective-icon,
+        .clock-icon,
+        .objective-card,
+        .objective-number,
+        .schedule-card,
+        .schedule-item,
+        .schedule-item time,
+        .chart-card,
+        .chart-image,
+        .cta-panel {
+            transition: none !important;
+            animation: none !important;
+        }
+    }
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    const revealGroups = [
+        {
+            selector: '.about-page .section-heading',
+            mode: ''
+        },
+        {
+            selector: '#who-we-are .about-image-wrap',
+            mode: 'about-motion-left'
+        },
+        {
+            selector: '#who-we-are .col-lg-6:last-child',
+            mode: 'about-motion-right'
+        },
+        {
+            selector: '.value-card',
+            mode: 'about-motion-scale'
+        },
+        {
+            selector: '.objective-card',
+            mode: ''
+        },
+        {
+            selector: '.hours-section .col-lg-5',
+            mode: 'about-motion-left'
+        },
+        {
+            selector: '.hours-section .schedule-card',
+            mode: 'about-motion-right'
+        },
+        {
+            selector: '.chart-card',
+            mode: 'about-motion-scale'
+        },
+        {
+            selector: '.cta-panel',
+            mode: ''
+        }
+    ];
+
+    const revealElements = [];
+
+    revealGroups.forEach(function (group) {
+        document.querySelectorAll(group.selector).forEach(function (element, index) {
+            /*
+             * Existing data-aos elements stay managed by AOS.
+             * We only animate elements that don't already use AOS.
+             */
+            if (element.hasAttribute('data-aos')) {
+                return;
+            }
+
+            const aosParent = element.closest('[data-aos]');
+            if (aosParent && aosParent !== element) {
+                return;
+            }
+
+            element.classList.add('about-motion-reveal');
+
+            if (group.mode) {
+                element.classList.add(group.mode);
+            }
+
+            const stagger = Math.min((index % 6) * 75, 375);
+            element.style.setProperty('--about-motion-delay', stagger + 'ms');
+
+            revealElements.push(element);
+        });
+    });
+
+    if (reducedMotion || !('IntersectionObserver' in window)) {
+        revealElements.forEach(function (element) {
+            element.classList.add('is-visible');
+        });
+        return;
+    }
+
+    const observer = new IntersectionObserver(function (entries, instance) {
+        entries.forEach(function (entry) {
+            if (!entry.isIntersecting) {
+                return;
+            }
+
+            entry.target.classList.add('is-visible');
+            instance.unobserve(entry.target);
+        });
+    }, {
+        root: null,
+        threshold: 0.12,
+        rootMargin: '0px 0px -45px 0px'
+    });
+
+    revealElements.forEach(function (element) {
+        observer.observe(element);
+    });
+});
+</script>
+
+
+@endsection

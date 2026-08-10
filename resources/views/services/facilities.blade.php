@@ -800,6 +800,350 @@
 
     @include('components.lisa-chatbox')
 
-@endsection
 
+<!-- =========================================================
+     FACILITIES PAGE ANIMATIONS
+     Additive only: existing layout/functionality is untouched.
+========================================================= -->
+<style>
+    @keyframes facilitiesHeroEnter {
+        from {
+            opacity: 0;
+            transform: translate3d(0, 28px, 0);
+        }
+        to {
+            opacity: 1;
+            transform: translate3d(0, 0, 0);
+        }
+    }
+
+    @keyframes facilitiesHeroRingFloat {
+        0%, 100% {
+            transform: translate3d(0, 0, 0) rotate(0deg);
+        }
+        50% {
+            transform: translate3d(-14px, -12px, 0) rotate(4deg);
+        }
+    }
+
+    .facilities-hero-content {
+        animation: facilitiesHeroEnter .85s cubic-bezier(.22, 1, .36, 1) both;
+    }
+
+    .facilities-hero::after {
+        animation: facilitiesHeroRingFloat 7.5s ease-in-out infinite;
+        will-change: transform;
+    }
+
+    /* Generic scroll reveal */
+    .facilities-motion-reveal {
+        opacity: 0;
+        transform: translate3d(0, 30px, 0);
+        transition:
+            opacity .72s cubic-bezier(.22, 1, .36, 1),
+            transform .72s cubic-bezier(.22, 1, .36, 1);
+        transition-delay: var(--facilities-motion-delay, 0ms);
+        will-change: opacity, transform;
+    }
+
+    .facilities-motion-reveal.facilities-motion-left {
+        transform: translate3d(-36px, 0, 0);
+    }
+
+    .facilities-motion-reveal.facilities-motion-right {
+        transform: translate3d(36px, 0, 0);
+    }
+
+    .facilities-motion-reveal.facilities-motion-scale {
+        transform: scale(.965);
+    }
+
+    .facilities-motion-reveal.is-visible {
+        opacity: 1;
+        transform: translate3d(0, 0, 0) scale(1);
+    }
+
+    /* Headings */
+    .section-heading .eyebrow::before,
+    .guidelines-intro .eyebrow::before {
+        transform-origin: left center;
+        transition: transform .55s cubic-bezier(.22, 1, .36, 1);
+    }
+
+    .facilities-motion-reveal:not(.is-visible) .eyebrow::before {
+        transform: scaleX(.25);
+    }
+
+    .facilities-motion-reveal.is-visible .eyebrow::before {
+        transform: scaleX(1);
+    }
+
+    /* Facility cards */
+    .facility-card {
+        transition:
+            transform .34s cubic-bezier(.22, 1, .36, 1),
+            box-shadow .34s ease,
+            border-color .34s ease;
+    }
+
+    .facility-card:hover {
+        transform: translateY(-7px);
+        box-shadow: 0 22px 48px rgba(11, 46, 89, .13);
+        border-color: rgba(24, 75, 140, .18);
+    }
+
+    .facility-photo img {
+        transition: transform .55s cubic-bezier(.22, 1, .36, 1);
+    }
+
+    .facility-card:hover .facility-photo img {
+        transform: scale(1.05);
+    }
+
+    .facility-details {
+        transition: transform .32s ease;
+    }
+
+    .facility-card:hover .facility-details {
+        transform: translateY(-2px);
+    }
+
+    .capacity-card {
+        transition:
+            transform .26s ease,
+            box-shadow .26s ease,
+            border-color .26s ease;
+    }
+
+    .capacity-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 12px 26px rgba(11, 46, 89, .09);
+        border-color: rgba(24, 75, 140, .18);
+    }
+
+    .capacity-icon {
+        transition:
+            transform .25s ease,
+            background .25s ease;
+    }
+
+    .capacity-card:hover .capacity-icon {
+        transform: scale(1.07);
+        background: var(--facility-blue);
+    }
+
+    /* Empty state */
+    .empty-state {
+        transition:
+            transform .3s ease,
+            box-shadow .3s ease;
+    }
+
+    .empty-state:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 16px 34px rgba(11, 46, 89, .09);
+    }
+
+    .empty-state-icon {
+        transition: transform .26s ease;
+    }
+
+    .empty-state:hover .empty-state-icon {
+        transform: scale(1.08);
+    }
+
+    /* Summary */
+    .summary-panel {
+        transition:
+            transform .35s cubic-bezier(.22, 1, .36, 1),
+            box-shadow .35s ease;
+    }
+
+    .summary-panel:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 26px 58px rgba(11, 46, 89, .2);
+    }
+
+    .summary-item {
+        transition:
+            transform .25s ease,
+            background .25s ease;
+    }
+
+    .summary-item:hover {
+        transform: translateY(-4px);
+    }
+
+    .summary-item strong {
+        transition: transform .25s ease;
+    }
+
+    .summary-item:hover strong {
+        transform: scale(1.07);
+    }
+
+    /* Guidelines */
+    .guidelines-link i {
+        transition: transform .25s ease;
+    }
+
+    .guidelines-link:hover i {
+        transform: translateX(5px);
+    }
+
+    .guideline {
+        transition:
+            transform .24s ease,
+            background .24s ease,
+            padding-left .24s ease,
+            padding-right .24s ease;
+    }
+
+    .guideline:hover {
+        transform: translateX(5px);
+        background: rgba(24, 75, 140, .025);
+    }
+
+    .guideline-number {
+        display: inline-block;
+        transition:
+            transform .23s ease,
+            color .23s ease;
+    }
+
+    .guideline:hover .guideline-number {
+        transform: scale(1.08);
+        color: var(--facility-blue);
+    }
+
+    /* Help CTA */
+    .help-card {
+        transition:
+            transform .35s cubic-bezier(.22, 1, .36, 1),
+            box-shadow .35s ease;
+    }
+
+    .help-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 26px 58px rgba(11, 46, 89, .2);
+    }
+
+    .help-button i {
+        transition: transform .25s ease;
+    }
+
+    .help-button:hover i {
+        transform: translateX(5px);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .facilities-hero-content,
+        .facilities-hero::after {
+            animation: none !important;
+        }
+
+        .facilities-motion-reveal,
+        .facilities-motion-reveal.facilities-motion-left,
+        .facilities-motion-reveal.facilities-motion-right,
+        .facilities-motion-reveal.facilities-motion-scale {
+            opacity: 1 !important;
+            transform: none !important;
+            transition: none !important;
+        }
+
+        .facility-card,
+        .facility-photo img,
+        .facility-details,
+        .capacity-card,
+        .capacity-icon,
+        .empty-state,
+        .empty-state-icon,
+        .summary-panel,
+        .summary-item,
+        .summary-item strong,
+        .guidelines-link i,
+        .guideline,
+        .guideline-number,
+        .help-card,
+        .help-button i {
+            transition: none !important;
+            animation: none !important;
+        }
+    }
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    const revealGroups = [
+        { selector: '.facilities-intro .section-heading', mode: '' },
+        { selector: '.facility-card', mode: '' },
+        { selector: '.empty-state', mode: 'facilities-motion-scale' },
+        { selector: '.summary-panel', mode: 'facilities-motion-scale' },
+        { selector: '.guidelines-intro', mode: 'facilities-motion-left' },
+        { selector: '.guidelines-list', mode: 'facilities-motion-right' },
+        { selector: '.help-card', mode: '' }
+    ];
+
+    const revealElements = [];
+
+    revealGroups.forEach(function (group) {
+        document.querySelectorAll(group.selector).forEach(function (element, index) {
+            /*
+             * Existing data-aos elements stay managed by AOS.
+             * We only add our custom reveal to elements without AOS.
+             */
+            if (element.hasAttribute('data-aos')) {
+                return;
+            }
+
+            const aosParent = element.closest('[data-aos]');
+            if (aosParent && aosParent !== element) {
+                return;
+            }
+
+            element.classList.add('facilities-motion-reveal');
+
+            if (group.mode) {
+                element.classList.add(group.mode);
+            }
+
+            const stagger = Math.min((index % 6) * 75, 375);
+            element.style.setProperty('--facilities-motion-delay', stagger + 'ms');
+
+            revealElements.push(element);
+        });
+    });
+
+    if (reducedMotion || !('IntersectionObserver' in window)) {
+        revealElements.forEach(function (element) {
+            element.classList.add('is-visible');
+        });
+        return;
+    }
+
+    const observer = new IntersectionObserver(function (entries, instance) {
+        entries.forEach(function (entry) {
+            if (!entry.isIntersecting) {
+                return;
+            }
+
+            entry.target.classList.add('is-visible');
+            instance.unobserve(entry.target);
+        });
+    }, {
+        root: null,
+        threshold: 0.12,
+        rootMargin: '0px 0px -45px 0px'
+    });
+
+    revealElements.forEach(function (element) {
+        observer.observe(element);
+    });
+});
+</script>
+
+
+@endsection
 

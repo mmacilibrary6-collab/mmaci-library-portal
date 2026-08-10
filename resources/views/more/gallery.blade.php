@@ -751,6 +751,291 @@ document.addEventListener('DOMContentLoaded', function () {
 
     @include('components.lisa-chatbox')
 
+
+<!-- =========================================================
+     LIBRARY GALLERY PAGE ANIMATIONS
+     Additive only: existing layout/functionality is untouched.
+========================================================= -->
+<style>
+    @keyframes galleryHeroEnter {
+        from {
+            opacity: 0;
+            transform: translate3d(0, 26px, 0);
+        }
+        to {
+            opacity: 1;
+            transform: translate3d(0, 0, 0);
+        }
+    }
+
+    @keyframes galleryHeroRingFloat {
+        0%, 100% {
+            transform: translate3d(0, 0, 0) rotate(0deg);
+        }
+        50% {
+            transform: translate3d(-13px, -13px, 0) rotate(4deg);
+        }
+    }
+
+    @keyframes galleryModalImageEnter {
+        from {
+            opacity: 0;
+            transform: scale(.975);
+        }
+        to {
+            opacity: 1;
+            transform: scale(1);
+        }
+    }
+
+    .gallery-hero-content {
+        animation: galleryHeroEnter .85s cubic-bezier(.22, 1, .36, 1) both;
+    }
+
+    .gallery-hero::after {
+        animation: galleryHeroRingFloat 7.5s ease-in-out infinite;
+        will-change: transform;
+    }
+
+    /* Intro / summary reveal */
+    .gallery-motion-reveal {
+        opacity: 0;
+        transform: translate3d(0, 28px, 0);
+        transition:
+            opacity .7s cubic-bezier(.22, 1, .36, 1),
+            transform .7s cubic-bezier(.22, 1, .36, 1);
+        transition-delay: var(--gallery-motion-delay, 0ms);
+        will-change: opacity, transform;
+    }
+
+    .gallery-motion-reveal.gallery-motion-left {
+        transform: translate3d(-34px, 0, 0);
+    }
+
+    .gallery-motion-reveal.gallery-motion-right {
+        transform: translate3d(34px, 0, 0);
+    }
+
+    .gallery-motion-reveal.gallery-motion-scale {
+        transform: scale(.97);
+    }
+
+    .gallery-motion-reveal.is-visible {
+        opacity: 1;
+        transform: translate3d(0, 0, 0) scale(1);
+    }
+
+    /* Summary */
+    .gallery-summary {
+        transition:
+            transform .28s ease,
+            border-color .28s ease;
+    }
+
+    .gallery-summary:hover {
+        transform: translateY(-3px);
+        border-left-color: var(--gallery-blue);
+    }
+
+    .gallery-summary strong {
+        display: inline-block;
+        transition: transform .25s ease;
+    }
+
+    .gallery-summary:hover strong {
+        transform: scale(1.06);
+    }
+
+    /* Existing cards already reveal themselves; enhance hover only */
+    .gallery-card {
+        transition:
+            opacity .6s ease var(--reveal-delay, 0ms),
+            transform .6s cubic-bezier(.2, .7, .2, 1) var(--reveal-delay, 0ms),
+            box-shadow .3s ease,
+            filter .3s ease;
+    }
+
+    .gallery-card:hover,
+    .gallery-card:focus-visible {
+        transform: translateY(-6px);
+        box-shadow: 0 22px 46px rgba(11, 46, 89, .2);
+    }
+
+    .gallery-image img {
+        transition:
+            transform .75s cubic-bezier(.2, .7, .2, 1),
+            filter .45s ease;
+    }
+
+    .gallery-card:hover .gallery-image img,
+    .gallery-card:focus-visible .gallery-image img {
+        transform: scale(1.075);
+        filter: saturate(1.05);
+    }
+
+    .gallery-overlay h3,
+    .gallery-overlay > span:first-child {
+        transition: transform .28s ease;
+    }
+
+    .gallery-card:hover .gallery-overlay h3,
+    .gallery-card:hover .gallery-overlay > span:first-child {
+        transform: translateY(-2px);
+    }
+
+    .view-image i {
+        transition: transform .25s ease;
+    }
+
+    .gallery-card:hover .view-image i,
+    .gallery-card:focus-visible .view-image i {
+        transform: scale(1.08);
+    }
+
+    /* Empty state */
+    .gallery-empty {
+        transition:
+            transform .3s ease,
+            box-shadow .3s ease,
+            border-color .3s ease;
+    }
+
+    .gallery-empty:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 16px 34px rgba(11, 46, 89, .09);
+        border-color: rgba(24, 75, 140, .16);
+    }
+
+    /* Modal */
+    .modal.show .gallery-modal {
+        animation: galleryHeroEnter .28s cubic-bezier(.22, 1, .36, 1) both;
+    }
+
+    .modal.show .gallery-modal-image img {
+        animation: galleryModalImageEnter .3s cubic-bezier(.22, 1, .36, 1) both;
+    }
+
+    .gallery-modal-nav {
+        transition:
+            transform .22s ease,
+            background .22s ease;
+    }
+
+    .gallery-modal-prev:hover {
+        transform: translateY(-50%) scale(1.07) translateX(-2px);
+        background: rgba(24, 75, 140, .9);
+    }
+
+    .gallery-modal-next:hover {
+        transform: translateY(-50%) scale(1.07) translateX(2px);
+        background: rgba(24, 75, 140, .9);
+    }
+
+    .gallery-modal-close {
+        transition:
+            transform .22s ease,
+            background .22s ease;
+    }
+
+    .gallery-modal-close:hover {
+        transform: rotate(4deg) scale(1.04);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .gallery-hero-content,
+        .gallery-hero::after,
+        .modal.show .gallery-modal,
+        .modal.show .gallery-modal-image img {
+            animation: none !important;
+        }
+
+        .gallery-motion-reveal,
+        .gallery-motion-reveal.gallery-motion-left,
+        .gallery-motion-reveal.gallery-motion-right,
+        .gallery-motion-reveal.gallery-motion-scale {
+            opacity: 1 !important;
+            transform: none !important;
+            transition: none !important;
+        }
+
+        .gallery-summary,
+        .gallery-summary strong,
+        .gallery-card,
+        .gallery-image img,
+        .gallery-overlay h3,
+        .gallery-overlay > span:first-child,
+        .view-image i,
+        .gallery-empty,
+        .gallery-modal-nav,
+        .gallery-modal-close {
+            transition: none !important;
+            animation: none !important;
+        }
+    }
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    const revealGroups = [
+        { selector: '.gallery-intro .section-heading', mode: 'gallery-motion-left' },
+        { selector: '.gallery-summary', mode: 'gallery-motion-right' },
+        { selector: '.gallery-empty', mode: 'gallery-motion-scale' }
+    ];
+
+    const revealElements = [];
+
+    revealGroups.forEach(function (group) {
+        document.querySelectorAll(group.selector).forEach(function (element, index) {
+            /*
+             * Gallery cards already have their own reveal observer in this file.
+             * Only unrelated elements are handled here.
+             */
+            if (element.classList.contains('gallery-card')) {
+                return;
+            }
+
+            element.classList.add('gallery-motion-reveal');
+
+            if (group.mode) {
+                element.classList.add(group.mode);
+            }
+
+            const stagger = Math.min((index % 6) * 75, 375);
+            element.style.setProperty('--gallery-motion-delay', stagger + 'ms');
+
+            revealElements.push(element);
+        });
+    });
+
+    if (reducedMotion || !('IntersectionObserver' in window)) {
+        revealElements.forEach(function (element) {
+            element.classList.add('is-visible');
+        });
+        return;
+    }
+
+    const observer = new IntersectionObserver(function (entries, instance) {
+        entries.forEach(function (entry) {
+            if (!entry.isIntersecting) {
+                return;
+            }
+
+            entry.target.classList.add('is-visible');
+            instance.unobserve(entry.target);
+        });
+    }, {
+        root: null,
+        threshold: 0.12,
+        rootMargin: '0px 0px -40px 0px'
+    });
+
+    revealElements.forEach(function (element) {
+        observer.observe(element);
+    });
+});
+</script>
+
+
 @endsection
-
-

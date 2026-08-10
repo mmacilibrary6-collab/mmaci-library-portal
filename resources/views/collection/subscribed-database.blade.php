@@ -741,5 +741,297 @@
 
     @include('components.lisa-chatbox')
 
-@endsection
 
+<!-- =========================================================
+     SUBSCRIBED ONLINE DATABASE PAGE ANIMATIONS
+     Additive only: existing layout/functionality is untouched.
+========================================================= -->
+<style>
+    @keyframes databaseHeroEnter {
+        from {
+            opacity: 0;
+            transform: translate3d(0, 28px, 0);
+        }
+        to {
+            opacity: 1;
+            transform: translate3d(0, 0, 0);
+        }
+    }
+
+    @keyframes databaseHeroRingFloat {
+        0%, 100% {
+            transform: translate3d(0, 0, 0) rotate(0deg);
+        }
+        50% {
+            transform: translate3d(-14px, -14px, 0) rotate(4deg);
+        }
+    }
+
+    @keyframes databasePreviewFloat {
+        0%, 100% {
+            transform: rotate(.8deg) translateY(0);
+        }
+        50% {
+            transform: rotate(.3deg) translateY(-7px);
+        }
+    }
+
+    .database-hero-content {
+        animation: databaseHeroEnter .85s cubic-bezier(.22, 1, .36, 1) both;
+    }
+
+    .database-hero::after {
+        animation: databaseHeroRingFloat 8s ease-in-out infinite;
+        will-change: transform;
+    }
+
+    .database-preview {
+        animation: databasePreviewFloat 6.5s ease-in-out infinite;
+        will-change: transform;
+    }
+
+    @media (max-width: 991.98px) {
+        .database-preview {
+            animation: none;
+        }
+    }
+
+    /* Scroll reveal */
+    .database-motion-reveal {
+        opacity: 0;
+        transform: translate3d(0, 30px, 0);
+        transition:
+            opacity .72s cubic-bezier(.22, 1, .36, 1),
+            transform .72s cubic-bezier(.22, 1, .36, 1);
+        transition-delay: var(--database-motion-delay, 0ms);
+        will-change: opacity, transform;
+    }
+
+    .database-motion-reveal.database-motion-left {
+        transform: translate3d(-36px, 0, 0);
+    }
+
+    .database-motion-reveal.database-motion-right {
+        transform: translate3d(36px, 0, 0);
+    }
+
+    .database-motion-reveal.database-motion-scale {
+        transform: scale(.965);
+    }
+
+    .database-motion-reveal.is-visible {
+        opacity: 1;
+        transform: translate3d(0, 0, 0) scale(1);
+    }
+
+    /* Credential notice */
+    .credential-notice {
+        transition:
+            transform .26s ease,
+            background .26s ease,
+            border-color .26s ease;
+    }
+
+    .credential-notice:hover {
+        transform: translateY(-3px);
+        background: rgba(255, 255, 255, .11);
+        border-color: rgba(244, 180, 0, .22);
+    }
+
+    .credential-notice i {
+        transition: transform .24s ease;
+    }
+
+    .credential-notice:hover i {
+        transform: scale(1.08);
+    }
+
+    /* Buttons */
+    .database-primary-button i,
+    .access-card-button i {
+        transition: transform .24s ease;
+    }
+
+    .database-primary-button:hover i,
+    .access-card-button:hover i {
+        transform: translate(3px, -3px);
+    }
+
+    /* Preview */
+    .database-preview {
+        transition:
+            box-shadow .32s ease,
+            border-color .32s ease;
+    }
+
+    .database-preview:hover {
+        box-shadow: 0 32px 70px rgba(0, 0, 0, .3);
+        border-color: rgba(244, 180, 0, .26);
+    }
+
+    .database-image {
+        transition:
+            transform .5s cubic-bezier(.22, 1, .36, 1),
+            filter .5s ease;
+    }
+
+    .database-preview:hover .database-image {
+        transform: scale(1.015);
+        filter: saturate(1.03);
+    }
+
+    /* Access steps */
+    .access-step {
+        transition:
+            transform .3s cubic-bezier(.22, 1, .36, 1),
+            box-shadow .3s ease,
+            border-color .3s ease;
+    }
+
+    .access-step:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 18px 38px rgba(11, 46, 89, .11);
+        border-color: rgba(24, 75, 140, .25);
+    }
+
+    .step-number {
+        transition:
+            transform .24s ease,
+            background .24s ease;
+    }
+
+    .access-step:hover .step-number {
+        transform: scale(1.08);
+        background: rgba(244, 180, 0, .28);
+    }
+
+    /* Access card */
+    .access-card {
+        transition:
+            transform .34s cubic-bezier(.22, 1, .36, 1),
+            box-shadow .34s ease;
+    }
+
+    .access-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 24px 54px rgba(11, 46, 89, .22);
+    }
+
+    .access-card-notice {
+        transition:
+            transform .24s ease,
+            background .24s ease;
+    }
+
+    .access-card-notice:hover {
+        transform: translateY(-2px);
+        background: rgba(255, 255, 255, .11);
+    }
+
+    .access-card-notice i {
+        transition: transform .24s ease;
+    }
+
+    .access-card-notice:hover i {
+        transform: scale(1.08);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .database-hero-content,
+        .database-hero::after,
+        .database-preview {
+            animation: none !important;
+        }
+
+        .database-motion-reveal,
+        .database-motion-reveal.database-motion-left,
+        .database-motion-reveal.database-motion-right,
+        .database-motion-reveal.database-motion-scale {
+            opacity: 1 !important;
+            transform: none !important;
+            transition: none !important;
+        }
+
+        .credential-notice,
+        .credential-notice i,
+        .database-primary-button i,
+        .access-card-button i,
+        .database-preview,
+        .database-image,
+        .access-step,
+        .step-number,
+        .access-card,
+        .access-card-notice,
+        .access-card-notice i {
+            transition: none !important;
+            animation: none !important;
+        }
+    }
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    const revealGroups = [
+        { selector: '.database-section-heading', mode: '' },
+        { selector: '.access-step', mode: '' },
+        { selector: '.access-card', mode: 'database-motion-right' }
+    ];
+
+    const revealElements = [];
+
+    revealGroups.forEach(function (group) {
+        document.querySelectorAll(group.selector).forEach(function (element, index) {
+            if (element.hasAttribute('data-aos')) {
+                return;
+            }
+
+            const aosParent = element.closest('[data-aos]');
+            if (aosParent && aosParent !== element) {
+                return;
+            }
+
+            element.classList.add('database-motion-reveal');
+
+            if (group.mode) {
+                element.classList.add(group.mode);
+            }
+
+            const stagger = Math.min((index % 6) * 75, 375);
+            element.style.setProperty('--database-motion-delay', stagger + 'ms');
+
+            revealElements.push(element);
+        });
+    });
+
+    if (reducedMotion || !('IntersectionObserver' in window)) {
+        revealElements.forEach(function (element) {
+            element.classList.add('is-visible');
+        });
+        return;
+    }
+
+    const observer = new IntersectionObserver(function (entries, instance) {
+        entries.forEach(function (entry) {
+            if (!entry.isIntersecting) {
+                return;
+            }
+
+            entry.target.classList.add('is-visible');
+            instance.unobserve(entry.target);
+        });
+    }, {
+        root: null,
+        threshold: 0.12,
+        rootMargin: '0px 0px -40px 0px'
+    });
+
+    revealElements.forEach(function (element) {
+        observer.observe(element);
+    });
+});
+</script>
+
+
+@endsection

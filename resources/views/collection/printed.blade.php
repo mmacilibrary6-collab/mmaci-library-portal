@@ -2065,6 +2065,368 @@ document.addEventListener('DOMContentLoaded', function () {
 
     @include('components.lisa-chatbox')
 
+
+<!-- =========================================================
+     PRINTED COLLECTION PAGE ANIMATIONS
+     Additive only: existing layout/functionality is untouched.
+========================================================= -->
+<style>
+    @keyframes collectionHeroEnter {
+        from {
+            opacity: 0;
+            transform: translate3d(0, 28px, 0);
+        }
+        to {
+            opacity: 1;
+            transform: translate3d(0, 0, 0);
+        }
+    }
+
+    @keyframes collectionHeroRingFloat {
+        0%, 100% {
+            transform: translate3d(0, 0, 0) rotate(0deg);
+        }
+        50% {
+            transform: translate3d(-14px, 12px, 0) rotate(4deg);
+        }
+    }
+
+    @keyframes collectionModalEnter {
+        from {
+            opacity: 0;
+            transform: translateY(14px) scale(.98);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+    }
+
+    .collection-hero-content {
+        animation: collectionHeroEnter .85s cubic-bezier(.22, 1, .36, 1) both;
+    }
+
+    .collection-hero::after {
+        animation: collectionHeroRingFloat 8s ease-in-out infinite;
+        will-change: transform;
+    }
+
+    /* Scroll reveal */
+    .collection-motion-reveal {
+        opacity: 0;
+        transform: translate3d(0, 30px, 0);
+        transition:
+            opacity .72s cubic-bezier(.22, 1, .36, 1),
+            transform .72s cubic-bezier(.22, 1, .36, 1);
+        transition-delay: var(--collection-motion-delay, 0ms);
+        will-change: opacity, transform;
+    }
+
+    .collection-motion-reveal.collection-motion-left {
+        transform: translate3d(-36px, 0, 0);
+    }
+
+    .collection-motion-reveal.collection-motion-right {
+        transform: translate3d(36px, 0, 0);
+    }
+
+    .collection-motion-reveal.collection-motion-scale {
+        transform: scale(.965);
+    }
+
+    .collection-motion-reveal.is-visible {
+        opacity: 1;
+        transform: translate3d(0, 0, 0) scale(1);
+    }
+
+    /* Search box */
+    .collection-search-box {
+        transition:
+            transform .28s ease,
+            box-shadow .28s ease,
+            border-color .28s ease;
+    }
+
+    .collection-search-box:focus-within {
+        transform: translateY(-3px);
+        border-color: rgba(24, 75, 140, .18);
+        box-shadow: 0 22px 52px rgba(11, 46, 89, .12);
+    }
+
+    /* Collection cards */
+    .collection-card {
+        transition:
+            transform .32s cubic-bezier(.22, 1, .36, 1),
+            box-shadow .32s ease,
+            border-color .32s ease;
+    }
+
+    .collection-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 22px 46px rgba(11, 46, 89, .14);
+        border-color: rgba(24, 75, 140, .2);
+    }
+
+    .collection-image {
+        transition:
+            transform .55s cubic-bezier(.22, 1, .36, 1),
+            filter .55s ease;
+    }
+
+    .collection-card:hover .collection-image {
+        transform: scale(1.065);
+        filter: saturate(1.04);
+    }
+
+    .collection-icon {
+        transition:
+            transform .25s ease,
+            background .25s ease,
+            border-color .25s ease;
+    }
+
+    .collection-card:hover .collection-icon {
+        transform: translateY(-3px) scale(1.06);
+        border-color: rgba(255, 255, 255, .5);
+    }
+
+    .collection-link i {
+        transition: transform .24s ease;
+    }
+
+    .collection-link:hover i {
+        transform: translateX(5px);
+    }
+
+    /* No results */
+    .no-results {
+        transition:
+            transform .28s ease,
+            opacity .28s ease;
+    }
+
+    .no-results-icon {
+        transition: transform .25s ease;
+    }
+
+    .no-results:hover .no-results-icon {
+        transform: scale(1.06);
+    }
+
+    /* Information section */
+    .information-list {
+        transition:
+            transform .32s ease,
+            box-shadow .32s ease;
+    }
+
+    .information-list:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 18px 38px rgba(11, 46, 89, .09);
+    }
+
+    .information-item {
+        transition:
+            transform .24s ease,
+            background .24s ease;
+    }
+
+    .information-item:hover {
+        transform: translateX(5px);
+    }
+
+    .information-icon {
+        transition:
+            transform .25s ease,
+            background .25s ease;
+    }
+
+    .information-item:hover .information-icon {
+        transform: scale(1.07);
+        background: #fffdf5;
+    }
+
+    /* CTA */
+    .collection-cta-box {
+        transition:
+            transform .35s cubic-bezier(.22, 1, .36, 1),
+            box-shadow .35s ease;
+    }
+
+    .collection-cta-box:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 28px 62px rgba(11, 46, 89, .24);
+    }
+
+    .collection-cta-box .btn-light i {
+        transition: transform .24s ease;
+    }
+
+    .collection-cta-box .btn-light:hover i {
+        transform: translateX(5px);
+    }
+
+    /* Collection modal */
+    .modal.show .collection-modal,
+    .modal.show .new-arrivals-modal {
+        animation: collectionModalEnter .28s cubic-bezier(.22, 1, .36, 1) both;
+    }
+
+    .modal-collection-image {
+        transition:
+            transform .45s cubic-bezier(.22, 1, .36, 1),
+            filter .45s ease;
+    }
+
+    .collection-modal:hover .modal-collection-image {
+        transform: scale(1.015);
+        filter: saturate(1.03);
+    }
+
+    /* New arrivals modal */
+    .new-arrival-card {
+        transition:
+            transform .3s cubic-bezier(.22, 1, .36, 1),
+            box-shadow .3s ease,
+            border-color .3s ease;
+    }
+
+    .new-arrival-card:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 18px 38px rgba(11, 46, 89, .12);
+        border-color: rgba(24, 75, 140, .18);
+    }
+
+    .new-arrival-cover {
+        transition:
+            transform .5s cubic-bezier(.22, 1, .36, 1),
+            filter .5s ease;
+    }
+
+    .new-arrival-card:hover .new-arrival-cover {
+        transform: scale(1.045);
+        filter: saturate(1.04);
+    }
+
+    .new-arrival-badge {
+        transition:
+            transform .24s ease,
+            box-shadow .24s ease;
+    }
+
+    .new-arrival-card:hover .new-arrival-badge {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 18px rgba(244, 180, 0, .18);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .collection-hero-content,
+        .collection-hero::after,
+        .modal.show .collection-modal,
+        .modal.show .new-arrivals-modal {
+            animation: none !important;
+        }
+
+        .collection-motion-reveal,
+        .collection-motion-reveal.collection-motion-left,
+        .collection-motion-reveal.collection-motion-right,
+        .collection-motion-reveal.collection-motion-scale {
+            opacity: 1 !important;
+            transform: none !important;
+            transition: none !important;
+        }
+
+        .collection-search-box,
+        .collection-card,
+        .collection-image,
+        .collection-icon,
+        .collection-link i,
+        .no-results,
+        .no-results-icon,
+        .information-list,
+        .information-item,
+        .information-icon,
+        .collection-cta-box,
+        .collection-cta-box .btn-light i,
+        .modal-collection-image,
+        .new-arrival-card,
+        .new-arrival-cover,
+        .new-arrival-badge {
+            transition: none !important;
+            animation: none !important;
+        }
+    }
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    const revealGroups = [
+        { selector: '.collection-introduction .col-xl-9', mode: '' },
+        { selector: '.collection-search-box', mode: 'collection-motion-scale' },
+        { selector: '.collection-information .col-lg-6:first-child', mode: 'collection-motion-left' },
+        { selector: '.collection-information .information-list', mode: 'collection-motion-right' },
+        { selector: '.collection-cta-box', mode: '' }
+    ];
+
+    const revealElements = [];
+
+    revealGroups.forEach(function (group) {
+        document.querySelectorAll(group.selector).forEach(function (element, index) {
+            /*
+             * Existing collection cards and information columns already use AOS.
+             * Do not stack another reveal on those same AOS-managed nodes.
+             */
+            if (element.hasAttribute('data-aos')) {
+                return;
+            }
+
+            const aosParent = element.closest('[data-aos]');
+            if (aosParent && aosParent !== element) {
+                return;
+            }
+
+            element.classList.add('collection-motion-reveal');
+
+            if (group.mode) {
+                element.classList.add(group.mode);
+            }
+
+            const stagger = Math.min((index % 6) * 75, 375);
+            element.style.setProperty('--collection-motion-delay', stagger + 'ms');
+
+            revealElements.push(element);
+        });
+    });
+
+    if (reducedMotion || !('IntersectionObserver' in window)) {
+        revealElements.forEach(function (element) {
+            element.classList.add('is-visible');
+        });
+        return;
+    }
+
+    const observer = new IntersectionObserver(function (entries, instance) {
+        entries.forEach(function (entry) {
+            if (!entry.isIntersecting) {
+                return;
+            }
+
+            entry.target.classList.add('is-visible');
+            instance.unobserve(entry.target);
+        });
+    }, {
+        root: null,
+        threshold: 0.12,
+        rootMargin: '0px 0px -40px 0px'
+    });
+
+    revealElements.forEach(function (element) {
+        observer.observe(element);
+    });
+});
+</script>
+
+
 @endsection
-
-

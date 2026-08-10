@@ -971,6 +971,293 @@
 
     @include('components.lisa-chatbox')
 
-@endsection
 
+<!-- =========================================================
+     VISITING RESEARCHERS PAGE ANIMATIONS
+     Additive only: existing layout/functionality is untouched.
+========================================================= -->
+<style>
+    @keyframes visitorHeroRingFloat {
+        0%, 100% { transform: translate3d(0, 0, 0) rotate(0deg); }
+        50% { transform: translate3d(-14px, -14px, 0) rotate(4deg); }
+    }
+
+    @keyframes visitorImageFloat {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-8px); }
+    }
+
+    @keyframes appointmentIconFloat {
+        0%, 100% { transform: translateY(0) rotate(0deg); }
+        50% { transform: translateY(-7px) rotate(2deg); }
+    }
+
+    .visiting-hero::before {
+        animation: visitorHeroRingFloat 8s ease-in-out infinite;
+        will-change: transform;
+    }
+
+    .visitor-placeholder {
+        animation: visitorImageFloat 6s ease-in-out infinite;
+        will-change: transform;
+    }
+
+    .appointment-icon {
+        animation: appointmentIconFloat 5.5s ease-in-out infinite;
+        will-change: transform;
+    }
+
+    /* Scroll reveal */
+    .visitor-motion-reveal {
+        opacity: 0;
+        transform: translate3d(0, 30px, 0);
+        transition:
+            opacity .72s cubic-bezier(.22, 1, .36, 1),
+            transform .72s cubic-bezier(.22, 1, .36, 1);
+        transition-delay: var(--visitor-motion-delay, 0ms);
+        will-change: opacity, transform;
+    }
+
+    .visitor-motion-reveal.visitor-motion-left {
+        transform: translate3d(-36px, 0, 0);
+    }
+
+    .visitor-motion-reveal.visitor-motion-right {
+        transform: translate3d(36px, 0, 0);
+    }
+
+    .visitor-motion-reveal.visitor-motion-scale {
+        transform: scale(.965);
+    }
+
+    .visitor-motion-reveal.is-visible {
+        opacity: 1;
+        transform: translate3d(0, 0, 0) scale(1);
+    }
+
+    /* Hero buttons */
+    .visiting-hero-actions .btn i,
+    .appointment-card .btn i {
+        transition: transform .25s ease;
+    }
+
+    .visiting-hero-actions .btn:hover i,
+    .appointment-card .btn:hover i {
+        transform: translate(3px, -3px);
+    }
+
+    /* Image */
+    .visitor-placeholder {
+        transition:
+            box-shadow .35s ease,
+            border-color .35s ease;
+    }
+
+    .visitor-placeholder:hover {
+        box-shadow:
+            0 34px 70px rgba(0, 0, 0, .34),
+            inset 0 1px rgba(255, 255, 255, .2);
+        border-color: rgba(244, 180, 0, .34);
+    }
+
+    /* Process cards */
+    .visitor-step-card {
+        transition:
+            transform .32s cubic-bezier(.22, 1, .36, 1),
+            box-shadow .32s ease,
+            border-color .32s ease;
+    }
+
+    .visitor-step-card:hover {
+        transform: translateY(-7px);
+        box-shadow: 0 22px 46px rgba(11, 46, 89, .14);
+        border-color: rgba(24, 75, 140, .18);
+    }
+
+    .visitor-step-icon {
+        transition:
+            transform .26s ease,
+            box-shadow .26s ease;
+    }
+
+    .visitor-step-card:hover .visitor-step-icon {
+        transform: translateY(-3px) scale(1.07);
+        box-shadow: 0 12px 24px rgba(244, 180, 0, .2);
+    }
+
+    .visitor-step-number {
+        transition:
+            transform .3s ease,
+            color .3s ease;
+    }
+
+    .visitor-step-card:hover .visitor-step-number {
+        transform: scale(1.08);
+        color: rgba(11, 46, 89, .16);
+    }
+
+    /* Appointment card */
+    .appointment-card {
+        transition:
+            transform .36s cubic-bezier(.22, 1, .36, 1),
+            box-shadow .36s ease;
+    }
+
+    .appointment-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 30px 68px rgba(11, 46, 89, .16);
+    }
+
+    .appointment-embed-wrap {
+        transition: background .3s ease;
+    }
+
+    .appointment-embed iframe {
+        transition: opacity .3s ease;
+    }
+
+    /* Reminder panel */
+    .visitor-reminder-list {
+        transition:
+            transform .34s cubic-bezier(.22, 1, .36, 1),
+            box-shadow .34s ease,
+            border-color .34s ease;
+    }
+
+    .visitor-reminder-list:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 18px 40px rgba(11, 46, 89, .1);
+        border-color: rgba(24, 75, 140, .18);
+    }
+
+    .visitor-reminder-item {
+        transition:
+            transform .24s ease,
+            padding-left .24s ease,
+            padding-right .24s ease;
+    }
+
+    .visitor-reminder-item:hover {
+        transform: translateX(5px);
+    }
+
+    .visitor-reminder-item > i {
+        transition:
+            transform .25s ease,
+            background .25s ease,
+            color .25s ease;
+    }
+
+    .visitor-reminder-item:hover > i {
+        transform: scale(1.07);
+        color: var(--mmaci-navy);
+        background: rgba(244, 180, 0, .2);
+    }
+
+    /* Mobile: avoid continuous floating motion taking space visually */
+    @media (max-width: 767.98px) {
+        .visitor-placeholder {
+            animation: none;
+        }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .visiting-hero::before,
+        .visitor-placeholder,
+        .appointment-icon {
+            animation: none !important;
+        }
+
+        .visitor-motion-reveal,
+        .visitor-motion-reveal.visitor-motion-left,
+        .visitor-motion-reveal.visitor-motion-right,
+        .visitor-motion-reveal.visitor-motion-scale {
+            opacity: 1 !important;
+            transform: none !important;
+            transition: none !important;
+        }
+
+        .visiting-hero-actions .btn i,
+        .appointment-card .btn i,
+        .visitor-placeholder,
+        .visitor-step-card,
+        .visitor-step-icon,
+        .visitor-step-number,
+        .appointment-card,
+        .appointment-embed-wrap,
+        .appointment-embed iframe,
+        .visitor-reminder-list,
+        .visitor-reminder-item,
+        .visitor-reminder-item > i {
+            transition: none !important;
+            animation: none !important;
+        }
+    }
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    const revealGroups = [
+        { selector: '.visiting-introduction .col-xl-8', mode: '' },
+        { selector: '.visitor-step-card', mode: '' },
+        { selector: '.appointment-card', mode: 'visitor-motion-scale' },
+        { selector: '.visitor-reminders-section .col-lg-5', mode: 'visitor-motion-left' },
+        { selector: '.visitor-reminder-list', mode: 'visitor-motion-right' }
+    ];
+
+    const revealElements = [];
+
+    revealGroups.forEach(function (group) {
+        document.querySelectorAll(group.selector).forEach(function (element, index) {
+            if (element.hasAttribute('data-aos')) {
+                return;
+            }
+
+            const aosParent = element.closest('[data-aos]');
+            if (aosParent && aosParent !== element) {
+                return;
+            }
+
+            element.classList.add('visitor-motion-reveal');
+
+            if (group.mode) {
+                element.classList.add(group.mode);
+            }
+
+            const stagger = Math.min((index % 6) * 75, 375);
+            element.style.setProperty('--visitor-motion-delay', stagger + 'ms');
+            revealElements.push(element);
+        });
+    });
+
+    if (reducedMotion || !('IntersectionObserver' in window)) {
+        revealElements.forEach(function (element) {
+            element.classList.add('is-visible');
+        });
+        return;
+    }
+
+    const observer = new IntersectionObserver(function (entries, instance) {
+        entries.forEach(function (entry) {
+            if (!entry.isIntersecting) return;
+
+            entry.target.classList.add('is-visible');
+            instance.unobserve(entry.target);
+        });
+    }, {
+        root: null,
+        threshold: 0.12,
+        rootMargin: '0px 0px -45px 0px'
+    });
+
+    revealElements.forEach(function (element) {
+        observer.observe(element);
+    });
+});
+</script>
+
+
+@endsection
 

@@ -667,6 +667,254 @@
 
     @include('components.lisa-chatbox')
 
+
+<!-- =========================================================
+     RESERVE AVR PAGE ANIMATIONS
+     Additive only: existing layout/functionality is untouched.
+========================================================= -->
+<style>
+    @keyframes avrHeroEnter {
+        from {
+            opacity: 0;
+            transform: translate3d(0, 28px, 0);
+        }
+        to {
+            opacity: 1;
+            transform: translate3d(0, 0, 0);
+        }
+    }
+
+    @keyframes avrHeroRingFloat {
+        0%, 100% {
+            transform: translate3d(0, 0, 0) rotate(0deg);
+        }
+        50% {
+            transform: translate3d(-13px, -13px, 0) rotate(4deg);
+        }
+    }
+
+    .recommendation-hero-content {
+        animation: avrHeroEnter .85s cubic-bezier(.22, 1, .36, 1) both;
+    }
+
+    .recommendation-hero::after {
+        animation: avrHeroRingFloat 7.5s ease-in-out infinite;
+        will-change: transform;
+    }
+
+    /* Scroll reveal */
+    .avr-motion-reveal {
+        opacity: 0;
+        transform: translate3d(0, 30px, 0);
+        transition:
+            opacity .72s cubic-bezier(.22, 1, .36, 1),
+            transform .72s cubic-bezier(.22, 1, .36, 1);
+        transition-delay: var(--avr-motion-delay, 0ms);
+        will-change: opacity, transform;
+    }
+
+    .avr-motion-reveal.avr-motion-left {
+        transform: translate3d(-36px, 0, 0);
+    }
+
+    .avr-motion-reveal.avr-motion-right {
+        transform: translate3d(36px, 0, 0);
+    }
+
+    .avr-motion-reveal.avr-motion-scale {
+        transform: scale(.965);
+    }
+
+    .avr-motion-reveal.is-visible {
+        opacity: 1;
+        transform: translate3d(0, 0, 0) scale(1);
+    }
+
+    /* Sidebar */
+    .recommendation-sidebar {
+        transition:
+            transform .34s cubic-bezier(.22, 1, .36, 1),
+            box-shadow .34s ease,
+            border-color .34s ease;
+    }
+
+    .recommendation-sidebar:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 20px 46px rgba(11, 46, 89, .11);
+        border-color: rgba(24, 75, 140, .18);
+    }
+
+    .recommendation-point {
+        transition:
+            transform .24s ease,
+            color .24s ease;
+    }
+
+    .recommendation-point:hover {
+        transform: translateX(5px);
+    }
+
+    .point-icon {
+        transition:
+            transform .24s ease,
+            background .24s ease;
+    }
+
+    .recommendation-point:hover .point-icon {
+        transform: scale(1.08);
+        background: rgba(244, 180, 0, .28);
+    }
+
+    .recommendation-note {
+        transition:
+            transform .26s ease,
+            box-shadow .26s ease;
+    }
+
+    .recommendation-note:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 22px rgba(11, 46, 89, .08);
+    }
+
+    /* Buttons */
+    .primary-action i,
+    .secondary-action i {
+        transition: transform .24s ease;
+    }
+
+    .primary-action:hover i,
+    .secondary-action:hover i {
+        transform: translate(3px, -3px);
+    }
+
+    /* Form card */
+    .recommendation-form-card {
+        transition:
+            transform .34s cubic-bezier(.22, 1, .36, 1),
+            box-shadow .34s ease,
+            border-color .34s ease;
+    }
+
+    .recommendation-form-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 20px 46px rgba(11, 46, 89, .12);
+        border-color: rgba(24, 75, 140, .18);
+    }
+
+    .recommendation-form-header {
+        transition: background .25s ease;
+    }
+
+    .recommendation-form-card:hover .recommendation-form-header {
+        background: rgba(24, 75, 140, .018);
+    }
+
+    /* Loading animation polish */
+    .form-loading span {
+        animation: avrLoadingPulse 1.6s ease-in-out infinite;
+    }
+
+    @keyframes avrLoadingPulse {
+        0%, 100% {
+            opacity: .55;
+        }
+        50% {
+            opacity: 1;
+        }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .recommendation-hero-content,
+        .recommendation-hero::after,
+        .form-loading span {
+            animation: none !important;
+        }
+
+        .avr-motion-reveal,
+        .avr-motion-reveal.avr-motion-left,
+        .avr-motion-reveal.avr-motion-right,
+        .avr-motion-reveal.avr-motion-scale {
+            opacity: 1 !important;
+            transform: none !important;
+            transition: none !important;
+        }
+
+        .recommendation-sidebar,
+        .recommendation-point,
+        .point-icon,
+        .recommendation-note,
+        .primary-action i,
+        .secondary-action i,
+        .recommendation-form-card,
+        .recommendation-form-header {
+            transition: none !important;
+            animation: none !important;
+        }
+    }
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    const revealGroups = [
+        { selector: '.recommendation-sidebar', mode: 'avr-motion-left' },
+        { selector: '.recommendation-form-card', mode: 'avr-motion-right' }
+    ];
+
+    const revealElements = [];
+
+    revealGroups.forEach(function (group) {
+        document.querySelectorAll(group.selector).forEach(function (element, index) {
+            if (element.hasAttribute('data-aos')) {
+                return;
+            }
+
+            const aosParent = element.closest('[data-aos]');
+            if (aosParent && aosParent !== element) {
+                return;
+            }
+
+            element.classList.add('avr-motion-reveal');
+
+            if (group.mode) {
+                element.classList.add(group.mode);
+            }
+
+            const stagger = Math.min((index % 6) * 75, 375);
+            element.style.setProperty('--avr-motion-delay', stagger + 'ms');
+
+            revealElements.push(element);
+        });
+    });
+
+    if (reducedMotion || !('IntersectionObserver' in window)) {
+        revealElements.forEach(function (element) {
+            element.classList.add('is-visible');
+        });
+        return;
+    }
+
+    const observer = new IntersectionObserver(function (entries, instance) {
+        entries.forEach(function (entry) {
+            if (!entry.isIntersecting) {
+                return;
+            }
+
+            entry.target.classList.add('is-visible');
+            instance.unobserve(entry.target);
+        });
+    }, {
+        root: null,
+        threshold: 0.12,
+        rootMargin: '0px 0px -45px 0px'
+    });
+
+    revealElements.forEach(function (element) {
+        observer.observe(element);
+    });
+});
+</script>
+
+
 @endsection
-
-

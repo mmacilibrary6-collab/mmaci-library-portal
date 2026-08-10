@@ -2792,4 +2792,318 @@ document.addEventListener(
 
 @include('components.lisa-chatbox')
 
+
+<!-- =========================================================
+     NEW ARRIVALS PAGE ANIMATIONS
+     Additive only: existing layout/functionality is untouched.
+========================================================= -->
+<style>
+    @keyframes arrivalsHeroEnter {
+        from {
+            opacity: 0;
+            transform: translate3d(0, 26px, 0);
+        }
+        to {
+            opacity: 1;
+            transform: translate3d(0, 0, 0);
+        }
+    }
+
+    @keyframes arrivalsEmptyPulse {
+        0%, 100% {
+            transform: scale(1);
+        }
+        50% {
+            transform: scale(1.045);
+        }
+    }
+
+    .arrivals-hero-content {
+        animation: arrivalsHeroEnter .85s cubic-bezier(.22, 1, .36, 1) both;
+    }
+
+    /* Scroll reveal */
+    .arrivals-motion-reveal {
+        opacity: 0;
+        transform: translate3d(0, 28px, 0);
+        transition:
+            opacity .7s cubic-bezier(.22, 1, .36, 1),
+            transform .7s cubic-bezier(.22, 1, .36, 1);
+        transition-delay: var(--arrivals-motion-delay, 0ms);
+        will-change: opacity, transform;
+    }
+
+    .arrivals-motion-reveal.arrivals-motion-left {
+        transform: translate3d(-34px, 0, 0);
+    }
+
+    .arrivals-motion-reveal.arrivals-motion-right {
+        transform: translate3d(34px, 0, 0);
+    }
+
+    .arrivals-motion-reveal.arrivals-motion-scale {
+        transform: scale(.97);
+    }
+
+    .arrivals-motion-reveal.is-visible {
+        opacity: 1;
+        transform: translate3d(0, 0, 0) scale(1);
+    }
+
+    /* Toolbar */
+    .arrival-toolbar {
+        transition: transform .28s ease;
+    }
+
+    .arrival-search-field {
+        transition:
+            transform .22s ease,
+            border-color .22s ease,
+            box-shadow .22s ease;
+    }
+
+    .arrival-search-field:focus-within {
+        transform: translateY(-2px);
+    }
+
+    /* Cards */
+    .arrival-card {
+        transition:
+            transform .3s cubic-bezier(.22, 1, .36, 1),
+            box-shadow .3s ease,
+            border-color .3s ease;
+    }
+
+    .arrival-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 22px 44px rgba(11, 46, 89, .14);
+    }
+
+    .arrival-cover img {
+        transition:
+            transform .48s cubic-bezier(.22, 1, .36, 1),
+            filter .48s ease;
+    }
+
+    .arrival-card:hover .arrival-cover img {
+        transform: scale(1.06);
+        filter: saturate(1.04);
+    }
+
+    .arrival-cover-overlay span {
+        transform: translateY(8px);
+        transition:
+            transform .28s ease,
+            opacity .28s ease;
+    }
+
+    .arrival-card:hover .arrival-cover-overlay span {
+        transform: translateY(0);
+    }
+
+    .arrival-arrow {
+        transition:
+            background .22s ease,
+            color .22s ease,
+            transform .22s ease;
+    }
+
+    .arrival-card:hover .arrival-arrow {
+        transform: translateX(4px) scale(1.04);
+    }
+
+    .arrival-category,
+    .arrival-date-short {
+        transition: transform .22s ease;
+    }
+
+    .arrival-card:hover .arrival-category,
+    .arrival-card:hover .arrival-date-short {
+        transform: translateY(-1px);
+    }
+
+    /* Empty states */
+    .arrival-empty,
+    .arrival-no-results {
+        transition:
+            transform .28s ease,
+            box-shadow .28s ease;
+    }
+
+    .arrival-empty:hover,
+    .arrival-no-results:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 16px 34px rgba(11, 46, 89, .09);
+    }
+
+    .empty-icon {
+        transition: transform .26s ease;
+    }
+
+    .arrival-empty:hover .empty-icon,
+    .arrival-no-results:hover .empty-icon {
+        animation: arrivalsEmptyPulse 1.2s ease-in-out infinite;
+    }
+
+    /* Modal polish */
+    .book-modal-dialog {
+        transition:
+            transform .28s cubic-bezier(.22, 1, .36, 1),
+            opacity .28s ease;
+    }
+
+    .book-modal.is-open .book-modal-cover img {
+        animation: arrivalsModalCoverEnter .34s cubic-bezier(.22, 1, .36, 1) both;
+    }
+
+    @keyframes arrivalsModalCoverEnter {
+        from {
+            opacity: 0;
+            transform: translateY(12px) scale(.97);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+    }
+
+    .book-information-item {
+        transition:
+            transform .22s ease,
+            box-shadow .22s ease,
+            border-color .22s ease;
+    }
+
+    .book-information-item:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 9px 20px rgba(11, 46, 89, .07);
+        border-color: rgba(24, 75, 140, .16);
+    }
+
+    .book-information-icon {
+        transition:
+            transform .22s ease,
+            background .22s ease;
+    }
+
+    .book-information-item:hover .book-information-icon {
+        transform: scale(1.06);
+        background: rgba(24, 75, 140, .12);
+    }
+
+    .book-modal-close {
+        transition:
+            color .2s ease,
+            background .2s ease,
+            transform .2s ease;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .arrivals-hero-content,
+        .arrival-empty:hover .empty-icon,
+        .arrival-no-results:hover .empty-icon,
+        .book-modal.is-open .book-modal-cover img {
+            animation: none !important;
+        }
+
+        .arrivals-motion-reveal,
+        .arrivals-motion-reveal.arrivals-motion-left,
+        .arrivals-motion-reveal.arrivals-motion-right,
+        .arrivals-motion-reveal.arrivals-motion-scale {
+            opacity: 1 !important;
+            transform: none !important;
+            transition: none !important;
+        }
+
+        .arrival-toolbar,
+        .arrival-search-field,
+        .arrival-card,
+        .arrival-cover img,
+        .arrival-cover-overlay span,
+        .arrival-arrow,
+        .arrival-category,
+        .arrival-date-short,
+        .arrival-empty,
+        .arrival-no-results,
+        .empty-icon,
+        .book-modal-dialog,
+        .book-information-item,
+        .book-information-icon,
+        .book-modal-close {
+            transition: none !important;
+            animation: none !important;
+        }
+    }
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    const revealGroups = [
+        { selector: '.arrival-toolbar', mode: '' },
+        { selector: '.arrival-item', mode: '' },
+        { selector: '.arrival-empty', mode: 'arrivals-motion-scale' },
+        { selector: '.arrival-no-results', mode: 'arrivals-motion-scale' }
+    ];
+
+    const revealElements = [];
+
+    revealGroups.forEach(function (group) {
+        document.querySelectorAll(group.selector).forEach(function (element, index) {
+            /*
+             * Existing data-aos elements stay managed by AOS.
+             * This avoids stacking transforms on the same node.
+             */
+            if (element.hasAttribute('data-aos')) {
+                return;
+            }
+
+            const aosParent = element.closest('[data-aos]');
+            if (aosParent && aosParent !== element) {
+                return;
+            }
+
+            element.classList.add('arrivals-motion-reveal');
+
+            if (group.mode) {
+                element.classList.add(group.mode);
+            }
+
+            const stagger = Math.min((index % 8) * 65, 390);
+            element.style.setProperty('--arrivals-motion-delay', stagger + 'ms');
+
+            revealElements.push(element);
+        });
+    });
+
+    if (reducedMotion || !('IntersectionObserver' in window)) {
+        revealElements.forEach(function (element) {
+            element.classList.add('is-visible');
+        });
+        return;
+    }
+
+    const observer = new IntersectionObserver(function (entries, instance) {
+        entries.forEach(function (entry) {
+            if (!entry.isIntersecting) {
+                return;
+            }
+
+            entry.target.classList.add('is-visible');
+            instance.unobserve(entry.target);
+        });
+    }, {
+        root: null,
+        threshold: 0.1,
+        rootMargin: '0px 0px -40px 0px'
+    });
+
+    revealElements.forEach(function (element) {
+        observer.observe(element);
+    });
+});
+</script>
+
+
 @endsection

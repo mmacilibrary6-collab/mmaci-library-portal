@@ -1091,6 +1091,419 @@ html {
 
     @include('components.lisa-chatbox')
 
-@endsection
 
+<!-- =========================================================
+     SERVICES PAGE ANIMATIONS
+     Additive only: existing layout/functionality is untouched.
+========================================================= -->
+<style>
+    @keyframes servicesHeroFloat {
+        0%, 100% {
+            transform: translate3d(0, 0, 0) rotate(0deg);
+        }
+        50% {
+            transform: translate3d(-12px, -12px, 0) rotate(3deg);
+        }
+    }
+
+    @keyframes servicesHeroEnter {
+        from {
+            opacity: 0;
+            transform: translate3d(0, 28px, 0);
+        }
+        to {
+            opacity: 1;
+            transform: translate3d(0, 0, 0);
+        }
+    }
+
+    .services-hero-content {
+        animation: servicesHeroEnter .85s cubic-bezier(.22, 1, .36, 1) both;
+    }
+
+    .services-hero::after {
+        animation: servicesHeroFloat 7s ease-in-out infinite;
+        will-change: transform;
+    }
+
+    /* Generic scroll reveal */
+    .services-motion-reveal {
+        opacity: 0;
+        transform: translate3d(0, 30px, 0);
+        transition:
+            opacity .72s cubic-bezier(.22, 1, .36, 1),
+            transform .72s cubic-bezier(.22, 1, .36, 1);
+        transition-delay: var(--services-motion-delay, 0ms);
+        will-change: opacity, transform;
+    }
+
+    .services-motion-reveal.services-motion-left {
+        transform: translate3d(-36px, 0, 0);
+    }
+
+    .services-motion-reveal.services-motion-right {
+        transform: translate3d(36px, 0, 0);
+    }
+
+    .services-motion-reveal.services-motion-scale {
+        transform: scale(.965);
+    }
+
+    .services-motion-reveal.is-visible {
+        opacity: 1;
+        transform: translate3d(0, 0, 0) scale(1);
+    }
+
+    /* Section headings */
+    .section-heading .eyebrow::before,
+    .rules-intro .eyebrow::before {
+        transform-origin: left center;
+        transition: transform .55s cubic-bezier(.22, 1, .36, 1);
+    }
+
+    .services-motion-reveal:not(.is-visible) .eyebrow::before {
+        transform: scaleX(.25);
+    }
+
+    .services-motion-reveal.is-visible .eyebrow::before {
+        transform: scaleX(1);
+    }
+
+    /* Hours */
+    .hours-panel {
+        transition:
+            transform .35s cubic-bezier(.22, 1, .36, 1),
+            box-shadow .35s ease;
+    }
+
+    .hours-panel:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 22px 52px rgba(11, 46, 89, .12);
+    }
+
+    .hours-row {
+        transition:
+            transform .24s ease,
+            background .24s ease,
+            padding-left .24s ease,
+            padding-right .24s ease;
+    }
+
+    .hours-row:hover {
+        transform: translateX(4px);
+        background: rgba(24, 75, 140, .035);
+    }
+
+    .hours-time,
+    .status-closed {
+        transition:
+            transform .22s ease,
+            box-shadow .22s ease;
+    }
+
+    .hours-row:hover .hours-time,
+    .hours-row:hover .status-closed {
+        transform: scale(1.035);
+    }
+
+    /* Service cards */
+    .service-card {
+        transition:
+            transform .32s cubic-bezier(.22, 1, .36, 1),
+            box-shadow .32s ease,
+            border-color .32s ease;
+    }
+
+    .service-card:hover {
+        transform: translateY(-7px);
+        box-shadow: 0 20px 42px rgba(11, 46, 89, .13);
+        border-color: rgba(24, 75, 140, .18);
+    }
+
+    .service-card-photo img {
+        transition: transform .5s cubic-bezier(.22, 1, .36, 1);
+    }
+
+    .service-card:hover .service-card-photo img {
+        transform: scale(1.055);
+    }
+
+    .feature-list li {
+        transition:
+            transform .22s ease,
+            color .22s ease;
+    }
+
+    .feature-list li:hover {
+        transform: translateX(4px);
+        color: var(--service-ink);
+    }
+
+    .feature-list i {
+        transition: transform .22s ease;
+    }
+
+    .feature-list li:hover i {
+        transform: scale(1.12);
+    }
+
+    /* Borrowing cards */
+    .borrowing-card {
+        transition:
+            transform .32s cubic-bezier(.22, 1, .36, 1),
+            box-shadow .32s ease,
+            border-color .32s ease;
+    }
+
+    .borrowing-card:hover {
+        transform: translateY(-7px);
+        box-shadow: 0 20px 42px rgba(11, 46, 89, .13);
+        border-color: rgba(24, 75, 140, .18);
+    }
+
+    .borrowing-stats > div {
+        transition:
+            transform .24s ease,
+            background .24s ease;
+    }
+
+    .borrowing-stats > div:hover {
+        transform: translateY(-3px);
+    }
+
+    .borrowing-stats strong {
+        transition: transform .24s ease;
+    }
+
+    .borrowing-stats > div:hover strong {
+        transform: scale(1.06);
+    }
+
+    .policy-list li {
+        transition:
+            transform .22s ease,
+            color .22s ease;
+    }
+
+    .policy-list li:hover {
+        transform: translateX(4px);
+        color: var(--service-ink);
+    }
+
+    .borrowing-note {
+        transition:
+            transform .28s ease,
+            box-shadow .28s ease;
+    }
+
+    .borrowing-note:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 12px 26px rgba(111, 82, 0, .10);
+    }
+
+    /* Rules */
+    .rules-note {
+        transition:
+            transform .28s ease,
+            box-shadow .28s ease;
+    }
+
+    .rules-note:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 12px 24px rgba(11, 46, 89, .08);
+    }
+
+    .rule-item {
+        transition:
+            transform .23s ease,
+            background .23s ease,
+            padding-left .23s ease,
+            padding-right .23s ease;
+    }
+
+    .rule-item:hover {
+        transform: translateX(5px);
+        background: rgba(24, 75, 140, .025);
+    }
+
+    .rule-number {
+        display: inline-block;
+        transition:
+            transform .23s ease,
+            color .23s ease;
+    }
+
+    .rule-item:hover .rule-number {
+        transform: scale(1.08);
+        color: var(--service-blue);
+    }
+
+    /* Electronic service */
+    .electronic-card {
+        transition:
+            transform .36s cubic-bezier(.22, 1, .36, 1),
+            box-shadow .36s ease;
+    }
+
+    .electronic-card:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 26px 58px rgba(11, 46, 89, .22);
+    }
+
+    .electronic-photo {
+        overflow: hidden;
+    }
+
+    .electronic-photo img {
+        transition: transform .55s cubic-bezier(.22, 1, .36, 1);
+    }
+
+    .electronic-card:hover .electronic-photo img {
+        transform: scale(1.04);
+    }
+
+    .electronic-content li {
+        transition: transform .22s ease;
+    }
+
+    .electronic-content li:hover {
+        transform: translateX(4px);
+    }
+
+    /* Help CTA */
+    .help-card {
+        transition:
+            transform .35s cubic-bezier(.22, 1, .36, 1),
+            box-shadow .35s ease;
+    }
+
+    .help-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 26px 58px rgba(11, 46, 89, .20);
+    }
+
+    .help-button i {
+        transition: transform .25s ease;
+    }
+
+    .help-button:hover i {
+        transform: translateX(5px);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .services-hero-content,
+        .services-hero::after {
+            animation: none !important;
+        }
+
+        .services-motion-reveal,
+        .services-motion-reveal.services-motion-left,
+        .services-motion-reveal.services-motion-right,
+        .services-motion-reveal.services-motion-scale {
+            opacity: 1 !important;
+            transform: none !important;
+            transition: none !important;
+        }
+
+        .hours-panel,
+        .hours-row,
+        .hours-time,
+        .status-closed,
+        .service-card,
+        .service-card-photo img,
+        .feature-list li,
+        .feature-list i,
+        .borrowing-card,
+        .borrowing-stats > div,
+        .borrowing-stats strong,
+        .policy-list li,
+        .borrowing-note,
+        .rules-note,
+        .rule-item,
+        .rule-number,
+        .electronic-card,
+        .electronic-photo img,
+        .electronic-content li,
+        .help-card,
+        .help-button i {
+            transition: none !important;
+            animation: none !important;
+        }
+    }
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    const revealGroups = [
+        { selector: '.services-intro .section-heading', mode: '' },
+        { selector: '.hours-panel', mode: 'services-motion-scale' },
+        { selector: '.available-services .section-heading', mode: '' },
+        { selector: '.service-card', mode: '' },
+        { selector: '.borrowing-section .section-heading', mode: '' },
+        { selector: '.borrowing-card', mode: '' },
+        { selector: '.borrowing-note', mode: '' },
+        { selector: '.rules-intro', mode: 'services-motion-left' },
+        { selector: '.rules-list', mode: 'services-motion-right' },
+        { selector: '.electronic-card', mode: 'services-motion-scale' },
+        { selector: '.help-card', mode: '' }
+    ];
+
+    const revealElements = [];
+
+    revealGroups.forEach(function (group) {
+        document.querySelectorAll(group.selector).forEach(function (element, index) {
+            if (element.hasAttribute('data-aos')) {
+                return;
+            }
+
+            const aosParent = element.closest('[data-aos]');
+            if (aosParent && aosParent !== element) {
+                return;
+            }
+
+            element.classList.add('services-motion-reveal');
+
+            if (group.mode) {
+                element.classList.add(group.mode);
+            }
+
+            const stagger = Math.min((index % 6) * 75, 375);
+            element.style.setProperty('--services-motion-delay', stagger + 'ms');
+
+            revealElements.push(element);
+        });
+    });
+
+    if (reducedMotion || !('IntersectionObserver' in window)) {
+        revealElements.forEach(function (element) {
+            element.classList.add('is-visible');
+        });
+        return;
+    }
+
+    const observer = new IntersectionObserver(function (entries, instance) {
+        entries.forEach(function (entry) {
+            if (!entry.isIntersecting) {
+                return;
+            }
+
+            entry.target.classList.add('is-visible');
+            instance.unobserve(entry.target);
+        });
+    }, {
+        root: null,
+        threshold: 0.12,
+        rootMargin: '0px 0px -45px 0px'
+    });
+
+    revealElements.forEach(function (element) {
+        observer.observe(element);
+    });
+});
+</script>
+
+
+@endsection
 

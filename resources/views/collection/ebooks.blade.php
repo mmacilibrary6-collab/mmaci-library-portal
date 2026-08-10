@@ -955,6 +955,376 @@ document.addEventListener('DOMContentLoaded', function () {
 
     @include('components.lisa-chatbox')
 
+
+<!-- =========================================================
+     ELECTRONIC BOOKS PAGE ANIMATIONS
+     Additive only: existing layout/functionality is untouched.
+========================================================= -->
+<style>
+    @keyframes ebookHeroEnter {
+        from {
+            opacity: 0;
+            transform: translate3d(0, 28px, 0);
+        }
+        to {
+            opacity: 1;
+            transform: translate3d(0, 0, 0);
+        }
+    }
+
+    @keyframes ebookHeroRingFloat {
+        0%, 100% {
+            transform: translate3d(0, 0, 0) rotate(0deg);
+        }
+        50% {
+            transform: translate3d(-13px, -13px, 0) rotate(4deg);
+        }
+    }
+
+    @keyframes ebookModalEnter {
+        from {
+            opacity: 0;
+            transform: translateY(14px) scale(.98);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+    }
+
+    .ebooks-hero-content {
+        animation: ebookHeroEnter .85s cubic-bezier(.22, 1, .36, 1) both;
+    }
+
+    .ebooks-hero::after {
+        animation: ebookHeroRingFloat 7.5s ease-in-out infinite;
+        will-change: transform;
+    }
+
+    /* Scroll reveal */
+    .ebook-motion-reveal {
+        opacity: 0;
+        transform: translate3d(0, 30px, 0);
+        transition:
+            opacity .72s cubic-bezier(.22, 1, .36, 1),
+            transform .72s cubic-bezier(.22, 1, .36, 1);
+        transition-delay: var(--ebook-motion-delay, 0ms);
+        will-change: opacity, transform;
+    }
+
+    .ebook-motion-reveal.ebook-motion-left {
+        transform: translate3d(-36px, 0, 0);
+    }
+
+    .ebook-motion-reveal.ebook-motion-right {
+        transform: translate3d(36px, 0, 0);
+    }
+
+    .ebook-motion-reveal.ebook-motion-scale {
+        transform: scale(.965);
+    }
+
+    .ebook-motion-reveal.is-visible {
+        opacity: 1;
+        transform: translate3d(0, 0, 0) scale(1);
+    }
+
+    /* Search */
+    .program-search {
+        transition:
+            transform .24s ease,
+            box-shadow .24s ease,
+            border-color .24s ease;
+    }
+
+    .program-search:focus-within {
+        transform: translateY(-2px);
+        border-color: rgba(24, 75, 140, .3);
+        box-shadow: 0 12px 30px rgba(11, 46, 89, .09);
+    }
+
+    .program-search button {
+        transition:
+            opacity .2s ease,
+            visibility .2s ease,
+            background .2s ease,
+            transform .2s ease;
+    }
+
+    .program-search button:hover {
+        background: rgba(24, 75, 140, .08);
+        transform: scale(1.05);
+    }
+
+    /* Program cards */
+    .program-card {
+        transition:
+            transform .32s cubic-bezier(.22, 1, .36, 1),
+            box-shadow .32s ease,
+            border-color .32s ease;
+    }
+
+    .program-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 22px 46px rgba(11, 46, 89, .13);
+        border-color: rgba(24, 75, 140, .18);
+    }
+
+    .program-image img {
+        transition:
+            transform .5s cubic-bezier(.22, 1, .36, 1),
+            filter .5s ease;
+    }
+
+    .program-card:hover .program-image img {
+        transform: scale(1.055);
+        filter: saturate(1.04);
+    }
+
+    .folder-count {
+        transition:
+            transform .24s ease,
+            background .24s ease;
+    }
+
+    .program-card:hover .folder-count {
+        transform: translateY(-2px);
+        background: rgba(24, 75, 140, .92);
+    }
+
+    .program-action i {
+        transition: transform .24s ease;
+    }
+
+    .program-card:hover .program-action i {
+        transform: translateX(5px);
+    }
+
+    /* Empty states */
+    .program-empty,
+    .search-empty {
+        transition:
+            transform .28s ease,
+            box-shadow .28s ease,
+            border-color .28s ease;
+    }
+
+    .program-empty:hover,
+    .search-empty:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 16px 34px rgba(11, 46, 89, .09);
+        border-color: rgba(24, 75, 140, .16);
+    }
+
+    /* Folder modal */
+    .folder-modal.show .modal-content {
+        animation: ebookModalEnter .28s cubic-bezier(.22, 1, .36, 1) both;
+    }
+
+    .folder-link {
+        transition:
+            transform .22s ease,
+            border-color .22s ease,
+            background .22s ease,
+            box-shadow .22s ease;
+    }
+
+    .folder-link:hover {
+        transform: translateX(4px);
+        box-shadow: 0 8px 18px rgba(11, 46, 89, .07);
+    }
+
+    .folder-link > i {
+        transition: transform .22s ease;
+    }
+
+    .folder-link:hover > i {
+        transform: translate(3px, -3px);
+    }
+
+    .modal-close-button {
+        transition:
+            transform .22s ease,
+            background .22s ease,
+            box-shadow .22s ease;
+    }
+
+    .modal-close-button:hover {
+        transform: translateY(-2px);
+        background: var(--ebook-blue);
+        box-shadow: 0 8px 18px rgba(11, 46, 89, .14);
+    }
+
+    /* Guide */
+    .text-action i {
+        transition: transform .24s ease;
+    }
+
+    .text-action:hover i {
+        transform: translateX(5px);
+    }
+
+    .guide-step {
+        transition:
+            transform .24s ease,
+            background .24s ease;
+    }
+
+    .guide-step:hover {
+        transform: translateX(5px);
+        background: rgba(24, 75, 140, .025);
+    }
+
+    .guide-step > span {
+        display: inline-block;
+        transition:
+            transform .23s ease,
+            color .23s ease;
+    }
+
+    .guide-step:hover > span {
+        transform: scale(1.08);
+        color: var(--ebook-blue);
+    }
+
+    /* CTA */
+    .cta-panel {
+        transition:
+            transform .35s cubic-bezier(.22, 1, .36, 1),
+            box-shadow .35s ease;
+    }
+
+    .cta-panel:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 24px 54px rgba(11, 46, 89, .2);
+    }
+
+    .cta-panel > a {
+        transition:
+            transform .22s ease,
+            box-shadow .22s ease;
+    }
+
+    .cta-panel > a:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 24px rgba(244, 180, 0, .22);
+    }
+
+    .cta-panel > a i {
+        transition: transform .24s ease;
+    }
+
+    .cta-panel > a:hover i {
+        transform: translateX(5px);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .ebooks-hero-content,
+        .ebooks-hero::after,
+        .folder-modal.show .modal-content {
+            animation: none !important;
+        }
+
+        .ebook-motion-reveal,
+        .ebook-motion-reveal.ebook-motion-left,
+        .ebook-motion-reveal.ebook-motion-right,
+        .ebook-motion-reveal.ebook-motion-scale {
+            opacity: 1 !important;
+            transform: none !important;
+            transition: none !important;
+        }
+
+        .program-search,
+        .program-search button,
+        .program-card,
+        .program-image img,
+        .folder-count,
+        .program-action i,
+        .program-empty,
+        .search-empty,
+        .folder-link,
+        .folder-link > i,
+        .modal-close-button,
+        .text-action i,
+        .guide-step,
+        .guide-step > span,
+        .cta-panel,
+        .cta-panel > a,
+        .cta-panel > a i {
+            transition: none !important;
+            animation: none !important;
+        }
+    }
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    const revealGroups = [
+        { selector: '.ebooks-intro .section-heading', mode: '' },
+        { selector: '.program-search', mode: '' },
+        { selector: '.program-item', mode: '' },
+        { selector: '.program-empty', mode: 'ebook-motion-scale' },
+        { selector: '.search-empty', mode: 'ebook-motion-scale' },
+        { selector: '.guide-intro', mode: 'ebook-motion-left' },
+        { selector: '.guide-steps', mode: 'ebook-motion-right' },
+        { selector: '.cta-panel', mode: '' }
+    ];
+
+    const revealElements = [];
+
+    revealGroups.forEach(function (group) {
+        document.querySelectorAll(group.selector).forEach(function (element, index) {
+            if (element.hasAttribute('data-aos')) {
+                return;
+            }
+
+            const aosParent = element.closest('[data-aos]');
+            if (aosParent && aosParent !== element) {
+                return;
+            }
+
+            element.classList.add('ebook-motion-reveal');
+
+            if (group.mode) {
+                element.classList.add(group.mode);
+            }
+
+            const stagger = Math.min((index % 8) * 65, 390);
+            element.style.setProperty('--ebook-motion-delay', stagger + 'ms');
+
+            revealElements.push(element);
+        });
+    });
+
+    if (reducedMotion || !('IntersectionObserver' in window)) {
+        revealElements.forEach(function (element) {
+            element.classList.add('is-visible');
+        });
+        return;
+    }
+
+    const observer = new IntersectionObserver(function (entries, instance) {
+        entries.forEach(function (entry) {
+            if (!entry.isIntersecting) {
+                return;
+            }
+
+            entry.target.classList.add('is-visible');
+            instance.unobserve(entry.target);
+        });
+    }, {
+        root: null,
+        threshold: 0.1,
+        rootMargin: '0px 0px -40px 0px'
+    });
+
+    revealElements.forEach(function (element) {
+        observer.observe(element);
+    });
+});
+</script>
+
+
 @endsection
-
-

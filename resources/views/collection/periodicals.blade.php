@@ -126,6 +126,304 @@
 </section>
     @include('components.lisa-chatbox')
 
+
+<!-- =========================================================
+     PERIODICAL COLLECTION PAGE ANIMATIONS
+     Additive only: existing layout/functionality is untouched.
+========================================================= -->
+<style>
+    @keyframes periodicalHeroEnter {
+        from {
+            opacity: 0;
+            transform: translate3d(0, 28px, 0);
+        }
+        to {
+            opacity: 1;
+            transform: translate3d(0, 0, 0);
+        }
+    }
+
+    @keyframes periodicalHeroRingFloat {
+        0%, 100% {
+            transform: translate3d(0, 0, 0) rotate(0deg);
+        }
+        50% {
+            transform: translate3d(-13px, -13px, 0) rotate(4deg);
+        }
+    }
+
+    @keyframes periodicalModalEnter {
+        from {
+            opacity: 0;
+            transform: translateY(14px) scale(.98);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+    }
+
+    .theses-hero-content {
+        animation: periodicalHeroEnter .85s cubic-bezier(.22, 1, .36, 1) both;
+    }
+
+    .theses-hero::after {
+        animation: periodicalHeroRingFloat 7.5s ease-in-out infinite;
+        will-change: transform;
+    }
+
+    /* Scroll reveal */
+    .periodical-motion-reveal {
+        opacity: 0;
+        transform: translate3d(0, 30px, 0);
+        transition:
+            opacity .72s cubic-bezier(.22, 1, .36, 1),
+            transform .72s cubic-bezier(.22, 1, .36, 1);
+        transition-delay: var(--periodical-motion-delay, 0ms);
+        will-change: opacity, transform;
+    }
+
+    .periodical-motion-reveal.periodical-motion-left {
+        transform: translate3d(-36px, 0, 0);
+    }
+
+    .periodical-motion-reveal.periodical-motion-right {
+        transform: translate3d(36px, 0, 0);
+    }
+
+    .periodical-motion-reveal.periodical-motion-scale {
+        transform: scale(.965);
+    }
+
+    .periodical-motion-reveal.is-visible {
+        opacity: 1;
+        transform: translate3d(0, 0, 0) scale(1);
+    }
+
+    /* Filter chips */
+    .filter-chip {
+        transition:
+            transform .22s ease,
+            color .22s ease,
+            background .22s ease,
+            border-color .22s ease,
+            box-shadow .22s ease;
+    }
+
+    .filter-chip:hover,
+    .filter-chip.active {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 18px rgba(24, 75, 140, .12);
+    }
+
+    /* Program cards */
+    .program-card {
+        transition:
+            transform .32s cubic-bezier(.22, 1, .36, 1),
+            box-shadow .32s ease,
+            border-color .32s ease;
+    }
+
+    .program-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 22px 46px rgba(11, 46, 89, .13);
+        border-color: rgba(24, 75, 140, .18);
+    }
+
+    .program-image img {
+        transition:
+            transform .5s cubic-bezier(.22, 1, .36, 1),
+            filter .5s ease;
+    }
+
+    .program-card:hover .program-image img {
+        transform: scale(1.055);
+        filter: saturate(1.04);
+    }
+
+    .folder-count {
+        transition:
+            transform .24s ease,
+            background .24s ease;
+    }
+
+    .program-card:hover .folder-count {
+        transform: translateY(-2px);
+        background: rgba(24, 75, 140, .92);
+    }
+
+    .program-action i {
+        transition: transform .24s ease;
+    }
+
+    .program-card:hover .program-action i {
+        transform: translateX(5px);
+    }
+
+    /* Empty state */
+    .program-empty {
+        transition:
+            transform .28s ease,
+            box-shadow .28s ease,
+            border-color .28s ease;
+    }
+
+    .program-empty:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 16px 34px rgba(11, 46, 89, .09);
+        border-color: rgba(24, 75, 140, .16);
+    }
+
+    /* Folder modal */
+    .folder-modal.show .modal-content {
+        animation: periodicalModalEnter .28s cubic-bezier(.22, 1, .36, 1) both;
+    }
+
+    .folder-link {
+        transition:
+            transform .22s ease,
+            border-color .22s ease,
+            background .22s ease,
+            box-shadow .22s ease;
+    }
+
+    .folder-link:hover {
+        transform: translateX(4px);
+        background: #eef4fb;
+        border-color: #b8c9dd;
+        box-shadow: 0 8px 18px rgba(11, 46, 89, .07);
+    }
+
+    .folder-link > i {
+        transition: transform .22s ease;
+    }
+
+    .folder-link:hover > i {
+        transform: translate(3px, -3px);
+    }
+
+    .folder-category-group h5 {
+        transition:
+            transform .22s ease,
+            color .22s ease;
+    }
+
+    .folder-category-group:hover h5 {
+        transform: translateX(2px);
+        color: var(--thesis-blue);
+    }
+
+    .modal-close-button {
+        transition:
+            transform .22s ease,
+            background .22s ease,
+            box-shadow .22s ease;
+    }
+
+    .modal-close-button:hover {
+        transform: translateY(-2px);
+        background: var(--thesis-blue);
+        box-shadow: 0 8px 18px rgba(11, 46, 89, .14);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .theses-hero-content,
+        .theses-hero::after,
+        .folder-modal.show .modal-content {
+            animation: none !important;
+        }
+
+        .periodical-motion-reveal,
+        .periodical-motion-reveal.periodical-motion-left,
+        .periodical-motion-reveal.periodical-motion-right,
+        .periodical-motion-reveal.periodical-motion-scale {
+            opacity: 1 !important;
+            transform: none !important;
+            transition: none !important;
+        }
+
+        .filter-chip,
+        .program-card,
+        .program-image img,
+        .folder-count,
+        .program-action i,
+        .program-empty,
+        .folder-link,
+        .folder-link > i,
+        .folder-category-group h5,
+        .modal-close-button {
+            transition: none !important;
+            animation: none !important;
+        }
+    }
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    const revealGroups = [
+        { selector: '.theses-intro .section-heading', mode: '' },
+        { selector: '.periodical-filter', mode: '' },
+        { selector: '.program-item', mode: '' },
+        { selector: '.program-empty', mode: 'periodical-motion-scale' }
+    ];
+
+    const revealElements = [];
+
+    revealGroups.forEach(function (group) {
+        document.querySelectorAll(group.selector).forEach(function (element, index) {
+            if (element.hasAttribute('data-aos')) {
+                return;
+            }
+
+            const aosParent = element.closest('[data-aos]');
+            if (aosParent && aosParent !== element) {
+                return;
+            }
+
+            element.classList.add('periodical-motion-reveal');
+
+            if (group.mode) {
+                element.classList.add(group.mode);
+            }
+
+            const stagger = Math.min((index % 8) * 65, 390);
+            element.style.setProperty('--periodical-motion-delay', stagger + 'ms');
+
+            revealElements.push(element);
+        });
+    });
+
+    if (reducedMotion || !('IntersectionObserver' in window)) {
+        revealElements.forEach(function (element) {
+            element.classList.add('is-visible');
+        });
+        return;
+    }
+
+    const observer = new IntersectionObserver(function (entries, instance) {
+        entries.forEach(function (entry) {
+            if (!entry.isIntersecting) {
+                return;
+            }
+
+            entry.target.classList.add('is-visible');
+            instance.unobserve(entry.target);
+        });
+    }, {
+        root: null,
+        threshold: 0.1,
+        rootMargin: '0px 0px -40px 0px'
+    });
+
+    revealElements.forEach(function (element) {
+        observer.observe(element);
+    });
+});
+</script>
+
+
 @endsection
 
 @push('styles')
@@ -467,5 +765,4 @@
 }
 </style>
 @endpush
-
 

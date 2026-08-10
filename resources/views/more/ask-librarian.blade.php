@@ -781,6 +781,296 @@
 
     @include('components.lisa-chatbox')
 
+
+<!-- =========================================================
+     ASK THE LIBRARIAN PAGE ANIMATIONS
+     Additive only: existing layout/functionality is untouched.
+========================================================= -->
+<style>
+    @keyframes askHeroEnter {
+        from {
+            opacity: 0;
+            transform: translate3d(0, 26px, 0);
+        }
+        to {
+            opacity: 1;
+            transform: translate3d(0, 0, 0);
+        }
+    }
+
+    @keyframes askHeroRingFloat {
+        0%, 100% {
+            transform: translate3d(0, 0, 0) rotate(0deg);
+        }
+        50% {
+            transform: translate3d(-14px, 12px, 0) rotate(4deg);
+        }
+    }
+
+    .ask-hero-content {
+        animation: askHeroEnter .85s cubic-bezier(.22, 1, .36, 1) both;
+    }
+
+    .ask-hero::before {
+        animation: askHeroRingFloat 8s ease-in-out infinite;
+        will-change: transform;
+    }
+
+    /* Scroll reveal */
+    .ask-motion-reveal {
+        opacity: 0;
+        transform: translate3d(0, 28px, 0);
+        transition:
+            opacity .7s cubic-bezier(.22, 1, .36, 1),
+            transform .7s cubic-bezier(.22, 1, .36, 1);
+        transition-delay: var(--ask-motion-delay, 0ms);
+        will-change: opacity, transform;
+    }
+
+    .ask-motion-reveal.ask-motion-left {
+        transform: translate3d(-34px, 0, 0);
+    }
+
+    .ask-motion-reveal.ask-motion-right {
+        transform: translate3d(34px, 0, 0);
+    }
+
+    .ask-motion-reveal.ask-motion-scale {
+        transform: scale(.97);
+    }
+
+    .ask-motion-reveal.is-visible {
+        opacity: 1;
+        transform: translate3d(0, 0, 0) scale(1);
+    }
+
+    /* Contact cards */
+    .library-contact-card {
+        transition:
+            transform .32s cubic-bezier(.22, 1, .36, 1),
+            box-shadow .32s ease,
+            border-color .32s ease;
+    }
+
+    .library-contact-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 22px 46px rgba(11, 46, 89, .14);
+        border-color: rgba(24, 75, 140, .18);
+    }
+
+    .library-contact-icon {
+        transition:
+            transform .25s ease,
+            box-shadow .25s ease;
+    }
+
+    .library-contact-card:hover .library-contact-icon {
+        transform: translateY(-3px) scale(1.07);
+        box-shadow: 0 12px 24px rgba(244, 180, 0, .2);
+    }
+
+    .library-contact-link i {
+        transition: transform .24s ease;
+    }
+
+    .library-contact-card:hover .library-contact-link i {
+        transform: translate(3px, -3px);
+    }
+
+    /* Tutorials */
+    .tutorial-card {
+        transition:
+            transform .3s cubic-bezier(.22, 1, .36, 1),
+            box-shadow .3s ease,
+            border-color .3s ease;
+    }
+
+    .tutorial-card:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 20px 42px rgba(11, 46, 89, .13);
+        border-color: rgba(24, 75, 140, .18);
+    }
+
+    .tutorial-icon {
+        transition:
+            transform .25s ease,
+            box-shadow .25s ease;
+    }
+
+    .tutorial-card:hover .tutorial-icon {
+        transform: scale(1.07);
+        box-shadow: 0 10px 22px rgba(244, 180, 0, .18);
+    }
+
+    .tutorial-arrow {
+        transition: transform .25s ease;
+    }
+
+    .tutorial-card:hover .tutorial-arrow {
+        transform: translateX(5px);
+    }
+
+    /* Survey */
+    .survey-card {
+        transition:
+            transform .35s cubic-bezier(.22, 1, .36, 1),
+            box-shadow .35s ease;
+    }
+
+    .survey-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 24px 54px rgba(11, 46, 89, .2);
+    }
+
+    .survey-button {
+        transition:
+            transform .22s ease,
+            box-shadow .22s ease;
+    }
+
+    .survey-button:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 24px rgba(244, 180, 0, .22);
+    }
+
+    .survey-button i {
+        transition: transform .24s ease;
+    }
+
+    .survey-button:hover i {
+        transform: translate(3px, -3px);
+    }
+
+    /* Visiting researcher CTA */
+    .researcher-form-card {
+        transition:
+            transform .32s cubic-bezier(.22, 1, .36, 1),
+            box-shadow .32s ease,
+            border-color .32s ease;
+    }
+
+    .researcher-form-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 18px 40px rgba(11, 46, 89, .11);
+        border-color: rgba(24, 75, 140, .18);
+    }
+
+    .researcher-form-icon {
+        transition:
+            transform .25s ease,
+            background .25s ease;
+    }
+
+    .researcher-form-card:hover .researcher-form-icon {
+        transform: scale(1.07);
+        background: var(--mmaci-blue);
+    }
+
+    .researcher-form-card .btn i {
+        transition: transform .24s ease;
+    }
+
+    .researcher-form-card .btn:hover i {
+        transform: translate(3px, -3px);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .ask-hero-content,
+        .ask-hero::before {
+            animation: none !important;
+        }
+
+        .ask-motion-reveal,
+        .ask-motion-reveal.ask-motion-left,
+        .ask-motion-reveal.ask-motion-right,
+        .ask-motion-reveal.ask-motion-scale {
+            opacity: 1 !important;
+            transform: none !important;
+            transition: none !important;
+        }
+
+        .library-contact-card,
+        .library-contact-icon,
+        .library-contact-link i,
+        .tutorial-card,
+        .tutorial-icon,
+        .tutorial-arrow,
+        .survey-card,
+        .survey-button,
+        .survey-button i,
+        .researcher-form-card,
+        .researcher-form-icon,
+        .researcher-form-card .btn i {
+            transition: none !important;
+            animation: none !important;
+        }
+    }
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    const revealGroups = [
+        { selector: '.contact-heading', mode: '' },
+        { selector: '.library-contact-card', mode: '' },
+        { selector: '.tutorial-section .col-lg-5', mode: 'ask-motion-left' },
+        { selector: '.tutorial-section .col-lg-7', mode: 'ask-motion-right' },
+        { selector: '.survey-card', mode: 'ask-motion-scale' },
+        { selector: '.researcher-form-card', mode: '' }
+    ];
+
+    const revealElements = [];
+
+    revealGroups.forEach(function (group) {
+        document.querySelectorAll(group.selector).forEach(function (element, index) {
+            if (element.hasAttribute('data-aos')) {
+                return;
+            }
+
+            const aosParent = element.closest('[data-aos]');
+            if (aosParent && aosParent !== element) {
+                return;
+            }
+
+            element.classList.add('ask-motion-reveal');
+
+            if (group.mode) {
+                element.classList.add(group.mode);
+            }
+
+            const stagger = Math.min((index % 6) * 75, 375);
+            element.style.setProperty('--ask-motion-delay', stagger + 'ms');
+
+            revealElements.push(element);
+        });
+    });
+
+    if (reducedMotion || !('IntersectionObserver' in window)) {
+        revealElements.forEach(function (element) {
+            element.classList.add('is-visible');
+        });
+        return;
+    }
+
+    const observer = new IntersectionObserver(function (entries, instance) {
+        entries.forEach(function (entry) {
+            if (!entry.isIntersecting) return;
+
+            entry.target.classList.add('is-visible');
+            instance.unobserve(entry.target);
+        });
+    }, {
+        root: null,
+        threshold: 0.12,
+        rootMargin: '0px 0px -40px 0px'
+    });
+
+    revealElements.forEach(function (element) {
+        observer.observe(element);
+    });
+});
+</script>
+
+
 @endsection
-
-
