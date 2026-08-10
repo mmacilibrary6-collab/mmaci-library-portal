@@ -303,6 +303,230 @@
 
         }
 
+
+        /* =========================================================
+           GLOBAL LAYOUT ANIMATIONS
+           Safe, additive motion for shared layout elements.
+        ========================================================= */
+
+        @keyframes appPageEnter {
+
+            from {
+
+                opacity: 0;
+                transform: translate3d(0, 10px, 0);
+
+            }
+
+            to {
+
+                opacity: 1;
+                transform: translate3d(0, 0, 0);
+
+            }
+
+        }
+
+
+        @keyframes appHeroPatternDrift {
+
+            0%,
+            100% {
+
+                background-position: 0 0;
+
+            }
+
+            50% {
+
+                background-position: 12px 12px;
+
+            }
+
+        }
+
+
+        @keyframes appFlashEnter {
+
+            from {
+
+                opacity: 0;
+                transform: translate3d(0, -10px, 0);
+
+            }
+
+            to {
+
+                opacity: 1;
+                transform: translate3d(0, 0, 0);
+
+            }
+
+        }
+
+
+        main {
+
+            animation:
+                appPageEnter
+                .45s
+                cubic-bezier(.22, 1, .36, 1)
+                both;
+
+        }
+
+
+        .page-hero::after {
+
+            animation:
+                appHeroPatternDrift
+                14s
+                ease-in-out
+                infinite;
+
+        }
+
+
+        main > .container.mt-4 .alert,
+        main > .container .alert {
+
+            animation:
+                appFlashEnter
+                .35s
+                cubic-bezier(.22, 1, .36, 1)
+                both;
+
+        }
+
+
+        .btn,
+        .btn-mmaci,
+        .btn-outline-mmaci {
+
+            transition:
+                transform .22s ease,
+                box-shadow .22s ease,
+                background-color .22s ease,
+                border-color .22s ease,
+                color .22s ease;
+
+        }
+
+
+        .btn:hover,
+        .btn-mmaci:hover,
+        .btn-outline-mmaci:hover {
+
+            transform: translateY(-2px);
+
+        }
+
+
+        .btn:active,
+        .btn-mmaci:active,
+        .btn-outline-mmaci:active {
+
+            transform: translateY(0) scale(.985);
+
+        }
+
+
+        .dropdown-menu {
+
+            transform-origin: top center;
+
+        }
+
+
+        .dropdown-menu.show {
+
+            animation:
+                appDropdownEnter
+                .2s
+                cubic-bezier(.22, 1, .36, 1)
+                both;
+
+        }
+
+
+        @keyframes appDropdownEnter {
+
+            from {
+
+                opacity: 0;
+                transform: translate3d(0, -7px, 0) scale(.985);
+
+            }
+
+            to {
+
+                opacity: 1;
+                transform: translate3d(0, 0, 0) scale(1);
+
+            }
+
+        }
+
+
+        .modal.show .modal-content {
+
+            animation:
+                appModalEnter
+                .24s
+                cubic-bezier(.22, 1, .36, 1)
+                both;
+
+        }
+
+
+        @keyframes appModalEnter {
+
+            from {
+
+                opacity: 0;
+                transform: translate3d(0, 10px, 0) scale(.985);
+
+            }
+
+            to {
+
+                opacity: 1;
+                transform: translate3d(0, 0, 0) scale(1);
+
+            }
+
+        }
+
+
+        .form-control,
+        .form-select {
+
+            transition:
+                border-color .22s ease,
+                box-shadow .22s ease,
+                background-color .22s ease,
+                transform .22s ease;
+
+        }
+
+
+        .form-control:focus,
+        .form-select:focus {
+
+            transform: translateY(-1px);
+
+        }
+
+
+        a:not(.btn):not(.navbar-brand):not(.dropdown-item) {
+
+            transition:
+                color .2s ease,
+                opacity .2s ease;
+
+        }
+
+
         @media (max-width: 991px) {
 
             .section-space {
@@ -462,9 +686,10 @@
         }
 
         /* Respect user's motion preferences */
+
         @media (prefers-reduced-motion: reduce) {
 
-            *,
+            * ,
             *::before,
             *::after {
 
@@ -472,6 +697,15 @@
                 animation-iteration-count: 1 !important;
                 transition-duration: 0.01ms !important;
                 scroll-behavior: auto !important;
+
+            }
+
+            main,
+            .page-hero::after,
+            .dropdown-menu.show,
+            .modal.show .modal-content {
+
+                animation: none !important;
 
             }
 
@@ -509,13 +743,68 @@
 
     <script>
 
-        AOS.init({
+        document.addEventListener(
+            'DOMContentLoaded',
+            function () {
 
-            duration: 800,
-            once: true,
-            offset: 70
+                const reducedMotion =
+                    window.matchMedia(
+                        '(prefers-reduced-motion: reduce)'
+                    ).matches;
 
-        });
+
+                if (
+                    typeof AOS !== 'undefined'
+                ) {
+
+                    AOS.init({
+
+                        duration:
+                            reducedMotion
+                                ? 0
+                                : 800,
+
+                        once:
+                            true,
+
+                        offset:
+                            70,
+
+                        easing:
+                            'ease-out-cubic',
+
+                        disable:
+                            reducedMotion
+
+                    });
+
+                }
+
+
+                /*
+                 * Refresh AOS after images and dynamic Blade content settle.
+                 * This helps prevent incorrect trigger positions on pages with
+                 * image-heavy cards, galleries, and dynamically sized content.
+                 */
+
+                window.addEventListener(
+                    'load',
+                    function () {
+
+                        if (
+                            typeof AOS !== 'undefined' &&
+                            !reducedMotion
+                        ) {
+
+                            AOS.refreshHard();
+
+                        }
+
+                    }
+                );
+
+            }
+        );
 
     </script>
 
