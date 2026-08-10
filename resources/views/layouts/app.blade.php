@@ -927,6 +927,44 @@
 
     <script>
 
+        (function () {
+            const motionSetting = window.localStorage.getItem('mmaciMotion');
+            const forceMotion = motionSetting !== 'reduce';
+
+            if (forceMotion) {
+                document.documentElement.dataset.motion = 'force';
+            }
+        }());
+
+        document.head.insertAdjacentHTML(
+            'beforeend',
+            '<style id="mmaci-motion-override">' +
+            'html[data-motion="force"] *,' +
+            'html[data-motion="force"] *::before,' +
+            'html[data-motion="force"] *::after {' +
+            'animation-duration: .001ms !important;' +
+            'animation-iteration-count: 1 !important;' +
+            'transition-duration: .001ms !important;' +
+            '}' +
+            'html[data-motion="force"] [data-aos],' +
+            'html[data-motion="force"] .app-reveal,' +
+            'html[data-motion="force"] .about-motion-reveal,' +
+            'html[data-motion="force"] .home-motion-reveal {' +
+            'opacity: 1 !important;' +
+            'transform: none !important;' +
+            '}' +
+            'html[data-motion="force"] .hero-orb-one,' +
+            'html[data-motion="force"] .hero-orb-two,' +
+            'html[data-motion="force"] .hero-image-glow,' +
+            'html[data-motion="force"] .hero-image,' +
+            'html[data-motion="force"] .home-hero::after,' +
+            'html[data-motion="force"] .page-hero::after {' +
+            'animation-duration: inherit !important;' +
+            'animation-iteration-count: infinite !important;' +
+            '}' +
+            '</style>'
+        );
+
         document.addEventListener(
             'DOMContentLoaded',
             function () {
