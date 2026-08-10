@@ -3268,7 +3268,7 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 });
 </script>
+@include('components.lisa-chatbox')
 
 @endsection
-
 
