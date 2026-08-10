@@ -51,7 +51,7 @@
                 bottom: 24px !important;
                 top: auto !important;
                 left: auto !important;
-                z-index: 2147483000 !important;
+                z-index: 1040 !important;
                 width: auto !important;
                 height: auto !important;
                 margin: 0 !important;
@@ -448,6 +448,10 @@
 
                     if (!widget || !launcher || !panel || !minimizeButton || !closeButton || !messages || !chips || !form || !input || !csrfToken) {
                         return;
+                    }
+
+                    if (widget.parentElement !== document.body) {
+                        document.body.appendChild(widget);
                     }
 
                     window.__lisaChatbotInitialized = true;

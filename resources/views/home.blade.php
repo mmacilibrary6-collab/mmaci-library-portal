@@ -729,6 +729,12 @@ document.addEventListener('DOMContentLoaded', function () {
 
             if (typeof bootstrap !== 'undefined' && modalElement) {
                 bootstrap.Modal.getOrCreateInstance(modalElement).show();
+            } else if (modalElement) {
+                modalElement.hidden = false;
+                modalElement.classList.add('show');
+                modalElement.style.display = 'block';
+                modalElement.setAttribute('aria-hidden', 'false');
+                document.body.classList.add('modal-open');
             }
         }
     });
@@ -1059,6 +1065,8 @@ document.addEventListener('DOMContentLoaded', function () {
     min-height: 0;
     width: 100%;
     height: 100%;
+    padding: 20px;
+    box-sizing: border-box;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -1067,8 +1075,8 @@ document.addEventListener('DOMContentLoaded', function () {
 }
 
 .viewer-image-panel img {
-    width: 100%;
-    height: 100%;
+    width: auto;
+    height: auto;
     max-width: 100%;
     max-height: 100%;
     display: block;
@@ -1277,6 +1285,7 @@ body.update-viewer-open {
     .viewer-image-panel {
         width: 100%;
         height: 100%;
+        padding: 16px;
     }
 
     .viewer-content-panel {
@@ -1321,6 +1330,10 @@ body.update-viewer-open {
         grid-template-rows: minmax(0, 55%) minmax(0, 45%);
         border: 0;
         border-radius: 0;
+    }
+
+    .viewer-image-panel {
+        padding: 12px;
     }
 
     .viewer-content-panel {
@@ -2068,6 +2081,10 @@ body.update-viewer-open {
     border: 0;
     border-radius: 18px;
     box-shadow: 0 24px 70px rgba(11, 46, 89, .22);
+}
+
+#eventDetailsModal {
+    z-index: 1055;
 }
 
 .event-modal .modal-header {
