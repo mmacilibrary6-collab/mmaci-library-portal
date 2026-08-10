@@ -739,8 +739,6 @@
 }
 </style>
 
-    @include('components.lisa-chatbox')
-
 
 <!-- =========================================================
      SUBSCRIBED ONLINE DATABASE PAGE ANIMATIONS
@@ -1027,5 +1025,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
 @endsection
+
 
 

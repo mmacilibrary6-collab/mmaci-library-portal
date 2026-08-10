@@ -2805,8 +2805,6 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 </script>
 
-    @include('components.lisa-chatbox')
-
 <!-- =========================================================
      HOME PAGE ANIMATIONS
      Additive only: existing layout/functionality is untouched.
@@ -3272,4 +3270,5 @@ document.addEventListener('DOMContentLoaded', function () {
 </script>
 
 @endsection
+
 

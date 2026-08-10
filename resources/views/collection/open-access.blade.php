@@ -687,8 +687,6 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 </script>
 
-    @include('components.lisa-chatbox')
-
 
 <!-- =========================================================
      OPEN ACCESS RESOURCES PAGE ANIMATIONS
@@ -948,4 +946,5 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
 @endsection
+
 

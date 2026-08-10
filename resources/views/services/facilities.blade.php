@@ -798,8 +798,6 @@
 }
 </style>
 
-    @include('components.lisa-chatbox')
-
 
 <!-- =========================================================
      FACILITIES PAGE ANIMATIONS
@@ -1139,6 +1137,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
 @endsection
+
 
 
 

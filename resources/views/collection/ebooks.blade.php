@@ -953,8 +953,6 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 </script>
 
-    @include('components.lisa-chatbox')
-
 
 <!-- =========================================================
      ELECTRONIC BOOKS PAGE ANIMATIONS
@@ -1320,4 +1318,5 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
 @endsection
+
 

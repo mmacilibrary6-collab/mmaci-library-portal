@@ -665,8 +665,6 @@
 }
 </style>
 
-    @include('components.lisa-chatbox')
-
 
 <!-- =========================================================
      RESERVE AVR PAGE ANIMATIONS
@@ -910,5 +908,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
 @endsection
+
 
 

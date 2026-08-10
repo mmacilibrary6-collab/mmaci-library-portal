@@ -742,8 +742,6 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 </script>
 
-    @include('components.lisa-chatbox')
-
 
 <!-- =========================================================
      LIBRARY GALLERY PAGE ANIMATIONS
@@ -1023,4 +1021,5 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
 @endsection
+
 

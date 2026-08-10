@@ -671,8 +671,6 @@
 }
 </style>
 
-    @include('components.lisa-chatbox')
-
 
 <!-- =========================================================
      ONLINE BOOK RECOMMENDATION PAGE ANIMATIONS
@@ -910,5 +908,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
 @endsection
+
 
 

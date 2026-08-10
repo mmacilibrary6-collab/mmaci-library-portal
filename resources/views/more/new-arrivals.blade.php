@@ -2790,9 +2790,6 @@ document.addEventListener(
 </script>
 
 
-@include('components.lisa-chatbox')
-
-
 <!-- =========================================================
      NEW ARRIVALS PAGE ANIMATIONS
      Additive only: existing layout/functionality is untouched.
@@ -3098,4 +3095,5 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
 @endsection
+
 

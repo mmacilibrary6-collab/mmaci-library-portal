@@ -124,7 +124,6 @@
         </div>
     </div>
 </section>
-    @include('components.lisa-chatbox')
 
 
 <!-- =========================================================
@@ -757,6 +756,7 @@ document.addEventListener('DOMContentLoaded', function () {
 }
 </style>
 @endpush
+
 
 
 

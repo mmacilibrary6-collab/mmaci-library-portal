@@ -888,6 +888,7 @@
     </main>
 
     @include('partials.footer')
+    @include('components.lisa-chatbox')
 
     <!-- Bootstrap JavaScript -->
 
