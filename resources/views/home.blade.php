@@ -749,18 +749,41 @@ document.addEventListener('DOMContentLoaded', function () {
         },
 
         dateClick: function (info) {
-            const clickedTime = info.date.getTime();
+            /*
+             * Compare YYYY-MM-DD values instead of raw timestamps.
+             * This avoids timezone / daylight-saving offsets and makes
+             * clicking any date covered by a multi-day event reliable.
+             */
+            const clickedDate = info.dateStr;
+
             const event = calendar.getEvents().find(function (calendarEvent) {
                 if (!calendarEvent.start) {
                     return false;
                 }
 
-                const startTime = calendarEvent.start.getTime();
-                const endTime = calendarEvent.end
-                    ? calendarEvent.end.getTime() - 86400000
-                    : startTime;
+                const toDateKey = function (date) {
+                    const year = date.getFullYear();
+                    const month = String(date.getMonth() + 1).padStart(2, '0');
+                    const day = String(date.getDate()).padStart(2, '0');
 
-                return clickedTime >= startTime && clickedTime <= endTime;
+                    return `${year}-${month}-${day}`;
+                };
+
+                const startDate = toDateKey(calendarEvent.start);
+
+                let endDate = startDate;
+
+                /*
+                 * FullCalendar uses an exclusive end date for all-day events.
+                 * Subtract one day so the visible final day remains clickable.
+                 */
+                if (calendarEvent.end) {
+                    const inclusiveEnd = new Date(calendarEvent.end);
+                    inclusiveEnd.setDate(inclusiveEnd.getDate() - 1);
+                    endDate = toDateKey(inclusiveEnd);
+                }
+
+                return clickedDate >= startDate && clickedDate <= endDate;
             });
 
             if (event) {
@@ -3330,6 +3353,650 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 });
 </script>
+
+<!-- =========================================================
+     HOME MODAL SYSTEM FIX
+     Calendar + Library Updates + New Arrivals
+========================================================= -->
+<style>
+    /*
+     * IMPORTANT:
+     * app.blade.php animates <main> with transform. A transformed ancestor
+     * changes the containing block used by position: fixed, which is why
+     * full-screen viewers can be clipped or shifted down the page.
+     *
+     * Keep the Home page itself untransformed so every modal is positioned
+     * against the browser viewport.
+     */
+    main {
+        transform: none !important;
+    }
+
+    /* =========================================================
+       SHARED MODAL SAFETY
+    ========================================================= */
+
+    body.modal-open,
+    body.update-viewer-open {
+        overflow: hidden !important;
+    }
+
+    #eventDetailsModal,
+    #libraryUpdateViewer,
+    #arrivalViewer {
+        isolation: isolate;
+    }
+
+    /* =========================================================
+       CALENDAR EVENT MODAL
+    ========================================================= */
+
+    #eventDetailsModal {
+        position: fixed !important;
+        inset: 0 !important;
+        z-index: 10850 !important;
+        padding: 18px !important;
+        overflow-x: hidden !important;
+        overflow-y: auto !important;
+    }
+
+    #eventDetailsModal .modal-dialog {
+        width: min(560px, 100%) !important;
+        max-width: 560px !important;
+        min-height: calc(100% - 36px);
+        margin: 18px auto !important;
+        display: flex;
+        align-items: center;
+    }
+
+    #eventDetailsModal .event-modal {
+        width: 100%;
+        max-height: calc(100dvh - 72px);
+        overflow: hidden;
+        border: 0;
+        border-radius: 20px;
+        box-shadow: 0 28px 80px rgba(0, 0, 0, .28);
+    }
+
+    #eventDetailsModal .modal-header {
+        align-items: flex-start;
+        padding: 22px 24px 18px;
+        background:
+            radial-gradient(circle at 100% 0, rgba(244, 180, 0, .15), transparent 35%),
+            linear-gradient(135deg, #0b2e59, #184b8c);
+        border: 0;
+    }
+
+    #eventDetailsModal .modal-header > div > span {
+        display: block;
+        margin-bottom: 4px;
+        color: #f4b400;
+        font-size: 10px;
+        font-weight: 800;
+        letter-spacing: .1em;
+        text-transform: uppercase;
+    }
+
+    #eventDetailsModal .modal-title {
+        color: #fff;
+        font-size: 20px;
+        font-weight: 800;
+    }
+
+    #eventDetailsModal .btn-close {
+        flex: 0 0 auto;
+        margin: 0;
+        padding: 10px;
+        background-color: rgba(255, 255, 255, .95);
+        border-radius: 10px;
+        opacity: 1;
+    }
+
+    #eventDetailsModal .modal-body {
+        max-height: calc(100dvh - 220px);
+        padding: 24px;
+        overflow-y: auto;
+        overscroll-behavior: contain;
+        scrollbar-width: thin;
+    }
+
+    #eventDetailsModal .modal-body > h4 {
+        margin: 0 0 18px;
+        color: #0b2e59;
+        font-size: clamp(20px, 3vw, 27px);
+        font-weight: 850;
+        line-height: 1.3;
+        overflow-wrap: anywhere;
+    }
+
+    #eventDetailsModal .event-information {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+        margin: 0 0 20px;
+    }
+
+    #eventDetailsModal .event-information > div {
+        min-width: 0;
+        padding: 13px 14px;
+        background: #f6f8fc;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+    }
+
+    #eventDetailsModal .event-information dt {
+        margin-bottom: 4px;
+        color: #7d8999;
+        font-size: 9px;
+        font-weight: 800;
+        letter-spacing: .06em;
+        text-transform: uppercase;
+    }
+
+    #eventDetailsModal .event-information dd {
+        margin: 0;
+        color: #0b2e59;
+        font-size: 12px;
+        font-weight: 700;
+        line-height: 1.5;
+        overflow-wrap: anywhere;
+    }
+
+    #eventDetailsModal .event-description {
+        padding: 16px;
+        background: #fffaf0;
+        border: 1px solid #f4df9b;
+        border-radius: 12px;
+    }
+
+    #eventDetailsModal .event-description > span {
+        display: block;
+        margin-bottom: 7px;
+        color: #735500;
+        font-size: 9px;
+        font-weight: 800;
+        letter-spacing: .06em;
+        text-transform: uppercase;
+    }
+
+    #eventDetailsModal .event-description p {
+        margin: 0;
+        color: #536174;
+        font-size: 13px;
+        line-height: 1.7;
+        white-space: pre-line;
+        overflow-wrap: anywhere;
+    }
+
+    #eventDetailsModal .modal-footer {
+        padding: 14px 20px;
+        background: #f8fafc;
+        border-top: 1px solid #e8edf3;
+    }
+
+    #eventDetailsModal .modal-close-button {
+        min-width: 100px;
+        padding: 10px 18px;
+        color: #fff;
+        background: #0b2e59;
+        border: 0;
+        border-radius: 10px;
+        font-weight: 700;
+    }
+
+    /* Make calendar events and event-containing dates clearly interactive. */
+    #calendar .fc-event,
+    #calendar .fc-daygrid-event {
+        cursor: pointer;
+    }
+
+    #calendar .fc-daygrid-day:has(.fc-event) {
+        cursor: pointer;
+    }
+
+    /* =========================================================
+       LIBRARY UPDATE + NEW ARRIVAL VIEWERS
+    ========================================================= */
+
+    .library-update-viewer {
+        position: fixed !important;
+        inset: 0 !important;
+        z-index: 10800 !important;
+
+        width: 100vw !important;
+        height: 100vh !important;
+        height: 100dvh !important;
+
+        padding: clamp(12px, 2vh, 20px) !important;
+
+        align-items: center !important;
+        justify-content: center !important;
+
+        overflow-x: hidden !important;
+        overflow-y: auto !important;
+    }
+
+    .library-update-viewer-backdrop {
+        position: fixed !important;
+        inset: 0 !important;
+
+        width: 100vw !important;
+        height: 100vh !important;
+        height: 100dvh !important;
+
+        background: rgba(3, 14, 29, .84) !important;
+        backdrop-filter: blur(7px);
+        -webkit-backdrop-filter: blur(7px);
+    }
+
+    /*
+     * Desktop target:
+     * compact enough to see the entire modal without browser-height clipping.
+     */
+    .library-update-viewer-dialog {
+        position: relative !important;
+        z-index: 2 !important;
+
+        width: min(980px, calc(100vw - 40px)) !important;
+        height: auto !important;
+        max-height: min(720px, calc(100dvh - 40px)) !important;
+
+        grid-template-columns: minmax(0, 1.15fr) minmax(320px, .85fr) !important;
+        grid-template-rows: minmax(0, 1fr) !important;
+
+        margin: auto !important;
+
+        overflow: hidden !important;
+
+        border-radius: 20px !important;
+
+        box-shadow:
+            0 28px 80px
+            rgba(0, 0, 0, .42) !important;
+    }
+
+    .viewer-image-panel {
+        min-height: 0 !important;
+        height: min(680px, calc(100dvh - 40px)) !important;
+
+        padding: 18px !important;
+
+        align-items: center !important;
+
+        overflow: hidden !important;
+    }
+
+    .viewer-image-panel img {
+        width: 100% !important;
+        height: 100% !important;
+
+        max-width: 100% !important;
+        max-height: 100% !important;
+
+        object-fit: contain !important;
+        object-position: center !important;
+    }
+
+    .viewer-content-panel {
+        min-height: 0 !important;
+        height: min(680px, calc(100dvh - 40px)) !important;
+
+        padding: 24px !important;
+
+        overflow-y: auto !important;
+        overflow-x: hidden !important;
+
+        overscroll-behavior: contain;
+        scrollbar-gutter: stable;
+    }
+
+    .viewer-brand {
+        padding-right: 44px !important;
+        padding-bottom: 16px !important;
+    }
+
+    .viewer-brand img {
+        width: 42px !important;
+        height: 42px !important;
+        flex-basis: 42px !important;
+    }
+
+    .viewer-copy {
+        padding: 20px 0 !important;
+    }
+
+    .viewer-copy h3 {
+        margin-bottom: 14px !important;
+        font-size: clamp(23px, 2.5vw, 34px) !important;
+    }
+
+    .viewer-copy p {
+        font-size: 13px !important;
+        line-height: 1.75 !important;
+    }
+
+    /*
+     * The New Arrivals viewer currently renders author/details into two <p>s.
+     * Give each one a readable compact information treatment.
+     */
+    #arrivalViewer .viewer-copy p {
+        padding: 11px 13px;
+        margin: 0 0 10px !important;
+        color: rgba(255, 255, 255, .82) !important;
+        background: rgba(255, 255, 255, .06);
+        border: 1px solid rgba(255, 255, 255, .1);
+        border-radius: 11px;
+        white-space: pre-line;
+    }
+
+    #arrivalViewer #arrivalViewerAuthor {
+        color: #fff !important;
+        font-weight: 700;
+    }
+
+    .viewer-footer {
+        padding-top: 16px !important;
+    }
+
+    .viewer-close-button {
+        top: 12px !important;
+        right: 12px !important;
+        width: 40px !important;
+        height: 40px !important;
+    }
+
+    .viewer-navigation {
+        width: 42px !important;
+        height: 42px !important;
+    }
+
+    .viewer-previous {
+        left: 12px !important;
+    }
+
+    /*
+     * Anchor the right arrow at the image/content split rather than a
+     * percentage derived from the previous oversized modal.
+     */
+    .viewer-next {
+        right: calc(34.8% + 12px) !important;
+    }
+
+    /* =========================================================
+       SHORT LAPTOP / DESKTOP VIEWPORTS
+    ========================================================= */
+
+    @media (min-width: 769px) and (max-height: 760px) {
+        .library-update-viewer {
+            padding: 12px !important;
+        }
+
+        .library-update-viewer-dialog {
+            width: min(920px, calc(100vw - 24px)) !important;
+            max-height: calc(100dvh - 24px) !important;
+            grid-template-columns: minmax(0, 1.08fr) minmax(300px, .92fr) !important;
+        }
+
+        .viewer-image-panel,
+        .viewer-content-panel {
+            height: calc(100dvh - 24px) !important;
+        }
+
+        .viewer-image-panel {
+            padding: 14px !important;
+        }
+
+        .viewer-content-panel {
+            padding: 20px !important;
+        }
+
+        .viewer-copy {
+            padding: 16px 0 !important;
+        }
+
+        .viewer-copy h3 {
+            font-size: 26px !important;
+        }
+
+        .viewer-copy p {
+            font-size: 12px !important;
+            line-height: 1.65 !important;
+        }
+
+        .viewer-next {
+            right: calc(39.2% + 10px) !important;
+        }
+
+        #eventDetailsModal .event-modal {
+            max-height: calc(100dvh - 36px);
+        }
+
+        #eventDetailsModal .modal-body {
+            max-height: calc(100dvh - 190px);
+        }
+    }
+
+    /* =========================================================
+       TABLET
+    ========================================================= */
+
+    @media (max-width: 768px) {
+        .library-update-viewer {
+            padding: 10px !important;
+            align-items: center !important;
+        }
+
+        .library-update-viewer-dialog {
+            width: min(640px, 100%) !important;
+            max-height: calc(100dvh - 20px) !important;
+
+            display: grid !important;
+            grid-template-columns: 1fr !important;
+            grid-template-rows: minmax(240px, 44vh) minmax(0, 1fr) !important;
+
+            border-radius: 18px !important;
+        }
+
+        .viewer-image-panel {
+            width: 100% !important;
+            height: 44vh !important;
+            max-height: 380px !important;
+            min-height: 220px !important;
+            padding: 12px !important;
+        }
+
+        .viewer-content-panel {
+            width: 100% !important;
+            height: auto !important;
+            max-height: calc(56dvh - 20px) !important;
+            padding: 20px 18px 22px !important;
+        }
+
+        .viewer-navigation {
+            top: 22vh !important;
+        }
+
+        .viewer-previous {
+            left: 10px !important;
+        }
+
+        .viewer-next {
+            right: 10px !important;
+        }
+
+        #eventDetailsModal {
+            padding: 10px !important;
+        }
+
+        #eventDetailsModal .modal-dialog {
+            min-height: calc(100% - 20px);
+            margin: 10px auto !important;
+        }
+
+        #eventDetailsModal .event-modal {
+            max-height: calc(100dvh - 20px);
+            border-radius: 17px;
+        }
+
+        #eventDetailsModal .modal-body {
+            max-height: calc(100dvh - 190px);
+            padding: 20px;
+        }
+    }
+
+    /* =========================================================
+       MOBILE
+    ========================================================= */
+
+    @media (max-width: 575.98px) {
+        .library-update-viewer {
+            padding: 8px !important;
+            align-items: flex-end !important;
+        }
+
+        .library-update-viewer-dialog {
+            width: 100% !important;
+            max-height: calc(100dvh - 16px) !important;
+
+            grid-template-rows: minmax(210px, 38vh) minmax(0, 1fr) !important;
+
+            border: 1px solid rgba(255, 255, 255, .12) !important;
+            border-radius: 18px !important;
+        }
+
+        .viewer-image-panel {
+            height: 38vh !important;
+            min-height: 200px !important;
+            max-height: 320px !important;
+            padding: 10px !important;
+        }
+
+        .viewer-content-panel {
+            max-height: calc(62dvh - 16px) !important;
+            padding: 17px 15px 20px !important;
+        }
+
+        .viewer-brand {
+            gap: 9px !important;
+            padding-right: 42px !important;
+            padding-bottom: 13px !important;
+        }
+
+        .viewer-brand img {
+            width: 36px !important;
+            height: 36px !important;
+            flex-basis: 36px !important;
+        }
+
+        .viewer-brand strong {
+            font-size: 11px !important;
+        }
+
+        .viewer-copy {
+            padding: 16px 0 !important;
+        }
+
+        .viewer-copy h3 {
+            font-size: 22px !important;
+            line-height: 1.2 !important;
+        }
+
+        .viewer-copy p {
+            font-size: 12px !important;
+            line-height: 1.65 !important;
+        }
+
+        .viewer-close-button {
+            top: 8px !important;
+            right: 8px !important;
+            width: 38px !important;
+            height: 38px !important;
+        }
+
+        .viewer-navigation {
+            top: 19vh !important;
+            width: 38px !important;
+            height: 38px !important;
+        }
+
+        #eventDetailsModal .modal-header {
+            padding: 18px 18px 15px;
+        }
+
+        #eventDetailsModal .modal-body {
+            padding: 18px;
+        }
+
+        #eventDetailsModal .event-information {
+            grid-template-columns: 1fr;
+        }
+
+        #eventDetailsModal .modal-footer {
+            padding: 12px 16px;
+        }
+
+        #eventDetailsModal .modal-close-button {
+            width: 100%;
+        }
+    }
+
+    /* Tiny-height mobile landscape */
+    @media (max-height: 520px) and (max-width: 900px) {
+        .library-update-viewer {
+            align-items: center !important;
+        }
+
+        .library-update-viewer-dialog {
+            grid-template-columns: minmax(0, 1fr) minmax(260px, .8fr) !important;
+            grid-template-rows: 1fr !important;
+            max-height: calc(100dvh - 16px) !important;
+        }
+
+        .viewer-image-panel,
+        .viewer-content-panel {
+            height: calc(100dvh - 16px) !important;
+            max-height: none !important;
+            min-height: 0 !important;
+        }
+
+        .viewer-navigation {
+            top: 50% !important;
+        }
+
+        .viewer-next {
+            right: calc(36% + 8px) !important;
+        }
+    }
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    /*
+     * Bootstrap modals normally work inside body-level content. Because this
+     * page is rendered inside <main>, move the event modal to <body> after
+     * load. This guarantees correct backdrop stacking and viewport positioning.
+     */
+    const eventModal = document.getElementById('eventDetailsModal');
+
+    if (eventModal && eventModal.parentElement !== document.body) {
+        document.body.appendChild(eventModal);
+    }
+
+    /*
+     * Do the same for the two custom fixed viewers. This makes them independent
+     * of any future transformed/overflow-hidden page containers.
+     */
+    ['libraryUpdateViewer', 'arrivalViewer'].forEach(function (id) {
+        const viewer = document.getElementById(id);
+
+        if (viewer && viewer.parentElement !== document.body) {
+            document.body.appendChild(viewer);
+        }
+    });
+});
+</script>
+
+
 @include('components.lisa-chatbox')
 
 @endsection
