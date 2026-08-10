@@ -2611,11 +2611,42 @@ body.update-viewer-open {
                 </div>
             </div>
 
-            <div class="viewer-copy">
+            <div class="viewer-copy arrival-viewer-copy">
                 <span class="viewer-eyebrow">Recently Added</span>
+
                 <h3 id="arrivalViewerTitle"></h3>
-                <p id="arrivalViewerAuthor"></p>
-                <p id="arrivalViewerDetails"></p>
+
+                <div class="arrival-viewer-field arrival-viewer-author-field">
+                    <span class="arrival-viewer-field-label">Author</span>
+                    <strong id="arrivalViewerAuthor"></strong>
+                </div>
+
+                <div class="arrival-viewer-meta-grid">
+                    <div class="arrival-viewer-field">
+                        <span class="arrival-viewer-field-label">Accession Number</span>
+                        <strong id="arrivalViewerAccession"></strong>
+                    </div>
+
+                    <div class="arrival-viewer-field">
+                        <span class="arrival-viewer-field-label">Category</span>
+                        <strong id="arrivalViewerCategory"></strong>
+                    </div>
+
+                    <div class="arrival-viewer-field arrival-viewer-optional" id="arrivalViewerYearWrap">
+                        <span class="arrival-viewer-field-label">Publication Year</span>
+                        <strong id="arrivalViewerYear"></strong>
+                    </div>
+
+                    <div class="arrival-viewer-field arrival-viewer-optional" id="arrivalViewerPublisherWrap">
+                        <span class="arrival-viewer-field-label">Publisher</span>
+                        <strong id="arrivalViewerPublisher"></strong>
+                    </div>
+                </div>
+
+                <div class="arrival-viewer-description">
+                    <span class="arrival-viewer-field-label">Description</span>
+                    <p id="arrivalViewerDescription"></p>
+                </div>
             </div>
 
             <div class="viewer-footer">
@@ -2764,7 +2795,13 @@ document.addEventListener('DOMContentLoaded', function () {
     const image = document.getElementById('arrivalViewerImage');
     const title = document.getElementById('arrivalViewerTitle');
     const author = document.getElementById('arrivalViewerAuthor');
-    const details = document.getElementById('arrivalViewerDetails');
+    const accession = document.getElementById('arrivalViewerAccession');
+    const category = document.getElementById('arrivalViewerCategory');
+    const year = document.getElementById('arrivalViewerYear');
+    const publisher = document.getElementById('arrivalViewerPublisher');
+    const description = document.getElementById('arrivalViewerDescription');
+    const yearWrap = document.getElementById('arrivalViewerYearWrap');
+    const publisherWrap = document.getElementById('arrivalViewerPublisherWrap');
     const counter = document.getElementById('arrivalViewerCounter');
     const closeButtons = viewer.querySelectorAll('[data-close-arrival-viewer]');
 
@@ -2799,14 +2836,28 @@ document.addEventListener('DOMContentLoaded', function () {
         image.src = arrival.image;
         image.alt = arrival.title;
         title.textContent = arrival.title;
-        author.textContent = arrival.author;
-        details.textContent = [
-            `Accession No: ${arrival.accession}`,
-            arrival.category ? `Category: ${arrival.category}` : null,
-            arrival.year ? `Publication Year: ${arrival.year}` : null,
-            arrival.publisher ? `Publisher: ${arrival.publisher}` : null,
-            arrival.description
-        ].filter(Boolean).join(' • ');
+
+        author.textContent = arrival.author || 'Unknown Author';
+        accession.textContent = arrival.accession || 'Not assigned';
+        category.textContent = arrival.category || 'Uncategorized';
+        description.textContent = arrival.description || 'No description available.';
+
+        if (arrival.year) {
+            year.textContent = arrival.year;
+            yearWrap.hidden = false;
+        } else {
+            year.textContent = '';
+            yearWrap.hidden = true;
+        }
+
+        if (arrival.publisher) {
+            publisher.textContent = arrival.publisher;
+            publisherWrap.hidden = false;
+        } else {
+            publisher.textContent = '';
+            publisherWrap.hidden = true;
+        }
+
         counter.textContent = `${currentIndex + 1} of ${arrivalCards.length}`;
     }
 
@@ -4308,8 +4359,89 @@ document.addEventListener('DOMContentLoaded', function () {
 </style>
 
 
+
+<style>
+/* =========================================================
+   NEW ARRIVALS VIEWER — DISTINCT BOOK INFORMATION
+========================================================= */
+
+#arrivalViewer .arrival-viewer-copy {
+    padding: 28px 0 !important;
+}
+
+#arrivalViewer .arrival-viewer-copy > h3 {
+    margin-bottom: 18px !important;
+}
+
+#arrivalViewer .arrival-viewer-field,
+#arrivalViewer .arrival-viewer-description {
+    min-width: 0;
+    padding: 13px 15px;
+    background: rgba(255, 255, 255, .075);
+    border: 1px solid rgba(255, 255, 255, .12);
+    border-radius: 13px;
+}
+
+#arrivalViewer .arrival-viewer-author-field {
+    margin-bottom: 11px;
+}
+
+#arrivalViewer .arrival-viewer-meta-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 11px;
+    margin-bottom: 11px;
+}
+
+#arrivalViewer .arrival-viewer-field-label {
+    display: block;
+    margin-bottom: 5px;
+    color: rgba(255, 255, 255, .56);
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: .065em;
+    line-height: 1.3;
+    text-transform: uppercase;
+}
+
+#arrivalViewer .arrival-viewer-field strong {
+    display: block;
+    color: #fff;
+    font-size: 13px;
+    font-weight: 800;
+    line-height: 1.45;
+    overflow-wrap: anywhere;
+}
+
+#arrivalViewer .arrival-viewer-description {
+    margin-top: 0;
+}
+
+#arrivalViewer .arrival-viewer-description p {
+    margin: 0 !important;
+    color: rgba(255, 255, 255, .78) !important;
+    font-size: 12px !important;
+    line-height: 1.7 !important;
+    white-space: normal !important;
+    overflow-wrap: anywhere;
+}
+
+#arrivalViewer .arrival-viewer-optional[hidden] {
+    display: none !important;
+}
+
+@media (max-width: 767.98px) {
+    #arrivalViewer .arrival-viewer-meta-grid {
+        grid-template-columns: 1fr;
+    }
+
+    #arrivalViewer .arrival-viewer-field,
+    #arrivalViewer .arrival-viewer-description {
+        padding: 12px 13px;
+    }
+}
+</style>
+
 @include('components.lisa-chatbox')
 
 @endsection
-
-
