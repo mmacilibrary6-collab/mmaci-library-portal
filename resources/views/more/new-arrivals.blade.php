@@ -42,8 +42,7 @@
 
         <div class="container">
 
-
-            {{-- SEARCH / HEADING --}}
+            {{-- SEARCH --}}
             @if(($arrivals ?? collect())->isNotEmpty())
 
                 <div class="arrival-toolbar">
@@ -98,7 +97,9 @@
 
                             data-arrival-index="{{ $loop->index }}"
 
-                            data-arrival-title='@json($book->title)'
+                            data-arrival-title='@json(
+                                $book->title
+                            )'
 
                             data-arrival-author='@json(
                                 $book->author ?? "Unknown Author"
@@ -112,19 +113,22 @@
                                 $book->category ?? "Uncategorized"
                             )'
 
-                            data-arrival-year='@json(
-                                $book->publication_year ?? null
-                            )'
-
-                            data-arrival-publisher='@json(
-                                $book->publisher ?? null
+                            data-arrival-date='@json(
+                                $book->arrival_date
+                                    ? \Carbon\Carbon::parse(
+                                        $book->arrival_date
+                                    )->format("F d, Y")
+                                    : "Not specified"
                             )'
 
                             data-arrival-description='@json(
-                                $book->description ?? "No description available."
+                                $book->description
+                                    ?? "No description available."
                             )'
 
-                            data-arrival-image='@json($book->image_url)'
+                            data-arrival-image='@json(
+                                $book->image_url
+                            )'
 
                             aria-label="View details for {{ $book->title }}">
 
@@ -144,8 +148,11 @@
                                 <div class="arrival-cover-overlay">
 
                                     <span>
+
                                         <i class="bi bi-eye"></i>
+
                                         View Details
+
                                     </span>
 
                                 </div>
@@ -153,23 +160,26 @@
                             </div>
 
 
-                            {{-- BODY --}}
+                            {{-- CARD BODY --}}
                             <div class="arrival-body">
 
                                 <div class="arrival-meta-row">
 
-                                    @if($book->category)
+                                    <span class="arrival-category">
 
-                                        <span class="arrival-category">
-                                            {{ $book->category }}
-                                        </span>
+                                        {{ $book->category ?? 'Uncategorized' }}
 
-                                    @endif
+                                    </span>
 
-                                    @if($book->publication_year)
 
-                                        <span class="arrival-year">
-                                            {{ $book->publication_year }}
+                                    @if($book->arrival_date)
+
+                                        <span class="arrival-date-short">
+
+                                            {{ \Carbon\Carbon::parse(
+                                                $book->arrival_date
+                                            )->format('M d') }}
+
                                         </span>
 
                                     @endif
@@ -192,11 +202,13 @@
 
 
                                 <p>
+
                                     {{ \Illuminate\Support\Str::limit(
                                         $book->description
                                             ?? 'No description available.',
                                         110
                                     ) }}
+
                                 </p>
 
 
@@ -265,8 +277,8 @@
                     </h3>
 
                     <p>
-                        Try searching by title, author, category,
-                        or accession number.
+                        Try searching by title, author,
+                        category, or accession number.
                     </p>
 
                 </div>
@@ -282,7 +294,7 @@
 
 
 {{-- =============================================================
-    CLEAN BOOK DETAILS MODAL
+    BOOK DETAILS MODAL
 ============================================================= --}}
 <div
     class="book-modal"
@@ -296,7 +308,7 @@
     </div>
 
 
-    {{-- MODAL --}}
+    {{-- DIALOG --}}
     <div
         class="book-modal-dialog"
         role="dialog"
@@ -304,7 +316,7 @@
         aria-labelledby="arrivalViewerTitle">
 
 
-        {{-- CLOSE --}}
+        {{-- CLOSE BUTTON --}}
         <button
             type="button"
             class="book-modal-close"
@@ -316,7 +328,7 @@
         </button>
 
 
-        {{-- BOOK IMAGE --}}
+        {{-- BOOK COVER --}}
         <div class="book-modal-cover">
 
             <img
@@ -327,7 +339,7 @@
         </div>
 
 
-        {{-- DETAILS --}}
+        {{-- BOOK DETAILS --}}
         <div class="book-modal-content">
 
 
@@ -348,21 +360,24 @@
                 </h2>
 
 
-                <p
-                    class="book-modal-author"
-                    id="arrivalViewerAuthor">
+                <p class="book-modal-label">
 
-                    Unknown Author
+                    <i class="bi bi-stars"></i>
+
+                    Recently added to the MMACI Library
 
                 </p>
 
             </div>
 
 
-            {{-- INFORMATION --}}
+            {{-- =================================================
+                MAIN INFORMATION
+            ================================================== --}}
             <div class="book-information-grid">
 
 
+                {{-- ACCESSION NUMBER --}}
                 <div class="book-information-item">
 
                     <div class="book-information-icon">
@@ -386,21 +401,22 @@
                 </div>
 
 
+                {{-- AUTHOR --}}
                 <div class="book-information-item">
 
                     <div class="book-information-icon">
 
-                        <i class="bi bi-calendar3"></i>
+                        <i class="bi bi-person"></i>
 
                     </div>
 
                     <div>
 
                         <small>
-                            Publication Year
+                            Author
                         </small>
 
-                        <strong id="arrivalViewerYear">
+                        <strong id="arrivalViewerAuthor">
                             —
                         </strong>
 
@@ -409,21 +425,22 @@
                 </div>
 
 
-                <div class="book-information-item book-publisher-item">
+                {{-- DATE OF ARRIVAL --}}
+                <div class="book-information-item book-date-item">
 
                     <div class="book-information-icon">
 
-                        <i class="bi bi-building"></i>
+                        <i class="bi bi-calendar-check"></i>
 
                     </div>
 
                     <div>
 
                         <small>
-                            Publisher
+                            Date of Arrival
                         </small>
 
-                        <strong id="arrivalViewerPublisher">
+                        <strong id="arrivalViewerArrivalDate">
                             —
                         </strong>
 
@@ -434,25 +451,31 @@
             </div>
 
 
-            {{-- DESCRIPTION --}}
+            {{-- =================================================
+                DESCRIPTION
+            ================================================== --}}
             <div class="book-description">
 
                 <h4>
 
                     <i class="bi bi-card-text"></i>
 
-                    About this book
+                    About this Book
 
                 </h4>
 
                 <p id="arrivalViewerDescription">
+
                     No description available.
+
                 </p>
 
             </div>
 
 
-            {{-- FOOTER --}}
+            {{-- =================================================
+                FOOTER
+            ================================================== --}}
             <div class="book-modal-footer">
 
                 <div class="book-modal-brand">
@@ -495,7 +518,7 @@
 <style>
 
 /* =============================================================
-   ROOT
+   VARIABLES
 ============================================================= */
 
 :root {
@@ -590,7 +613,9 @@
 
     margin: 15px 0 14px;
 
-    font-size: clamp(42px, 6vw, 70px);
+    font-size:
+        clamp(42px, 6vw, 70px);
+
     font-weight: 900;
 
     line-height: 1;
@@ -606,7 +631,8 @@
 
     margin: 0;
 
-    color: rgba(255, 255, 255, .80);
+    color:
+        rgba(255, 255, 255, .80);
 
     font-size: 16px;
 
@@ -624,7 +650,8 @@
 
     padding: 60px 0 80px;
 
-    background: var(--arrival-bg);
+    background:
+        var(--arrival-bg);
 
 }
 
@@ -650,7 +677,8 @@
 
 .arrival-heading span {
 
-    color: var(--arrival-blue);
+    color:
+        var(--arrival-blue);
 
     font-size: 11px;
     font-weight: 800;
@@ -666,9 +694,11 @@
 
     margin: 5px 0 0;
 
-    color: var(--arrival-navy);
+    color:
+        var(--arrival-navy);
 
-    font-size: clamp(26px, 4vw, 38px);
+    font-size:
+        clamp(26px, 4vw, 38px);
 
     font-weight: 800;
 
@@ -682,23 +712,27 @@
 
 .arrival-search-field {
 
-    width: min(100%, 450px);
+    width:
+        min(100%, 450px);
 
     display: flex;
     align-items: center;
 
     gap: 11px;
 
-    padding: 14px 17px;
+    padding:
+        14px 17px;
 
     background: #ffffff;
 
-    border: 1px solid var(--arrival-border);
+    border:
+        1px solid var(--arrival-border);
 
     border-radius: 14px;
 
     box-shadow:
-        0 8px 25px rgba(11, 46, 89, .06);
+        0 8px 25px
+        rgba(11, 46, 89, .06);
 
     transition:
         border-color .2s ease,
@@ -713,7 +747,8 @@
         rgba(24, 75, 140, .45);
 
     box-shadow:
-        0 0 0 4px rgba(24, 75, 140, .08);
+        0 0 0 4px
+        rgba(24, 75, 140, .08);
 
 }
 
@@ -722,9 +757,8 @@
 
     flex-shrink: 0;
 
-    color: var(--arrival-blue);
-
-    font-size: 16px;
+    color:
+        var(--arrival-blue);
 
 }
 
@@ -735,9 +769,11 @@
 
     padding: 0;
 
-    color: var(--arrival-text);
+    color:
+        var(--arrival-text);
 
-    background: transparent;
+    background:
+        transparent;
 
     border: 0;
 
@@ -757,7 +793,7 @@
 
 
 /* =============================================================
-   BOOK GRID
+   GRID
 ============================================================= */
 
 .arrivals-grid {
@@ -765,7 +801,10 @@
     display: grid;
 
     grid-template-columns:
-        repeat(4, minmax(0, 1fr));
+        repeat(
+            4,
+            minmax(0, 1fr)
+        );
 
     gap: 24px;
 
@@ -781,7 +820,7 @@
 
 
 /* =============================================================
-   CARD
+   BOOK CARD
 ============================================================= */
 
 .arrival-card {
@@ -790,7 +829,6 @@
     height: 100%;
 
     display: flex;
-
     flex-direction: column;
 
     padding: 0;
@@ -809,7 +847,8 @@
     border-radius: 18px;
 
     box-shadow:
-        0 7px 22px rgba(11, 46, 89, .06);
+        0 7px 22px
+        rgba(11, 46, 89, .06);
 
     cursor: pointer;
 
@@ -827,10 +866,11 @@
         translateY(-6px);
 
     border-color:
-        rgba(24, 75, 140, .26);
+        rgba(24, 75, 140, .28);
 
     box-shadow:
-        0 18px 38px rgba(11, 46, 89, .13);
+        0 18px 38px
+        rgba(11, 46, 89, .13);
 
 }
 
@@ -838,7 +878,8 @@
 .arrival-card:focus-visible {
 
     outline:
-        3px solid rgba(244, 180, 0, .55);
+        3px solid
+        rgba(244, 180, 0, .55);
 
     outline-offset: 4px;
 
@@ -856,11 +897,13 @@
 
     width: 100%;
 
-    aspect-ratio: 3 / 4;
+    aspect-ratio:
+        3 / 4;
 
     overflow: hidden;
 
-    background: #e5eaf0;
+    background:
+        #e5eaf0;
 
 }
 
@@ -890,7 +933,7 @@
 
 
 
-/* HOVER OVERLAY */
+/* OVERLAY */
 
 .arrival-cover-overlay {
 
@@ -946,14 +989,16 @@
         rgba(11, 46, 89, .90);
 
     border:
-        1px solid rgba(255, 255, 255, .22);
+        1px solid
+        rgba(255, 255, 255, .22);
 
     border-radius: 50px;
 
     font-size: 10px;
     font-weight: 700;
 
-    backdrop-filter: blur(5px);
+    backdrop-filter:
+        blur(5px);
 
 }
 
@@ -968,7 +1013,6 @@
     flex: 1;
 
     display: flex;
-
     flex-direction: column;
 
     padding: 19px;
@@ -996,14 +1040,15 @@
 
     display: inline-flex;
 
-    max-width: 75%;
+    max-width: 72%;
 
     padding:
         5px 9px;
 
     overflow: hidden;
 
-    color: var(--arrival-navy);
+    color:
+        var(--arrival-navy);
 
     background:
         rgba(244, 180, 0, .15);
@@ -1023,11 +1068,11 @@
 }
 
 
-.arrival-year {
+.arrival-date-short {
 
     flex-shrink: 0;
 
-    color: #8895a5;
+    color: #8995a5;
 
     font-size: 10px;
     font-weight: 700;
@@ -1044,14 +1089,17 @@
     margin:
         0 0 7px;
 
-    color: var(--arrival-navy);
+    color:
+        var(--arrival-navy);
 
     font-size: 17px;
     font-weight: 800;
 
     line-height: 1.4;
 
-    -webkit-box-orient: vertical;
+    -webkit-box-orient:
+        vertical;
+
     -webkit-line-clamp: 2;
 
 }
@@ -1074,7 +1122,8 @@
 
 .arrival-author i {
 
-    color: var(--arrival-blue);
+    color:
+        var(--arrival-blue);
 
 }
 
@@ -1088,20 +1137,25 @@
     margin:
         13px 0 20px;
 
-    color: var(--arrival-muted);
+    color:
+        var(--arrival-muted);
 
     font-size: 12px;
 
     line-height: 1.7;
 
-    -webkit-box-orient: vertical;
+    -webkit-box-orient:
+        vertical;
+
     -webkit-line-clamp: 3;
 
 }
 
 
 
-/* CARD FOOTER */
+/* =============================================================
+   CARD FOOTER
+============================================================= */
 
 .arrival-card-footer {
 
@@ -1124,7 +1178,8 @@
 
 .arrival-card-footer > span:first-child {
 
-    color: var(--arrival-blue);
+    color:
+        var(--arrival-blue);
 
     font-size: 10px;
     font-weight: 800;
@@ -1143,7 +1198,8 @@
 
     flex-shrink: 0;
 
-    color: var(--arrival-blue);
+    color:
+        var(--arrival-blue);
 
     background:
         rgba(24, 75, 140, .08);
@@ -1174,15 +1230,17 @@
 
 
 /* =============================================================
-   EMPTY STATES
+   EMPTY STATE
 ============================================================= */
 
 .arrival-empty,
 .arrival-no-results {
 
-    grid-column: 1 / -1;
+    grid-column:
+        1 / -1;
 
-    padding: 70px 25px;
+    padding:
+        70px 25px;
 
     text-align: center;
 
@@ -1208,7 +1266,8 @@
     margin:
         0 auto 16px;
 
-    color: var(--arrival-blue);
+    color:
+        var(--arrival-blue);
 
     background:
         rgba(24, 75, 140, .08);
@@ -1226,7 +1285,8 @@
     margin:
         0 0 7px;
 
-    color: var(--arrival-navy);
+    color:
+        var(--arrival-navy);
 
     font-size: 20px;
     font-weight: 800;
@@ -1239,16 +1299,15 @@
 
     margin: 0;
 
-    color: var(--arrival-muted);
-
-    font-size: 13px;
+    color:
+        var(--arrival-muted);
 
 }
 
 
 
 /* =============================================================
-   MODAL
+   BOOK MODAL
 ============================================================= */
 
 .book-modal {
@@ -1309,7 +1368,9 @@
 
 
 
-/* DIALOG */
+/* =============================================================
+   MODAL DIALOG
+============================================================= */
 
 .book-modal-dialog {
 
@@ -1318,7 +1379,7 @@
     z-index: 1;
 
     width:
-        min(860px, 100%);
+        min(850px, 100%);
 
     max-height:
         calc(100vh - 48px);
@@ -1326,7 +1387,7 @@
     display: grid;
 
     grid-template-columns:
-        300px minmax(0, 1fr);
+        290px minmax(0, 1fr);
 
     overflow: hidden;
 
@@ -1335,10 +1396,12 @@
     border-radius: 22px;
 
     box-shadow:
-        0 30px 90px rgba(0, 0, 0, .38);
+        0 30px 90px
+        rgba(0, 0, 0, .38);
 
     transform:
-        translateY(15px) scale(.98);
+        translateY(15px)
+        scale(.98);
 
     transition:
         transform .25s ease;
@@ -1350,7 +1413,8 @@
 .book-modal-dialog {
 
     transform:
-        translateY(0) scale(1);
+        translateY(0)
+        scale(1);
 
 }
 
@@ -1378,18 +1442,21 @@
 
     padding: 0;
 
-    color: var(--arrival-navy);
+    color:
+        var(--arrival-navy);
 
     background:
-        rgba(255, 255, 255, .94);
+        rgba(255, 255, 255, .96);
 
     border:
-        1px solid rgba(11, 46, 89, .12);
+        1px solid
+        rgba(11, 46, 89, .12);
 
     border-radius: 11px;
 
     box-shadow:
-        0 6px 16px rgba(0, 0, 0, .12);
+        0 6px 16px
+        rgba(0, 0, 0, .12);
 
     cursor: pointer;
 
@@ -1447,8 +1514,8 @@
 
     width: 100%;
 
-    max-width: 235px;
-    max-height: 410px;
+    max-width: 225px;
+    max-height: 400px;
 
     display: block;
 
@@ -1457,7 +1524,8 @@
     border-radius: 8px;
 
     box-shadow:
-        0 20px 40px rgba(11, 46, 89, .22);
+        0 20px 40px
+        rgba(11, 46, 89, .22);
 
 }
 
@@ -1505,7 +1573,8 @@
     padding:
         6px 10px;
 
-    color: var(--arrival-navy);
+    color:
+        var(--arrival-navy);
 
     background:
         rgba(244, 180, 0, .17);
@@ -1525,9 +1594,10 @@
 .book-modal-header h2 {
 
     margin:
-        0 0 8px;
+        0 0 9px;
 
-    color: var(--arrival-navy);
+    color:
+        var(--arrival-navy);
 
     font-size:
         clamp(23px, 3vw, 32px);
@@ -1541,21 +1611,36 @@
 }
 
 
-.book-modal-author {
+.book-modal-label {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 6px;
 
     margin: 0;
 
-    color: var(--arrival-blue);
+    color:
+        var(--arrival-blue);
 
-    font-size: 13px;
+    font-size: 11px;
     font-weight: 700;
+
+}
+
+
+.book-modal-label i {
+
+    color:
+        var(--arrival-gold);
 
 }
 
 
 
 /* =============================================================
-   INFORMATION GRID
+   BOOK INFORMATION
 ============================================================= */
 
 .book-information-grid {
@@ -1563,9 +1648,12 @@
     display: grid;
 
     grid-template-columns:
-        repeat(2, minmax(0, 1fr));
+        repeat(
+            2,
+            minmax(0, 1fr)
+        );
 
-    gap: 10px;
+    gap: 11px;
 
     margin:
         25px 0;
@@ -1579,35 +1667,35 @@
 
     align-items: center;
 
-    gap: 11px;
+    gap: 12px;
 
     min-width: 0;
 
-    padding:
-        13px;
+    padding: 14px;
 
     background:
         #f7f9fc;
 
     border:
-        1px solid #e8edf3;
+        1px solid #e3e9f0;
 
-    border-radius: 12px;
+    border-radius: 13px;
 
 }
 
 
-.book-publisher-item {
+.book-date-item {
 
-    grid-column: 1 / -1;
+    grid-column:
+        1 / -1;
 
 }
 
 
 .book-information-icon {
 
-    width: 36px;
-    height: 36px;
+    width: 40px;
+    height: 40px;
 
     display: grid;
 
@@ -1615,14 +1703,15 @@
 
     flex-shrink: 0;
 
-    color: var(--arrival-blue);
+    color:
+        var(--arrival-blue);
 
     background:
-        rgba(24, 75, 140, .08);
+        #eaf0f8;
 
-    border-radius: 9px;
+    border-radius: 10px;
 
-    font-size: 14px;
+    font-size: 15px;
 
 }
 
@@ -1638,12 +1727,15 @@
 
     display: block;
 
-    margin-bottom: 2px;
+    margin-bottom: 3px;
 
-    color: #8591a0;
+    color:
+        #8995a5;
 
     font-size: 9px;
-    font-weight: 600;
+    font-weight: 700;
+
+    letter-spacing: .02em;
 
     text-transform: uppercase;
 
@@ -1656,10 +1748,13 @@
 
     overflow: hidden;
 
-    color: var(--arrival-text);
+    color:
+        var(--arrival-navy);
 
-    font-size: 11px;
+    font-size: 12px;
     font-weight: 800;
+
+    line-height: 1.4;
 
     text-overflow: ellipsis;
 
@@ -1687,9 +1782,10 @@
     gap: 7px;
 
     margin:
-        0 0 9px;
+        0 0 10px;
 
-    color: var(--arrival-navy);
+    color:
+        var(--arrival-navy);
 
     font-size: 13px;
     font-weight: 800;
@@ -1699,7 +1795,8 @@
 
 .book-description h4 i {
 
-    color: var(--arrival-blue);
+    color:
+        var(--arrival-blue);
 
 }
 
@@ -1708,7 +1805,8 @@
 
     margin: 0;
 
-    color: var(--arrival-muted);
+    color:
+        var(--arrival-muted);
 
     font-size: 12px;
 
@@ -1733,7 +1831,7 @@
 
     margin-top: auto;
 
-    padding-top: 24px;
+    padding-top: 25px;
 
 }
 
@@ -1770,7 +1868,8 @@
 
     display: block;
 
-    color: var(--arrival-navy);
+    color:
+        var(--arrival-navy);
 
     font-size: 10px;
     font-weight: 800;
@@ -1794,7 +1893,8 @@
     padding:
         6px 10px;
 
-    color: var(--arrival-blue);
+    color:
+        var(--arrival-blue);
 
     background:
         rgba(24, 75, 140, .07);
@@ -1808,7 +1908,7 @@
 
 
 
-/* STOP PAGE SCROLL */
+/* DISABLE BODY SCROLL */
 
 body.arrival-viewer-open {
 
@@ -1819,7 +1919,7 @@ body.arrival-viewer-open {
 
 
 /* =============================================================
-   RESPONSIVE - TABLET
+   TABLET
 ============================================================= */
 
 @media (max-width: 1199px) {
@@ -1827,7 +1927,10 @@ body.arrival-viewer-open {
     .arrivals-grid {
 
         grid-template-columns:
-            repeat(3, minmax(0, 1fr));
+            repeat(
+                3,
+                minmax(0, 1fr)
+            );
 
     }
 
@@ -1856,7 +1959,10 @@ body.arrival-viewer-open {
     .arrivals-grid {
 
         grid-template-columns:
-            repeat(2, minmax(0, 1fr));
+            repeat(
+                2,
+                minmax(0, 1fr)
+            );
 
     }
 
@@ -1867,7 +1973,8 @@ body.arrival-viewer-open {
             min(700px, 100%);
 
         grid-template-columns:
-            250px minmax(0, 1fr);
+            245px
+            minmax(0, 1fr);
 
     }
 
@@ -1881,7 +1988,7 @@ body.arrival-viewer-open {
 
     .book-modal-cover img {
 
-        max-width: 200px;
+        max-width: 195px;
 
     }
 
@@ -1898,7 +2005,7 @@ body.arrival-viewer-open {
 
 
 /* =============================================================
-   RESPONSIVE - MOBILE
+   MOBILE
 ============================================================= */
 
 @media (max-width: 650px) {
@@ -1928,7 +2035,8 @@ body.arrival-viewer-open {
 
     .arrivals-grid {
 
-        grid-template-columns: 1fr;
+        grid-template-columns:
+            1fr;
 
         gap: 18px;
 
@@ -1939,7 +2047,8 @@ body.arrival-viewer-open {
 
         max-width: 380px;
 
-        margin: 0 auto;
+        margin:
+            0 auto;
 
     }
 
@@ -1951,7 +2060,7 @@ body.arrival-viewer-open {
     }
 
 
-    /* MODAL MOBILE */
+    /* MODAL */
 
     .book-modal {
 
@@ -1974,7 +2083,7 @@ body.arrival-viewer-open {
         overflow-y: auto;
 
         border-radius:
-            20px 20px 14px 14px;
+            20px;
 
     }
 
@@ -1983,10 +2092,10 @@ body.arrival-viewer-open {
 
         min-height: 0;
 
-        height: 290px;
+        height: 280px;
 
         padding:
-            22px 50px 18px;
+            22px 45px 18px;
 
     }
 
@@ -1996,7 +2105,7 @@ body.arrival-viewer-open {
         width: auto;
 
         max-width: 180px;
-        max-height: 250px;
+        max-height: 240px;
 
     }
 
@@ -2015,7 +2124,7 @@ body.arrival-viewer-open {
 
     .book-modal-header {
 
-        padding-right: 25px;
+        padding-right: 20px;
 
     }
 
@@ -2029,7 +2138,8 @@ body.arrival-viewer-open {
 
     .book-information-grid {
 
-        grid-template-columns: 1fr;
+        grid-template-columns:
+            1fr;
 
         gap: 8px;
 
@@ -2039,22 +2149,16 @@ body.arrival-viewer-open {
     }
 
 
-    .book-publisher-item {
+    .book-date-item {
 
         grid-column: auto;
 
     }
 
 
-    .book-modal-close {
+    .book-modal-footer {
 
-        position: fixed;
-
-        top: auto;
-
-        margin-top: 13px;
-
-        right: 26px;
+        margin-top: 20px;
 
     }
 
@@ -2063,7 +2167,7 @@ body.arrival-viewer-open {
 
 
 /* =============================================================
-   EXTRA SMALL MOBILE
+   EXTRA SMALL
 ============================================================= */
 
 @media (max-width: 400px) {
@@ -2077,14 +2181,14 @@ body.arrival-viewer-open {
 
     .book-modal-cover {
 
-        height: 260px;
+        height: 250px;
 
     }
 
 
     .book-modal-cover img {
 
-        max-height: 220px;
+        max-height: 215px;
 
     }
 
@@ -2105,552 +2209,583 @@ body.arrival-viewer-open {
 
 <script>
 
-document.addEventListener('DOMContentLoaded', function () {
+document.addEventListener(
+    'DOMContentLoaded',
+    function () {
 
 
-    /* =========================================================
-       ELEMENTS
-    ========================================================== */
+        /* =====================================================
+           ELEMENTS
+        ====================================================== */
 
-    const searchInput =
-        document.getElementById('arrivalSearch');
-
-    const arrivalCards =
-        Array.from(
-            document.querySelectorAll(
-                '.arrival-card-button'
-            )
-        );
-
-    const noResults =
-        document.getElementById(
-            'arrivalNoResults'
-        );
-
-    const viewer =
-        document.getElementById(
-            'arrivalViewer'
-        );
+        const searchInput =
+            document.getElementById(
+                'arrivalSearch'
+            );
 
 
-    /* =========================================================
-       SEARCH
-    ========================================================== */
-
-    function filterArrivals() {
-
-        if (!searchInput) {
-            return;
-        }
-
-
-        const term =
-            searchInput.value
-                .trim()
-                .toLowerCase();
-
-
-        let visibleCount = 0;
-
-
-        arrivalCards.forEach(function (card) {
-
-            const searchableData = [
-
-                parseJson(
-                    card.dataset.arrivalTitle,
-                    ''
-                ),
-
-                parseJson(
-                    card.dataset.arrivalAuthor,
-                    ''
-                ),
-
-                parseJson(
-                    card.dataset.arrivalAccession,
-                    ''
-                ),
-
-                parseJson(
-                    card.dataset.arrivalCategory,
-                    ''
+        const arrivalCards =
+            Array.from(
+                document.querySelectorAll(
+                    '.arrival-card-button'
                 )
-
-            ]
-            .join(' ')
-            .toLowerCase();
+            );
 
 
-            const matches =
-                term === '' ||
-                searchableData.includes(term);
+        const noResults =
+            document.getElementById(
+                'arrivalNoResults'
+            );
 
 
-            const item =
-                card.closest(
-                    '.arrival-item'
+        const viewer =
+            document.getElementById(
+                'arrivalViewer'
+            );
+
+
+
+        /* =====================================================
+           JSON PARSER
+        ====================================================== */
+
+        function parseJson(
+            value,
+            fallback = ''
+        ) {
+
+            if (
+                value === undefined ||
+                value === null ||
+                value === ''
+            ) {
+
+                return fallback;
+
+            }
+
+
+            try {
+
+                return JSON.parse(
+                    value
                 );
 
+            }
 
-            if (item) {
+            catch (error) {
 
-                item.style.display =
-                    matches
-                        ? ''
-                        : 'none';
+                return value ||
+                    fallback;
+
+            }
+
+        }
+
+
+
+        /* =====================================================
+           SEARCH
+        ====================================================== */
+
+        function filterArrivals() {
+
+            if (!searchInput) {
+
+                return;
 
             }
 
 
-            if (matches) {
+            const term =
+                searchInput
+                    .value
+                    .trim()
+                    .toLowerCase();
 
-                visibleCount++;
 
-            }
+            let visibleCount = 0;
 
-        });
 
+            arrivalCards.forEach(
+                function (card) {
 
-        if (noResults) {
+                    const searchableData = [
 
-            noResults.classList.toggle(
-                'd-none',
-                visibleCount !== 0
-            );
+                        parseJson(
+                            card.dataset.arrivalTitle,
+                            ''
+                        ),
 
-        }
+                        parseJson(
+                            card.dataset.arrivalAuthor,
+                            ''
+                        ),
 
-    }
+                        parseJson(
+                            card.dataset.arrivalAccession,
+                            ''
+                        ),
 
+                        parseJson(
+                            card.dataset.arrivalCategory,
+                            ''
+                        ),
 
-    if (searchInput) {
+                        parseJson(
+                            card.dataset.arrivalDate,
+                            ''
+                        )
 
-        searchInput.addEventListener(
-            'input',
-            filterArrivals
-        );
+                    ]
+                    .join(' ')
+                    .toLowerCase();
 
-    }
 
+                    const matches =
+                        term === '' ||
+                        searchableData.includes(
+                            term
+                        );
 
 
-    /* =========================================================
-       NO VIEWER / NO CARDS
-    ========================================================== */
+                    const item =
+                        card.closest(
+                            '.arrival-item'
+                        );
 
-    if (
-        !viewer ||
-        arrivalCards.length === 0
-    ) {
 
-        return;
+                    if (item) {
 
-    }
+                        item.style.display =
+                            matches
+                                ? ''
+                                : 'none';
 
+                    }
 
 
-    /* =========================================================
-       VIEWER ELEMENTS
-    ========================================================== */
+                    if (matches) {
 
-    const viewerImage =
-        document.getElementById(
-            'arrivalViewerImage'
-        );
+                        visibleCount++;
 
-    const viewerTitle =
-        document.getElementById(
-            'arrivalViewerTitle'
-        );
-
-    const viewerAuthor =
-        document.getElementById(
-            'arrivalViewerAuthor'
-        );
-
-    const viewerCategory =
-        document.getElementById(
-            'arrivalViewerCategory'
-        );
-
-    const viewerAccession =
-        document.getElementById(
-            'arrivalViewerAccession'
-        );
-
-    const viewerYear =
-        document.getElementById(
-            'arrivalViewerYear'
-        );
-
-    const viewerPublisher =
-        document.getElementById(
-            'arrivalViewerPublisher'
-        );
-
-    const viewerDescription =
-        document.getElementById(
-            'arrivalViewerDescription'
-        );
-
-    const viewerCounter =
-        document.getElementById(
-            'arrivalViewerCounter'
-        );
-
-    const closeElements =
-        viewer.querySelectorAll(
-            '[data-close-arrival-viewer]'
-        );
-
-
-    let lastFocusedElement = null;
-
-
-
-    /* =========================================================
-       SAFE JSON PARSER
-    ========================================================== */
-
-    function parseJson(
-        value,
-        fallback = ''
-    ) {
-
-        if (
-            value === undefined ||
-            value === null ||
-            value === ''
-        ) {
-
-            return fallback;
-
-        }
-
-
-        try {
-
-            return JSON.parse(value);
-
-        }
-        catch (error) {
-
-            return value || fallback;
-
-        }
-
-    }
-
-
-
-    /* =========================================================
-       GET BOOK DATA
-    ========================================================== */
-
-    function getBookData(card) {
-
-        return {
-
-            title:
-                parseJson(
-                    card.dataset.arrivalTitle,
-                    'New Arrival'
-                ),
-
-            author:
-                parseJson(
-                    card.dataset.arrivalAuthor,
-                    'Unknown Author'
-                ),
-
-            accession:
-                parseJson(
-                    card.dataset.arrivalAccession,
-                    'Not assigned'
-                ),
-
-            category:
-                parseJson(
-                    card.dataset.arrivalCategory,
-                    'Uncategorized'
-                ),
-
-            year:
-                parseJson(
-                    card.dataset.arrivalYear,
-                    ''
-                ),
-
-            publisher:
-                parseJson(
-                    card.dataset.arrivalPublisher,
-                    ''
-                ),
-
-            description:
-                parseJson(
-                    card.dataset.arrivalDescription,
-                    'No description available.'
-                ),
-
-            image:
-                parseJson(
-                    card.dataset.arrivalImage,
-                    ''
-                )
-
-        };
-
-    }
-
-
-
-    /* =========================================================
-       RENDER BOOK
-    ========================================================== */
-
-    function renderBook(
-        card,
-        index
-    ) {
-
-        const book =
-            getBookData(card);
-
-
-        viewerTitle.textContent =
-            book.title ||
-            'New Arrival';
-
-
-        viewerAuthor.textContent =
-            book.author ||
-            'Unknown Author';
-
-
-        viewerCategory.textContent =
-            book.category ||
-            'Uncategorized';
-
-
-        viewerAccession.textContent =
-            book.accession ||
-            'Not assigned';
-
-
-        viewerYear.textContent =
-            book.year ||
-            'Not specified';
-
-
-        viewerPublisher.textContent =
-            book.publisher ||
-            'Not specified';
-
-
-        viewerDescription.textContent =
-            book.description ||
-            'No description available.';
-
-
-        viewerCounter.textContent =
-            `${index + 1} of ${arrivalCards.length}`;
-
-
-        viewerImage.src =
-            book.image ||
-            @json(
-                asset('images/readingarea.jpg')
-            );
-
-
-        viewerImage.alt =
-            book.title ||
-            'Book cover';
-
-    }
-
-
-
-    /* =========================================================
-       OPEN MODAL
-    ========================================================== */
-
-    function openViewer(
-        card,
-        index
-    ) {
-
-        lastFocusedElement =
-            card;
-
-
-        renderBook(
-            card,
-            index
-        );
-
-
-        viewer.classList.add(
-            'is-open'
-        );
-
-
-        viewer.setAttribute(
-            'aria-hidden',
-            'false'
-        );
-
-
-        document.body.classList.add(
-            'arrival-viewer-open'
-        );
-
-
-        window.setTimeout(function () {
-
-            viewer
-                .querySelector(
-                    '.book-modal-close'
-                )
-                ?.focus();
-
-        }, 50);
-
-    }
-
-
-
-    /* =========================================================
-       CLOSE MODAL
-    ========================================================== */
-
-    function closeViewer() {
-
-        viewer.classList.remove(
-            'is-open'
-        );
-
-
-        viewer.setAttribute(
-            'aria-hidden',
-            'true'
-        );
-
-
-        document.body.classList.remove(
-            'arrival-viewer-open'
-        );
-
-
-        if (lastFocusedElement) {
-
-            lastFocusedElement.focus();
-
-        }
-
-    }
-
-
-
-    /* =========================================================
-       CARD CLICK
-    ========================================================== */
-
-    arrivalCards.forEach(
-        function (
-            card,
-            index
-        ) {
-
-            card.addEventListener(
-                'click',
-                function () {
-
-                    openViewer(
-                        card,
-                        index
-                    );
+                    }
 
                 }
             );
 
+
+            if (noResults) {
+
+                noResults.classList.toggle(
+                    'd-none',
+                    visibleCount !== 0
+                );
+
+            }
+
         }
-    );
 
 
+        if (searchInput) {
 
-    /* =========================================================
-       CLOSE CLICK
-    ========================================================== */
-
-    closeElements.forEach(
-        function (element) {
-
-            element.addEventListener(
-                'click',
-                closeViewer
+            searchInput.addEventListener(
+                'input',
+                filterArrivals
             );
 
         }
-    );
 
 
 
-    /* =========================================================
-       IMAGE FALLBACK
-    ========================================================== */
+        /* =====================================================
+           STOP IF NO BOOKS
+        ====================================================== */
 
-    viewerImage.addEventListener(
-        'error',
-        function () {
+        if (
+            !viewer ||
+            arrivalCards.length === 0
+        ) {
 
-            viewerImage.onerror = null;
+            return;
+
+        }
+
+
+
+        /* =====================================================
+           MODAL ELEMENTS
+        ====================================================== */
+
+        const viewerImage =
+            document.getElementById(
+                'arrivalViewerImage'
+            );
+
+
+        const viewerTitle =
+            document.getElementById(
+                'arrivalViewerTitle'
+            );
+
+
+        const viewerCategory =
+            document.getElementById(
+                'arrivalViewerCategory'
+            );
+
+
+        const viewerAccession =
+            document.getElementById(
+                'arrivalViewerAccession'
+            );
+
+
+        const viewerAuthor =
+            document.getElementById(
+                'arrivalViewerAuthor'
+            );
+
+
+        const viewerArrivalDate =
+            document.getElementById(
+                'arrivalViewerArrivalDate'
+            );
+
+
+        const viewerDescription =
+            document.getElementById(
+                'arrivalViewerDescription'
+            );
+
+
+        const viewerCounter =
+            document.getElementById(
+                'arrivalViewerCounter'
+            );
+
+
+        const closeElements =
+            viewer.querySelectorAll(
+                '[data-close-arrival-viewer]'
+            );
+
+
+        let lastFocusedElement =
+            null;
+
+
+
+        /* =====================================================
+           GET BOOK DATA
+        ====================================================== */
+
+        function getBookData(card) {
+
+            return {
+
+                title:
+                    parseJson(
+                        card.dataset.arrivalTitle,
+                        'New Arrival'
+                    ),
+
+                author:
+                    parseJson(
+                        card.dataset.arrivalAuthor,
+                        'Unknown Author'
+                    ),
+
+                accession:
+                    parseJson(
+                        card.dataset.arrivalAccession,
+                        'Not assigned'
+                    ),
+
+                category:
+                    parseJson(
+                        card.dataset.arrivalCategory,
+                        'Uncategorized'
+                    ),
+
+                arrivalDate:
+                    parseJson(
+                        card.dataset.arrivalDate,
+                        'Not specified'
+                    ),
+
+                description:
+                    parseJson(
+                        card.dataset.arrivalDescription,
+                        'No description available.'
+                    ),
+
+                image:
+                    parseJson(
+                        card.dataset.arrivalImage,
+                        ''
+                    )
+
+            };
+
+        }
+
+
+
+        /* =====================================================
+           RENDER BOOK
+        ====================================================== */
+
+        function renderBook(
+            card,
+            index
+        ) {
+
+            const book =
+                getBookData(
+                    card
+                );
+
+
+            viewerTitle.textContent =
+                book.title ||
+                'New Arrival';
+
+
+            viewerCategory.textContent =
+                book.category ||
+                'Uncategorized';
+
+
+            viewerAccession.textContent =
+                book.accession ||
+                'Not assigned';
+
+
+            viewerAuthor.textContent =
+                book.author ||
+                'Unknown Author';
+
+
+            viewerArrivalDate.textContent =
+                book.arrivalDate ||
+                'Not specified';
+
+
+            viewerDescription.textContent =
+                book.description ||
+                'No description available.';
+
+
+            viewerCounter.textContent =
+                `${index + 1} of ${arrivalCards.length}`;
+
 
             viewerImage.src =
+                book.image ||
                 @json(
                     asset(
                         'images/readingarea.jpg'
                     )
                 );
 
+
+            viewerImage.alt =
+                book.title ||
+                'Book cover';
+
         }
-    );
 
 
 
-    /* =========================================================
-       ESCAPE KEY
-    ========================================================== */
+        /* =====================================================
+           OPEN MODAL
+        ====================================================== */
 
-    document.addEventListener(
-        'keydown',
-        function (event) {
+        function openViewer(
+            card,
+            index
+        ) {
 
-            if (
-                event.key === 'Escape' &&
-                viewer.classList.contains(
-                    'is-open'
-                )
-            ) {
+            lastFocusedElement =
+                card;
 
-                closeViewer();
+
+            renderBook(
+                card,
+                index
+            );
+
+
+            viewer.classList.add(
+                'is-open'
+            );
+
+
+            viewer.setAttribute(
+                'aria-hidden',
+                'false'
+            );
+
+
+            document.body.classList.add(
+                'arrival-viewer-open'
+            );
+
+
+            setTimeout(
+                function () {
+
+                    viewer
+                        .querySelector(
+                            '.book-modal-close'
+                        )
+                        ?.focus();
+
+                },
+                50
+            );
+
+        }
+
+
+
+        /* =====================================================
+           CLOSE MODAL
+        ====================================================== */
+
+        function closeViewer() {
+
+            viewer.classList.remove(
+                'is-open'
+            );
+
+
+            viewer.setAttribute(
+                'aria-hidden',
+                'true'
+            );
+
+
+            document.body.classList.remove(
+                'arrival-viewer-open'
+            );
+
+
+            if (lastFocusedElement) {
+
+                lastFocusedElement.focus();
 
             }
 
         }
-    );
 
 
 
-    /* =========================================================
-       INITIAL SEARCH
-    ========================================================== */
+        /* =====================================================
+           CARD CLICK
+        ====================================================== */
 
-    filterArrivals();
+        arrivalCards.forEach(
+            function (
+                card,
+                index
+            ) {
 
-});
+                card.addEventListener(
+                    'click',
+                    function () {
+
+                        openViewer(
+                            card,
+                            index
+                        );
+
+                    }
+                );
+
+            }
+        );
+
+
+
+        /* =====================================================
+           CLOSE BUTTON / BACKDROP
+        ====================================================== */
+
+        closeElements.forEach(
+            function (element) {
+
+                element.addEventListener(
+                    'click',
+                    function () {
+
+                        closeViewer();
+
+                    }
+                );
+
+            }
+        );
+
+
+
+        /* =====================================================
+           ESCAPE KEY
+        ====================================================== */
+
+        document.addEventListener(
+            'keydown',
+            function (event) {
+
+                if (
+                    event.key === 'Escape' &&
+                    viewer.classList.contains(
+                        'is-open'
+                    )
+                ) {
+
+                    closeViewer();
+
+                }
+
+            }
+        );
+
+
+
+        /* =====================================================
+           IMAGE FALLBACK
+        ====================================================== */
+
+        viewerImage.addEventListener(
+            'error',
+            function () {
+
+                viewerImage.onerror =
+                    null;
+
+
+                viewerImage.src =
+                    @json(
+                        asset(
+                            'images/readingarea.jpg'
+                        )
+                    );
+
+            }
+        );
+
+
+
+        /* =====================================================
+           INITIAL SEARCH
+        ====================================================== */
+
+        filterArrivals();
+
+    }
+);
 
 </script>
 
