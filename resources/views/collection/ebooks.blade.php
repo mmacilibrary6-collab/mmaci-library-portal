@@ -3051,6 +3051,269 @@ document.addEventListener(
 </script>
 
 
+
+<!-- =========================================================
+     E-BOOK MODAL HEIGHT / CLIPPING FIX
+     Header + footer always visible; folder list scrolls.
+========================================================= -->
+<style>
+
+    .ebook-folder-modal {
+        padding: 14px !important;
+        overflow: hidden !important;
+    }
+
+    .ebook-folder-modal-dialog {
+        width: min(650px, calc(100vw - 28px)) !important;
+
+        /*
+         * Never allow the modal shell to exceed the visible viewport.
+         */
+        height: auto !important;
+        max-height: calc(100dvh - 28px) !important;
+
+        display: grid !important;
+        grid-template-rows: auto minmax(0, 1fr) auto !important;
+
+        overflow: hidden !important;
+
+        margin: 0 !important;
+    }
+
+    .ebook-folder-modal-header {
+        position: relative !important;
+        z-index: 2 !important;
+        flex: none !important;
+    }
+
+    .ebook-folder-modal-body {
+        /*
+         * This is now the ONLY scrolling area.
+         */
+        min-height: 0 !important;
+        height: auto !important;
+        max-height: none !important;
+
+        overflow-y: auto !important;
+        overflow-x: hidden !important;
+
+        scrollbar-gutter: stable !important;
+        overscroll-behavior: contain !important;
+    }
+
+    .ebook-folder-modal-footer {
+        position: relative !important;
+        z-index: 2 !important;
+
+        flex: none !important;
+
+        background: #ffffff !important;
+
+        box-shadow:
+            0 -8px 20px
+            rgba(11, 46, 89, .035) !important;
+    }
+
+
+    /* =========================================================
+       SHORT DESKTOP / LAPTOP SCREENS
+    ========================================================= */
+
+    @media (min-width: 576px) and (max-height: 760px) {
+
+        .ebook-folder-modal {
+            padding: 10px !important;
+        }
+
+        .ebook-folder-modal-dialog {
+            width: min(620px, calc(100vw - 20px)) !important;
+            max-height: calc(100dvh - 20px) !important;
+        }
+
+        .ebook-folder-modal-header {
+            padding: 15px 18px !important;
+        }
+
+        .ebook-folder-modal-header span {
+            margin-bottom: 3px !important;
+            font-size: 8px !important;
+        }
+
+        .ebook-folder-modal-header h3 {
+            font-size: 20px !important;
+        }
+
+        .ebook-folder-modal-close {
+            width: 35px !important;
+            height: 35px !important;
+            flex-basis: 35px !important;
+        }
+
+        .ebook-folder-modal-body {
+            padding: 10px !important;
+        }
+
+        .ebook-folder-modal-body .folder-list {
+            gap: 7px !important;
+        }
+
+        .ebook-folder-modal-body .folder-link {
+            padding: 10px 12px !important;
+        }
+
+        .ebook-folder-modal-body .folder-link strong {
+            font-size: 12px !important;
+        }
+
+        .ebook-folder-modal-body .folder-link small {
+            margin-top: 2px !important;
+            font-size: 9px !important;
+            line-height: 1.4 !important;
+        }
+
+        .ebook-folder-modal-body .folder-link-action {
+            padding: 7px 9px !important;
+            font-size: 9px !important;
+        }
+
+        .ebook-folder-modal-footer {
+            padding: 9px 12px !important;
+        }
+
+    }
+
+
+    /* =========================================================
+       MOBILE
+    ========================================================= */
+
+    @media (max-width: 575.98px) {
+
+        .ebook-folder-modal {
+            padding: 8px !important;
+        }
+
+        .ebook-folder-modal-dialog {
+            width: calc(100vw - 16px) !important;
+            max-height: calc(100dvh - 16px) !important;
+
+            border-radius: 14px !important;
+        }
+
+        .ebook-folder-modal-header {
+            padding: 14px !important;
+        }
+
+        .ebook-folder-modal-header span {
+            font-size: 7px !important;
+        }
+
+        .ebook-folder-modal-header h3 {
+            font-size: 17px !important;
+        }
+
+        .ebook-folder-modal-close {
+            width: 34px !important;
+            height: 34px !important;
+            flex-basis: 34px !important;
+        }
+
+        .ebook-folder-modal-body {
+            padding: 8px !important;
+        }
+
+        .ebook-folder-modal-body .folder-list {
+            gap: 7px !important;
+        }
+
+        /*
+         * Keep folder cards compact on phones.
+         * Open stays beside the content instead of creating a very tall row.
+         */
+        .ebook-folder-modal-body .folder-link {
+            grid-template-columns: minmax(0, 1fr) auto !important;
+
+            gap: 8px !important;
+
+            padding: 10px !important;
+        }
+
+        .ebook-folder-modal-body .folder-link strong {
+            font-size: 12px !important;
+        }
+
+        .ebook-folder-modal-body .folder-link small {
+            font-size: 9px !important;
+            line-height: 1.4 !important;
+        }
+
+        .ebook-folder-modal-body .folder-link-action {
+            width: auto !important;
+
+            justify-content: center !important;
+
+            padding: 7px 8px !important;
+
+            font-size: 9px !important;
+        }
+
+        .ebook-folder-modal-footer {
+            display: grid !important;
+            grid-template-columns: 1fr auto !important;
+
+            align-items: center !important;
+
+            gap: 8px !important;
+
+            padding: 9px 10px !important;
+        }
+
+        .ebook-folder-modal-close-text {
+            width: auto !important;
+
+            min-width: 72px !important;
+
+            padding: 8px 12px !important;
+        }
+
+    }
+
+
+    /* =========================================================
+       VERY SMALL PHONES
+    ========================================================= */
+
+    @media (max-width: 390px) {
+
+        .ebook-folder-modal-header {
+            padding: 12px !important;
+        }
+
+        .ebook-folder-modal-header h3 {
+            font-size: 15px !important;
+        }
+
+        .ebook-folder-modal-body .folder-link {
+            grid-template-columns: 1fr !important;
+        }
+
+        .ebook-folder-modal-body .folder-link-action {
+            width: 100% !important;
+        }
+
+        .ebook-folder-modal-footer {
+            grid-template-columns: 1fr !important;
+        }
+
+        .ebook-folder-modal-close-text {
+            width: 100% !important;
+        }
+
+    }
+
+</style>
+
+
 @include('components.lisa-chatbox')
 
 @endsection
