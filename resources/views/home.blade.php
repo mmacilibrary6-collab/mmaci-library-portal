@@ -1551,6 +1551,7 @@ body.update-viewer-open {
 
 .arrivals-scroll {
     display: flex;
+    align-items: stretch;
     gap: 24px;
     padding: 4px 4px 18px;
     overflow-x: auto;
@@ -1616,6 +1617,8 @@ body.update-viewer-open {
 
 .arrival-item {
     flex: 0 0 clamp(270px, 23vw, 345px);
+    display: flex;
+    align-self: stretch;
     scroll-snap-align: start;
 }
 
@@ -1625,7 +1628,9 @@ body.update-viewer-open {
 
 
 .arrival-card {
+    width: 100%;
     height: 100%;
+    min-height: 570px;
     display: flex;
     flex-direction: column;
     overflow: hidden;
@@ -1668,28 +1673,45 @@ body.update-viewer-open {
 
 .arrival-body {
     flex: 1;
+    display: flex;
+    flex-direction: column;
     padding: 23px;
 }
 
 .arrival-body h3 {
+    display: -webkit-box;
+    min-height: 73px;
     margin: 0 0 4px;
+    overflow: hidden;
     color: var(--home-navy);
     font-size: 18px;
     font-weight: 800;
     line-height: 1.35;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
 }
 
 .arrival-body > span {
+    display: -webkit-box;
+    min-height: 34px;
+    overflow: hidden;
     color: #8a95a5;
     font-size: 11px;
+    line-height: 1.55;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
 }
 
 .arrival-body p {
+    display: -webkit-box;
     min-height: 66px;
-    margin: 14px 0 18px;
+    margin: 14px 0 0;
+    overflow: hidden;
     color: var(--home-muted);
     font-size: 13px;
     line-height: 1.7;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
 }
 
 .service-card a,
