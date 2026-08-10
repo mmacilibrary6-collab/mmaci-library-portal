@@ -1320,7 +1320,7 @@
 
     display: flex;
 
-    align-items: center;
+    align-items: flex-start;
     justify-content: center;
 
     padding: 24px;
@@ -1383,6 +1383,8 @@
 
     max-height:
         calc(100vh - 48px);
+    max-height:
+        calc(100dvh - 48px);
 
     display: grid;
 
@@ -1488,7 +1490,8 @@
 
 .book-modal-cover {
 
-    min-height: 500px;
+    min-height: 0;
+    height: 100%;
 
     display: flex;
 
@@ -1497,7 +1500,7 @@
 
     padding: 28px;
 
-    overflow: hidden;
+    overflow: auto;
 
     background:
 
@@ -1512,10 +1515,10 @@
 
 .book-modal-cover img {
 
-    width: 100%;
+    width: auto;
 
     max-width: 225px;
-    max-height: 400px;
+    max-height: min(62vh, 400px);
 
     display: block;
 
@@ -1545,6 +1548,8 @@
 
     max-height:
         calc(100vh - 48px);
+    max-height:
+        calc(100dvh - 48px);
 
     overflow-y: auto;
 
