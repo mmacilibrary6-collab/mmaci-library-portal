@@ -1891,13 +1891,7 @@ document.addEventListener('DOMContentLoaded', function () {
             11000;
 
         display:
-            flex;
-
-        align-items:
-            center;
-
-        justify-content:
-            center;
+            block;
 
         padding:
             18px;
@@ -1971,10 +1965,16 @@ document.addEventListener('DOMContentLoaded', function () {
     .ebook-folder-modal-dialog {
 
         position:
-            relative;
+            fixed;
 
         z-index:
             2;
+
+        top:
+            50%;
+
+        left:
+            50%;
 
         width:
             min(
@@ -1988,9 +1988,6 @@ document.addEventListener('DOMContentLoaded', function () {
             calc(
                 100dvh - 36px
             );
-
-        align-self:
-            center;
 
         display:
             flex;
@@ -2026,7 +2023,7 @@ document.addEventListener('DOMContentLoaded', function () {
             );
 
         transform:
-            translateY(0)
+            translate(-50%, -50%)
             scale(1);
 
         transition:
@@ -2046,7 +2043,7 @@ document.addEventListener('DOMContentLoaded', function () {
     .ebook-folder-modal-dialog {
 
         transform:
-            translateY(0)
+            translate(-50%, -50%)
             scale(1);
 
     }
@@ -3137,7 +3134,9 @@ document.addEventListener(
     .ebook-folder-modal-dialog {
         width: min(620px, calc(100vw - 16px)) !important;
         max-height: calc(100dvh - 16px) !important;
-        align-self: center !important;
+        top: 50% !important;
+        left: 50% !important;
+        transform: translate(-50%, -50%) scale(1) !important;
     }
 
         .ebook-folder-modal-header {
@@ -3208,7 +3207,9 @@ document.addEventListener(
             max-height: calc(100dvh - 12px) !important;
 
             border-radius: 14px !important;
-            align-self: center !important;
+            top: 50% !important;
+            left: 50% !important;
+            transform: translate(-50%, -50%) scale(1) !important;
         }
 
         .ebook-folder-modal-header {
