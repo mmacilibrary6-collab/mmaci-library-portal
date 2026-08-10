@@ -114,7 +114,7 @@
                             tabindex="-1"
                             aria-labelledby="{{ $offcanvasId }}-label"
                             aria-hidden="true">
-                            <div class="modal-dialog modal-dialog-centered ebook-modal-dialog">
+                            <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-xl ebook-modal-dialog">
                                 <div class="modal-content">
                                     <div class="modal-header">
                                         <div>
@@ -135,7 +135,8 @@
                                         @if($program->folders->isNotEmpty())
                                             <div class="folder-list">
                                                 @foreach($program->folders->sortBy('title', SORT_NATURAL | SORT_FLAG_CASE) as $folder)
-                                                    <a href="{{ $folder->drive_link }}"
+                                                        <a href="{{ $folder->drive_link }}"
+                                                        role="button"
                                                         target="_blank"
                                                         rel="noopener noreferrer"
                                                         class="folder-link">
@@ -546,14 +547,7 @@
     line-height: 1.75;
 }
 
-.ebook-modal .modal-dialog {
-    width: min(calc(100vw - 24px), 1040px);
-    max-width: min(calc(100vw - 24px), 1040px);
-    margin: .75rem auto;
-}
-
 .ebook-modal .modal-content {
-    height: min(92vh, 900px);
     border: 0;
     border-radius: 22px;
     overflow: hidden;
@@ -561,7 +555,6 @@
 }
 
 .ebook-modal .modal-header {
-    flex: 0 0 auto;
     padding: 22px 24px 18px;
     border-bottom: 1px solid var(--ebooks-border);
 }
@@ -582,9 +575,6 @@
 }
 
 .ebook-modal .modal-body {
-    flex: 1 1 auto;
-    min-height: 0;
-    overflow-y: auto;
     padding: 22px 24px;
 }
 
@@ -606,35 +596,6 @@
     box-shadow: none;
 }
 
-.ebook-modal .modal-header {
-    padding: 22px 24px 18px;
-    border-bottom: 1px solid var(--ebooks-border);
-}
-
-.ebook-modal .modal-header span {
-    color: var(--ebooks-blue);
-    font-size: 11px;
-    font-weight: 800;
-    letter-spacing: .08em;
-    text-transform: uppercase;
-}
-
-.ebook-modal .modal-title {
-    margin: 6px 0 0;
-    color: var(--ebooks-navy);
-    font-size: 22px;
-    font-weight: 850;
-}
-
-.ebook-modal .modal-body {
-    padding: 22px 24px;
-}
-
-.ebook-modal .modal-footer {
-    padding: 18px 24px 22px;
-    border-top: 1px solid var(--ebooks-border);
-}
-
 .modal-close-button {
     padding: 10px 16px;
     color: var(--ebooks-white);
@@ -642,6 +603,12 @@
     border: 0;
     border-radius: 10px;
     font-weight: 700;
+}
+
+.folder-link {
+    position: relative;
+    z-index: 1;
+    pointer-events: auto;
 }
 
 @keyframes ebooksHeroEnter {
@@ -704,8 +671,8 @@
     .ebook-modal .modal-dialog {
         width: 100%;
         max-width: 100%;
-        margin: 0;
         height: 100%;
+        margin: 0;
     }
 
     .ebook-modal .modal-content {
@@ -716,6 +683,7 @@
 
     .ebook-modal .modal-body {
         padding: 18px 18px 20px;
+        overflow-y: auto;
     }
 
     .ebook-modal .modal-header,
@@ -752,6 +720,24 @@
         transform: none !important;
         animation: none !important;
         transition: none !important;
+    }
+}
+
+@media (min-width: 768px) {
+    .ebook-modal .modal-dialog {
+        width: min(calc(100vw - 32px), 1140px);
+        max-width: min(calc(100vw - 32px), 1140px);
+        margin: 1rem auto;
+        height: calc(100vh - 2rem);
+    }
+
+    .ebook-modal .modal-content {
+        height: 100%;
+        max-height: calc(100vh - 2rem);
+    }
+
+    .ebook-modal .modal-body {
+        overflow-y: auto;
     }
 }
 </style>
