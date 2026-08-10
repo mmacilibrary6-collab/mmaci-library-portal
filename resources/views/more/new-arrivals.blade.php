@@ -6,15 +6,22 @@
 
 <section class="new-arrivals-page">
 
+    {{-- =========================================================
+        HERO
+    ========================================================== --}}
     <div class="arrivals-hero">
+
         <div class="container">
+
             <div class="arrivals-hero-content" data-aos="fade-up">
 
                 <span class="arrivals-eyebrow">
-                    Recently Added
+                    MMACI Library
                 </span>
 
-                <h1>New Arrivals</h1>
+                <h1>
+                    New Arrivals
+                </h1>
 
                 <p>
                     Explore the newest printed books and learning resources
@@ -22,32 +29,46 @@
                 </p>
 
             </div>
+
         </div>
+
     </div>
 
 
+    {{-- =========================================================
+        CONTENT
+    ========================================================== --}}
     <div class="arrivals-content">
 
         <div class="container">
 
-            {{-- SEARCH --}}
+
+            {{-- SEARCH / HEADING --}}
             @if(($arrivals ?? collect())->isNotEmpty())
 
                 <div class="arrival-toolbar">
 
                     <div class="arrival-heading">
-                        <span>Library Collection</span>
-                        <h2>Browse New Arrivals</h2>
+
+                        <span>
+                            Library Collection
+                        </span>
+
+                        <h2>
+                            Browse New Arrivals
+                        </h2>
+
                     </div>
+
 
                     <div class="arrival-search-field">
 
-                        <i class="bi bi-search" aria-hidden="true"></i>
+                        <i class="bi bi-search"></i>
 
                         <input
                             type="search"
                             id="arrivalSearch"
-                            placeholder="Search title, accession number, or author..."
+                            placeholder="Search title, author, accession number..."
                             autocomplete="off"
                             aria-label="Search new arrivals">
 
@@ -58,12 +79,18 @@
             @endif
 
 
-            {{-- BOOK GRID --}}
-            <div class="arrivals-grid" id="arrivalsGrid">
+            {{-- =================================================
+                BOOK GRID
+            ================================================== --}}
+            <div
+                class="arrivals-grid"
+                id="arrivalsGrid">
 
                 @forelse($arrivals ?? [] as $book)
 
-                    <div class="arrival-item" data-aos="fade-up">
+                    <div
+                        class="arrival-item"
+                        data-aos="fade-up">
 
                         <button
                             type="button"
@@ -99,54 +126,93 @@
 
                             data-arrival-image='@json($book->image_url)'
 
-                            aria-label="View {{ $book->title }}"
-                        >
+                            aria-label="View details for {{ $book->title }}">
 
+
+                            {{-- COVER --}}
                             <div class="arrival-cover">
 
                                 <img
                                     src="{{ $book->image_url }}"
                                     alt="{{ $book->title }}"
                                     loading="lazy"
-                                    onerror="this.onerror=null;this.src='{{ asset('images/readingarea.jpg') }}';">
+                                    onerror="
+                                        this.onerror = null;
+                                        this.src = '{{ asset('images/readingarea.jpg') }}';
+                                    ">
+
+                                <div class="arrival-cover-overlay">
+
+                                    <span>
+                                        <i class="bi bi-eye"></i>
+                                        View Details
+                                    </span>
+
+                                </div>
 
                             </div>
 
+
+                            {{-- BODY --}}
                             <div class="arrival-body">
 
-                                @if($book->category)
+                                <div class="arrival-meta-row">
 
-                                    <span class="arrival-category">
-                                        {{ $book->category }}
-                                    </span>
+                                    @if($book->category)
 
-                                @endif
+                                        <span class="arrival-category">
+                                            {{ $book->category }}
+                                        </span>
+
+                                    @endif
+
+                                    @if($book->publication_year)
+
+                                        <span class="arrival-year">
+                                            {{ $book->publication_year }}
+                                        </span>
+
+                                    @endif
+
+                                </div>
+
 
                                 <h3>
                                     {{ $book->title }}
                                 </h3>
 
+
                                 <span class="arrival-author">
+
+                                    <i class="bi bi-person"></i>
+
                                     {{ $book->author ?? 'Unknown Author' }}
+
                                 </span>
+
 
                                 <p>
                                     {{ \Illuminate\Support\Str::limit(
-                                        $book->description ?? 'No description available.',
-                                        100
+                                        $book->description
+                                            ?? 'No description available.',
+                                        110
                                     ) }}
                                 </p>
 
-                                <span class="arrival-view-text">
 
-                                    View Details
+                                <div class="arrival-card-footer">
 
-                                    <i
-                                        class="bi bi-arrow-up-right"
-                                        aria-hidden="true">
-                                    </i>
+                                    <span>
+                                        View book details
+                                    </span>
 
-                                </span>
+                                    <span class="arrival-arrow">
+
+                                        <i class="bi bi-arrow-right"></i>
+
+                                    </span>
+
+                                </div>
 
                             </div>
 
@@ -158,9 +224,15 @@
 
                     <div class="arrival-empty">
 
-                        <i class="bi bi-book"></i>
+                        <div class="empty-icon">
 
-                        <h3>No new arrivals available</h3>
+                            <i class="bi bi-book"></i>
+
+                        </div>
+
+                        <h3>
+                            No new arrivals available
+                        </h3>
 
                         <p>
                             Newly added library resources will appear here.
@@ -173,19 +245,28 @@
             </div>
 
 
-            {{-- NO SEARCH RESULTS --}}
+            {{-- =================================================
+                NO SEARCH RESULTS
+            ================================================== --}}
             @if(($arrivals ?? collect())->isNotEmpty())
 
                 <div
                     class="arrival-no-results d-none"
                     id="arrivalNoResults">
 
-                    <i class="bi bi-search"></i>
+                    <div class="empty-icon">
 
-                    <h3>No matching arrivals found</h3>
+                        <i class="bi bi-search"></i>
+
+                    </div>
+
+                    <h3>
+                        No matching books found
+                    </h3>
 
                     <p>
-                        Try searching by title, accession number, or author.
+                        Try searching by title, author, category,
+                        or accession number.
                     </p>
 
                 </div>
@@ -199,130 +280,245 @@
 </section>
 
 
-{{-- ARRIVAL DETAILS VIEWER --}}
 
+{{-- =============================================================
+    CLEAN BOOK DETAILS MODAL
+============================================================= --}}
 <div
-    class="arrival-viewer"
+    class="book-modal"
     id="arrivalViewer"
     aria-hidden="true">
 
+    {{-- BACKDROP --}}
     <div
-        class="arrival-viewer-backdrop"
+        class="book-modal-backdrop"
         data-close-arrival-viewer>
     </div>
 
 
+    {{-- MODAL --}}
     <div
-        class="arrival-viewer-dialog"
+        class="book-modal-dialog"
         role="dialog"
         aria-modal="true"
         aria-labelledby="arrivalViewerTitle">
 
+
+        {{-- CLOSE --}}
         <button
             type="button"
-            class="viewer-close-button"
+            class="book-modal-close"
             data-close-arrival-viewer
-            aria-label="Close arrival details">
+            aria-label="Close book details">
 
-            <i
-                class="bi bi-x-lg"
-                aria-hidden="true">
-            </i>
+            <i class="bi bi-x-lg"></i>
 
         </button>
 
 
-        <div class="viewer-image-panel">
+        {{-- BOOK IMAGE --}}
+        <div class="book-modal-cover">
 
             <img
                 id="arrivalViewerImage"
                 src="{{ asset('images/readingarea.jpg') }}"
-                alt="New arrival">
+                alt="Book cover">
 
         </div>
 
 
-        <aside class="viewer-content-panel">
-
-            <div class="viewer-brand">
-
-                <img
-                    src="{{ asset('images/logomml.png') }}"
-                    alt="MMACI logo"
-                    onerror="this.style.display='none';">
-
-                <div>
-
-                    <strong>
-                        MMACI Library Services Office
-                    </strong>
-
-                    <span>
-                        New Arrival
-                    </span>
-
-                </div>
-
-            </div>
+        {{-- DETAILS --}}
+        <div class="book-modal-content">
 
 
-            <div class="viewer-copy">
+            {{-- HEADER --}}
+            <div class="book-modal-header">
 
-                <span class="viewer-eyebrow">
-                    Recently Added
+                <span
+                    class="book-modal-category"
+                    id="arrivalViewerCategory">
+
+                    New Arrival
+
                 </span>
 
-                <h3 id="arrivalViewerTitle"></h3>
+
+                <h2 id="arrivalViewerTitle">
+                    Book Title
+                </h2>
+
 
                 <p
-                    class="viewer-author"
+                    class="book-modal-author"
                     id="arrivalViewerAuthor">
+
+                    Unknown Author
+
                 </p>
 
-                <div
-                    class="viewer-details"
-                    id="arrivalViewerDetails">
+            </div>
+
+
+            {{-- INFORMATION --}}
+            <div class="book-information-grid">
+
+
+                <div class="book-information-item">
+
+                    <div class="book-information-icon">
+
+                        <i class="bi bi-upc-scan"></i>
+
+                    </div>
+
+                    <div>
+
+                        <small>
+                            Accession Number
+                        </small>
+
+                        <strong id="arrivalViewerAccession">
+                            —
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+                <div class="book-information-item">
+
+                    <div class="book-information-icon">
+
+                        <i class="bi bi-calendar3"></i>
+
+                    </div>
+
+                    <div>
+
+                        <small>
+                            Publication Year
+                        </small>
+
+                        <strong id="arrivalViewerYear">
+                            —
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+                <div class="book-information-item book-publisher-item">
+
+                    <div class="book-information-icon">
+
+                        <i class="bi bi-building"></i>
+
+                    </div>
+
+                    <div>
+
+                        <small>
+                            Publisher
+                        </small>
+
+                        <strong id="arrivalViewerPublisher">
+                            —
+                        </strong>
+
+                    </div>
+
                 </div>
 
             </div>
 
 
-            <div class="viewer-footer">
+            {{-- DESCRIPTION --}}
+            <div class="book-description">
 
-                <span id="arrivalViewerCounter"></span>
+                <h4>
 
-                <small>
-                    Click outside or press Escape to close.
-                </small>
+                    <i class="bi bi-card-text"></i>
+
+                    About this book
+
+                </h4>
+
+                <p id="arrivalViewerDescription">
+                    No description available.
+                </p>
 
             </div>
 
-        </aside>
+
+            {{-- FOOTER --}}
+            <div class="book-modal-footer">
+
+                <div class="book-modal-brand">
+
+                    <img
+                        src="{{ asset('images/logomml.png') }}"
+                        alt="MMACI Logo"
+                        onerror="this.style.display='none';">
+
+                    <div>
+
+                        <strong>
+                            MMACI Library
+                        </strong>
+
+                        <span>
+                            Library Services Office
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <span
+                    class="book-modal-counter"
+                    id="arrivalViewerCounter">
+                </span>
+
+            </div>
+
+        </div>
 
     </div>
 
 </div>
 
 
+
 <style>
+
+/* =============================================================
+   ROOT
+============================================================= */
 
 :root {
 
     --arrival-navy: #0b2e59;
     --arrival-blue: #184b8c;
     --arrival-gold: #f4b400;
+
     --arrival-text: #17243a;
     --arrival-muted: #647187;
+
     --arrival-bg: #f4f7fb;
     --arrival-border: #dfe6ef;
+
     --arrival-white: #ffffff;
 
 }
 
 
-/* =============================================
+
+/* =============================================================
    HERO
-============================================= */
+============================================================= */
 
 .arrivals-hero {
 
@@ -337,9 +533,9 @@
 
         linear-gradient(
             105deg,
-            rgba(7, 30, 61, .93),
+            rgba(7, 30, 61, .94),
             rgba(11, 46, 89, .88),
-            rgba(24, 75, 140, .75)
+            rgba(24, 75, 140, .76)
         ),
 
         url("{{ asset('images/libraryphotojpg.jpg') }}")
@@ -350,7 +546,7 @@
 
 .arrivals-hero-content {
 
-    max-width: 750px;
+    max-width: 760px;
 
     padding: 75px 0;
 
@@ -361,7 +557,8 @@
 
     display: inline-flex;
     align-items: center;
-    gap: 10px;
+
+    gap: 9px;
 
     color: var(--arrival-gold);
 
@@ -369,6 +566,7 @@
     font-weight: 800;
 
     letter-spacing: .12em;
+
     text-transform: uppercase;
 
 }
@@ -383,7 +581,7 @@
 
     background: var(--arrival-gold);
 
-    border-radius: 10px;
+    border-radius: 20px;
 
 }
 
@@ -393,7 +591,6 @@
     margin: 15px 0 14px;
 
     font-size: clamp(42px, 6vw, 70px);
-
     font-weight: 900;
 
     line-height: 1;
@@ -409,7 +606,7 @@
 
     margin: 0;
 
-    color: rgba(255,255,255,.78);
+    color: rgba(255, 255, 255, .80);
 
     font-size: 16px;
 
@@ -418,9 +615,10 @@
 }
 
 
-/* =============================================
+
+/* =============================================================
    CONTENT
-============================================= */
+============================================================= */
 
 .arrivals-content {
 
@@ -431,7 +629,10 @@
 }
 
 
-/* TOOLBAR */
+
+/* =============================================================
+   TOOLBAR
+============================================================= */
 
 .arrival-toolbar {
 
@@ -455,6 +656,7 @@
     font-weight: 800;
 
     letter-spacing: .1em;
+
     text-transform: uppercase;
 
 }
@@ -462,27 +664,30 @@
 
 .arrival-heading h2 {
 
-    margin: 6px 0 0;
+    margin: 5px 0 0;
 
     color: var(--arrival-navy);
 
-    font-size: clamp(27px, 4vw, 38px);
+    font-size: clamp(26px, 4vw, 38px);
 
     font-weight: 800;
 
 }
 
 
-/* SEARCH */
+
+/* =============================================================
+   SEARCH
+============================================================= */
 
 .arrival-search-field {
 
-    width: min(100%, 460px);
+    width: min(100%, 450px);
 
     display: flex;
     align-items: center;
 
-    gap: 12px;
+    gap: 11px;
 
     padding: 14px 17px;
 
@@ -493,12 +698,29 @@
     border-radius: 14px;
 
     box-shadow:
-        0 8px 25px rgba(11,46,89,.06);
+        0 8px 25px rgba(11, 46, 89, .06);
+
+    transition:
+        border-color .2s ease,
+        box-shadow .2s ease;
+
+}
+
+
+.arrival-search-field:focus-within {
+
+    border-color:
+        rgba(24, 75, 140, .45);
+
+    box-shadow:
+        0 0 0 4px rgba(24, 75, 140, .08);
 
 }
 
 
 .arrival-search-field i {
+
+    flex-shrink: 0;
 
     color: var(--arrival-blue);
 
@@ -511,29 +733,32 @@
 
     width: 100%;
 
+    padding: 0;
+
+    color: var(--arrival-text);
+
+    background: transparent;
+
     border: 0;
 
     outline: 0;
 
-    background: transparent;
-
-    color: var(--arrival-text);
-
-    font-size: 14px;
+    font-size: 13px;
 
 }
 
 
 .arrival-search-field input::placeholder {
 
-    color: #98a2b0;
+    color: #9aa5b3;
 
 }
 
 
-/* =============================================
+
+/* =============================================================
    BOOK GRID
-============================================= */
+============================================================= */
 
 .arrivals-grid {
 
@@ -542,7 +767,7 @@
     grid-template-columns:
         repeat(4, minmax(0, 1fr));
 
-    gap: 25px;
+    gap: 24px;
 
 }
 
@@ -554,28 +779,37 @@
 }
 
 
+
+/* =============================================================
+   CARD
+============================================================= */
+
 .arrival-card {
 
     width: 100%;
     height: 100%;
 
     display: flex;
+
     flex-direction: column;
 
     padding: 0;
 
     overflow: hidden;
 
+    color: inherit;
+
     text-align: left;
 
     background: #ffffff;
 
-    border: 1px solid var(--arrival-border);
+    border:
+        1px solid var(--arrival-border);
 
     border-radius: 18px;
 
     box-shadow:
-        0 9px 25px rgba(11,46,89,.06);
+        0 7px 22px rgba(11, 46, 89, .06);
 
     cursor: pointer;
 
@@ -589,13 +823,14 @@
 
 .arrival-card:hover {
 
-    transform: translateY(-5px);
+    transform:
+        translateY(-6px);
 
     border-color:
-        rgba(24,75,140,.25);
+        rgba(24, 75, 140, .26);
 
     box-shadow:
-        0 16px 35px rgba(11,46,89,.12);
+        0 18px 38px rgba(11, 46, 89, .13);
 
 }
 
@@ -603,16 +838,21 @@
 .arrival-card:focus-visible {
 
     outline:
-        3px solid rgba(244,180,0,.55);
+        3px solid rgba(244, 180, 0, .55);
 
-    outline-offset: 3px;
+    outline-offset: 4px;
 
 }
 
 
-/* COVER */
+
+/* =============================================================
+   COVER
+============================================================= */
 
 .arrival-cover {
+
+    position: relative;
 
     width: 100%;
 
@@ -620,7 +860,7 @@
 
     overflow: hidden;
 
-    background: #e7ebf0;
+    background: #e5eaf0;
 
 }
 
@@ -643,71 +883,198 @@
 .arrival-card:hover
 .arrival-cover img {
 
-    transform: scale(1.025);
+    transform:
+        scale(1.045);
 
 }
 
 
-/* CARD BODY */
+
+/* HOVER OVERLAY */
+
+.arrival-cover-overlay {
+
+    position: absolute;
+
+    inset: 0;
+
+    display: flex;
+
+    align-items: flex-end;
+    justify-content: center;
+
+    padding: 18px;
+
+    opacity: 0;
+
+    background:
+
+        linear-gradient(
+            to top,
+            rgba(5, 20, 40, .82),
+            transparent 55%
+        );
+
+    transition:
+        opacity .25s ease;
+
+}
+
+
+.arrival-card:hover
+.arrival-cover-overlay {
+
+    opacity: 1;
+
+}
+
+
+.arrival-cover-overlay span {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 7px;
+
+    padding:
+        8px 13px;
+
+    color: #ffffff;
+
+    background:
+        rgba(11, 46, 89, .90);
+
+    border:
+        1px solid rgba(255, 255, 255, .22);
+
+    border-radius: 50px;
+
+    font-size: 10px;
+    font-weight: 700;
+
+    backdrop-filter: blur(5px);
+
+}
+
+
+
+/* =============================================================
+   CARD BODY
+============================================================= */
 
 .arrival-body {
 
     flex: 1;
 
     display: flex;
+
     flex-direction: column;
 
-    padding: 20px;
+    padding: 19px;
+
+}
+
+
+.arrival-meta-row {
+
+    min-height: 25px;
+
+    display: flex;
+
+    justify-content: space-between;
+    align-items: center;
+
+    gap: 8px;
+
+    margin-bottom: 10px;
 
 }
 
 
 .arrival-category {
 
-    align-self: flex-start;
+    display: inline-flex;
 
-    margin-bottom: 9px;
+    max-width: 75%;
 
-    padding: 5px 9px;
+    padding:
+        5px 9px;
+
+    overflow: hidden;
 
     color: var(--arrival-navy);
 
     background:
-        rgba(244,180,0,.14);
+        rgba(244, 180, 0, .15);
 
     border-radius: 50px;
 
     font-size: 9px;
-
     font-weight: 800;
 
-    letter-spacing: .05em;
+    letter-spacing: .04em;
 
+    text-overflow: ellipsis;
     text-transform: uppercase;
+
+    white-space: nowrap;
+
+}
+
+
+.arrival-year {
+
+    flex-shrink: 0;
+
+    color: #8895a5;
+
+    font-size: 10px;
+    font-weight: 700;
 
 }
 
 
 .arrival-body h3 {
 
-    margin: 0 0 5px;
+    display: -webkit-box;
+
+    overflow: hidden;
+
+    margin:
+        0 0 7px;
 
     color: var(--arrival-navy);
 
     font-size: 17px;
-
     font-weight: 800;
 
     line-height: 1.4;
+
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
 
 }
 
 
 .arrival-author {
 
-    color: #7c899a;
+    display: flex;
+
+    align-items: center;
+
+    gap: 5px;
+
+    color: #798697;
 
     font-size: 11px;
+
+}
+
+
+.arrival-author i {
+
+    color: var(--arrival-blue);
 
 }
 
@@ -718,7 +1085,8 @@
 
     overflow: hidden;
 
-    margin: 13px 0 18px;
+    margin:
+        13px 0 20px;
 
     color: var(--arrival-muted);
 
@@ -732,28 +1100,82 @@
 }
 
 
-.arrival-view-text {
 
-    display: inline-flex;
+/* CARD FOOTER */
 
+.arrival-card-footer {
+
+    display: flex;
+
+    justify-content: space-between;
     align-items: center;
 
-    gap: 6px;
+    gap: 10px;
 
     margin-top: auto;
 
+    padding-top: 14px;
+
+    border-top:
+        1px solid #edf1f5;
+
+}
+
+
+.arrival-card-footer > span:first-child {
+
     color: var(--arrival-blue);
 
-    font-size: 11px;
-
+    font-size: 10px;
     font-weight: 800;
 
 }
 
 
-/* =============================================
+.arrival-arrow {
+
+    width: 28px;
+    height: 28px;
+
+    display: grid;
+
+    place-items: center;
+
+    flex-shrink: 0;
+
+    color: var(--arrival-blue);
+
+    background:
+        rgba(24, 75, 140, .08);
+
+    border-radius: 50%;
+
+    transition:
+        background .2s ease,
+        color .2s ease,
+        transform .2s ease;
+
+}
+
+
+.arrival-card:hover
+.arrival-arrow {
+
+    color: #ffffff;
+
+    background:
+        var(--arrival-blue);
+
+    transform:
+        translateX(2px);
+
+}
+
+
+
+/* =============================================================
    EMPTY STATES
-============================================= */
+============================================================= */
 
 .arrival-empty,
 .arrival-no-results {
@@ -766,23 +1188,34 @@
 
     background: #ffffff;
 
-    border: 1px solid var(--arrival-border);
+    border:
+        1px solid var(--arrival-border);
 
     border-radius: 18px;
 
 }
 
 
-.arrival-empty i,
-.arrival-no-results i {
+.empty-icon {
 
-    display: block;
+    width: 62px;
+    height: 62px;
 
-    margin-bottom: 15px;
+    display: grid;
+
+    place-items: center;
+
+    margin:
+        0 auto 16px;
 
     color: var(--arrival-blue);
 
-    font-size: 38px;
+    background:
+        rgba(24, 75, 140, .08);
+
+    border-radius: 50%;
+
+    font-size: 26px;
 
 }
 
@@ -790,12 +1223,12 @@
 .arrival-empty h3,
 .arrival-no-results h3 {
 
-    margin-bottom: 7px;
+    margin:
+        0 0 7px;
 
     color: var(--arrival-navy);
 
     font-size: 20px;
-
     font-weight: 800;
 
 }
@@ -808,350 +1241,574 @@
 
     color: var(--arrival-muted);
 
+    font-size: 13px;
+
 }
 
 
-/* =============================================
-   VIEWER
-============================================= */
 
-.arrival-viewer {
+/* =============================================================
+   MODAL
+============================================================= */
+
+.book-modal {
 
     position: fixed;
 
     inset: 0;
 
-    z-index: 9999;
+    z-index: 10000;
 
-    display: none;
+    display: flex;
 
     align-items: center;
     justify-content: center;
 
-    padding: 16px;
+    padding: 24px;
+
+    opacity: 0;
+
+    visibility: hidden;
+
+    pointer-events: none;
+
+    transition:
+        opacity .22s ease,
+        visibility .22s ease;
 
 }
 
 
-.arrival-viewer.is-open {
+.book-modal.is-open {
 
-    display: flex;
+    opacity: 1;
+
+    visibility: visible;
+
+    pointer-events: auto;
 
 }
 
 
-.arrival-viewer-backdrop {
+
+/* BACKDROP */
+
+.book-modal-backdrop {
 
     position: absolute;
 
     inset: 0;
 
     background:
-        rgba(3,14,29,.92);
+        rgba(3, 14, 29, .78);
 
-    backdrop-filter: blur(8px);
+    backdrop-filter:
+        blur(7px);
 
 }
 
 
-.arrival-viewer-dialog {
+
+/* DIALOG */
+
+.book-modal-dialog {
 
     position: relative;
 
     z-index: 1;
 
-    width: min(1100px, 100%);
+    width:
+        min(860px, 100%);
 
-    height: min(
-        760px,
-        calc(100vh - 32px)
-    );
+    max-height:
+        calc(100vh - 48px);
 
     display: grid;
 
     grid-template-columns:
-        minmax(0, 1.25fr)
-        minmax(320px, .8fr);
+        300px minmax(0, 1fr);
 
     overflow: hidden;
 
-    background: #07101d;
-
-    border:
-        1px solid rgba(255,255,255,.14);
+    background: #ffffff;
 
     border-radius: 22px;
 
     box-shadow:
-        0 30px 90px rgba(0,0,0,.48);
+        0 30px 90px rgba(0, 0, 0, .38);
+
+    transform:
+        translateY(15px) scale(.98);
+
+    transition:
+        transform .25s ease;
 
 }
 
 
-.viewer-image-panel {
+.book-modal.is-open
+.book-modal-dialog {
 
-    min-width: 0;
+    transform:
+        translateY(0) scale(1);
+
+}
+
+
+
+/* =============================================================
+   CLOSE BUTTON
+============================================================= */
+
+.book-modal-close {
+
+    position: absolute;
+
+    top: 14px;
+    right: 14px;
+
+    z-index: 10;
+
+    width: 38px;
+    height: 38px;
+
+    display: grid;
+
+    place-items: center;
+
+    padding: 0;
+
+    color: var(--arrival-navy);
+
+    background:
+        rgba(255, 255, 255, .94);
+
+    border:
+        1px solid rgba(11, 46, 89, .12);
+
+    border-radius: 11px;
+
+    box-shadow:
+        0 6px 16px rgba(0, 0, 0, .12);
+
+    cursor: pointer;
+
+    transition:
+        color .2s ease,
+        background .2s ease,
+        transform .2s ease;
+
+}
+
+
+.book-modal-close:hover {
+
+    color: #ffffff;
+
+    background:
+        var(--arrival-navy);
+
+    transform:
+        rotate(4deg);
+
+}
+
+
+
+/* =============================================================
+   MODAL COVER
+============================================================= */
+
+.book-modal-cover {
+
+    min-height: 500px;
 
     display: flex;
 
     align-items: center;
     justify-content: center;
 
-    overflow: hidden;
-
-    background: #030810;
-
-}
-
-
-.viewer-image-panel img {
-
-    width: 100%;
-    height: 100%;
-
-    display: block;
-
-    object-fit: contain;
-
-}
-
-
-.viewer-content-panel {
-
-    display: flex;
-
-    flex-direction: column;
-
     padding: 28px;
 
-    overflow-y: auto;
-
-    color: #ffffff;
+    overflow: hidden;
 
     background:
 
-        radial-gradient(
-            circle at 100% 0,
-            rgba(244,180,0,.09),
-            transparent 32%
-        ),
-
         linear-gradient(
-            165deg,
-            #0b2e59,
-            #071f3e
+            145deg,
+            #eaf0f7,
+            #dfe8f3
         );
 
 }
 
 
-.viewer-brand {
+.book-modal-cover img {
 
-    display: flex;
+    width: 100%;
 
-    align-items: center;
+    max-width: 235px;
+    max-height: 410px;
 
-    gap: 12px;
-
-    padding-right: 45px;
-    padding-bottom: 20px;
-
-    border-bottom:
-        1px solid rgba(255,255,255,.12);
-
-}
-
-
-.viewer-brand img {
-
-    width: 46px;
-    height: 46px;
+    display: block;
 
     object-fit: contain;
 
-    background: #ffffff;
+    border-radius: 8px;
 
-    border-radius: 50%;
-
-}
-
-
-.viewer-brand strong {
-
-    display: block;
-
-    font-size: 13px;
-
-    font-weight: 800;
+    box-shadow:
+        0 20px 40px rgba(11, 46, 89, .22);
 
 }
 
 
-.viewer-brand span {
 
-    display: block;
+/* =============================================================
+   MODAL CONTENT
+============================================================= */
 
-    margin-top: 3px;
+.book-modal-content {
 
-    color:
-        rgba(255,255,255,.58);
+    min-width: 0;
 
-    font-size: 10px;
+    display: flex;
+
+    flex-direction: column;
+
+    max-height:
+        calc(100vh - 48px);
+
+    overflow-y: auto;
+
+    padding:
+        32px 32px 25px;
 
 }
 
 
-.viewer-copy {
 
-    padding: 28px 0;
+/* HEADER */
+
+.book-modal-header {
+
+    padding-right: 35px;
 
 }
 
 
-.viewer-eyebrow {
+.book-modal-category {
 
     display: inline-flex;
 
-    margin-bottom: 14px;
+    margin-bottom: 13px;
 
-    padding: 6px 10px;
+    padding:
+        6px 10px;
 
     color: var(--arrival-navy);
 
-    background: var(--arrival-gold);
+    background:
+        rgba(244, 180, 0, .17);
 
     border-radius: 50px;
 
     font-size: 9px;
-
     font-weight: 800;
 
-    letter-spacing: .08em;
+    letter-spacing: .06em;
 
     text-transform: uppercase;
 
 }
 
 
-.viewer-copy h3 {
+.book-modal-header h2 {
 
-    margin: 0 0 10px;
+    margin:
+        0 0 8px;
 
-    color: #ffffff;
+    color: var(--arrival-navy);
 
-    font-size: clamp(
-        25px,
-        3vw,
-        38px
-    );
+    font-size:
+        clamp(23px, 3vw, 32px);
 
     font-weight: 900;
 
-    line-height: 1.2;
+    line-height: 1.25;
+
+    letter-spacing: -.02em;
 
 }
 
 
-.viewer-author {
+.book-modal-author {
 
-    margin-bottom: 18px !important;
+    margin: 0;
 
-    color: var(--arrival-gold) !important;
+    color: var(--arrival-blue);
 
-    font-size: 14px !important;
-
+    font-size: 13px;
     font-weight: 700;
 
 }
 
 
-.viewer-details {
 
-    color:
-        rgba(255,255,255,.76);
+/* =============================================================
+   INFORMATION GRID
+============================================================= */
 
-    font-size: 13px;
+.book-information-grid {
 
-    line-height: 1.85;
+    display: grid;
 
-    white-space: pre-line;
+    grid-template-columns:
+        repeat(2, minmax(0, 1fr));
 
-}
+    gap: 10px;
 
-
-.viewer-footer {
-
-    margin-top: auto;
-
-    padding-top: 20px;
-
-    border-top:
-        1px solid rgba(255,255,255,.12);
+    margin:
+        25px 0;
 
 }
 
 
-.viewer-footer span {
+.book-information-item {
 
-    display: block;
+    display: flex;
 
-    color: var(--arrival-gold);
+    align-items: center;
 
-    font-size: 11px;
+    gap: 11px;
 
-    font-weight: 800;
+    min-width: 0;
+
+    padding:
+        13px;
+
+    background:
+        #f7f9fc;
+
+    border:
+        1px solid #e8edf3;
+
+    border-radius: 12px;
 
 }
 
 
-.viewer-footer small {
+.book-publisher-item {
 
-    color:
-        rgba(255,255,255,.5);
-
-    font-size: 9px;
+    grid-column: 1 / -1;
 
 }
 
 
-.viewer-close-button {
+.book-information-icon {
 
-    position: absolute;
-
-    top: 16px;
-    right: 16px;
-
-    z-index: 5;
-
-    width: 42px;
-    height: 42px;
+    width: 36px;
+    height: 36px;
 
     display: grid;
 
     place-items: center;
 
-    color: #ffffff;
+    flex-shrink: 0;
+
+    color: var(--arrival-blue);
 
     background:
-        rgba(7,31,62,.82);
+        rgba(24, 75, 140, .08);
+
+    border-radius: 9px;
+
+    font-size: 14px;
+
+}
+
+
+.book-information-item > div:last-child {
+
+    min-width: 0;
+
+}
+
+
+.book-information-item small {
+
+    display: block;
+
+    margin-bottom: 2px;
+
+    color: #8591a0;
+
+    font-size: 9px;
+    font-weight: 600;
+
+    text-transform: uppercase;
+
+}
+
+
+.book-information-item strong {
+
+    display: block;
+
+    overflow: hidden;
+
+    color: var(--arrival-text);
+
+    font-size: 11px;
+    font-weight: 800;
+
+    text-overflow: ellipsis;
+
+}
+
+
+
+/* =============================================================
+   DESCRIPTION
+============================================================= */
+
+.book-description {
+
+    padding-top: 3px;
+
+}
+
+
+.book-description h4 {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 7px;
+
+    margin:
+        0 0 9px;
+
+    color: var(--arrival-navy);
+
+    font-size: 13px;
+    font-weight: 800;
+
+}
+
+
+.book-description h4 i {
+
+    color: var(--arrival-blue);
+
+}
+
+
+.book-description p {
+
+    margin: 0;
+
+    color: var(--arrival-muted);
+
+    font-size: 12px;
+
+    line-height: 1.8;
+
+}
+
+
+
+/* =============================================================
+   MODAL FOOTER
+============================================================= */
+
+.book-modal-footer {
+
+    display: flex;
+
+    justify-content: space-between;
+    align-items: center;
+
+    gap: 15px;
+
+    margin-top: auto;
+
+    padding-top: 24px;
+
+}
+
+
+.book-modal-brand {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 9px;
+
+}
+
+
+.book-modal-brand img {
+
+    width: 35px;
+    height: 35px;
+
+    object-fit: contain;
+
+    background: #ffffff;
 
     border:
-        1px solid rgba(255,255,255,.2);
+        1px solid #e7ebf0;
 
-    border-radius: 12px;
-
-    cursor: pointer;
+    border-radius: 50%;
 
 }
 
 
-.viewer-close-button:hover {
+.book-modal-brand strong {
+
+    display: block;
+
+    color: var(--arrival-navy);
+
+    font-size: 10px;
+    font-weight: 800;
+
+}
+
+
+.book-modal-brand span {
+
+    display: block;
+
+    color: #8a96a5;
+
+    font-size: 8px;
+
+}
+
+
+.book-modal-counter {
+
+    padding:
+        6px 10px;
+
+    color: var(--arrival-blue);
 
     background:
-        rgba(24,75,140,.96);
+        rgba(24, 75, 140, .07);
+
+    border-radius: 50px;
+
+    font-size: 9px;
+    font-weight: 800;
 
 }
 
+
+
+/* STOP PAGE SCROLL */
 
 body.arrival-viewer-open {
 
@@ -1160,9 +1817,10 @@ body.arrival-viewer-open {
 }
 
 
-/* =============================================
-   RESPONSIVE
-============================================= */
+
+/* =============================================================
+   RESPONSIVE - TABLET
+============================================================= */
 
 @media (max-width: 1199px) {
 
@@ -1174,6 +1832,7 @@ body.arrival-viewer-open {
     }
 
 }
+
 
 
 @media (max-width: 991px) {
@@ -1202,20 +1861,47 @@ body.arrival-viewer-open {
     }
 
 
-    .arrival-viewer-dialog {
+    .book-modal-dialog {
 
-        grid-template-columns: 1fr;
+        width:
+            min(700px, 100%);
 
-        grid-template-rows:
-            minmax(0, 56%)
-            minmax(0, 44%);
+        grid-template-columns:
+            250px minmax(0, 1fr);
+
+    }
+
+
+    .book-modal-cover {
+
+        padding: 20px;
+
+    }
+
+
+    .book-modal-cover img {
+
+        max-width: 200px;
+
+    }
+
+
+    .book-modal-content {
+
+        padding:
+            28px 25px 23px;
 
     }
 
 }
 
 
-@media (max-width: 575px) {
+
+/* =============================================================
+   RESPONSIVE - MOBILE
+============================================================= */
+
+@media (max-width: 650px) {
 
     .arrivals-hero {
 
@@ -1226,14 +1912,16 @@ body.arrival-viewer-open {
 
     .arrivals-hero-content {
 
-        padding: 55px 0;
+        padding:
+            55px 0;
 
     }
 
 
     .arrivals-content {
 
-        padding: 42px 0 60px;
+        padding:
+            42px 0 60px;
 
     }
 
@@ -1249,40 +1937,163 @@ body.arrival-viewer-open {
 
     .arrival-card {
 
-        max-width: 360px;
+        max-width: 380px;
 
-        margin: auto;
-
-    }
-
-
-    .arrival-viewer {
-
-        padding: 0;
+        margin: 0 auto;
 
     }
 
 
-    .arrival-viewer-dialog {
+    .arrival-cover-overlay {
+
+        display: none;
+
+    }
+
+
+    /* MODAL MOBILE */
+
+    .book-modal {
+
+        padding: 12px;
+
+        align-items: flex-end;
+
+    }
+
+
+    .book-modal-dialog {
 
         width: 100%;
 
-        height: 100dvh;
+        max-height:
+            calc(100dvh - 24px);
 
-        border: 0;
+        display: block;
 
-        border-radius: 0;
+        overflow-y: auto;
 
-        grid-template-rows:
-            minmax(0, 53%)
-            minmax(0, 47%);
+        border-radius:
+            20px 20px 14px 14px;
 
     }
 
 
-    .viewer-content-panel {
+    .book-modal-cover {
 
-        padding: 20px 18px;
+        min-height: 0;
+
+        height: 290px;
+
+        padding:
+            22px 50px 18px;
+
+    }
+
+
+    .book-modal-cover img {
+
+        width: auto;
+
+        max-width: 180px;
+        max-height: 250px;
+
+    }
+
+
+    .book-modal-content {
+
+        max-height: none;
+
+        overflow: visible;
+
+        padding:
+            22px 19px 20px;
+
+    }
+
+
+    .book-modal-header {
+
+        padding-right: 25px;
+
+    }
+
+
+    .book-modal-header h2 {
+
+        font-size: 23px;
+
+    }
+
+
+    .book-information-grid {
+
+        grid-template-columns: 1fr;
+
+        gap: 8px;
+
+        margin:
+            20px 0;
+
+    }
+
+
+    .book-publisher-item {
+
+        grid-column: auto;
+
+    }
+
+
+    .book-modal-close {
+
+        position: fixed;
+
+        top: auto;
+
+        margin-top: 13px;
+
+        right: 26px;
+
+    }
+
+}
+
+
+
+/* =============================================================
+   EXTRA SMALL MOBILE
+============================================================= */
+
+@media (max-width: 400px) {
+
+    .arrival-body {
+
+        padding: 17px;
+
+    }
+
+
+    .book-modal-cover {
+
+        height: 260px;
+
+    }
+
+
+    .book-modal-cover img {
+
+        max-height: 220px;
+
+    }
+
+
+    .book-modal-footer {
+
+        align-items: flex-start;
+
+        flex-direction: column;
 
     }
 
@@ -1291,505 +2102,558 @@ body.arrival-viewer-open {
 </style>
 
 
+
 <script>
 
-document.addEventListener(
-    'DOMContentLoaded',
-    function () {
-
-        const searchInput =
-            document.getElementById('arrivalSearch');
-
-        const arrivalCards =
-            Array.from(
-                document.querySelectorAll(
-                    '.arrival-card-button'
-                )
-            );
-
-        const noResults =
-            document.getElementById(
-                'arrivalNoResults'
-            );
-
-        const viewer =
-            document.getElementById(
-                'arrivalViewer'
-            );
+document.addEventListener('DOMContentLoaded', function () {
 
 
-        /*
-        |--------------------------------------------------------------------------
-        | SEARCH
-        |--------------------------------------------------------------------------
-        */
+    /* =========================================================
+       ELEMENTS
+    ========================================================== */
 
-        function filterArrivals() {
+    const searchInput =
+        document.getElementById('arrivalSearch');
 
-            const term =
-                (
-                    searchInput?.value || ''
-                )
+    const arrivalCards =
+        Array.from(
+            document.querySelectorAll(
+                '.arrival-card-button'
+            )
+        );
+
+    const noResults =
+        document.getElementById(
+            'arrivalNoResults'
+        );
+
+    const viewer =
+        document.getElementById(
+            'arrivalViewer'
+        );
+
+
+    /* =========================================================
+       SEARCH
+    ========================================================== */
+
+    function filterArrivals() {
+
+        if (!searchInput) {
+            return;
+        }
+
+
+        const term =
+            searchInput.value
                 .trim()
                 .toLowerCase();
 
 
-            let visibleCount = 0;
+        let visibleCount = 0;
 
 
-            arrivalCards.forEach(
-                function (card) {
+        arrivalCards.forEach(function (card) {
 
-                    const data = [
+            const searchableData = [
 
-                        card.dataset.arrivalTitle,
+                parseJson(
+                    card.dataset.arrivalTitle,
+                    ''
+                ),
 
-                        card.dataset.arrivalAuthor,
+                parseJson(
+                    card.dataset.arrivalAuthor,
+                    ''
+                ),
 
-                        card.dataset.arrivalAccession,
+                parseJson(
+                    card.dataset.arrivalAccession,
+                    ''
+                ),
 
-                        card.dataset.arrivalCategory
+                parseJson(
+                    card.dataset.arrivalCategory,
+                    ''
+                )
 
-                    ]
-                    .join(' ')
-                    .toLowerCase();
-
-
-                    const match =
-                        !term ||
-                        data.includes(term);
-
-
-                    const item =
-                        card.closest(
-                            '.arrival-item'
-                        );
-
-
-                    if (item) {
-
-                        item.style.display =
-                            match
-                                ? ''
-                                : 'none';
-
-                    }
+            ]
+            .join(' ')
+            .toLowerCase();
 
 
-                    if (match) {
-
-                        visibleCount++;
-
-                    }
-
-                }
-            );
+            const matches =
+                term === '' ||
+                searchableData.includes(term);
 
 
-            if (noResults) {
-
-                noResults.classList.toggle(
-                    'd-none',
-                    visibleCount !== 0
+            const item =
+                card.closest(
+                    '.arrival-item'
                 );
+
+
+            if (item) {
+
+                item.style.display =
+                    matches
+                        ? ''
+                        : 'none';
 
             }
 
+
+            if (matches) {
+
+                visibleCount++;
+
+            }
+
+        });
+
+
+        if (noResults) {
+
+            noResults.classList.toggle(
+                'd-none',
+                visibleCount !== 0
+            );
+
         }
 
+    }
 
-        searchInput?.addEventListener(
+
+    if (searchInput) {
+
+        searchInput.addEventListener(
             'input',
             filterArrivals
         );
 
+    }
 
-        /*
-        |--------------------------------------------------------------------------
-        | VIEWER
-        |--------------------------------------------------------------------------
-        */
 
-        if (
-            !viewer ||
-            arrivalCards.length === 0
-        ) {
 
-            return;
+    /* =========================================================
+       NO VIEWER / NO CARDS
+    ========================================================== */
 
-        }
+    if (
+        !viewer ||
+        arrivalCards.length === 0
+    ) {
 
-
-        const image =
-            document.getElementById(
-                'arrivalViewerImage'
-            );
-
-        const title =
-            document.getElementById(
-                'arrivalViewerTitle'
-            );
-
-        const author =
-            document.getElementById(
-                'arrivalViewerAuthor'
-            );
-
-        const details =
-            document.getElementById(
-                'arrivalViewerDetails'
-            );
-
-        const counter =
-            document.getElementById(
-                'arrivalViewerCounter'
-            );
-
-        const closeButtons =
-            viewer.querySelectorAll(
-                '[data-close-arrival-viewer]'
-            );
-
-
-        let currentIndex = 0;
-
-        let lastFocusedElement = null;
-
-
-        function parseJson(
-            value,
-            fallback
-        ) {
-
-            try {
-
-                return JSON.parse(value);
-
-            }
-
-            catch (error) {
-
-                return fallback;
-
-            }
-
-        }
-
-
-        function readCard(card) {
-
-            return {
-
-                title:
-                    parseJson(
-                        card.dataset.arrivalTitle,
-                        'New Arrival'
-                    ),
-
-                author:
-                    parseJson(
-                        card.dataset.arrivalAuthor,
-                        'Unknown Author'
-                    ),
-
-                accession:
-                    parseJson(
-                        card.dataset.arrivalAccession,
-                        'Not assigned'
-                    ),
-
-                category:
-                    parseJson(
-                        card.dataset.arrivalCategory,
-                        'Uncategorized'
-                    ),
-
-                year:
-                    parseJson(
-                        card.dataset.arrivalYear,
-                        ''
-                    ),
-
-                publisher:
-                    parseJson(
-                        card.dataset.arrivalPublisher,
-                        ''
-                    ),
-
-                description:
-                    parseJson(
-                        card.dataset.arrivalDescription,
-                        'No description available.'
-                    ),
-
-                image:
-                    parseJson(
-                        card.dataset.arrivalImage,
-                        ''
-                    )
-
-            };
-
-        }
-
-
-        function renderArrival(index) {
-
-            currentIndex =
-                Math.max(
-                    0,
-                    Math.min(
-                        index,
-                        arrivalCards.length - 1
-                    )
-                );
-
-
-            const arrival =
-                readCard(
-                    arrivalCards[currentIndex]
-                );
-
-
-            image.src =
-                arrival.image ||
-                @json(asset('images/readingarea.jpg'));
-
-
-            image.alt =
-                arrival.title;
-
-
-            title.textContent =
-                arrival.title;
-
-
-            author.textContent =
-                arrival.author;
-
-
-            let html = '';
-
-
-            html += `
-                <div>
-                    <strong>Accession Number</strong><br>
-                    ${escapeHtml(arrival.accession)}
-                </div>
-            `;
-
-
-            html += `
-                <div style="margin-top:14px;">
-                    <strong>Category</strong><br>
-                    ${escapeHtml(arrival.category)}
-                </div>
-            `;
-
-
-            if (arrival.year) {
-
-                html += `
-                    <div style="margin-top:14px;">
-                        <strong>Publication Year</strong><br>
-                        ${escapeHtml(arrival.year)}
-                    </div>
-                `;
-
-            }
-
-
-            if (arrival.publisher) {
-
-                html += `
-                    <div style="margin-top:14px;">
-                        <strong>Publisher</strong><br>
-                        ${escapeHtml(arrival.publisher)}
-                    </div>
-                `;
-
-            }
-
-
-            html += `
-                <div style="margin-top:20px;">
-                    <strong>Description</strong><br>
-                    ${escapeHtml(arrival.description)}
-                </div>
-            `;
-
-
-            details.innerHTML = html;
-
-
-            counter.textContent =
-                `${currentIndex + 1} of ${arrivalCards.length}`;
-
-        }
-
-
-        function escapeHtml(value) {
-
-            const element =
-                document.createElement('div');
-
-            element.textContent =
-                value ?? '';
-
-            return element.innerHTML;
-
-        }
-
-
-        function openViewer(
-            index,
-            trigger
-        ) {
-
-            lastFocusedElement =
-                trigger;
-
-
-            renderArrival(index);
-
-
-            viewer.classList.add(
-                'is-open'
-            );
-
-
-            viewer.setAttribute(
-                'aria-hidden',
-                'false'
-            );
-
-
-            document.body.classList.add(
-                'arrival-viewer-open'
-            );
-
-
-            setTimeout(
-                function () {
-
-                    viewer
-                        .querySelector(
-                            '.viewer-close-button'
-                        )
-                        ?.focus();
-
-                },
-                20
-            );
-
-        }
-
-
-        function closeViewer() {
-
-            viewer.classList.remove(
-                'is-open'
-            );
-
-
-            viewer.setAttribute(
-                'aria-hidden',
-                'true'
-            );
-
-
-            document.body.classList.remove(
-                'arrival-viewer-open'
-            );
-
-
-            lastFocusedElement?.focus();
-
-        }
-
-
-        arrivalCards.forEach(
-            function (
-                card,
-                index
-            ) {
-
-                card.addEventListener(
-                    'click',
-                    function () {
-
-                        openViewer(
-                            index,
-                            card
-                        );
-
-                    }
-                );
-
-            }
-        );
-
-
-        closeButtons.forEach(
-            function (button) {
-
-                button.addEventListener(
-                    'click',
-                    closeViewer
-                );
-
-            }
-        );
-
-
-        image.addEventListener(
-            'error',
-            function () {
-
-                image.src =
-                    @json(
-                        asset(
-                            'images/readingarea.jpg'
-                        )
-                    );
-
-            }
-        );
-
-
-        document.addEventListener(
-            'keydown',
-            function (event) {
-
-                if (
-                    !viewer.classList.contains(
-                        'is-open'
-                    )
-                ) {
-
-                    return;
-
-                }
-
-
-                if (
-                    event.key === 'Escape'
-                ) {
-
-                    closeViewer();
-
-                }
-
-            }
-        );
-
-
-        filterArrivals();
+        return;
 
     }
-);
+
+
+
+    /* =========================================================
+       VIEWER ELEMENTS
+    ========================================================== */
+
+    const viewerImage =
+        document.getElementById(
+            'arrivalViewerImage'
+        );
+
+    const viewerTitle =
+        document.getElementById(
+            'arrivalViewerTitle'
+        );
+
+    const viewerAuthor =
+        document.getElementById(
+            'arrivalViewerAuthor'
+        );
+
+    const viewerCategory =
+        document.getElementById(
+            'arrivalViewerCategory'
+        );
+
+    const viewerAccession =
+        document.getElementById(
+            'arrivalViewerAccession'
+        );
+
+    const viewerYear =
+        document.getElementById(
+            'arrivalViewerYear'
+        );
+
+    const viewerPublisher =
+        document.getElementById(
+            'arrivalViewerPublisher'
+        );
+
+    const viewerDescription =
+        document.getElementById(
+            'arrivalViewerDescription'
+        );
+
+    const viewerCounter =
+        document.getElementById(
+            'arrivalViewerCounter'
+        );
+
+    const closeElements =
+        viewer.querySelectorAll(
+            '[data-close-arrival-viewer]'
+        );
+
+
+    let lastFocusedElement = null;
+
+
+
+    /* =========================================================
+       SAFE JSON PARSER
+    ========================================================== */
+
+    function parseJson(
+        value,
+        fallback = ''
+    ) {
+
+        if (
+            value === undefined ||
+            value === null ||
+            value === ''
+        ) {
+
+            return fallback;
+
+        }
+
+
+        try {
+
+            return JSON.parse(value);
+
+        }
+        catch (error) {
+
+            return value || fallback;
+
+        }
+
+    }
+
+
+
+    /* =========================================================
+       GET BOOK DATA
+    ========================================================== */
+
+    function getBookData(card) {
+
+        return {
+
+            title:
+                parseJson(
+                    card.dataset.arrivalTitle,
+                    'New Arrival'
+                ),
+
+            author:
+                parseJson(
+                    card.dataset.arrivalAuthor,
+                    'Unknown Author'
+                ),
+
+            accession:
+                parseJson(
+                    card.dataset.arrivalAccession,
+                    'Not assigned'
+                ),
+
+            category:
+                parseJson(
+                    card.dataset.arrivalCategory,
+                    'Uncategorized'
+                ),
+
+            year:
+                parseJson(
+                    card.dataset.arrivalYear,
+                    ''
+                ),
+
+            publisher:
+                parseJson(
+                    card.dataset.arrivalPublisher,
+                    ''
+                ),
+
+            description:
+                parseJson(
+                    card.dataset.arrivalDescription,
+                    'No description available.'
+                ),
+
+            image:
+                parseJson(
+                    card.dataset.arrivalImage,
+                    ''
+                )
+
+        };
+
+    }
+
+
+
+    /* =========================================================
+       RENDER BOOK
+    ========================================================== */
+
+    function renderBook(
+        card,
+        index
+    ) {
+
+        const book =
+            getBookData(card);
+
+
+        viewerTitle.textContent =
+            book.title ||
+            'New Arrival';
+
+
+        viewerAuthor.textContent =
+            book.author ||
+            'Unknown Author';
+
+
+        viewerCategory.textContent =
+            book.category ||
+            'Uncategorized';
+
+
+        viewerAccession.textContent =
+            book.accession ||
+            'Not assigned';
+
+
+        viewerYear.textContent =
+            book.year ||
+            'Not specified';
+
+
+        viewerPublisher.textContent =
+            book.publisher ||
+            'Not specified';
+
+
+        viewerDescription.textContent =
+            book.description ||
+            'No description available.';
+
+
+        viewerCounter.textContent =
+            `${index + 1} of ${arrivalCards.length}`;
+
+
+        viewerImage.src =
+            book.image ||
+            @json(
+                asset('images/readingarea.jpg')
+            );
+
+
+        viewerImage.alt =
+            book.title ||
+            'Book cover';
+
+    }
+
+
+
+    /* =========================================================
+       OPEN MODAL
+    ========================================================== */
+
+    function openViewer(
+        card,
+        index
+    ) {
+
+        lastFocusedElement =
+            card;
+
+
+        renderBook(
+            card,
+            index
+        );
+
+
+        viewer.classList.add(
+            'is-open'
+        );
+
+
+        viewer.setAttribute(
+            'aria-hidden',
+            'false'
+        );
+
+
+        document.body.classList.add(
+            'arrival-viewer-open'
+        );
+
+
+        window.setTimeout(function () {
+
+            viewer
+                .querySelector(
+                    '.book-modal-close'
+                )
+                ?.focus();
+
+        }, 50);
+
+    }
+
+
+
+    /* =========================================================
+       CLOSE MODAL
+    ========================================================== */
+
+    function closeViewer() {
+
+        viewer.classList.remove(
+            'is-open'
+        );
+
+
+        viewer.setAttribute(
+            'aria-hidden',
+            'true'
+        );
+
+
+        document.body.classList.remove(
+            'arrival-viewer-open'
+        );
+
+
+        if (lastFocusedElement) {
+
+            lastFocusedElement.focus();
+
+        }
+
+    }
+
+
+
+    /* =========================================================
+       CARD CLICK
+    ========================================================== */
+
+    arrivalCards.forEach(
+        function (
+            card,
+            index
+        ) {
+
+            card.addEventListener(
+                'click',
+                function () {
+
+                    openViewer(
+                        card,
+                        index
+                    );
+
+                }
+            );
+
+        }
+    );
+
+
+
+    /* =========================================================
+       CLOSE CLICK
+    ========================================================== */
+
+    closeElements.forEach(
+        function (element) {
+
+            element.addEventListener(
+                'click',
+                closeViewer
+            );
+
+        }
+    );
+
+
+
+    /* =========================================================
+       IMAGE FALLBACK
+    ========================================================== */
+
+    viewerImage.addEventListener(
+        'error',
+        function () {
+
+            viewerImage.onerror = null;
+
+            viewerImage.src =
+                @json(
+                    asset(
+                        'images/readingarea.jpg'
+                    )
+                );
+
+        }
+    );
+
+
+
+    /* =========================================================
+       ESCAPE KEY
+    ========================================================== */
+
+    document.addEventListener(
+        'keydown',
+        function (event) {
+
+            if (
+                event.key === 'Escape' &&
+                viewer.classList.contains(
+                    'is-open'
+                )
+            ) {
+
+                closeViewer();
+
+            }
+
+        }
+    );
+
+
+
+    /* =========================================================
+       INITIAL SEARCH
+    ========================================================== */
+
+    filterArrivals();
+
+});
 
 </script>
+
 
 @include('components.lisa-chatbox')
 
