@@ -2997,10 +2997,48 @@ document.addEventListener(
             background .2s ease,
             transform .2s ease;
     }
+
+    @media (prefers-reduced-motion: reduce) {
+        .arrivals-hero-content,
+        .arrival-empty:hover .empty-icon,
+        .arrival-no-results:hover .empty-icon,
+        .book-modal.is-open .book-modal-cover img {
+            animation: none !important;
+        }
+
+        .arrivals-motion-reveal,
+        .arrivals-motion-reveal.arrivals-motion-left,
+        .arrivals-motion-reveal.arrivals-motion-right,
+        .arrivals-motion-reveal.arrivals-motion-scale {
+            opacity: 1 !important;
+            transform: none !important;
+            transition: none !important;
+        }
+
+        .arrival-toolbar,
+        .arrival-search-field,
+        .arrival-card,
+        .arrival-cover img,
+        .arrival-cover-overlay span,
+        .arrival-arrow,
+        .arrival-category,
+        .arrival-date-short,
+        .arrival-empty,
+        .arrival-no-results,
+        .empty-icon,
+        .book-modal-dialog,
+        .book-information-item,
+        .book-information-icon,
+        .book-modal-close {
+            transition: none !important;
+            animation: none !important;
+        }
+    }
 </style>
 
 <script>
 document.addEventListener('DOMContentLoaded', function () {
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     const revealGroups = [
         { selector: '.arrival-toolbar', mode: '' },
@@ -3039,7 +3077,7 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
-    if (!('IntersectionObserver' in window)) {
+    if (reducedMotion || !('IntersectionObserver' in window)) {
         revealElements.forEach(function (element) {
             element.classList.add('is-visible');
         });
@@ -3069,4 +3107,3 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
 @endsection
-

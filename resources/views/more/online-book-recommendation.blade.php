@@ -822,10 +822,40 @@
         0%, 100% { opacity: .55; }
         50% { opacity: 1; }
     }
+
+    @media (prefers-reduced-motion: reduce) {
+        .recommendation-hero-content,
+        .recommendation-hero::after,
+        .form-loading span {
+            animation: none !important;
+        }
+
+        .bookrec-motion-reveal,
+        .bookrec-motion-reveal.bookrec-motion-left,
+        .bookrec-motion-reveal.bookrec-motion-right,
+        .bookrec-motion-reveal.bookrec-motion-scale {
+            opacity: 1 !important;
+            transform: none !important;
+            transition: none !important;
+        }
+
+        .recommendation-sidebar,
+        .recommendation-point,
+        .point-icon,
+        .recommendation-note,
+        .primary-action i,
+        .secondary-action i,
+        .recommendation-form-card,
+        .recommendation-form-header {
+            transition: none !important;
+            animation: none !important;
+        }
+    }
 </style>
 
 <script>
 document.addEventListener('DOMContentLoaded', function () {
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     const revealGroups = [
         { selector: '.recommendation-sidebar', mode: 'bookrec-motion-left' },
@@ -858,7 +888,7 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
-    if (!('IntersectionObserver' in window)) {
+    if (reducedMotion || !('IntersectionObserver' in window)) {
         revealElements.forEach(function (element) {
             element.classList.add('is-visible');
         });
@@ -888,5 +918,3 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
 @endsection
-
-

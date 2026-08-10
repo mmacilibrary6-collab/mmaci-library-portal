@@ -935,10 +935,43 @@
     .access-card-notice:hover i {
         transform: scale(1.08);
     }
+
+    @media (prefers-reduced-motion: reduce) {
+        .database-hero-content,
+        .database-hero::after,
+        .database-preview {
+            animation: none !important;
+        }
+
+        .database-motion-reveal,
+        .database-motion-reveal.database-motion-left,
+        .database-motion-reveal.database-motion-right,
+        .database-motion-reveal.database-motion-scale {
+            opacity: 1 !important;
+            transform: none !important;
+            transition: none !important;
+        }
+
+        .credential-notice,
+        .credential-notice i,
+        .database-primary-button i,
+        .access-card-button i,
+        .database-preview,
+        .database-image,
+        .access-step,
+        .step-number,
+        .access-card,
+        .access-card-notice,
+        .access-card-notice i {
+            transition: none !important;
+            animation: none !important;
+        }
+    }
 </style>
 
 <script>
 document.addEventListener('DOMContentLoaded', function () {
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     const revealGroups = [
         { selector: '.database-section-heading', mode: '' },
@@ -972,7 +1005,7 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
-    if (!('IntersectionObserver' in window)) {
+    if (reducedMotion || !('IntersectionObserver' in window)) {
         revealElements.forEach(function (element) {
             element.classList.add('is-visible');
         });
@@ -1002,5 +1035,3 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
 @endsection
-
-

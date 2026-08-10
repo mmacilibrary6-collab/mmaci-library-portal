@@ -843,6 +843,18 @@
 
 }
 
+
+@media (prefers-reduced-motion: reduce) {
+
+    .donated-hero-content,
+    .donated-hero::after {
+
+        animation:
+            none !important;
+
+    }
+
+
     .donated-motion-reveal {
 
         opacity:
@@ -876,6 +888,11 @@ document.addEventListener(
     'DOMContentLoaded',
     function () {
 
+        const reducedMotion =
+            window.matchMedia(
+                '(prefers-reduced-motion: reduce)'
+            ).matches;
+
 
         const revealElements =
             document.querySelectorAll(
@@ -902,6 +919,7 @@ document.addEventListener(
 
 
         if (
+            reducedMotion ||
             !(
                 'IntersectionObserver'
                 in window
@@ -990,4 +1008,3 @@ document.addEventListener(
 @push('styles')
 
 @endpush
-

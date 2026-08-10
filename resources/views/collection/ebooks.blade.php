@@ -1217,10 +1217,49 @@ document.addEventListener('DOMContentLoaded', function () {
     .cta-panel > a:hover i {
         transform: translateX(5px);
     }
+
+    @media (prefers-reduced-motion: reduce) {
+        .ebooks-hero-content,
+        .ebooks-hero::after,
+        .folder-modal.show .modal-content {
+            animation: none !important;
+        }
+
+        .ebook-motion-reveal,
+        .ebook-motion-reveal.ebook-motion-left,
+        .ebook-motion-reveal.ebook-motion-right,
+        .ebook-motion-reveal.ebook-motion-scale {
+            opacity: 1 !important;
+            transform: none !important;
+            transition: none !important;
+        }
+
+        .program-search,
+        .program-search button,
+        .program-card,
+        .program-image img,
+        .folder-count,
+        .program-action i,
+        .program-empty,
+        .search-empty,
+        .folder-link,
+        .folder-link > i,
+        .modal-close-button,
+        .text-action i,
+        .guide-step,
+        .guide-step > span,
+        .cta-panel,
+        .cta-panel > a,
+        .cta-panel > a i {
+            transition: none !important;
+            animation: none !important;
+        }
+    }
 </style>
 
 <script>
 document.addEventListener('DOMContentLoaded', function () {
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     const revealGroups = [
         { selector: '.ebooks-intro .section-heading', mode: '' },
@@ -1259,7 +1298,7 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
-    if (!('IntersectionObserver' in window)) {
+    if (reducedMotion || !('IntersectionObserver' in window)) {
         revealElements.forEach(function (element) {
             element.classList.add('is-visible');
         });
@@ -1289,4 +1328,3 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
 @endsection
-

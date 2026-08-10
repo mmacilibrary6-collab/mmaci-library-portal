@@ -1035,10 +1035,46 @@
     .help-button:hover i {
         transform: translateX(5px);
     }
+
+    @media (prefers-reduced-motion: reduce) {
+        .facilities-hero-content,
+        .facilities-hero::after {
+            animation: none !important;
+        }
+
+        .facilities-motion-reveal,
+        .facilities-motion-reveal.facilities-motion-left,
+        .facilities-motion-reveal.facilities-motion-right,
+        .facilities-motion-reveal.facilities-motion-scale {
+            opacity: 1 !important;
+            transform: none !important;
+            transition: none !important;
+        }
+
+        .facility-card,
+        .facility-photo img,
+        .facility-details,
+        .capacity-card,
+        .capacity-icon,
+        .empty-state,
+        .empty-state-icon,
+        .summary-panel,
+        .summary-item,
+        .summary-item strong,
+        .guidelines-link i,
+        .guideline,
+        .guideline-number,
+        .help-card,
+        .help-button i {
+            transition: none !important;
+            animation: none !important;
+        }
+    }
 </style>
 
 <script>
 document.addEventListener('DOMContentLoaded', function () {
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     const revealGroups = [
         { selector: '.facilities-intro .section-heading', mode: '' },
@@ -1080,7 +1116,7 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
-    if (!('IntersectionObserver' in window)) {
+    if (reducedMotion || !('IntersectionObserver' in window)) {
         revealElements.forEach(function (element) {
             element.classList.add('is-visible');
         });
@@ -1110,6 +1146,4 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
 @endsection
-
-
 
