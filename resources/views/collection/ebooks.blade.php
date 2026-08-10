@@ -1330,7 +1330,7 @@ document.addEventListener('DOMContentLoaded', function () {
      Bootstrap-centered modal with one scrollable content area.
 ========================================================= -->
 <div id="ebookFolderModal" class="ebook-folder-overlay" hidden aria-hidden="true">
-    <button type="button" class="ebook-folder-overlay-backdrop" data-ebook-modal-close aria-label="Close overlay"></button>
+    <div class="ebook-folder-overlay-backdrop" data-ebook-modal-close aria-hidden="true"></div>
 
     <div class="ebook-folder-modal" role="dialog" aria-modal="true" aria-labelledby="ebookFolderModalTitle">
         <div class="ebook-folder-modal-content">
@@ -1361,8 +1361,9 @@ document.addEventListener('DOMContentLoaded', function () {
     position: fixed;
     inset: 0;
     z-index: 1070;
-    display: grid;
-    place-items: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     padding: 12px;
 }
 
@@ -1375,13 +1376,13 @@ document.addEventListener('DOMContentLoaded', function () {
     inset: 0;
     width: 100%;
     height: 100%;
-    padding: 0;
-    border: 0;
     background: rgba(6, 18, 36, .58);
+    z-index: 0;
 }
 
 .ebook-folder-modal {
     position: relative;
+    z-index: 1;
     width: min(650px, calc(100vw - 24px));
     max-width: none;
     max-height: calc(100dvh - 24px);
@@ -1591,6 +1592,8 @@ document.addEventListener('DOMContentLoaded', function () {
         return;
     }
 
+    const originalParent = modalEl.parentElement;
+    const originalNextSibling = modalEl.nextSibling;
     let lastFocused = null;
 
     function openFromPanel(panel, trigger) {
@@ -1605,6 +1608,10 @@ document.addEventListener('DOMContentLoaded', function () {
         titleEl.textContent = panelTitle ? panelTitle.textContent.trim() : 'E-Book Folders';
         bodyEl.innerHTML = panelBody ? panelBody.innerHTML : '';
         countEl.textContent = panelCount ? panelCount.textContent.trim() : '0 folders available';
+
+        if (modalEl.parentElement !== document.body) {
+            document.body.appendChild(modalEl);
+        }
 
         modalEl.hidden = false;
         modalEl.setAttribute('aria-hidden', 'false');
@@ -1623,6 +1630,14 @@ document.addEventListener('DOMContentLoaded', function () {
         document.body.style.removeProperty('overflow');
 
         bodyEl.innerHTML = '';
+
+        if (originalParent && modalEl.parentElement !== originalParent) {
+            if (originalNextSibling && originalNextSibling.parentNode === originalParent) {
+                originalParent.insertBefore(modalEl, originalNextSibling);
+            } else {
+                originalParent.appendChild(modalEl);
+            }
+        }
 
         if (lastFocused) {
             lastFocused.focus();
