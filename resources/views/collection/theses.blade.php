@@ -607,6 +607,15 @@
     border: 0;
     border-radius: 18px;
     box-shadow: 0 24px 70px rgba(11, 46, 89, .22);
+    pointer-events: auto;
+}
+
+.folder-modal {
+    z-index: 1065;
+}
+
+.folder-modal .modal-dialog {
+    z-index: 2;
 }
 
 .folder-modal .modal-header {
@@ -633,6 +642,7 @@
     max-height: 55vh;
     padding: 14px 20px;
     overflow-y: auto;
+    overscroll-behavior: contain;
 }
 
 .folder-list {

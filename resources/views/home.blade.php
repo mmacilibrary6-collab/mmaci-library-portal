@@ -1020,7 +1020,7 @@ document.addEventListener('DOMContentLoaded', function () {
 .library-update-viewer {
     position: fixed;
     inset: 0;
-    z-index: 9999;
+    z-index: 1065;
     display: none;
     align-items: center;
     justify-content: center;
@@ -1045,7 +1045,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 .library-update-viewer-dialog {
     position: relative;
-    z-index: 1;
+    z-index: 2;
     width: min(1280px, 100%);
     height: min(900px, calc(100vh - 32px));
     height: min(900px, calc(100dvh - 32px));
@@ -1057,6 +1057,7 @@ document.addEventListener('DOMContentLoaded', function () {
     border: 1px solid rgba(255, 255, 255, .14);
     border-radius: 22px;
     box-shadow: 0 30px 90px rgba(0, 0, 0, .48);
+    pointer-events: auto;
 }
 
 .viewer-image-panel {
@@ -2085,6 +2086,20 @@ body.update-viewer-open {
 
 #eventDetailsModal {
     z-index: 1055;
+}
+
+#eventDetailsModal .modal-dialog {
+    z-index: 2;
+}
+
+#eventDetailsModal .modal-content {
+    pointer-events: auto;
+}
+
+#eventDetailsModal .modal-body {
+    max-height: min(72vh, 760px);
+    overflow-y: auto;
+    overscroll-behavior: contain;
 }
 
 .event-modal .modal-header {
