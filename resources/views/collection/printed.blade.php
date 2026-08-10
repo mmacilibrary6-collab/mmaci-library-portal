@@ -1222,8 +1222,11 @@
 
 .modal-collection-image {
     width: 100%;
-    height: 330px;
-    object-fit: cover;
+    height: auto;
+    max-height: 52vh;
+    object-fit: contain;
+    object-position: center;
+    background: #081a33;
 }
 
 .collection-modal h2 {
@@ -1286,6 +1289,8 @@
 .new-arrivals-modal-body {
     padding: 28px;
     background: #f4f7fc;
+    max-height: min(72vh, 860px);
+    overflow-y: auto;
 }
 
 .new-arrivals-grid {
@@ -1306,7 +1311,10 @@
 .new-arrival-cover-wrapper {
     position: relative;
     height: 260px;
-    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: auto;
     background: #e8edf5;
 }
 
@@ -1314,8 +1322,9 @@
     width: 100%;
     height: 100%;
     display: block;
-    object-fit: cover;
+    object-fit: contain;
     object-position: center;
+    background: #e8edf5;
 }
 
 .new-arrival-badge {
@@ -1408,6 +1417,7 @@
 
     .new-arrivals-modal-body {
         padding: 16px;
+        max-height: min(68vh, 760px);
     }
 
     .new-arrivals-grid {
@@ -1890,9 +1900,13 @@ body {
     box-shadow: 0 10px 24px rgba(0, 0, 0, 0.16);
 }
 
-.collection-modal {
-    border-radius: 18px;
-}
+    .collection-modal {
+        border-radius: 18px;
+    }
+
+    .modal-collection-image {
+        max-height: 42vh;
+    }
 
 @media (max-width: 991.98px) {
     .collection-hero {
@@ -1965,6 +1979,10 @@ body {
 
     .collection-search-box {
         padding: 10px;
+    }
+
+    .modal-collection-image {
+        max-height: 36vh;
     }
 
     .information-list {

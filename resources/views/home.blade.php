@@ -1068,17 +1068,17 @@ document.addEventListener('DOMContentLoaded', function () {
     padding: 20px;
     box-sizing: border-box;
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     justify-content: center;
-    overflow: hidden;
+    overflow: auto;
     background: #030810;
 }
 
 .viewer-image-panel img {
-    width: auto;
+    width: 100%;
     height: auto;
     max-width: 100%;
-    max-height: 100%;
+    max-height: none;
     display: block;
     object-fit: contain;
     object-position: center;
