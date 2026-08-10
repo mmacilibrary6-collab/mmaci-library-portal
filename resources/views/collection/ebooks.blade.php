@@ -1358,12 +1358,16 @@ document.addEventListener('DOMContentLoaded', function () {
 
 <style>
 .ebook-folder-overlay {
-    position: fixed;
-    inset: 0;
+    position: fixed !important;
+    top: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    width: 100vw !important;
+    height: 100dvh !important;
     z-index: 1070;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    display: grid;
+    place-items: center;
     padding: 12px;
 }
 
@@ -1378,6 +1382,7 @@ document.addEventListener('DOMContentLoaded', function () {
     height: 100%;
     background: rgba(6, 18, 36, .58);
     z-index: 0;
+    pointer-events: auto;
 }
 
 .ebook-folder-modal {
@@ -1386,9 +1391,7 @@ document.addEventListener('DOMContentLoaded', function () {
     width: min(650px, calc(100vw - 24px));
     max-width: none;
     max-height: calc(100dvh - 24px);
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    display: block;
     pointer-events: auto;
 }
 
@@ -1613,6 +1616,14 @@ document.addEventListener('DOMContentLoaded', function () {
             document.body.appendChild(modalEl);
         }
 
+        modalEl.style.position = 'fixed';
+        modalEl.style.inset = '0';
+        modalEl.style.width = '100vw';
+        modalEl.style.height = '100dvh';
+        modalEl.style.display = 'grid';
+        modalEl.style.placeItems = 'center';
+        modalEl.style.padding = window.matchMedia('(max-width: 575.98px)').matches ? '6px' : '12px';
+
         modalEl.hidden = false;
         modalEl.setAttribute('aria-hidden', 'false');
         document.body.classList.add('modal-open');
@@ -1626,6 +1637,13 @@ document.addEventListener('DOMContentLoaded', function () {
     function closeModal() {
         modalEl.hidden = true;
         modalEl.setAttribute('aria-hidden', 'true');
+        modalEl.style.removeProperty('position');
+        modalEl.style.removeProperty('inset');
+        modalEl.style.removeProperty('width');
+        modalEl.style.removeProperty('height');
+        modalEl.style.removeProperty('display');
+        modalEl.style.removeProperty('place-items');
+        modalEl.style.removeProperty('padding');
         document.body.classList.remove('modal-open');
         document.body.style.removeProperty('overflow');
 
