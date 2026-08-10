@@ -1325,6 +1325,309 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 });
 </script>
+<!-- =========================================================
+     E-BOOK MODAL
+     Bootstrap-centered modal with one scrollable content area.
+========================================================= -->
+<div class="modal fade ebook-folder-modal" id="ebookFolderModal" tabindex="-1" aria-labelledby="ebookFolderModalTitle" aria-hidden="true">
+    <div class="modal-dialog ebook-folder-modal-dialog">
+        <div class="modal-content ebook-folder-modal-content">
+            <div class="ebook-folder-modal-header">
+                <div>
+                    <span>Electronic Book Collection</span>
+                    <h3 id="ebookFolderModalTitle">E-Book Folders</h3>
+                </div>
+                <button type="button" class="ebook-folder-modal-close" data-ebook-modal-close aria-label="Close E-Book folders">
+                    <i class="bi bi-x-lg" aria-hidden="true"></i>
+                </button>
+            </div>
+
+            <div id="ebookFolderModalBody" class="ebook-folder-modal-body"></div>
+
+            <div class="ebook-folder-modal-footer">
+                <span id="ebookFolderModalCount">0 folders available</span>
+                <button type="button" class="ebook-folder-modal-close-text" data-ebook-modal-close>
+                    Close
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.ebook-folder-modal {
+    --bs-modal-margin: 0;
+}
+
+.ebook-folder-modal .modal-dialog {
+    width: min(650px, calc(100vw - 24px));
+    max-width: none;
+    min-height: 100dvh;
+    margin: 0 auto;
+    padding: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.ebook-folder-modal-content {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-height: calc(100dvh - 24px);
+    overflow: hidden;
+    background: #fff;
+    border: 1px solid rgba(11, 46, 89, .09);
+    border-radius: 18px;
+    box-shadow: 0 28px 80px rgba(0, 0, 0, .30);
+}
+
+.ebook-folder-modal-header {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 18px;
+    padding: 20px 22px;
+    color: #fff;
+    background: radial-gradient(circle at 100% 0, rgba(244, 180, 0, .17), transparent 35%), linear-gradient(135deg, #0b2e59, #184b8c);
+}
+
+.ebook-folder-modal-header span {
+    display: block;
+    color: #f4b400;
+    font-size: 8px;
+    font-weight: 800;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+}
+
+.ebook-folder-modal-header h3 {
+    margin: 3px 0 0;
+    color: #fff;
+    font-size: 20px;
+    font-weight: 800;
+    line-height: 1.35;
+}
+
+.ebook-folder-modal-close {
+    width: 38px;
+    height: 38px;
+    flex: 0 0 38px;
+    display: grid;
+    place-items: center;
+    padding: 0;
+    color: #fff;
+    background: rgba(255, 255, 255, .12);
+    border: 1px solid rgba(255, 255, 255, .2);
+    border-radius: 10px;
+}
+
+.ebook-folder-modal-body {
+    min-height: 0;
+    flex: 1 1 auto;
+    padding: 12px;
+    overflow: auto;
+    background: #f5f7fb;
+    scrollbar-gutter: stable;
+    overscroll-behavior: contain;
+}
+
+.ebook-folder-modal-footer {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 10px 13px;
+    background: #fff;
+    border-top: 1px solid #dfe6ef;
+}
+
+.ebook-folder-modal-close-text {
+    padding: 8px 13px;
+    color: #fff;
+    background: #0b2e59;
+    border: 0;
+    border-radius: 8px;
+    font-size: 10px;
+    font-weight: 700;
+}
+
+.ebook-folder-modal-body .folder-list {
+    display: grid;
+    gap: 9px;
+}
+
+.ebook-folder-modal-body .folder-link {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 12px;
+    align-items: center;
+    padding: 13px 14px;
+    color: inherit;
+    background: #fff;
+    border: 1px solid #dfe6ef;
+    border-radius: 11px;
+    text-decoration: none;
+}
+
+.ebook-folder-modal-body .folder-link strong {
+    display: block;
+    color: #0b2e59;
+    font-size: 13px;
+    font-weight: 800;
+    line-height: 1.45;
+    overflow-wrap: anywhere;
+}
+
+.ebook-folder-modal-body .folder-link small {
+    display: -webkit-box;
+    margin-top: 3px;
+    overflow: hidden;
+    color: #647187;
+    font-size: 10px;
+    line-height: 1.5;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+}
+
+.ebook-folder-modal-body .folder-link-action {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    flex: 0 0 auto;
+    padding: 8px 10px;
+    color: #184b8c;
+    background: rgba(24, 75, 140, .08);
+    border-radius: 8px;
+    font-size: 10px;
+    font-weight: 800;
+}
+
+@media (max-width: 575.98px) {
+    .ebook-folder-modal .modal-dialog {
+        width: calc(100vw - 12px);
+        min-height: 100dvh;
+        padding: 6px;
+        margin: 0 auto;
+    }
+
+    .ebook-folder-modal-content {
+        max-height: calc(100dvh - 12px);
+        border-radius: 14px;
+    }
+
+    .ebook-folder-modal-header {
+        padding: 12px;
+    }
+
+    .ebook-folder-modal-header h3 {
+        font-size: 17px;
+    }
+
+    .ebook-folder-modal-close {
+        width: 34px;
+        height: 34px;
+        flex-basis: 34px;
+    }
+
+    .ebook-folder-modal-body {
+        padding: 8px;
+    }
+
+    .ebook-folder-modal-body .folder-link {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 8px;
+        padding: 10px;
+    }
+
+    .ebook-folder-modal-body .folder-link-action {
+        justify-content: center;
+    }
+
+    .ebook-folder-modal-footer {
+        flex-direction: column;
+        align-items: stretch;
+        padding: 8px 10px;
+    }
+
+    .ebook-folder-modal-close-text {
+        width: 100%;
+    }
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const modalEl = document.getElementById('ebookFolderModal');
+    const titleEl = document.getElementById('ebookFolderModalTitle');
+    const bodyEl = document.getElementById('ebookFolderModalBody');
+    const countEl = document.getElementById('ebookFolderModalCount');
+
+    if (!modalEl || !titleEl || !bodyEl || !countEl || typeof bootstrap === 'undefined') {
+        return;
+    }
+
+    const modal = bootstrap.Modal.getOrCreateInstance(modalEl, {
+        backdrop: true,
+        focus: true
+    });
+
+    let lastFocused = null;
+
+    function openFromPanel(panel, trigger) {
+        if (!panel) return;
+
+        lastFocused = trigger || null;
+
+        const panelTitle = panel.querySelector('.program-folder-panel-header h4');
+        const panelBody = panel.querySelector('.program-folder-panel-body');
+        const panelCount = panel.querySelector('.program-folder-panel-footer > span');
+
+        titleEl.textContent = panelTitle ? panelTitle.textContent.trim() : 'E-Book Folders';
+        bodyEl.innerHTML = panelBody ? panelBody.innerHTML : '';
+        countEl.textContent = panelCount ? panelCount.textContent.trim() : '0 folders available';
+
+        modal.show();
+
+        window.setTimeout(function () {
+            modalEl.querySelector('.ebook-folder-modal-close')?.focus();
+        }, 50);
+    }
+
+    function closeModal() {
+        modal.hide();
+    }
+
+    document.addEventListener('click', function (event) {
+        const trigger = event.target.closest('.program-folder-toggle');
+
+        if (trigger) {
+            event.preventDefault();
+            event.stopPropagation();
+            event.stopImmediatePropagation();
+
+            const panelId = trigger.getAttribute('data-folder-target');
+            openFromPanel(document.getElementById(panelId), trigger);
+            return;
+        }
+
+        if (event.target.closest('[data-ebook-modal-close]')) {
+            event.preventDefault();
+            closeModal();
+        }
+    }, true);
+
+    modalEl.addEventListener('hidden.bs.modal', function () {
+        bodyEl.innerHTML = '';
+        if (lastFocused) {
+            lastFocused.focus();
+        }
+    });
+});
+</script>
+
 @include('components.lisa-chatbox')
 
 @endsection
