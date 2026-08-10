@@ -311,31 +311,14 @@
                             <p>
                                 {{ $collection['description'] }}
                             </p>
-
                             @if ($collection['is_new_arrivals'] ?? false)
 
                                 <button
                                     type="button"
                                     class="collection-link"
                                     data-bs-toggle="modal"
-                                    data-bs-target="#newArrivalsModal">
-
-                                    View Collection
-
-                                    <i class="bi bi-arrow-right"></i>
-
-                                </button>
-
-                            @else
-
-                                <button
-                                    type="button"
-                                    class="collection-link"
-                                    data-bs-toggle="modal"
-                                    data-bs-target="#collectionModal"
-                                    data-collection-title="{{ $collection['title'] }}"
-                                    data-collection-description="{{ $collection['description'] }}"
-                                    data-collection-image="{{ $collection['image'] }}">
+                                    data-bs-target="#newArrivalsModal"
+                                    aria-label="View New Arrivals">
 
                                     View Collection
 
@@ -527,54 +510,6 @@
     </div>
 
 </section>
-
-<!-- ================= COLLECTION MODAL ================= -->
-
-<div class="modal fade"
-     id="collectionModal"
-     tabindex="-1"
-     aria-labelledby="collectionModalLabel"
-     aria-hidden="true">
-
-    <div class="modal-dialog modal-dialog-centered modal-lg">
-
-        <div class="modal-content collection-modal">
-
-            <button
-                type="button"
-                class="btn-close modal-close"
-                data-bs-dismiss="modal"
-                aria-label="Close">
-            </button>
-
-            <img
-                src="{{ asset('images/readingarea.jpg') }}"
-                id="modalCollectionImage"
-                class="modal-collection-image"
-                alt="Collection preview"
-                onerror="this.onerror=null;this.src='{{ asset('images/readingarea.jpg') }}';">
-
-            <div class="modal-body p-4 p-md-5">
-
-                <span class="section-label">
-                    Printed Collection
-                </span>
-
-                <h2 id="modalCollectionTitle"
-                    class="mt-3">
-                </h2>
-
-                <p id="modalCollectionDescription"
-                   class="mb-0">
-                </p>
-
-            </div>
-
-        </div>
-
-    </div>
-
-</div>
 
 <!-- ================= NEW ARRIVALS MODAL ================= -->
 
@@ -2051,18 +1986,6 @@ document.addEventListener('DOMContentLoaded', function () {
     searchInput.addEventListener('input', filterCollections);
     categoryFilter.addEventListener('change', filterCollections);
 
-    const collectionModal =
-        document.getElementById('collectionModal');
-
-    if (collectionModal) {
-
-        collectionModal.addEventListener('show.bs.modal', function (event) {
-
-            const button = event.relatedTarget;
-
-            if (!button) {
-                return;
-            }
 
             const title =
                 button.getAttribute('data-collection-title');
@@ -2446,6 +2369,340 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 });
 </script>
+
+<!-- =========================================================
+     PRINTED COLLECTION — NEW ARRIVALS ONLY
+     Removes dead collection modal behavior and fixes New Arrivals UI.
+========================================================= -->
+<style>
+    /*
+     * The animated app layout can leave <main> transformed.
+     * A transformed ancestor can break Bootstrap fixed modal positioning.
+     * This page does not need a transformed <main>.
+     */
+    main {
+        transform: none !important;
+    }
+
+    /* Regular collection cards intentionally have NO action row. */
+    .collection-card-body > .collection-link {
+        margin-top: auto;
+    }
+
+    /* =========================================================
+       NEW ARRIVALS MODAL
+    ========================================================= */
+
+    #newArrivalsModal {
+        position: fixed !important;
+        inset: 0 !important;
+        z-index: 10900 !important;
+        padding: 16px !important;
+        overflow-x: hidden !important;
+        overflow-y: auto !important;
+    }
+
+    #newArrivalsModal .modal-dialog {
+        width: min(980px, calc(100vw - 32px)) !important;
+        max-width: 980px !important;
+        min-height: calc(100% - 32px) !important;
+        margin: 16px auto !important;
+        display: flex !important;
+        align-items: center !important;
+    }
+
+    #newArrivalsModal .new-arrivals-modal {
+        width: 100% !important;
+        max-height: calc(100dvh - 32px) !important;
+        display: flex !important;
+        flex-direction: column !important;
+        overflow: hidden !important;
+        background: #fff !important;
+        border: 1px solid rgba(11, 46, 89, .08) !important;
+        border-radius: 20px !important;
+        box-shadow: 0 28px 80px rgba(0, 0, 0, .28) !important;
+    }
+
+    #newArrivalsModal .new-arrivals-modal-header {
+        flex: 0 0 auto !important;
+        align-items: flex-start !important;
+        gap: 20px !important;
+        padding: 22px 24px !important;
+    }
+
+    #newArrivalsModal .new-arrivals-modal-header > div {
+        min-width: 0 !important;
+    }
+
+    #newArrivalsModal .new-arrivals-modal-header h2 {
+        margin: 2px 0 4px !important;
+        color: #fff !important;
+        font-size: clamp(23px, 3vw, 31px) !important;
+        line-height: 1.2 !important;
+    }
+
+    #newArrivalsModal .new-arrivals-modal-header p {
+        max-width: 620px !important;
+        font-size: 13px !important;
+        line-height: 1.6 !important;
+    }
+
+    #newArrivalsModal .btn-close {
+        width: 38px !important;
+        height: 38px !important;
+        flex: 0 0 38px !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        background-color: rgba(255, 255, 255, .95) !important;
+        background-size: 12px !important;
+        border-radius: 10px !important;
+        opacity: 1 !important;
+    }
+
+    #newArrivalsModal .new-arrivals-modal-body {
+        flex: 1 1 auto !important;
+        min-height: 0 !important;
+        max-height: none !important;
+        padding: 20px !important;
+        overflow-y: auto !important;
+        overscroll-behavior: contain !important;
+        scrollbar-gutter: stable;
+    }
+
+    #newArrivalsModal .new-arrivals-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+        gap: 16px !important;
+    }
+
+    #newArrivalsModal .new-arrival-card {
+        display: flex !important;
+        min-width: 0 !important;
+        flex-direction: column !important;
+        border-radius: 15px !important;
+    }
+
+    #newArrivalsModal .new-arrival-cover-wrapper {
+        height: 210px !important;
+        flex: 0 0 210px !important;
+        overflow: hidden !important;
+    }
+
+    #newArrivalsModal .new-arrival-cover {
+        width: 100% !important;
+        height: 100% !important;
+        object-fit: contain !important;
+        padding: 8px !important;
+    }
+
+    #newArrivalsModal .new-arrival-card-body {
+        flex: 1 1 auto !important;
+        padding: 17px !important;
+    }
+
+    #newArrivalsModal .new-arrival-card h3 {
+        margin-bottom: 13px !important;
+        font-size: 16px !important;
+        line-height: 1.35 !important;
+    }
+
+    #newArrivalsModal .new-arrival-meta {
+        gap: 9px !important;
+    }
+
+    #newArrivalsModal .new-arrival-meta strong {
+        font-size: 12px !important;
+        line-height: 1.45 !important;
+    }
+
+    #newArrivalsModal .new-arrival-description {
+        margin-top: 13px !important;
+        padding-top: 12px !important;
+        font-size: 12px !important;
+        line-height: 1.6 !important;
+    }
+
+    #newArrivalsModal .modal-footer {
+        flex: 0 0 auto !important;
+        gap: 12px !important;
+        padding: 12px 18px !important;
+        background: #f8fafc !important;
+        border-top: 1px solid #e5eaf1 !important;
+    }
+
+    #newArrivalsModal .modal-footer .btn-secondary {
+        padding: 9px 18px !important;
+        color: #fff !important;
+        background: #0b2e59 !important;
+        border: 0 !important;
+        border-radius: 9px !important;
+        font-size: 12px !important;
+        font-weight: 700 !important;
+    }
+
+    #newArrivalsModal .modal-footer .btn-secondary:hover {
+        background: #184b8c !important;
+    }
+
+    /* Medium screens */
+    @media (max-width: 991.98px) {
+        #newArrivalsModal .new-arrivals-grid {
+            grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        }
+    }
+
+    /* Mobile */
+    @media (max-width: 575.98px) {
+        #newArrivalsModal {
+            padding: 8px !important;
+        }
+
+        #newArrivalsModal .modal-dialog {
+            width: 100% !important;
+            min-height: calc(100% - 16px) !important;
+            margin: 8px auto !important;
+        }
+
+        #newArrivalsModal .new-arrivals-modal {
+            max-height: calc(100dvh - 16px) !important;
+            border-radius: 16px !important;
+        }
+
+        #newArrivalsModal .new-arrivals-modal-header {
+            padding: 17px 16px !important;
+        }
+
+        #newArrivalsModal .new-arrivals-modal-label {
+            font-size: 9px !important;
+        }
+
+        #newArrivalsModal .new-arrivals-modal-header h2 {
+            font-size: 22px !important;
+        }
+
+        #newArrivalsModal .new-arrivals-modal-header p {
+            font-size: 12px !important;
+        }
+
+        #newArrivalsModal .btn-close {
+            width: 36px !important;
+            height: 36px !important;
+            flex-basis: 36px !important;
+        }
+
+        #newArrivalsModal .new-arrivals-modal-body {
+            padding: 13px !important;
+        }
+
+        #newArrivalsModal .new-arrivals-grid {
+            grid-template-columns: 1fr !important;
+            gap: 13px !important;
+        }
+
+        #newArrivalsModal .new-arrival-card {
+            display: grid !important;
+            grid-template-columns: 105px minmax(0, 1fr) !important;
+        }
+
+        #newArrivalsModal .new-arrival-cover-wrapper {
+            width: 105px !important;
+            height: 100% !important;
+            min-height: 160px !important;
+            flex: none !important;
+        }
+
+        #newArrivalsModal .new-arrival-cover {
+            padding: 6px !important;
+        }
+
+        #newArrivalsModal .new-arrival-card-body {
+            padding: 14px !important;
+        }
+
+        #newArrivalsModal .new-arrival-category {
+            margin-bottom: 6px !important;
+            font-size: 9px !important;
+        }
+
+        #newArrivalsModal .new-arrival-card h3 {
+            margin-bottom: 10px !important;
+            font-size: 15px !important;
+        }
+
+        #newArrivalsModal .new-arrival-meta span {
+            font-size: 9px !important;
+        }
+
+        #newArrivalsModal .new-arrival-meta strong {
+            font-size: 11px !important;
+        }
+
+        #newArrivalsModal .new-arrival-description {
+            display: none !important;
+        }
+
+        #newArrivalsModal .modal-footer {
+            padding: 10px 13px !important;
+        }
+
+        #newArrivalsModal .new-arrivals-total {
+            font-size: 11px !important;
+        }
+    }
+
+    /* Short laptop screens */
+    @media (min-width: 576px) and (max-height: 720px) {
+        #newArrivalsModal .modal-dialog {
+            margin: 10px auto !important;
+            min-height: calc(100% - 20px) !important;
+        }
+
+        #newArrivalsModal .new-arrivals-modal {
+            max-height: calc(100dvh - 20px) !important;
+        }
+
+        #newArrivalsModal .new-arrivals-modal-header {
+            padding: 16px 20px !important;
+        }
+
+        #newArrivalsModal .new-arrivals-modal-body {
+            padding: 14px !important;
+        }
+
+        #newArrivalsModal .new-arrival-cover-wrapper {
+            height: 180px !important;
+            flex-basis: 180px !important;
+        }
+
+        #newArrivalsModal .new-arrival-card-body {
+            padding: 14px !important;
+        }
+    }
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+
+    const newArrivalsModal = document.getElementById('newArrivalsModal');
+
+    if (newArrivalsModal && newArrivalsModal.parentElement !== document.body) {
+        document.body.appendChild(newArrivalsModal);
+    }
+
+    if (newArrivalsModal) {
+        newArrivalsModal.addEventListener('hidden.bs.modal', function () {
+            document.querySelectorAll('.modal-backdrop').forEach(function (backdrop) {
+                backdrop.remove();
+            });
+
+            document.body.classList.remove('modal-open');
+            document.body.style.removeProperty('overflow');
+            document.body.style.removeProperty('padding-right');
+        });
+    }
+});
+</script>
+
+
 @include('components.lisa-chatbox')
 
 @endsection

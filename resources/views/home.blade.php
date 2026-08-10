@@ -3997,6 +3997,317 @@ document.addEventListener('DOMContentLoaded', function () {
 </script>
 
 
+
+<!-- =========================================================
+     EVENT MODAL VISUAL POLISH
+     Compact, balanced, desktop/mobile friendly.
+========================================================= -->
+<style>
+    #eventDetailsModal {
+        --event-modal-navy: #0b2e59;
+        --event-modal-blue: #184b8c;
+        --event-modal-gold: #f4b400;
+        --event-modal-text: #26384d;
+        --event-modal-muted: #6c7a89;
+        --event-modal-line: #e3e9f1;
+        --event-modal-soft: #f6f8fb;
+    }
+
+    #eventDetailsModal .modal-dialog {
+        width: min(520px, calc(100vw - 28px)) !important;
+        max-width: 520px !important;
+        min-height: 100% !important;
+        margin: 0 auto !important;
+        padding: 18px 0 !important;
+        display: flex !important;
+        align-items: center !important;
+    }
+
+    #eventDetailsModal .event-modal {
+        width: 100% !important;
+        max-height: calc(100dvh - 36px) !important;
+        display: flex !important;
+        flex-direction: column !important;
+        overflow: hidden !important;
+        background: #fff !important;
+        border: 1px solid rgba(11, 46, 89, .08) !important;
+        border-radius: 18px !important;
+        box-shadow: 0 24px 70px rgba(0, 0, 0, .24) !important;
+    }
+
+    #eventDetailsModal .modal-header {
+        position: relative !important;
+        min-height: 88px !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: space-between !important;
+        gap: 18px !important;
+        padding: 20px 22px !important;
+        color: #fff !important;
+        background:
+            radial-gradient(circle at 100% 0, rgba(244, 180, 0, .13), transparent 34%),
+            linear-gradient(135deg, #0b2e59 0%, #184b8c 100%) !important;
+        border: 0 !important;
+    }
+
+    #eventDetailsModal .modal-header > div {
+        min-width: 0 !important;
+    }
+
+    #eventDetailsModal .modal-header > div > span {
+        display: block !important;
+        margin: 0 0 4px !important;
+        color: var(--event-modal-gold) !important;
+        font-size: 9px !important;
+        font-weight: 800 !important;
+        letter-spacing: .11em !important;
+        line-height: 1.2 !important;
+        text-transform: uppercase !important;
+    }
+
+    #eventDetailsModal .modal-title {
+        margin: 0 !important;
+        color: #fff !important;
+        font-size: 21px !important;
+        font-weight: 800 !important;
+        line-height: 1.2 !important;
+        letter-spacing: -.02em !important;
+    }
+
+    #eventDetailsModal .btn-close {
+        position: static !important;
+        inset: auto !important;
+        width: 38px !important;
+        height: 38px !important;
+        flex: 0 0 38px !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        background-color: rgba(255, 255, 255, .96) !important;
+        background-size: 12px !important;
+        border: 1px solid rgba(255, 255, 255, .45) !important;
+        border-radius: 10px !important;
+        box-shadow: 0 6px 18px rgba(0, 0, 0, .12) !important;
+        opacity: 1 !important;
+        transition: transform .2s ease, background-color .2s ease !important;
+    }
+
+    #eventDetailsModal .btn-close:hover {
+        transform: scale(1.05) !important;
+        background-color: #fff !important;
+    }
+
+    #eventDetailsModal .modal-body {
+        flex: 1 1 auto !important;
+        max-height: none !important;
+        padding: 22px !important;
+        overflow-y: auto !important;
+        background: #fff !important;
+        scrollbar-width: thin !important;
+        overscroll-behavior: contain !important;
+    }
+
+    #eventDetailsModal .modal-body > h4 {
+        margin: 0 0 18px !important;
+        color: var(--event-modal-navy) !important;
+        font-size: clamp(22px, 4vw, 28px) !important;
+        font-weight: 800 !important;
+        line-height: 1.25 !important;
+        letter-spacing: -.025em !important;
+        overflow-wrap: anywhere !important;
+    }
+
+    /*
+     * One-column information rows are deliberate:
+     * event dates can be long, so this avoids the awkward wrapping shown
+     * in the previous two-column layout.
+     */
+    #eventDetailsModal .event-information {
+        display: grid !important;
+        grid-template-columns: 1fr !important;
+        gap: 9px !important;
+        margin: 0 0 16px !important;
+    }
+
+    #eventDetailsModal .event-information > div {
+        display: grid !important;
+        grid-template-columns: 92px minmax(0, 1fr) !important;
+        align-items: start !important;
+        gap: 12px !important;
+        min-width: 0 !important;
+        padding: 12px 14px !important;
+        background: var(--event-modal-soft) !important;
+        border: 1px solid var(--event-modal-line) !important;
+        border-radius: 11px !important;
+    }
+
+    #eventDetailsModal .event-information dt {
+        margin: 1px 0 0 !important;
+        color: #8491a2 !important;
+        font-size: 9px !important;
+        font-weight: 800 !important;
+        letter-spacing: .07em !important;
+        line-height: 1.45 !important;
+        text-transform: uppercase !important;
+    }
+
+    #eventDetailsModal .event-information dd {
+        margin: 0 !important;
+        color: var(--event-modal-navy) !important;
+        font-size: 12px !important;
+        font-weight: 700 !important;
+        line-height: 1.55 !important;
+        overflow-wrap: anywhere !important;
+    }
+
+    #eventDetailsModal .event-description {
+        padding: 14px 15px !important;
+        background: #fffaf0 !important;
+        border: 1px solid rgba(244, 180, 0, .42) !important;
+        border-radius: 11px !important;
+    }
+
+    #eventDetailsModal .event-description > span {
+        display: block !important;
+        margin-bottom: 6px !important;
+        color: #785800 !important;
+        font-size: 9px !important;
+        font-weight: 800 !important;
+        letter-spacing: .07em !important;
+        text-transform: uppercase !important;
+    }
+
+    #eventDetailsModal .event-description p {
+        margin: 0 !important;
+        color: #59687c !important;
+        font-size: 12.5px !important;
+        line-height: 1.72 !important;
+        white-space: pre-line !important;
+        overflow-wrap: anywhere !important;
+    }
+
+    #eventDetailsModal .modal-footer {
+        flex: 0 0 auto !important;
+        justify-content: flex-end !important;
+        padding: 13px 18px !important;
+        background: #f8fafc !important;
+        border-top: 1px solid var(--event-modal-line) !important;
+    }
+
+    #eventDetailsModal .modal-close-button {
+        min-width: 92px !important;
+        padding: 10px 17px !important;
+        color: #fff !important;
+        background: var(--event-modal-navy) !important;
+        border: 0 !important;
+        border-radius: 9px !important;
+        font-size: 12px !important;
+        font-weight: 700 !important;
+        box-shadow: none !important;
+    }
+
+    #eventDetailsModal .modal-close-button:hover {
+        color: #fff !important;
+        background: var(--event-modal-blue) !important;
+        transform: translateY(-1px) !important;
+    }
+
+    @media (max-width: 575.98px) {
+        #eventDetailsModal {
+            padding: 8px !important;
+        }
+
+        #eventDetailsModal .modal-dialog {
+            width: 100% !important;
+            min-height: 100% !important;
+            padding: 8px 0 !important;
+        }
+
+        #eventDetailsModal .event-modal {
+            max-height: calc(100dvh - 16px) !important;
+            border-radius: 16px !important;
+        }
+
+        #eventDetailsModal .modal-header {
+            min-height: 76px !important;
+            padding: 16px 17px !important;
+        }
+
+        #eventDetailsModal .modal-title {
+            font-size: 19px !important;
+        }
+
+        #eventDetailsModal .btn-close {
+            width: 36px !important;
+            height: 36px !important;
+            flex-basis: 36px !important;
+        }
+
+        #eventDetailsModal .modal-body {
+            padding: 18px 16px !important;
+        }
+
+        #eventDetailsModal .modal-body > h4 {
+            margin-bottom: 15px !important;
+            font-size: 22px !important;
+        }
+
+        #eventDetailsModal .event-information > div {
+            grid-template-columns: 1fr !important;
+            gap: 4px !important;
+            padding: 11px 12px !important;
+        }
+
+        #eventDetailsModal .modal-footer {
+            padding: 11px 14px !important;
+        }
+
+        #eventDetailsModal .modal-close-button {
+            width: 100% !important;
+        }
+    }
+
+    @media (max-height: 620px) and (min-width: 576px) {
+        #eventDetailsModal .modal-dialog {
+            padding: 10px 0 !important;
+        }
+
+        #eventDetailsModal .event-modal {
+            max-height: calc(100dvh - 20px) !important;
+        }
+
+        #eventDetailsModal .modal-header {
+            min-height: 72px !important;
+            padding: 14px 18px !important;
+        }
+
+        #eventDetailsModal .modal-body {
+            padding: 17px 20px !important;
+        }
+
+        #eventDetailsModal .modal-body > h4 {
+            margin-bottom: 13px !important;
+            font-size: 23px !important;
+        }
+
+        #eventDetailsModal .event-information {
+            margin-bottom: 12px !important;
+        }
+
+        #eventDetailsModal .event-information > div {
+            padding: 9px 12px !important;
+        }
+
+        #eventDetailsModal .event-description {
+            padding: 11px 13px !important;
+        }
+
+        #eventDetailsModal .modal-footer {
+            padding: 10px 16px !important;
+        }
+    }
+</style>
+
+
 @include('components.lisa-chatbox')
 
 @endsection
