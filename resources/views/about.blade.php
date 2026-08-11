@@ -35,7 +35,7 @@
                 <div class="col-lg-5 hero-visual" data-aos="fade-left">
                     <div class="hero-image-glow"></div>
                     <img
-                        src="{{ asset('images/maamcherry.png') }}"
+                        src="{{ asset('images/maamcherry-large.png') }}"
                         class="hero-image"
                         alt="MMACI Library Services Office representative">
                 </div>
