@@ -494,7 +494,7 @@
         <div class="video-frame" data-aos="fade-up">
             <div class="ratio ratio-16x9">
                 <iframe
-                    src="https://www.youtube.com/embed/0ySUHcWgcFM"
+                    src="https://www.youtube.com/embed/G683Hi_NdGo"
                     title="MMACI Library Featured Video"
                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                     allowfullscreen>
