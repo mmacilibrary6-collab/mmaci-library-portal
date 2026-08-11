@@ -1306,7 +1306,7 @@ document.addEventListener('DOMContentLoaded', function () {
 }
 
 .viewer-next {
-    right: calc(29.5% + 16px);
+    right: calc(44.5% + 12px);
 }
 
 .viewer-navigation:disabled {
@@ -2591,6 +2591,14 @@ body.update-viewer-open {
             <i class="bi bi-x-lg" aria-hidden="true"></i>
         </button>
 
+        <button
+            type="button"
+            class="viewer-navigation viewer-previous"
+            id="arrivalPrevious"
+            aria-label="Previous arrival">
+            <i class="bi bi-chevron-left" aria-hidden="true"></i>
+        </button>
+
         <div class="viewer-image-panel">
             <img
                 id="arrivalViewerImage"
@@ -2654,6 +2662,14 @@ body.update-viewer-open {
                 <small>Click outside the card or press Escape to close.</small>
             </div>
         </aside>
+
+        <button
+            type="button"
+            class="viewer-navigation viewer-next"
+            id="arrivalNext"
+            aria-label="Next arrival">
+            <i class="bi bi-chevron-right" aria-hidden="true"></i>
+        </button>
     </div>
 </div>
 
@@ -2803,6 +2819,8 @@ document.addEventListener('DOMContentLoaded', function () {
     const yearWrap = document.getElementById('arrivalViewerYearWrap');
     const publisherWrap = document.getElementById('arrivalViewerPublisherWrap');
     const counter = document.getElementById('arrivalViewerCounter');
+    const previousButton = document.getElementById('arrivalPrevious');
+    const nextButton = document.getElementById('arrivalNext');
     const closeButtons = viewer.querySelectorAll('[data-close-arrival-viewer]');
 
     let currentIndex = 0;
@@ -2859,6 +2877,9 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         counter.textContent = `${currentIndex + 1} of ${arrivalCards.length}`;
+
+        previousButton.disabled = arrivalCards.length <= 1;
+        nextButton.disabled = arrivalCards.length <= 1;
     }
 
     function openViewer(index, trigger) {
@@ -2881,6 +2902,22 @@ document.addEventListener('DOMContentLoaded', function () {
         if (lastFocusedElement) {
             lastFocusedElement.focus();
         }
+    }
+
+    function showPrevious() {
+        const previousIndex = currentIndex === 0
+            ? arrivalCards.length - 1
+            : currentIndex - 1;
+
+        renderArrival(previousIndex);
+    }
+
+    function showNext() {
+        const nextIndex = currentIndex === arrivalCards.length - 1
+            ? 0
+            : currentIndex + 1;
+
+        renderArrival(nextIndex);
     }
 
     function filterArrivals() {
@@ -2921,6 +2958,9 @@ document.addEventListener('DOMContentLoaded', function () {
         button.addEventListener('click', closeViewer);
     });
 
+    previousButton.addEventListener('click', showPrevious);
+    nextButton.addEventListener('click', showNext);
+
     searchInput?.addEventListener('input', filterArrivals);
 
     image.addEventListener('error', function () {
@@ -2934,6 +2974,14 @@ document.addEventListener('DOMContentLoaded', function () {
 
         if (event.key === 'Escape') {
             closeViewer();
+        }
+
+        if (event.key === 'ArrowLeft') {
+            showPrevious();
+        }
+
+        if (event.key === 'ArrowRight') {
+            showNext();
         }
     });
 
@@ -3815,7 +3863,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         .viewer-next {
-            right: calc(39.2% + 10px) !important;
+            right: calc(46.5% + 10px) !important;
         }
 
         #eventDetailsModal .event-modal {
