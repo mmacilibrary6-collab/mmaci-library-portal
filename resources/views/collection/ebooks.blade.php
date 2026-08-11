@@ -368,6 +368,12 @@
     font-size: 15px;
 }
 
+.ebooks-search input::-webkit-search-cancel-button,
+.ebooks-search input::-webkit-search-decoration {
+    -webkit-appearance: none;
+    appearance: none;
+}
+
 .ebooks-search button {
     display: grid;
     place-items: center;
@@ -528,6 +534,12 @@
 .folder-search-input:focus {
     border-color: var(--ebooks-blue);
     box-shadow: 0 0 0 3px rgba(24, 75, 140, .12);
+}
+
+.folder-search-input::-webkit-search-cancel-button,
+.folder-search-input::-webkit-search-decoration {
+    -webkit-appearance: none;
+    appearance: none;
 }
 
 .folder-search-clear {

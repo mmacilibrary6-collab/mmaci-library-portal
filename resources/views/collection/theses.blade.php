@@ -462,6 +462,14 @@
     font-size: 14px;
 }
 
+.program-search input::-webkit-search-cancel-button,
+.program-search input::-webkit-search-decoration,
+.collection-folder-search-input::-webkit-search-cancel-button,
+.collection-folder-search-input::-webkit-search-decoration {
+    -webkit-appearance: none;
+    appearance: none;
+}
+
 .program-search button {
     width: 32px;
     height: 32px;

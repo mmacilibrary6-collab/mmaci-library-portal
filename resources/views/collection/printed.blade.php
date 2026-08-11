@@ -91,7 +91,7 @@
 
             <div class="row align-items-center g-3">
 
-                <div class="col-lg-8">
+                <div class="col-12">
 
                     <div class="search-input-wrapper">
 
@@ -105,33 +105,6 @@
                             aria-label="Search printed collection">
 
                     </div>
-
-                </div>
-
-                <div class="col-lg-4">
-
-                    <select
-                        id="collectionFilter"
-                        class="form-select"
-                        aria-label="Filter collection">
-
-                        <option value="all">
-                            All Collections
-                        </option>
-
-                        <option value="academic">
-                            Academic Collections
-                        </option>
-
-                        <option value="general">
-                            General Collections
-                        </option>
-
-                        <option value="special">
-                            Special Resources
-                        </option>
-
-                    </select>
 
                 </div>
 
@@ -1945,28 +1918,20 @@ body {
 document.addEventListener('DOMContentLoaded', function () {
 
     const searchInput = document.getElementById('collectionSearch');
-    const categoryFilter = document.getElementById('collectionFilter');
     const collectionItems = document.querySelectorAll('.collection-item');
     const noResults = document.getElementById('noResults');
 
     function filterCollections() {
 
         const searchTerm = searchInput.value.toLowerCase().trim();
-        const selectedCategory = categoryFilter.value;
         let visibleItems = 0;
 
         collectionItems.forEach(function (item) {
 
             const title = item.dataset.title;
-            const category = item.dataset.category;
-
             const matchesSearch = title.includes(searchTerm);
 
-            const matchesCategory =
-                selectedCategory === 'all' ||
-                category === selectedCategory;
-
-            if (matchesSearch && matchesCategory) {
+            if (matchesSearch) {
 
                 item.style.display = '';
                 visibleItems++;
@@ -1985,7 +1950,6 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     searchInput.addEventListener('input', filterCollections);
-    categoryFilter.addEventListener('change', filterCollections);
 
 
             const title =

@@ -141,19 +141,7 @@
                         <h2>Submit your AVR request</h2>
                     </div>
 
-                    <a
-                        href="{{ $formUrl }}"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        class="primary-action">
-
-                        Open Form
-
-                        <i
-                            class="bi bi-box-arrow-up-right"
-                            aria-hidden="true">
-                        </i>
-                    </a>
+                    
 
                 </header>
 
