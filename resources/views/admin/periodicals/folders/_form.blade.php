@@ -10,7 +10,7 @@
             <span class="section-icon"><i class="bi bi-folder-fill"></i></span>
             <div>
                 <h5>Folder Information</h5>
-                <p>Enter the folder title, program, category, and link.</p>
+                <p>Enter the folder title, program, category, and link. Folders are sorted alphabetically automatically.</p>
             </div>
         </div>
 
@@ -70,14 +70,6 @@
                     <option value="0" @selected(old('status', $folder?->status ?? 1) == 0)>Hidden</option>
                 </select>
                 @error('status')
-                    <div class="invalid-feedback">{{ $message }}</div>
-                @enderror
-            </div>
-
-            <div class="col-lg-2">
-                <label for="sort_order" class="form-label">Sort</label>
-                <input type="number" name="sort_order" id="sort_order" min="0" value="{{ old('sort_order', $folder?->sort_order ?? 0) }}" class="form-control @error('sort_order') is-invalid @enderror">
-                @error('sort_order')
                     <div class="invalid-feedback">{{ $message }}</div>
                 @enderror
             </div>

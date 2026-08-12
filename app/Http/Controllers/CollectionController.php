@@ -164,7 +164,7 @@ class CollectionController extends Controller
                         $query->orderBy('category');
                     }
 
-                    $query->orderBy('sort_order')->orderBy('title');
+                    $query->orderBy('title', 'asc');
                 },
             ])
             ->get();

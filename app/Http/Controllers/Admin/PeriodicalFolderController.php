@@ -29,8 +29,7 @@ class PeriodicalFolderController extends Controller
                 });
             })
             ->when(filled($programId), fn ($query) => $query->where('periodical_program_id', $programId))
-            ->orderBy('sort_order')
-            ->orderBy('title')
+            ->orderBy('title', 'asc')
             ->paginate(10)
             ->withQueryString();
 

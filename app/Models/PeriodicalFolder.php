@@ -16,13 +16,11 @@ class PeriodicalFolder extends Model
         'title',
         'description',
         'folder_link',
-        'sort_order',
         'status',
     ];
 
     protected $casts = [
         'periodical_program_id' => 'integer',
-        'sort_order' => 'integer',
         'status' => 'boolean',
     ];
 

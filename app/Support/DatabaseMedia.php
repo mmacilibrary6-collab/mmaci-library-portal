@@ -59,7 +59,9 @@ class DatabaseMedia
         $sourceWidth = imagesx($source);
         $sourceHeight = imagesy($source);
 
-        $maxSize = 1600;
+        // Keep uploaded images reasonably sized so they load faster and
+        // produce smaller database-backed payloads.
+        $maxSize = 1280;
         $scale = min(
             1,
             $maxSize / max(1, $sourceWidth),
@@ -90,7 +92,7 @@ class DatabaseMedia
         );
 
         ob_start();
-        imagewebp($target, null, 82);
+        imagewebp($target, null, 76);
         $webpContents = ob_get_clean();
 
         imagedestroy($source);
