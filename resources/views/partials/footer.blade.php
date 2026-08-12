@@ -197,8 +197,8 @@
 
                 <p class="footer-contact">
                     <i class="bi bi-envelope-fill"></i>
-                    <a href="mailto:librarymmaci@gmail.com">
-                        librarymmaci@gmail.com
+                    <a href="mailto:mmacilibrary@mmacibutuan.edu.ph">
+                        mmacilibrary@mmacibutuan.edu.ph
                     </a>
                 </p>
 
