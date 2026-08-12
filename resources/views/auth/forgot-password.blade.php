@@ -31,6 +31,22 @@
 
                     </div>
 
+                    @if(session('status'))
+                        <div class="alert alert-success alert-dismissible fade show auth-alert" role="alert">
+                            <i class="bi bi-check-circle-fill me-2"></i>
+                            <span>{{ session('status') }}</span>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    @endif
+
+                    @if(session('error'))
+                        <div class="alert alert-danger alert-dismissible fade show auth-alert" role="alert">
+                            <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                            <span>{{ session('error') }}</span>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    @endif
+
                     <form method="POST"
                           action="{{ route('password.email') }}">
 
@@ -143,6 +159,11 @@
     margin:auto;
     box-shadow:0 16px 40px rgba(0,0,0,.12);
 
+}
+
+.auth-alert {
+    margin-bottom: 18px;
+    border-radius: 14px;
 }
 
 .login-logo{

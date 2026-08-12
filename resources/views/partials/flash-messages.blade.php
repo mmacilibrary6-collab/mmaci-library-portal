@@ -1,5 +1,12 @@
+@php
+    $flashWrapperClass = trim(implode(' ', array_filter([
+        $containerClass ?? '',
+        $wrapperClass ?? '',
+    ])));
+@endphp
+
 @if(session('success'))
-    <div class="{{ $containerClass ?? '' }}">
+    <div class="{{ $flashWrapperClass }}">
         <div class="alert alert-success alert-dismissible fade show {{ $successClass ?? '' }}" role="alert">
             <i class="bi bi-check-circle-fill me-2"></i>
             <span>{{ session('success') }}</span>
@@ -9,7 +16,7 @@
 @endif
 
 @if(session('error'))
-    <div class="{{ $containerClass ?? '' }}">
+    <div class="{{ $flashWrapperClass }}">
         <div class="alert alert-danger alert-dismissible fade show {{ $errorClass ?? '' }}" role="alert">
             <i class="bi bi-exclamation-triangle-fill me-2"></i>
             <span>{{ session('error') }}</span>
@@ -19,7 +26,7 @@
 @endif
 
 @if(session('status'))
-    <div class="{{ $containerClass ?? '' }}">
+    <div class="{{ $flashWrapperClass }}">
         <div class="alert alert-success alert-dismissible fade show {{ $statusClass ?? '' }}" role="alert">
             <i class="bi bi-check-circle-fill me-2"></i>
             <span>{{ session('status') }}</span>
@@ -29,7 +36,7 @@
 @endif
 
 @if($errors->any())
-    <div class="{{ $containerClass ?? '' }}">
+    <div class="{{ $flashWrapperClass }}">
         <div class="alert alert-danger alert-dismissible fade show {{ $errorsClass ?? '' }}" role="alert">
             <strong>Please correct the following:</strong>
             <ul class="mb-0 mt-2">

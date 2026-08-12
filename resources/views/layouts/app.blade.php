@@ -265,6 +265,19 @@
 
         }
 
+        .flash-messages-auth {
+            max-width: 820px;
+            margin: 18px auto 0;
+            padding-left: 16px;
+            padding-right: 16px;
+        }
+
+        .flash-messages-auth .alert {
+            margin-bottom: 0;
+            border-radius: 16px;
+            box-shadow: 0 10px 28px rgba(11, 46, 89, 0.12);
+        }
+
         .form-control,
         .form-select {
 
@@ -852,6 +865,16 @@
 
             }
 
+            .flash-messages-auth {
+                margin-top: 12px;
+                padding-left: 12px;
+                padding-right: 12px;
+            }
+
+            .flash-messages-auth .alert {
+                padding: 14px 16px;
+            }
+
             .section-title {
 
                 font-size: clamp(1.5rem, 6.5vw, 2rem);
@@ -890,7 +913,9 @@
 
     <main>
 
-        @include('partials.flash-messages', ['containerClass' => 'container mt-4'])
+        @unless(request()->routeIs('login', 'password.request', 'password.email', 'password.reset'))
+            @include('partials.flash-messages', ['containerClass' => 'container mt-4'])
+        @endunless
 
         @yield('content')
 
