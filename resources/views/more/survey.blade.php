@@ -443,6 +443,15 @@
     .survey-layout {
         grid-template-columns: 1fr;
     }
+
+    .survey-sidebar {
+        order: 2;
+    }
+
+    .survey-form-card {
+        order: 1;
+    }
+
     .survey-embed,
     .survey-embed iframe {
         min-height: 820px;
@@ -451,6 +460,22 @@
 }
 
 @media (max-width: 575.98px) {
+    .survey-hero {
+        min-height: 380px;
+    }
+
+    .survey-hero-content {
+        padding: 70px 10px 58px;
+    }
+
+    .survey-hero h1 {
+        font-size: clamp(38px, 14vw, 54px);
+    }
+
+    .survey-hero p {
+        font-size: 15px;
+    }
+
     .survey-sidebar,
     .survey-form-header {
         padding-left: 20px;
@@ -460,6 +485,21 @@
         padding-top: 22px;
         padding-bottom: 22px;
     }
+
+    .survey-point {
+        padding: 14px;
+    }
+
+    .survey-note {
+        align-items: flex-start;
+        padding: 14px;
+    }
+
+    .secondary-action {
+        width: 100%;
+        justify-content: center;
+    }
+
     .survey-embed,
     .survey-embed iframe {
         min-height: 760px;
@@ -467,5 +507,6 @@
     }
 }
 </style>
+@include('components.lisa-chatbox')
 
 @endsection

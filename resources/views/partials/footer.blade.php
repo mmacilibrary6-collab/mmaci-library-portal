@@ -140,8 +140,8 @@
                     </li>
 
                     <li>
-                        <a href="{{ route('more.visiting-users') }}">
-                            Visiting Users
+                        <a href="{{ route('more.gallery') }}">
+                            Gallery
                         </a>
                     </li>
 
@@ -160,6 +160,12 @@
                     <li>
                         <a href="{{ route('more.survey') }}">
                             Survey
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="{{ route('more.visiting-users') }}">
+                            Visiting Users
                         </a>
                     </li>
 
