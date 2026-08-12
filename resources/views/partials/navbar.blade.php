@@ -377,7 +377,7 @@
                                 class="dropdown-item"
                                 href="{{ route('more.survey') }}">
 
-                                Survey
+                                Feedback Survey
 
                             </a>
 

@@ -111,21 +111,18 @@
                 <div class="col-lg-7" data-aos="fade-up">
                     <article class="value-card mission-card h-100">
                         <div class="value-icon">
-                            <i class="bi bi-bullseye"></i>
+                            <i class="bi bi-journal-text"></i>
                         </div>
                         <div>
                             <span class="card-label">Our Mission</span>
-                            <h3>Supporting learning and discovery</h3>
+                            <h3>Learning Resource Center Mission</h3>
                             <p>
-                                The Library Services Office supports learning,
-                                teaching, research, and creative expression by
-                                providing timely and effective access to
-                                information for the entire academy.
+                                The Learning Resource Center commits to:
                             </p>
                             <ul class="mission-list">
-                                <li>Understand the research, teaching, and learning needs of users.</li>
-                                <li>Build collections and tools that support academic work.</li>
-                                <li>Create hospitable and conducive spaces for study and research.</li>
+                                <li>Provide timely, relevant information and learning services that foster critical thinking, creativity, collaboration, communication, information and media literacy, and ICT competence.</li>
+                                <li>Support teaching, learning, and interdisciplinary research through accessible collections, digital resources, and research assistance.</li>
+                                <li>Promote lifelong learning, ethical information use, and community engagement through outreach and service oriented programs.</li>
                             </ul>
                         </div>
                     </article>
@@ -134,16 +131,18 @@
                 <div class="col-lg-5" data-aos="fade-up" data-aos-delay="100">
                     <article class="value-card vision-card h-100">
                         <div class="value-icon">
-                            <i class="bi bi-eye-fill"></i>
+                            <i class="bi bi-compass"></i>
                         </div>
                         <div>
                             <span class="card-label">Our Vision</span>
-                            <h3>A responsive, user-centered library</h3>
+                            <h3>Innovative, learner centered information hub</h3>
                             <p>
-                                The MMACI Library Services Office envisions a
-                                library responsive to the diverse needs and
-                                expectations of the community, with users at
-                                the center of everything it does.
+                                The MMACI Learning Resource Center envisions an
+                                innovative, learner centered information hub
+                                that develops information literate, digitally
+                                competent, and globally competitive graduates
+                                through excellent resources, services, and
+                                partnerships.
                             </p>
                         </div>
                     </article>
@@ -157,19 +156,22 @@
         <div class="container">
             <div class="section-heading text-center">
                 <span class="eyebrow">Our priorities</span>
-                <h2 class="section-title">Library Objectives</h2>
-                <p>Focused services designed to support academic success.</p>
+                <h2 class="section-title">Library Services Office Quality Objectives</h2>
+                <p>Commitments that guide our resources, services, and spaces.</p>
             </div>
 
             <div class="row g-4">
                 <div class="col-md-6 col-lg-4" data-aos="fade-up">
                     <article class="objective-card h-100">
                         <span class="objective-number">01</span>
-                        <div class="objective-icon"><i class="bi bi-book-half"></i></div>
-                        <h3>Quality Resources</h3>
+                        <div class="objective-icon"><i class="bi bi-book"></i></div>
+                        <h3>Timely Access</h3>
                         <p>
-                            Provide current printed and digital resources that
-                            meet the academic needs of the institution.
+                            Provide timely, equitable, and effective access to
+                            relevant and reliable information resources that
+                            support the teaching, learning, research, training,
+                            and academic needs of the Merchant Marine Academy
+                            of Caraga Inc.
                         </p>
                     </article>
                 </div>
@@ -177,11 +179,15 @@
                 <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="100">
                     <article class="objective-card h-100">
                         <span class="objective-number">02</span>
-                        <div class="objective-icon"><i class="bi bi-search"></i></div>
-                        <h3>Research Support</h3>
+                        <div class="objective-icon"><i class="bi bi-binoculars"></i></div>
+                        <h3>Balanced Collection</h3>
                         <p>
-                            Help students and faculty find reliable information
-                            sources and navigate the research process.
+                            Develop, maintain, preserve, and continuously
+                            evaluate a balanced and current collection that
+                            supports the curricular programs of MMACI, with
+                            particular attention to maritime, professional,
+                            technical, general education, and research
+                            resources.
                         </p>
                     </article>
                 </div>
@@ -190,10 +196,56 @@
                     <article class="objective-card h-100">
                         <span class="objective-number">03</span>
                         <div class="objective-icon"><i class="bi bi-laptop"></i></div>
-                        <h3>Digital Access</h3>
+                        <h3>Information Literacy</h3>
                         <p>
-                            Promote access to e-books, journals, databases,
-                            and open-access learning resources.
+                            Develop information-literate and independent
+                            learners through library orientation, information
+                            literacy, bibliographic instruction, research
+                            assistance, and user education programs.
+                        </p>
+                    </article>
+                </div>
+
+                <div class="col-md-6 col-lg-4" data-aos="fade-up">
+                    <article class="objective-card h-100">
+                        <span class="objective-number">04</span>
+                        <div class="objective-icon"><i class="bi bi-database"></i></div>
+                        <h3>Library Technologies</h3>
+                        <p>
+                            Provide appropriate library technologies, electronic
+                            resources, and information systems that enhance
+                            access to information, support research and
+                            instruction, and improve the efficiency and
+                            effectiveness of library services.
+                        </p>
+                    </article>
+                </div>
+
+                <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="100">
+                    <article class="objective-card h-100">
+                        <span class="objective-number">05</span>
+                        <div class="objective-icon"><i class="bi bi-door-open"></i></div>
+                        <h3>Learning Spaces</h3>
+                        <p>
+                            Provide safe, accessible, inclusive, and conducive
+                            learning spaces and facilities that promote
+                            individual study, collaborative learning, research,
+                            creativity, and academic engagement.
+                        </p>
+                    </article>
+                </div>
+
+                <div class="col-md-6 col-lg-4 mx-md-auto" data-aos="fade-up" data-aos-delay="200">
+                    <article class="objective-card h-100">
+                        <span class="objective-number">06</span>
+                        <div class="objective-icon"><i class="bi bi-arrow-repeat"></i></div>
+                        <h3>Continuous Improvement</h3>
+                        <p>
+                            Continuously improve library services, resources,
+                            and operations through assessment, user feedback,
+                            collaboration, linkages, and evidence-based planning
+                            in support of the institutional goals and quality
+                            objectives of MMACI.
                         </p>
                     </article>
                 </div>
@@ -371,7 +423,14 @@
     .about-hero {
         position: relative;
         min-height: 560px;
-        background: linear-gradient(120deg, #061c36 0%, var(--mmaci-navy) 50%, #15589b 100%);
+        background:
+            linear-gradient(
+                120deg,
+                rgba(6, 28, 54, .92) 0%,
+                rgba(11, 46, 89, .80) 48%,
+                rgba(21, 88, 155, .66) 100%
+            ),
+            url("{{ asset('images/libraryphotojpg.jpg') }}") center / cover no-repeat;
         isolation: isolate;
     }
 
@@ -871,6 +930,14 @@
             flex-direction: column;
             padding: 44px;
         }
+
+        .hero-orb {
+            display: none;
+        }
+
+        .hero-image-glow {
+            display: none;
+        }
     }
 
     @media (max-width: 575.98px) {
@@ -885,7 +952,6 @@
         .hero-copy h1 { font-size: 2.7rem; }
         .hero-visual { min-height: 320px; }
         .hero-image { height: 325px; }
-        .hero-image-glow { width: 270px; height: 270px; }
         .about-image-wrap { padding: 12px 12px 42px 0; }
         .about-image { min-height: 280px; }
         .image-note { right: -2px; padding: 13px 15px; }
@@ -973,13 +1039,13 @@
 
     /* Decorative hero motion */
     .hero-orb-one {
-        animation: aboutOrbFloatOne 8s ease-in-out infinite;
-        will-change: transform;
+        animation: none;
+        will-change: auto;
     }
 
     .hero-orb-two {
-        animation: aboutOrbFloatTwo 10s ease-in-out infinite;
-        will-change: transform;
+        animation: none;
+        will-change: auto;
     }
 
     .hero-image-glow {
@@ -988,15 +1054,8 @@
     }
 
     .hero-image {
-        animation: aboutImageFloat 5.8s ease-in-out infinite;
-        will-change: translate;
-    }
-
-    /* Avoid overriding the translateX centering used on tablet/mobile. */
-    @media (max-width: 991.98px) {
-        .hero-image {
-            animation: none;
-        }
+        animation: none;
+        will-change: auto;
     }
 
     /* Scroll reveal */
