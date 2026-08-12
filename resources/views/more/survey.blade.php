@@ -15,7 +15,7 @@
     <div class="container">
         <div class="survey-hero-content">
 
-            <span class="hero-label">Library Feedback</span>
+            
 
             <h1>Survey</h1>
 
@@ -179,8 +179,8 @@
     isolation: isolate;
     color: var(--survey-white);
     background:
-        linear-gradient(105deg, rgba(7, 30, 61, 0.92), rgba(11, 46, 89, 0.76), rgba(24, 75, 140, 0.62)),
-        url("{{ asset('images/readingarea.jpg') }}") center / cover no-repeat;
+        linear-gradient(105deg, rgba(7, 30, 61, 0.84), rgba(11, 46, 89, 0.60), rgba(24, 75, 140, 0.42)),
+        url("{{ asset('images/libraryphotojpg.jpg') }}") center / cover no-repeat;
 }
 
 .survey-hero::after {
@@ -192,6 +192,16 @@
     height: 440px;
     border: 58px solid rgba(244, 180, 0, 0.11);
     border-radius: 50%;
+    pointer-events: none;
+}
+
+.survey-hero::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+        radial-gradient(circle at 15% 20%, rgba(255, 255, 255, 0.12), transparent 28%),
+        radial-gradient(circle at 82% 30%, rgba(244, 180, 0, 0.12), transparent 24%);
     pointer-events: none;
 }
 
