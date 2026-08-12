@@ -444,7 +444,8 @@
 /* Contact cards */
 
 .library-contact-card {
-    display: block;
+    display: flex;
+    flex-direction: column;
     height: 100%;
     padding: 22px;
     color: inherit;
@@ -453,6 +454,7 @@
     border: 1px solid var(--mmaci-border);
     border-radius: 15px;
     box-shadow: 0 8px 24px rgba(11, 46, 89, 0.06);
+    overflow: hidden;
     transition:
         transform 0.3s ease,
         box-shadow 0.3s ease;
@@ -491,9 +493,12 @@
     font-size: 17px;
     font-weight: 800;
     line-height: 1.45;
+    word-break: break-word;
+    overflow-wrap: anywhere;
 }
 
 .library-contact-link {
+    margin-top: auto;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -637,16 +642,21 @@
 }
 
 @media (max-width: 991.98px) {
-    .survey-card {
-        align-items: flex-start;
-        flex-direction: column;
-    }
-
     .researcher-form-card {
         align-items: flex-start;
         flex-direction: column;
     }
 
+}
+
+@media (max-width: 575.98px) {
+    .library-contact-card {
+        padding: 18px;
+    }
+
+    .library-contact-card h3 {
+        font-size: 16px;
+    }
 }
 
 @media (max-width: 575.98px) {
