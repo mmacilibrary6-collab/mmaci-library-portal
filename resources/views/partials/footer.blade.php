@@ -197,8 +197,8 @@
 
                 <p class="footer-contact">
                     <i class="bi bi-envelope-fill"></i>
-                    <a href="mailto:mmacilibrary@mmacibutuan.edu.ph">
-                        mmacilibrary@mmacibutuan.edu.ph
+                    <a href="mailto:mmacilibrary@gmail.com">
+                        mmacilibrary@gmail.com
                     </a>
                 </p>
 
@@ -241,7 +241,7 @@
             <div class="col-md-6">
 
                 <small class="copyright">
-                    © {{ date('Y') }} MMACI Library Services Office.
+                    &copy; {{ date('Y') }} MMACI Library Services Office.
                     All Rights Reserved.
                 </small>
 
@@ -406,3 +406,4 @@
 }
 
 </style>
+

@@ -14,7 +14,7 @@ class MoreController extends Controller
         'https://www.youtube.com/channel/UC9wkl5BvNXqhxQgYi8WP3ig';
 
     private const SATISFACTION_SURVEY_URL =
-        'https://docs.google.com/forms/d/e/1FAIpQLSedbW1FN9CIQ8-vFvwqcEptpBHOtObKgHks_34kz7_3nheTTA/viewform';
+        'https://docs.google.com/forms/d/1erf6GL9AJ3EqHCr61fZcj8Cyf2pJ85KIAjclYrRITHI/viewform';
 
     private const VISITING_RESEARCHER_FORM_URL =
         'https://docs.google.com/forms/d/e/1FAIpQLSeKuNcoNY5ndVnlJfsFyjjM96t7Ga5FBz00MAT6gSM2KHOhTQ/viewform';
