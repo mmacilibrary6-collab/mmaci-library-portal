@@ -236,6 +236,17 @@ Route::prefix('more')
             [MoreController::class, 'reserveAvr']
         )->name('reserve-avr');
 
+        /*
+        |--------------------------------------------------------------------------
+        | Survey
+        |--------------------------------------------------------------------------
+        */
+
+        Route::get(
+            '/survey',
+            [MoreController::class, 'survey']
+        )->name('survey');
+
         Route::redirect(
             '/new-arrivals',
             '/collection/new-arrivals',

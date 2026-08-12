@@ -7,7 +7,6 @@
 @php
     $facebookUrl = 'https://www.facebook.com/MMACILibrary/';
     $youtubeUrl = 'https://www.youtube.com/channel/UC9wkl5BvNXqhxQgYi8WP3ig';
-    $surveyUrl = 'https://docs.google.com/forms/d/e/1FAIpQLSedbW1FN9CIQ8-vFvwqcEptpBHOtObKgHks_34kz7_3nheTTA/viewform';
 
     $officialContacts = collect([
         [
@@ -228,39 +227,6 @@
 
 </section>
 
-<!-- ================= SATISFACTION SURVEY ================= -->
-
-<section class="survey-section">
-
-    <div class="container">
-
-        <div class="survey-card">
-            <div>
-                <span>Library Satisfaction Survey</span>
-
-                <h2>Tell us about your library experience.</h2>
-
-                <p>
-                    Share your feedback and help us improve our collections,
-                    facilities, and services.
-                </p>
-            </div>
-
-            <a
-                href="{{ $surveyUrl }}"
-                target="_blank"
-                rel="noopener noreferrer"
-                class="survey-button">
-                Complete Survey
-                <i class="bi bi-arrow-up-right"></i>
-            </a>
-
-        </div>
-
-    </div>
-
-</section>
-
 <!-- ================= VISITING RESEARCHERS ================= -->
 
 <section class="researcher-form-section">
@@ -431,7 +397,6 @@
 /* Shared */
 
 .library-contact-section,
-.survey-section,
 .researcher-form-section {
     padding: 56px 0;
     background: #ffffff;
@@ -612,70 +577,6 @@
     font-size: 22px;
 }
 
-/* Survey */
-
-.survey-card {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 30px;
-    padding: 34px 38px;
-    color: #ffffff;
-    background:
-        radial-gradient(
-            circle at top right,
-            rgba(244, 180, 0, 0.30),
-            transparent 35%
-        ),
-        linear-gradient(
-            135deg,
-            var(--mmaci-navy),
-            var(--mmaci-blue)
-        );
-    border-radius: 17px;
-    box-shadow: 0 16px 40px rgba(11, 46, 89, 0.16);
-}
-
-.survey-card span {
-    color: var(--mmaci-yellow);
-    font-size: 11px;
-    font-weight: 800;
-    text-transform: uppercase;
-}
-
-.survey-card h2 {
-    margin: 7px 0;
-    font-size: clamp(25px, 3vw, 34px);
-    font-weight: 800;
-}
-
-.survey-card p {
-    max-width: 700px;
-    margin: 0;
-    color: rgba(255, 255, 255, 0.76);
-    line-height: 1.8;
-}
-
-.survey-button {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    flex-shrink: 0;
-    padding: 13px 19px;
-    color: var(--mmaci-navy);
-    background: var(--mmaci-yellow);
-    border-radius: 9px;
-    font-size: 13px;
-    font-weight: 800;
-    text-decoration: none;
-}
-
-.survey-button:hover {
-    color: var(--mmaci-navy);
-    transform: translateY(-2px);
-}
-
 /* Researcher form */
 
 .researcher-form-section {
@@ -763,16 +664,8 @@
         margin-left: 0;
     }
 
-    .survey-card {
-        padding: 28px 23px;
-    }
-
     .researcher-form-card {
         padding: 27px 22px;
-    }
-
-    .survey-button {
-        width: 100%;
     }
 
 }
@@ -908,37 +801,6 @@
         transform: translateX(5px);
     }
 
-    /* Survey */
-    .survey-card {
-        transition:
-            transform .35s cubic-bezier(.22, 1, .36, 1),
-            box-shadow .35s ease;
-    }
-
-    .survey-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 24px 54px rgba(11, 46, 89, .2);
-    }
-
-    .survey-button {
-        transition:
-            transform .22s ease,
-            box-shadow .22s ease;
-    }
-
-    .survey-button:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 10px 24px rgba(244, 180, 0, .22);
-    }
-
-    .survey-button i {
-        transition: transform .24s ease;
-    }
-
-    .survey-button:hover i {
-        transform: translate(3px, -3px);
-    }
-
     /* Visiting researcher CTA */
     .researcher-form-card {
         transition:
@@ -987,9 +849,6 @@
         .tutorial-card,
         .tutorial-icon,
         .tutorial-arrow,
-        .survey-card,
-        .survey-button,
-        .survey-button i,
         .researcher-form-card,
         .researcher-form-icon,
         .researcher-form-card .btn i {
@@ -1007,7 +866,6 @@ document.addEventListener('DOMContentLoaded', function () {
         { selector: '.library-contact-card', mode: '' },
         { selector: '.tutorial-section .col-lg-5', mode: 'ask-motion-left' },
         { selector: '.tutorial-section .col-lg-7', mode: 'ask-motion-right' },
-        { selector: '.survey-card', mode: 'ask-motion-scale' },
         { selector: '.researcher-form-card', mode: '' }
     ];
 

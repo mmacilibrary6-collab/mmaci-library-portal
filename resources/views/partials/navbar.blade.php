@@ -369,6 +369,21 @@
                         </li>
 
 
+                        <!-- Survey -->
+
+                        <li>
+
+                            <a
+                                class="dropdown-item"
+                                href="{{ route('more.survey') }}">
+
+                                Survey
+
+                            </a>
+
+                        </li>
+
+
                         <!-- Visiting Users -->
 
                         <li>

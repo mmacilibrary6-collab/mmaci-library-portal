@@ -39,9 +39,9 @@ class MoreController extends Controller
             ],
             [
                 'title' => 'Email',
-                'value' => 'mmacilibrary@gmail.com',
+                'value' => 'mmacilibrary@mmacibutuan.edu.ph',
                 'icon' => 'bi-envelope-fill',
-                'url' => 'mailto:mmacilibrary@gmail.com',
+                'url' => 'mailto:mmacilibrary@mmacibutuan.edu.ph',
             ],
             [
                 'title' => 'YouTube',
@@ -140,6 +140,16 @@ class MoreController extends Controller
     {
         return view('more.reserve-avr', [
             'formUrl' => self::RESERVE_AVR_FORM_URL,
+        ]);
+    }
+
+    /**
+     * Display the survey page.
+     */
+    public function survey(): View
+    {
+        return view('more.survey', [
+            'formUrl' => self::SATISFACTION_SURVEY_URL,
         ]);
     }
 }

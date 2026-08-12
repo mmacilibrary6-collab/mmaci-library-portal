@@ -158,6 +158,12 @@
                     </li>
 
                     <li>
+                        <a href="{{ route('more.survey') }}">
+                            Survey
+                        </a>
+                    </li>
+
+                    <li>
                         <a href="{{ route('collection.new-arrivals') }}">
                             New Arrivals
                         </a>
