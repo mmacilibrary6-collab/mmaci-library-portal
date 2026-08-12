@@ -10,18 +10,18 @@
 
         <div class="row justify-content-center align-items-center login-row">
 
-            <div class="col-lg-4 col-md-6 col-sm-8 col-11">
+            <div class="col-xl-5 col-lg-5 col-md-8 col-sm-10 col-11">
 
-                <div class="login-card">
+                <div class="login-card reset-card">
 
-                    <div class="text-center mb-4">
+                    <div class="text-center mb-3">
 
                         <img
                             src="{{ asset('images/logomml.webp') }}"
                             class="login-logo"
                             alt="MMACI Logo">
 
-                        <h2 class="mt-4 mb-2">
+                        <h2 class="mt-2 mb-1">
                             Reset Password
                         </h2>
 
@@ -38,7 +38,7 @@
 
                         <input type="hidden" name="token" value="{{ $token }}">
 
-                        <div class="mb-4">
+                        <div class="mb-2">
 
                             <label class="form-label">
 
@@ -66,7 +66,7 @@
 
                         </div>
 
-                        <div class="mb-4">
+                        <div class="mb-2">
 
                             <label class="form-label">
 
@@ -93,7 +93,7 @@
 
                         </div>
 
-                        <div class="mb-4">
+                        <div class="mb-3">
 
                             <label class="form-label">
 
@@ -110,7 +110,7 @@
 
                         </div>
 
-                        <button class="btn btn-warning w-100 py-3 fw-bold rounded-pill">
+                        <button class="btn btn-warning w-100 py-3 fw-bold rounded-pill mt-1">
 
                             <i class="bi bi-shield-lock me-2"></i>
 
@@ -120,7 +120,7 @@
 
                     </form>
 
-                    <div class="text-center mt-4">
+                    <div class="text-center mt-3">
 
                         <a href="{{ route('login') }}"
                            class="back-home">
@@ -182,13 +182,17 @@
 
     border-radius:20px;
 
-    padding:24px;
+    padding:22px 28px 20px;
 
     max-width:380px;
     width:100%;
     margin:auto;
     box-shadow:0 16px 40px rgba(0,0,0,.12);
 
+}
+
+.reset-card{
+    max-width:540px;
 }
 
 .login-logo{
@@ -205,7 +209,7 @@
 
     color:#0B2E59;
 
-    font-size:1.75rem;
+    font-size:1.62rem;
     font-weight:800;
     margin-bottom:.5rem;
 
@@ -251,15 +255,19 @@
 
     .login-card{
 
-        padding:20px;
+        padding:18px 18px 16px;
         border-radius:16px;
         max-width:100%;
 
     }
 
+    .reset-card{
+        max-width:100%;
+    }
+
     .login-card h2{
 
-        font-size:1.6rem;
+        font-size:1.5rem;
 
     }
 
@@ -273,7 +281,7 @@
     .login-row{
 
         min-height:auto;
-        padding:18px 0;
+        padding:14px 0 18px;
 
     }
 
