@@ -182,6 +182,11 @@
                         >
                     </div>
 
+                    <div class="program-no-results d-none">
+                        <i class="bi bi-search"></i>
+                        <p>No matching programs found.</p>
+                    </div>
+
                     @forelse($ebookPrograms ?? [] as $program)
 
                         <div class="program-list-item" data-program-item="ebook">
@@ -250,6 +255,11 @@
                         >
                     </div>
 
+                    <div class="program-no-results d-none">
+                        <i class="bi bi-search"></i>
+                        <p>No matching programs found.</p>
+                    </div>
+
                     @forelse($thesisPrograms ?? [] as $program)
 
                         <div class="program-list-item" data-program-item="thesis">
@@ -316,6 +326,11 @@
                             data-program-search="periodical"
                             autocomplete="off"
                         >
+                    </div>
+
+                    <div class="program-no-results d-none">
+                        <i class="bi bi-search"></i>
+                        <p>No matching programs found.</p>
                     </div>
 
                     @forelse($periodicalPrograms ?? [] as $program)
@@ -2076,6 +2091,10 @@ body {
     background: #F9FBFF;
 }
 
+.program-list-item[hidden] {
+    display: none !important;
+}
+
 .program-dot {
     width: 12px;
     height: 12px;
@@ -2189,6 +2208,35 @@ body {
     box-shadow: 0 0 0 0.2rem rgba(46, 95, 167, 0.12);
 }
 
+.program-no-results {
+    min-height: 220px;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    color: #8A95A5;
+    text-align: center;
+    border: 1px dashed #D8E2EF;
+    border-radius: 16px;
+    background: #FBFCFE;
+}
+
+.program-no-results.is-visible {
+    display: flex;
+}
+
+.program-no-results i {
+    font-size: 1.1rem;
+    color: #2E5FA7;
+}
+
+.program-no-results p {
+    margin: 0;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
 @media (max-width: 767.98px) {
     .dashboard-programs .panel-header {
         min-height: auto;
@@ -2248,23 +2296,36 @@ body {
 </style>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const inputs = Array.from(document.querySelectorAll('.program-search-input'));
-        if (!inputs.length) return;
-
+    function filterDashboardPrograms(input) {
         const normalize = (value) => (value || '').toLowerCase().trim();
+        const term = normalize(input.value);
+        const panel = input.closest('.program-panel');
+        if (!panel) return;
 
-        inputs.forEach(function (input) {
+        const items = Array.from(panel.querySelectorAll('.program-list-item'));
+        const emptyState = panel.querySelector('.program-no-results');
+        let visibleCount = 0;
+
+        items.forEach(function (item) {
+            const text = normalize(item.dataset.search || item.textContent);
+            const isVisible = !term || text.includes(term);
+            item.hidden = !isVisible;
+            if (isVisible) visibleCount += 1;
+        });
+
+        if (emptyState) {
+            const showNoResults = Boolean(items.length && term && visibleCount === 0);
+            emptyState.classList.toggle('d-none', !showNoResults);
+            emptyState.classList.toggle('is-visible', showNoResults);
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        document.querySelectorAll('.program-search-input').forEach(function (input) {
             input.addEventListener('input', function () {
-                const term = normalize(this.value);
-                const target = this.dataset.programSearch;
-                const items = Array.from(document.querySelectorAll(`[data-program-item="${target}"]`));
-
-                items.forEach(function (item) {
-                    const name = normalize(item.querySelector('.program-list-copy h6')?.textContent);
-                    item.style.display = !term || name.includes(term) ? '' : 'none';
-                });
+                filterDashboardPrograms(this);
             });
+            filterDashboardPrograms(input);
         });
     });
 </script>
