@@ -34,109 +34,178 @@
     </div>
 
     {{-- STATISTIC CARDS --}}
-    <div class="row g-4 mb-4">
+    <div class="row g-4 mb-4 dashboard-summary-grid">
 
         <div class="col-xl-3 col-md-6">
-
             <div class="stat-card">
-
                 <div class="stat-icon icon-blue">
-
                     <i class="bi bi-calendar-event"></i>
-
                 </div>
-
                 <div class="stat-content">
-
-                    <span class="stat-label">
-                        Calendar Events
-                    </span>
-
-                    <h2 class="stat-number">
-                        {{ $totalEvents ?? 0 }}
-                    </h2>
-
-                    <a
-                        href="{{ route('admin.calendar.index') }}"
-                        class="stat-link">
-
-                        Manage events
-
-                        <i class="bi bi-arrow-right"></i>
-
-                    </a>
-
+                    <span class="stat-label">Calendar Events</span>
+                    <h2 class="stat-number">{{ $totalEvents ?? 0 }}</h2>
+                    <a href="{{ route('admin.calendar.index') }}" class="stat-link">Manage events <i class="bi bi-arrow-right"></i></a>
                 </div>
-
             </div>
-
         </div>
 
         <div class="col-xl-3 col-md-6">
-
             <div class="stat-card">
-
                 <div class="stat-icon icon-yellow">
-
                     <i class="bi bi-book"></i>
-
                 </div>
-
                 <div class="stat-content">
-
-                    <span class="stat-label">
-                        New Arrivals
-                    </span>
-
-                    <h2 class="stat-number">
-                        {{ $totalBooks ?? 0 }}
-                    </h2>
-
-                    <a
-                        href="{{ route('admin.new-arrivals.index') }}"
-                        class="stat-link">
-
-                        Manage collection
-
-                        <i class="bi bi-arrow-right"></i>
-
-                    </a>
-
+                    <span class="stat-label">New Arrivals</span>
+                    <h2 class="stat-number">{{ $totalBooks ?? 0 }}</h2>
+                    <a href="{{ route('admin.new-arrivals.index') }}" class="stat-link">Manage collection <i class="bi bi-arrow-right"></i></a>
                 </div>
-
             </div>
-
         </div>
 
         <div class="col-xl-3 col-md-6">
-
             <div class="stat-card">
-
                 <div class="stat-icon icon-purple">
-
                     <i class="bi bi-tablet"></i>
+                </div>
+                <div class="stat-content">
+                    <span class="stat-label">E-Book Programs</span>
+                    <h2 class="stat-number">{{ $totalEbooks ?? 0 }}</h2>
+                    <a href="{{ route('admin.ebook-programs.index') }}" class="stat-link">Manage programs <i class="bi bi-arrow-right"></i></a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6">
+            <div class="stat-card">
+                <div class="stat-icon icon-green">
+                    <i class="bi bi-images"></i>
+                </div>
+                <div class="stat-content">
+                    <span class="stat-label">Gallery Items</span>
+                    <h2 class="stat-number">{{ $totalGallery ?? 0 }}</h2>
+                    <a href="{{ route('admin.gallery.index') }}" class="stat-link">Manage gallery <i class="bi bi-arrow-right"></i></a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6">
+            <div class="stat-card">
+                <div class="stat-icon icon-orange">
+                    <i class="bi bi-gift"></i>
+                </div>
+                <div class="stat-content">
+                    <span class="stat-label">Donated Books</span>
+                    <h2 class="stat-number">{{ $totalDonatedBooks ?? 0 }}</h2>
+                    <a href="{{ route('admin.donated-books.index') }}" class="stat-link">Manage donated books <i class="bi bi-arrow-right"></i></a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6">
+            <div class="stat-card">
+                <div class="stat-icon icon-purple">
+                    <i class="bi bi-journal-bookmark"></i>
+                </div>
+                <div class="stat-content">
+                    <span class="stat-label">Thesis Programs</span>
+                    <h2 class="stat-number">{{ $totalThesisPrograms ?? 0 }}</h2>
+                    <a href="{{ route('admin.thesis-programs.index') }}" class="stat-link">Manage programs <i class="bi bi-arrow-right"></i></a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6">
+            <div class="stat-card">
+                <div class="stat-icon icon-yellow">
+                    <i class="bi bi-journal-text"></i>
+                </div>
+                <div class="stat-content">
+                    <span class="stat-label">Periodical Programs</span>
+                    <h2 class="stat-number">{{ $totalPeriodicalPrograms ?? 0 }}</h2>
+                    <a href="{{ route('admin.periodical-programs.index') }}" class="stat-link">Manage programs <i class="bi bi-arrow-right"></i></a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6">
+            <div class="stat-card">
+                <div class="stat-icon icon-blue">
+                    <i class="bi bi-images"></i>
+                </div>
+                <div class="stat-content">
+                    <span class="stat-label">Library Updates</span>
+                    <h2 class="stat-number">{{ $totalLibraryUpdates ?? 0 }}</h2>
+                    <a href="{{ route('admin.library-updates.index') }}" class="stat-link">Manage updates <i class="bi bi-arrow-right"></i></a>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    {{-- PROGRAM BREAKDOWN --}}
+    <div class="row g-4 mb-4 dashboard-programs">
+
+        <div class="col-xl-4 col-lg-6">
+
+            <div class="dashboard-panel h-100 program-panel">
+
+                <div class="panel-header">
+
+                    <div>
+
+                        <p class="panel-eyebrow mb-1">
+                            Digital Resources
+                        </p>
+
+                        <h3 class="panel-title mb-0">
+                            E-Book Programs
+                        </h3>
+
+                    </div>
+
+                    <a href="{{ route('admin.ebook-programs.index') }}"
+                       class="btn btn-sm btn-outline-primary rounded-pill px-3">
+                        Manage
+                    </a>
 
                 </div>
 
-                <div class="stat-content">
+                <div class="panel-body program-list-body">
+                    <div class="program-card-search">
+                        <i class="bi bi-search"></i>
+                        <input
+                            type="text"
+                            class="form-control program-search-input"
+                            placeholder="Search programs..."
+                            data-program-search="ebook"
+                            autocomplete="off"
+                        >
+                    </div>
 
-                    <span class="stat-label">
-                        E-Book Programs
-                    </span>
+                    @forelse($ebookPrograms ?? [] as $program)
 
-                    <h2 class="stat-number">
-                        {{ $totalEbooks ?? 0 }}
-                    </h2>
+                        <div class="program-list-item" data-program-item="ebook">
 
-                    <a
-                        href="{{ route('admin.new-arrivals.index') }}"
-                        class="stat-link">
+                            <div class="program-dot program-dot-purple"></div>
 
-                        View resources
+                            <div class="program-list-copy">
+                                <h6>{{ $program->title ?? 'Untitled Program' }}</h6>
+                                <p>{{ $program->folders_count ?? 0 }} folder{{ ($program->folders_count ?? 0) === 1 ? '' : 's' }}</p>
+                            </div>
 
-                        <i class="bi bi-arrow-right"></i>
+                            <span class="program-count">{{ $program->folders_count ?? 0 }}</span>
 
-                    </a>
+                        </div>
+
+                    @empty
+
+                        <div class="empty-state">
+                            <i class="bi bi-folder-x"></i>
+                            <h5>No e-book programs yet</h5>
+                            <p>Create a program to start organizing folders.</p>
+                        </div>
+
+                    @endforelse
 
                 </div>
 
@@ -144,35 +213,135 @@
 
         </div>
 
-        <div class="col-xl-3 col-md-6">
+        <div class="col-xl-4 col-lg-6">
 
-            <div class="stat-card">
+            <div class="dashboard-panel h-100 program-panel">
 
-                <div class="stat-icon icon-green">
+                <div class="panel-header">
 
-                    <i class="bi bi-images"></i>
+                    <div>
+
+                        <p class="panel-eyebrow mb-1">
+                            Research Collections
+                        </p>
+
+                        <h3 class="panel-title mb-0">
+                            Thesis &amp; Dissertation Programs
+                        </h3>
+
+                    </div>
+
+                    <a href="{{ route('admin.thesis-programs.index') }}"
+                       class="btn btn-sm btn-outline-primary rounded-pill px-3">
+                        Manage
+                    </a>
 
                 </div>
 
-                <div class="stat-content">
+                <div class="panel-body program-list-body">
+                    <div class="program-card-search">
+                        <i class="bi bi-search"></i>
+                        <input
+                            type="text"
+                            class="form-control program-search-input"
+                            placeholder="Search programs..."
+                            data-program-search="thesis"
+                            autocomplete="off"
+                        >
+                    </div>
 
-                    <span class="stat-label">
-                        Gallery Items
-                    </span>
+                    @forelse($thesisPrograms ?? [] as $program)
 
-                    <h2 class="stat-number">
-                        {{ $totalGallery ?? 0 }}
-                    </h2>
+                        <div class="program-list-item" data-program-item="thesis">
 
-                    <a
-                        href="{{ route('admin.gallery.index') }}"
-                        class="stat-link">
+                            <div class="program-dot program-dot-cyan"></div>
 
-                        Manage gallery
+                            <div class="program-list-copy">
+                                <h6>{{ $program->title ?? 'Untitled Program' }}</h6>
+                                <p>{{ $program->folders_count ?? 0 }} folder{{ ($program->folders_count ?? 0) === 1 ? '' : 's' }}</p>
+                            </div>
 
-                        <i class="bi bi-arrow-right"></i>
+                            <span class="program-count">{{ $program->folders_count ?? 0 }}</span>
 
+                        </div>
+
+                    @empty
+
+                        <div class="empty-state">
+                            <i class="bi bi-journal-x"></i>
+                            <h5>No thesis programs yet</h5>
+                            <p>Create a program to start organizing folders.</p>
+                        </div>
+
+                    @endforelse
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="col-xl-4 col-lg-6">
+
+            <div class="dashboard-panel h-100 program-panel">
+
+                <div class="panel-header">
+
+                    <div>
+
+                        <p class="panel-eyebrow mb-1">
+                            Periodicals
+                        </p>
+
+                        <h3 class="panel-title mb-0">
+                            Periodical Programs
+                        </h3>
+
+                    </div>
+
+                    <a href="{{ route('admin.periodical-programs.index') }}"
+                       class="btn btn-sm btn-outline-primary rounded-pill px-3">
+                        Manage
                     </a>
+
+                </div>
+
+                <div class="panel-body program-list-body">
+                    <div class="program-card-search">
+                        <i class="bi bi-search"></i>
+                        <input
+                            type="text"
+                            class="form-control program-search-input"
+                            placeholder="Search programs..."
+                            data-program-search="periodical"
+                            autocomplete="off"
+                        >
+                    </div>
+
+                    @forelse($periodicalPrograms ?? [] as $program)
+
+                        <div class="program-list-item" data-program-item="periodical">
+
+                            <div class="program-dot program-dot-dark"></div>
+
+                            <div class="program-list-copy">
+                                <h6>{{ $program->title ?? 'Untitled Program' }}</h6>
+                                <p>{{ $program->folders_count ?? 0 }} folder{{ ($program->folders_count ?? 0) === 1 ? '' : 's' }}</p>
+                            </div>
+
+                            <span class="program-count">{{ $program->folders_count ?? 0 }}</span>
+
+                        </div>
+
+                    @empty
+
+                        <div class="empty-state">
+                            <i class="bi bi-inbox"></i>
+                            <h5>No periodical programs yet</h5>
+                            <p>Create a program to start organizing folders.</p>
+                        </div>
+
+                    @endforelse
 
                 </div>
 
@@ -1803,6 +1972,301 @@ body {
     visibility: visible !important;
 }
 
+.dashboard-summary-grid .stat-icon {
+    background: #ffffff !important;
+    border-color: rgba(255, 255, 255, 0.55) !important;
+}
+
+.dashboard-summary-grid .icon-blue {
+    color: #ffffff !important;
+    background: linear-gradient(145deg, #2765A8, #184B8C) !important;
+}
+
+.dashboard-summary-grid > .col-xl-3:nth-child(1) .stat-icon.icon-blue {
+    color: #ffffff !important;
+    background: linear-gradient(145deg, #3474B8, #184B8C) !important;
+    border-color: rgba(255, 255, 255, 0.18) !important;
+}
+
+.dashboard-summary-grid > .col-xl-3:nth-child(1) .stat-icon.icon-blue i {
+    color: #ffffff !important;
+}
+
+.dashboard-summary-grid .icon-yellow {
+    color: #0B2E59 !important;
+    background: linear-gradient(145deg, #FFD45A, #F4B400) !important;
+}
+
+.dashboard-summary-grid .icon-purple {
+    color: #ffffff !important;
+    background: linear-gradient(145deg, #3B6FA8, #274E7C) !important;
+}
+
+.dashboard-summary-grid .icon-green {
+    color: #ffffff !important;
+    background: linear-gradient(145deg, #29936E, #176B52) !important;
+}
+
+.dashboard-summary-grid .icon-orange {
+    color: #0B2E59 !important;
+    background: linear-gradient(145deg, #FFD45A, #E7A800) !important;
+}
+
+/* Program breakdown panels */
+.dashboard-programs .program-panel {
+    display: flex;
+    flex-direction: column;
+    border: 1px solid rgba(22, 54, 96, 0.10);
+    box-shadow: 0 16px 40px rgba(13, 36, 69, 0.08);
+    overflow: hidden;
+    min-height: 100%;
+}
+
+.dashboard-programs .program-panel .panel-body {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 auto;
+    min-height: 0;
+}
+
+.dashboard-programs .panel-header {
+    min-height: 98px;
+    align-items: flex-start;
+    gap: 14px;
+}
+
+.dashboard-programs .panel-title {
+    font-size: 1.1rem;
+    line-height: 1.2;
+    min-height: 52px;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    overflow: hidden;
+}
+
+.dashboard-programs .panel-eyebrow {
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    font-size: 0.72rem;
+    font-weight: 800;
+    color: #8AA0BE;
+}
+
+.program-list-body {
+    flex: 1 1 auto;
+    min-height: 0;
+    display: grid;
+    gap: 12px;
+    padding-top: 4px;
+    min-height: 420px;
+    max-height: 420px;
+    overflow-y: auto;
+    padding-right: 6px;
+}
+
+.program-list-item {
+    display: grid !important;
+    grid-template-columns: 14px minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 16px;
+    border: 1px solid #E6ECF5;
+    border-radius: 16px;
+    background: #F9FBFF;
+}
+
+.program-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 999px;
+    flex: 0 0 12px;
+    box-shadow: 0 0 0 6px rgba(255, 255, 255, 0.65);
+}
+
+.program-dot-purple {
+    background: linear-gradient(145deg, #4B7CF5, #2F5FBF);
+}
+
+.program-dot-cyan {
+    background: linear-gradient(145deg, #2AA7D6, #1A78B7);
+}
+
+.program-dot-dark {
+    background: linear-gradient(145deg, #5B6F89, #314961);
+}
+
+.program-list-copy {
+    flex: 1;
+    min-width: 0;
+}
+
+.program-list-copy h6 {
+    margin: 0;
+    font-size: 0.98rem;
+    font-weight: 700;
+    color: #173456;
+    line-height: 1.35;
+}
+
+.program-list-copy p {
+    margin: 3px 0 0;
+    font-size: 0.88rem;
+    color: #7890AA;
+}
+
+.program-count {
+    min-width: 42px;
+    height: 42px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 10px;
+    border-radius: 999px;
+    background: #123B6D;
+    color: #fff;
+    font-size: 0.95rem;
+    font-weight: 800;
+    box-shadow: 0 10px 20px rgba(18, 59, 109, 0.18);
+    justify-self: end;
+}
+
+.dashboard-programs .empty-state {
+    min-height: 292px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 22px 12px;
+    border: 1px dashed #D7DFEA;
+    border-radius: 16px;
+    background: #FBFCFE;
+}
+
+.dashboard-programs .empty-state h5 {
+    margin-top: 10px;
+    font-size: 1rem;
+}
+
+.dashboard-programs .empty-state p {
+    margin-bottom: 0;
+}
+
+.dashboard-programs .panel-body.program-list-body {
+    margin: 0;
+}
+
+.program-card-search {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+    padding: 0 4px;
+}
+
+.program-card-search i {
+    position: static;
+    color: #6E83A2;
+    pointer-events: none;
+    flex: 0 0 auto;
+    font-size: 1.05rem;
+}
+
+.program-search-input {
+    flex: 1 1 auto;
+    width: 100%;
+    height: 44px;
+    border-radius: 14px;
+    padding-left: 16px;
+    border: 1px solid #D8E2EF;
+    background: #fff;
+    box-shadow: none;
+    color: #173456;
+}
+
+.program-search-input:focus {
+    border-color: #2E5FA7;
+    box-shadow: 0 0 0 0.2rem rgba(46, 95, 167, 0.12);
+}
+
+@media (max-width: 767.98px) {
+    .dashboard-programs .panel-header {
+        min-height: auto;
+    }
+
+    .dashboard-programs .panel-title {
+        min-height: auto;
+        display: block;
+        -webkit-line-clamp: unset;
+    }
+
+    .program-card-search {
+        gap: 8px;
+    }
+
+    .dashboard-programs .panel-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .program-list-item {
+        padding: 13px 14px;
+    }
+
+    .program-count {
+        min-width: 38px;
+        height: 38px;
+        font-size: 0.9rem;
+    }
+
+    .program-list-body {
+        min-height: 300px;
+        max-height: 300px;
+    }
+}
+
+.program-list-body::-webkit-scrollbar {
+    width: 8px;
+}
+
+.program-list-body::-webkit-scrollbar-track {
+    background: #EEF3FA;
+    border-radius: 999px;
+}
+
+.program-list-body::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, #2E5FA7, #123B6D);
+    border-radius: 999px;
+}
+
+@media (max-width: 767.98px) {
+    .program-search-input {
+        height: 42px;
+    }
+}
+
 </style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const inputs = Array.from(document.querySelectorAll('.program-search-input'));
+        if (!inputs.length) return;
+
+        const normalize = (value) => (value || '').toLowerCase().trim();
+
+        inputs.forEach(function (input) {
+            input.addEventListener('input', function () {
+                const term = normalize(this.value);
+                const target = this.dataset.programSearch;
+                const items = Array.from(document.querySelectorAll(`[data-program-item="${target}"]`));
+
+                items.forEach(function (item) {
+                    const name = normalize(item.querySelector('.program-list-copy h6')?.textContent);
+                    item.style.display = !term || name.includes(term) ? '' : 'none';
+                });
+            });
+        });
+    });
+</script>
 
 @endsection

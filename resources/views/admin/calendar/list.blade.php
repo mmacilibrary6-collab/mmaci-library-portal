@@ -1,4 +1,4 @@
-@extends('layouts.admin')
+﻿@extends('layouts.admin')
 
 @section('title', 'Calendar Events')
 @section('page-title', 'Calendar Events')
@@ -8,7 +8,13 @@
     <section class="calendar-hero">
         <div class="hero-copy">
             <span class="hero-icon">
-                <i class="bi bi-calendar3"></i>
+                <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                    <rect x="3.5" y="5" width="17" height="15.5" rx="3.2" ry="3.2" fill="none" stroke="currentColor" stroke-width="1.8"/>
+                    <path d="M7 3.75v3.5M17 3.75v3.5M3.5 9.25h17" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                    <rect x="7" y="11" width="2.5" height="2.5" rx="0.45" fill="currentColor"/>
+                    <rect x="11" y="11" width="2.5" height="2.5" rx="0.45" fill="currentColor"/>
+                    <rect x="15" y="11" width="2.5" height="2.5" rx="0.45" fill="currentColor"/>
+                </svg>
             </span>
 
             <div>
@@ -83,9 +89,7 @@
                         <tr>
                             <td>
                                 <div class="event-identity">
-                                    <span class="event-icon">
-                                        <i class="bi bi-calendar-event"></i>
-                                    </span>
+                                    <span class="event-icon"><i class="bi bi-calendar3"></i></span>
 
                                     <div>
                                         <strong>{{ $event->title }}</strong>
@@ -102,7 +106,7 @@
 
                                 <strong>
                                     @if($end && $start && $end > $start)
-                                        {{ $start->format('M d') }} — {{ $end->format('M d, Y') }}
+                                        {{ $start->format('M d') }} &mdash; {{ $end->format('M d, Y') }}
                                     @else
                                         {{ $start->format('M d, Y') }}
                                     @endif
@@ -112,7 +116,7 @@
                                     @if($event->start_time)
                                         {{ \Carbon\Carbon::parse($event->start_time)->format('g:i A') }}
                                         @if($event->end_time)
-                                            — {{ \Carbon\Carbon::parse($event->end_time)->format('g:i A') }}
+                                            &mdash; {{ \Carbon\Carbon::parse($event->end_time)->format('g:i A') }}
                                         @endif
                                     @else
                                         Time not specified
@@ -215,7 +219,7 @@
         @if($events->hasPages())
             <div class="panel-footer">
                 <p>
-                    Showing {{ $events->firstItem() }}–{{ $events->lastItem() }}
+                    Showing {{ $events->firstItem() }}â€“{{ $events->lastItem() }}
                     of {{ $events->total() }}
                 </p>
 
@@ -282,10 +286,29 @@
         display: grid;
         place-items: center;
         border-radius: 18px;
-        background: var(--gold);
-        color: var(--navy);
+        background: linear-gradient(145deg, #FFD65E, #F4B400);
+        color: #0B2E59;
         font-size: 27px;
         box-shadow: 0 12px 25px rgba(0, 0, 0, .14);
+    }
+
+    .hero-icon svg,
+    .event-icon svg {
+        width: 70%;
+        height: 70%;
+        display: block;
+        color: currentColor;
+        fill: none;
+        stroke: currentColor;
+    }
+
+    .hero-icon svg {
+        width: 62%;
+        height: 62%;
+    }
+
+    .hero-icon i {
+        display: none;
     }
 
     .hero-eyebrow {
@@ -516,15 +539,56 @@
     }
 
     .event-icon {
-        width: 46px;
-        height: 46px;
+        width: 62px;
+        height: 62px;
         flex-shrink: 0;
-        display: grid;
-        place-items: center;
-        color: #0b2e59;
-        background: #edf4fb;
-        border-radius: 14px;
-        font-size: 1.1rem;
+        position: relative;
+        display: block;
+        align-items: center;
+        justify-content: center;
+        color: #FFD65E;
+        background: linear-gradient(145deg, #3474B8, #2B65AE);
+        border: 0;
+        border-radius: 16px;
+        box-shadow: 0 10px 20px rgba(11, 46, 89, .14);
+    }
+
+    .event-icon i {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        display: block;
+        color: #FFD65E;
+        font-size: 1.35rem;
+        line-height: 1;
+    }
+
+    .calendar-table tbody td:nth-child(1) {
+        vertical-align: top;
+    }
+
+    .calendar-table tbody td:nth-child(2),
+    .calendar-table tbody td:nth-child(3),
+    .calendar-table tbody td:nth-child(4),
+    .calendar-table tbody td:nth-child(5) {
+        vertical-align: middle;
+    }
+
+    .event-identity,
+    .time-cell,
+    .location-cell,
+    .status-badge,
+    .table-actions {
+        margin-top: 2px;
+    }
+
+    .event-identity {
+        align-items: flex-start;
+    }
+
+    .event-icon {
+        margin-top: 2px;
     }
 
     .event-identity strong {
@@ -752,3 +816,4 @@
     }
 </style>
 @endpush
+

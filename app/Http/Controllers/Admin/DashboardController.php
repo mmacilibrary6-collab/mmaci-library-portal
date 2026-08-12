@@ -5,7 +5,11 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\CalendarEvent;
 use App\Models\EbookProgram;
+use App\Models\ThesisProgram;
+use App\Models\PeriodicalProgram;
 use App\Models\NewArrival;
+use App\Models\DonatedBook;
+use App\Models\LibraryUpdate;
 use App\Models\Gallery;
 
 class DashboardController extends Controller
@@ -25,9 +29,17 @@ class DashboardController extends Controller
 
         $totalBooks = NewArrival::where('resource_type', 'printed')->count();
 
+        $totalDonatedBooks = DonatedBook::count();
+
         $totalEbooks = EbookProgram::count();
 
+        $totalThesisPrograms = ThesisProgram::count();
+
+        $totalPeriodicalPrograms = PeriodicalProgram::count();
+
         $totalGallery = Gallery::count();
+
+        $totalLibraryUpdates = LibraryUpdate::count();
 
         /*
         |--------------------------------------------------------------------------
@@ -43,6 +55,21 @@ class DashboardController extends Controller
             ->take(5)
             ->get();
 
+        $ebookPrograms = EbookProgram::query()
+            ->withCount('folders')
+            ->orderBy('title')
+            ->get();
+
+        $thesisPrograms = ThesisProgram::query()
+            ->withCount('folders')
+            ->orderBy('title')
+            ->get();
+
+        $periodicalPrograms = PeriodicalProgram::query()
+            ->withCount('folders')
+            ->orderBy('title')
+            ->get();
+
         /*
         |--------------------------------------------------------------------------
         | Return View
@@ -54,13 +81,22 @@ class DashboardController extends Controller
             'totalEvents',
 
             'totalBooks',
+            'totalDonatedBooks',
 
             'totalEbooks',
 
+            'totalThesisPrograms',
+
+            'totalPeriodicalPrograms',
+
             'totalGallery',
+            'totalLibraryUpdates',
 
             'latestEvents',
-            'latestBooks'
+            'latestBooks',
+            'ebookPrograms',
+            'thesisPrograms',
+            'periodicalPrograms'
 
         ));
     }

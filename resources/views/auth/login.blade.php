@@ -10,7 +10,7 @@
 
         <div class="row justify-content-center align-items-center login-row">
 
-            <div class="col-lg-4 col-md-6 col-sm-8 col-11">
+            <div class="col-12 col-sm-10 col-md-6 col-lg-4">
 
                 <div class="login-card">
 
@@ -251,6 +251,9 @@
         text-decoration:none;
         font-size:.9rem;
         font-weight:600;
+        white-space:normal;
+        display:inline-block;
+        max-width:100%;
 
     }
 
@@ -266,6 +269,8 @@
         text-decoration:none;
         font-weight:600;
         font-size:.95rem;
+        display:inline-block;
+        max-width:100%;
 
     }
 
@@ -277,11 +282,24 @@
 
     @media (max-width:768px){
 
+        .login-section{
+
+            padding: 0 12px;
+
+        }
+
+        .login-row{
+
+            padding: 12px 0;
+
+        }
+
         .login-card{
 
             padding:20px;
             border-radius:16px;
             max-width:100%;
+            width:100%;
         }
 
         .login-card h2{
@@ -294,13 +312,6 @@
 
             width:52px;
             height:52px;
-
-        }
-
-        .login-row{
-
-            min-height:auto;
-            padding:18px 0;
 
         }
 
