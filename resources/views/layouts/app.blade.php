@@ -87,6 +87,96 @@
 
         }
 
+        .site-loader {
+            position: fixed;
+            inset: 0;
+            z-index: 100000;
+            display: grid;
+            place-items: center;
+            padding: 24px;
+            color: #ffffff;
+            background:
+                radial-gradient(circle at 50% 42%, rgba(24, 75, 140, 0.9), transparent 34%),
+                #0b2e59;
+            opacity: 1;
+            visibility: visible;
+            transition: opacity 0.35s ease, visibility 0.35s ease;
+        }
+
+        .site-loader.is-hidden {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+        .site-loader-card {
+            display: grid;
+            justify-items: center;
+            gap: 16px;
+            text-align: center;
+        }
+
+        .site-loader-mark {
+            display: grid;
+            width: 72px;
+            height: 72px;
+            place-items: center;
+            color: #0b2e59;
+            background: #f4b400;
+            border-radius: 22px;
+            box-shadow: 0 18px 45px rgba(0, 0, 0, 0.24);
+            font-size: 22px;
+            font-weight: 800;
+            letter-spacing: -0.04em;
+            animation: site-loader-pulse 1.25s ease-in-out infinite;
+        }
+
+        .site-loader-title {
+            margin: 0;
+            font-size: 20px;
+            font-weight: 700;
+        }
+
+        .site-loader-status {
+            margin: -8px 0 0;
+            color: rgba(255, 255, 255, 0.72);
+            font-size: 13px;
+        }
+
+        .site-loader-progress {
+            width: min(220px, 64vw);
+            height: 4px;
+            overflow: hidden;
+            background: rgba(255, 255, 255, 0.16);
+            border-radius: 999px;
+        }
+
+        .site-loader-progress::after {
+            content: "";
+            display: block;
+            width: 42%;
+            height: 100%;
+            background: #f4b400;
+            border-radius: inherit;
+            animation: site-loader-slide 1.1s ease-in-out infinite;
+        }
+
+        @keyframes site-loader-pulse {
+            50% { transform: translateY(-4px); }
+        }
+
+        @keyframes site-loader-slide {
+            from { transform: translateX(-110%); }
+            to { transform: translateX(350%); }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .site-loader-mark,
+            .site-loader-progress::after {
+                animation: none;
+            }
+        }
+
         main {
 
             min-height: 70vh;
@@ -908,6 +998,64 @@
 </head>
 
 <body>
+
+    <div class="site-loader" id="siteLoader" role="status" aria-live="polite" aria-label="Loading page">
+        <div class="site-loader-card">
+            <span class="site-loader-mark" aria-hidden="true">M</span>
+            <p class="site-loader-title">MMACI Library</p>
+            <p class="site-loader-status">Preparing your page...</p>
+            <span class="site-loader-progress" aria-hidden="true"></span>
+        </div>
+    </div>
+
+    <noscript>
+        <style>.site-loader { display: none !important; }</style>
+    </noscript>
+
+    <script>
+        (function () {
+            const loader = document.getElementById('siteLoader');
+
+            if (!loader) return;
+
+            const hideLoader = function () {
+                loader.classList.add('is-hidden');
+                window.setTimeout(function () {
+                    loader.setAttribute('hidden', '');
+                }, 400);
+            };
+
+            const showLoader = function () {
+                loader.removeAttribute('hidden');
+                requestAnimationFrame(function () {
+                    loader.classList.remove('is-hidden');
+                });
+            };
+
+            document.addEventListener('DOMContentLoaded', hideLoader, { once: true });
+            window.addEventListener('pageshow', hideLoader);
+            window.setTimeout(hideLoader, 5000);
+
+            document.addEventListener('click', function (event) {
+                const link = event.target.closest('a[href]');
+
+                if (
+                    !link ||
+                    event.defaultPrevented ||
+                    event.button !== 0 ||
+                    event.metaKey || event.ctrlKey || event.shiftKey || event.altKey ||
+                    link.target === '_blank' ||
+                    link.hasAttribute('download') ||
+                    link.getAttribute('href').startsWith('#') ||
+                    link.origin !== window.location.origin
+                ) {
+                    return;
+                }
+
+                showLoader();
+            });
+        })();
+    </script>
 
     @include('partials.navbar')
 
