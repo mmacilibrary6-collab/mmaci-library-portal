@@ -88,14 +88,15 @@ class DatabaseMedia
 
     public static function toDataUri(?string $value, string $fallback = ''): string
     {
-        $value = trim((string) $value);
+        $value = (string) $value;
+        $normalizedValue = trim($value);
 
-        if ($value === '') {
+        if ($normalizedValue === '') {
             return $fallback;
         }
 
-        if (Str::startsWith($value, ['http://', 'https://', 'data:'])) {
-            return $value;
+        if (Str::startsWith($normalizedValue, ['http://', 'https://', 'data:'])) {
+            return $normalizedValue;
         }
 
         $mimeType = self::detectMimeType($value);

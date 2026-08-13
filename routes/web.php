@@ -11,6 +11,13 @@ use Illuminate\Support\Facades\Storage;
 
 use App\Models\NewArrival;
 use App\Models\LibraryUpdate;
+use App\Models\DonatedBook;
+use App\Models\EbookProgram;
+use App\Models\Gallery;
+use App\Models\GalleryImage;
+use App\Models\OpenAccessResource;
+use App\Models\PeriodicalProgram;
+use App\Models\ThesisProgram;
 use App\Support\MediaStorage;
 
 /*
@@ -90,6 +97,13 @@ Route::get('/database-media/{type}/{id}', function (string $type, int $id) {
     $models = [
         'new-arrival' => NewArrival::class,
         'library-update' => LibraryUpdate::class,
+        'donated-book' => DonatedBook::class,
+        'ebook-program' => EbookProgram::class,
+        'gallery' => Gallery::class,
+        'gallery-image' => GalleryImage::class,
+        'open-access-resource' => OpenAccessResource::class,
+        'periodical-program' => PeriodicalProgram::class,
+        'thesis-program' => ThesisProgram::class,
     ];
 
     abort_unless(isset($models[$type]), 404);
