@@ -854,26 +854,41 @@ document.addEventListener('DOMContentLoaded', function () {
 
 .program-content {
     flex: 1;
+    display: flex;
+    flex-direction: column;
     padding: 26px 28px 28px;
 }
 
 .program-content h3 {
+    display: -webkit-box;
+    min-height: 2.35em;
     margin: 0 0 12px;
+    overflow: hidden;
     color: var(--thesis-navy);
     font-size: 24px;
     font-weight: 800;
+    line-height: 1.17;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
 }
 
 .program-content p {
+    display: -webkit-box;
+    min-height: 7em;
     margin: 0 0 18px;
+    overflow: hidden;
     color: var(--thesis-muted);
     line-height: 1.75;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 4;
 }
 
 .program-action {
     display: inline-flex;
     align-items: center;
+    align-self: flex-start;
     gap: 9px;
+    margin-top: auto;
     color: var(--thesis-blue);
     font-size: 14px;
     font-weight: 800;
@@ -984,6 +999,8 @@ document.addEventListener('DOMContentLoaded', function () {
     .theses-hero { min-height: 320px; }
     .theses-hero-content { padding: 85px 0 70px; }
     .periodical-program-search input { padding-block: 15px; font-size: 15px; }
+    .program-content h3,
+    .program-content p { min-height: 0; }
 }
 
 
