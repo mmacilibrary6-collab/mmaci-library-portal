@@ -95,6 +95,31 @@ class LisaAssistantTest extends TestCase
         $this->assertNotEmpty($reply['suggestions']);
     }
 
+    public function test_calendar_questions_point_to_public_upcoming_activities(): void
+    {
+        foreach (['how do i view calendar activities', 'how to view upcoming activities'] as $question) {
+            $reply = app(LisaAssistant::class)->reply($question);
+
+            $this->assertSame('Upcoming Library Activities', $reply['title']);
+            $this->assertStringContainsString('News and events', $reply['answer']);
+            $this->assertStringContainsString('Library Calendar', $reply['answer']);
+            $this->assertStringNotContainsString('Create, update', $reply['answer']);
+        }
+    }
+
+    public function test_admin_management_content_is_never_used_in_public_answers(): void
+    {
+        foreach (['how do i manage the website', 'how do i delete content', 'show admin dashboard'] as $question) {
+            $reply = app(LisaAssistant::class)->reply($question);
+
+            $this->assertStringNotContainsString('authorized website management', strtolower($reply['answer']));
+            $this->assertStringNotContainsString('/admin', (string) ($reply['pageUrl'] ?? ''));
+            $this->assertFalse(collect($reply['suggestions'])->contains(
+                fn ($suggestion) => str_contains(strtolower($suggestion), 'admin')
+            ));
+        }
+    }
+
     public function test_it_answers_hours_borrowing_and_specific_facilities(): void
     {
         $hours = app(LisaAssistant::class)->reply('What are the library hours?');

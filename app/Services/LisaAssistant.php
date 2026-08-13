@@ -166,7 +166,7 @@ class LisaAssistant
 
     protected function knowledgeEntries(): array
     {
-        return Cache::remember('lisa.knowledge.entries.v6', now()->addMinutes(10), function () {
+        return Cache::remember('lisa.knowledge.entries.v7', now()->addMinutes(10), function () {
             return array_merge(
                 $this->manualEntries(),
                 $this->databaseEntries(),
@@ -283,13 +283,6 @@ class LisaAssistant
                 'pageUrl' => url('/more/visiting-users'),
                 'suggestions' => ['What should visitors know?', 'Open the visiting users page'],
             ],
-            [
-                'title' => 'Website management',
-                'keywords' => ['admin', 'dashboard', 'manage website', 'upload', 'create event', 'edit content', 'delete content', 'publish'],
-                'answer' => 'Authorized staff can use the website management area to maintain events, collections, folders, gallery content, donated books, arrivals, and other public website information.',
-                'pageUrl' => null,
-                'suggestions' => ['How do I add an event?', 'How do I upload an image?', 'How do I publish content?'],
-            ],
         ];
     }
 
@@ -388,7 +381,7 @@ class LisaAssistant
             return [];
         }
 
-        $excludedDirectories = ['auth/', 'emails/', 'layouts/', 'partials/', 'vendor/'];
+        $excludedDirectories = ['admin/', 'auth/', 'components/', 'emails/', 'layouts/', 'partials/', 'vendor/'];
 
         return collect(File::allFiles($viewsPath))
             ->filter(function ($file) use ($viewsPath, $excludedDirectories) {
@@ -417,7 +410,11 @@ class LisaAssistant
                         ?: Str::headline(basename($path, '.blade.php'));
 
                     $snippets = $this->extractSnippets($contents);
-                    $isAdmin = Str::startsWith($relative, 'admin/');
+                    $pageUrl = $this->guessPageUrl($relative);
+
+                    if ($pageUrl === null) {
+                        return null;
+                    }
 
                     return [
                         'title' => $title,
@@ -425,11 +422,8 @@ class LisaAssistant
                             [$title, Str::headline(str_replace('/', ' ', $relative))],
                             $snippets['keywords']
                         )))),
-                        'answer' => $snippets['answer']
-                            ?: ($isAdmin
-                                ? "The {$title} screen is part of the authorized website management area."
-                                : "The {$title} page is available on the MMACI Library website."),
-                        'pageUrl' => $isAdmin ? null : $this->guessPageUrl($relative),
+                        'answer' => $snippets['answer'] ?: "The {$title} page is available on the MMACI Library website.",
+                        'pageUrl' => $pageUrl,
                         'suggestions' => $snippets['suggestions'],
                     ];
                 } catch (Throwable) {
@@ -657,6 +651,15 @@ class LisaAssistant
     protected function libraryInformationResponse(string $message): ?array
     {
         $message = $this->normalizeText($message);
+
+        if (Str::contains($message, ['calendar', 'upcoming activit', 'upcoming event', 'library event', 'library activit'])) {
+            return $this->informationResponse(
+                'Upcoming Library Activities',
+                'You can view upcoming library activities on the Home page. Scroll to the News and events section to see the Upcoming Activities list and the Library Calendar.',
+                '/',
+                ['View library updates', 'Where are the new arrivals?', 'Open the gallery']
+            );
+        }
 
         if (Str::contains($message, ['what facilities', 'available facilities', 'facility available', 'library facilities', 'learning spaces'])) {
             return $this->informationResponse(
