@@ -203,6 +203,7 @@ class NewArrivalController extends Controller
                 'image',
                 'mimes:jpg,jpeg,png,webp',
                 'max:5120',
+                'dimensions:max_width=4096,max_height=4096',
             ],
 
             'image_url' => [
@@ -257,6 +258,9 @@ class NewArrivalController extends Controller
 
             'image_file.max' =>
                 'The cover image must not exceed 5 MB.',
+
+            'image_file.dimensions' =>
+                'The cover image dimensions must not exceed 4,096 by 4,096 pixels.',
 
             'image_url.url' =>
                 'Enter a valid image URL.',

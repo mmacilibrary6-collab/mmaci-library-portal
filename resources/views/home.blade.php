@@ -434,7 +434,7 @@
                         Get professional help finding and evaluating relevant
                         research materials.
                     </p>
-                    <a href="{{ url('/ask-librarian') }}">
+                    <a href="{{ route('more.ask-librarian') }}">
                         Ask a Librarian
                         <i class="bi bi-arrow-right" aria-hidden="true"></i>
                     </a>

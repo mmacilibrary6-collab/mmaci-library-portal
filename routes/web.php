@@ -10,6 +10,8 @@ use Illuminate\Support\Facades\Storage;
 */
 
 use App\Models\NewArrival;
+use App\Models\LibraryUpdate;
+use App\Support\MediaStorage;
 
 /*
 |--------------------------------------------------------------------------
@@ -84,6 +86,52 @@ Route::get('/media', function () {
 
 })->name('public.media');
 
+Route::get('/database-media/{type}/{id}', function (string $type, int $id) {
+    $models = [
+        'new-arrival' => NewArrival::class,
+        'library-update' => LibraryUpdate::class,
+    ];
+
+    abort_unless(isset($models[$type]), 404);
+
+    $image = $models[$type]::query()
+        ->whereKey($id)
+        ->value('image');
+
+    abort_if(blank($image), 404);
+
+    if (str_starts_with($image, 'http://') || str_starts_with($image, 'https://')) {
+        return redirect()->away($image);
+    }
+
+    if (!str_starts_with($image, 'data:') && MediaStorage::exists($image)) {
+        return redirect()->to(MediaStorage::url($image));
+    }
+
+    $mimeType = 'application/octet-stream';
+    $contents = $image;
+
+    if (str_starts_with($image, 'data:')) {
+        preg_match('/^data:([^;,]+);base64,(.*)$/s', $image, $matches);
+        abort_unless(count($matches) === 3, 404);
+
+        $mimeType = $matches[1];
+        $contents = base64_decode($matches[2], true);
+        abort_if($contents === false, 404);
+    } else {
+        $detectedType = (new finfo(FILEINFO_MIME_TYPE))->buffer($contents);
+        if (is_string($detectedType) && str_starts_with($detectedType, 'image/')) {
+            $mimeType = $detectedType;
+        }
+    }
+
+    return response($contents, 200, [
+        'Content-Type' => $mimeType,
+        'Cache-Control' => 'public, max-age=604800, immutable',
+        'X-Content-Type-Options' => 'nosniff',
+    ]);
+})->whereNumber('id')->name('database.media');
+
 /*
 |--------------------------------------------------------------------------
 | About
@@ -92,6 +140,10 @@ Route::get('/media', function () {
 
 Route::get('/about', [AboutController::class, 'index'])
     ->name('about');
+
+Route::get('/ask-librarian', function () {
+    return redirect()->route('more.ask-librarian', status: 301);
+})->name('ask-librarian.redirect');
 
 /*
 |--------------------------------------------------------------------------

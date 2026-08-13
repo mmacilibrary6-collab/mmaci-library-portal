@@ -99,7 +99,8 @@ class LibraryUpdateController extends Controller
                 $isCreating ? 'required' : 'nullable',
                 'image',
                 'mimes:jpg,jpeg,png,webp',
-                'max:5120'
+                'max:5120',
+                'dimensions:max_width=4096,max_height=4096',
             ],
             'status' => ['required', 'in:0,1'],
         ];
@@ -115,6 +116,7 @@ class LibraryUpdateController extends Controller
             'image_file.image' => 'The uploaded file must be an image.',
             'image_file.mimes' => 'The image must be a JPG, JPEG, PNG, or WEBP file.',
             'image_file.max' => 'The image must not exceed 5 MB.',
+            'image_file.dimensions' => 'The image dimensions must not exceed 4,096 by 4,096 pixels.',
         ]);
 
         $data = [

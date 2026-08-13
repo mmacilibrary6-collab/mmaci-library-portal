@@ -53,6 +53,14 @@ class NewArrival extends Model
             return asset('images/readingarea.jpg');
         }
 
+        if ($this->exists && !str_starts_with((string) $this->image, 'http')) {
+            return route('database.media', [
+                'type' => 'new-arrival',
+                'id' => $this->getKey(),
+                'v' => $this->updated_at?->timestamp,
+            ]);
+        }
+
         return DatabaseMedia::toDataUri(
             $this->image,
             MediaStorage::url($this->image, asset('images/readingarea.jpg'))
