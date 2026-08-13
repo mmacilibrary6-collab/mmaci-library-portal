@@ -292,41 +292,14 @@
 
             <div>
                 <h5>Display Settings</h5>
-                <p>Set the position and visibility of this resource.</p>
+                <p>Resources are sorted alphabetically by title.</p>
             </div>
 
         </div>
 
         <div class="row g-4">
 
-            <div class="col-lg-4">
-
-                <label for="sort_order" class="form-label">
-                    Sort Order
-                </label>
-
-                <input
-                    type="number"
-                    name="sort_order"
-                    id="sort_order"
-                    min="0"
-                    value="{{ old('sort_order', $resource?->sort_order ?? 0) }}"
-                    class="form-control @error('sort_order') is-invalid @enderror"
-                    placeholder="0">
-
-                <div class="field-help">
-                    Lower numbers appear first.
-                </div>
-
-                @error('sort_order')
-                    <div class="invalid-feedback">
-                        {{ $message }}
-                    </div>
-                @enderror
-
-            </div>
-
-            <div class="col-lg-8">
+            <div class="col-12">
 
                 <label class="form-label">
                     Public Visibility

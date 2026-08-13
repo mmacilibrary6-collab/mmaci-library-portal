@@ -17,12 +17,10 @@ class OpenAccessResource extends Model
         'description',
         'website_url',
         'image',
-        'sort_order',
         'is_active',
     ];
 
     protected $casts = [
-        'sort_order' => 'integer',
         'is_active' => 'boolean',
     ];
 
@@ -34,8 +32,7 @@ class OpenAccessResource extends Model
     public function scopeOrdered(Builder $query): Builder
     {
         return $query
-            ->orderBy('sort_order')
-            ->orderBy('title');
+            ->orderBy('title', 'asc');
     }
 
     public function getImageUrlAttribute(): string

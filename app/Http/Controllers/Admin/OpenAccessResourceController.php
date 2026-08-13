@@ -54,8 +54,7 @@ class OpenAccessResourceController extends Controller
                     false
                 )
             )
-            ->orderBy('sort_order')
-            ->orderBy('title')
+            ->orderBy('title', 'asc')
             ->paginate(12)
             ->withQueryString();
 
@@ -113,10 +112,6 @@ class OpenAccessResourceController extends Controller
 
             'image' => $imagePath,
 
-            'sort_order' => (int) (
-                $validated['sort_order'] ?? 0
-            ),
-
             'is_active' => $request->boolean(
                 'is_active'
             ),
@@ -165,10 +160,6 @@ class OpenAccessResourceController extends Controller
 
             'website_url' => trim(
                 $validated['website_url']
-            ),
-
-            'sort_order' => (int) (
-                $validated['sort_order'] ?? 0
             ),
 
             'is_active' => $request->boolean(
@@ -253,13 +244,6 @@ class OpenAccessResourceController extends Controller
                 'max:2048',
             ],
 
-            'sort_order' => [
-                'nullable',
-                'integer',
-                'min:0',
-                'max:9999',
-            ],
-
             'is_active' => [
                 'nullable',
                 'boolean',
@@ -291,8 +275,6 @@ class OpenAccessResourceController extends Controller
             'image_url.url' =>
                 'Enter a valid external image link.',
 
-            'sort_order.integer' =>
-                'The sort order must be a whole number.',
         ];
     }
 

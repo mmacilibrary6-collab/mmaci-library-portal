@@ -140,11 +140,6 @@
 
                         <div class="resource-card-badges">
 
-                            <span class="resource-order">
-                                <i class="bi bi-list-ol"></i>
-                                {{ $resource->sort_order }}
-                            </span>
-
                             <span class="resource-status {{ $resource->is_active ? 'active' : 'inactive' }}">
 
                                 <span></span>

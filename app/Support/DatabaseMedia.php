@@ -36,6 +36,56 @@ class DatabaseMedia
         return $optimized;
     }
 
+    public static function optimizeStoredValue(string $value): ?string
+    {
+        $normalizedValue = trim($value);
+
+        if ($normalizedValue === '' || Str::startsWith($normalizedValue, ['http://', 'https://'])) {
+            return null;
+        }
+
+        if (Str::startsWith($normalizedValue, 'data:')) {
+            if (!preg_match('/^data:([^;,]+);base64,(.*)$/s', $normalizedValue, $matches)) {
+                return null;
+            }
+
+            $value = base64_decode($matches[2], true);
+            if ($value === false) {
+                return null;
+            }
+        }
+
+        $temporaryPath = tempnam(sys_get_temp_dir(), 'mmaci-media-');
+        if ($temporaryPath === false) {
+            return null;
+        }
+
+        try {
+            if (file_put_contents($temporaryPath, $value) === false) {
+                return null;
+            }
+
+            $imageInfo = @getimagesize($temporaryPath);
+            if ($imageInfo === false) {
+                return null;
+            }
+
+            [$width, $height] = $imageInfo;
+            if ($width > 4096 || $height > 4096 || ($width * $height) > 8_000_000) {
+                return null;
+            }
+
+            return self::optimizeToWebp(
+                $temporaryPath,
+                (string) ($imageInfo['mime'] ?? '')
+            );
+        } catch (ValidationException) {
+            return null;
+        } finally {
+            @unlink($temporaryPath);
+        }
+    }
+
     public static function toDataUri(?string $value, string $fallback = ''): string
     {
         $value = trim((string) $value);
