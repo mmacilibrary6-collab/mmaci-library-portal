@@ -138,6 +138,8 @@
                                     src="{{ $book->image_url }}"
                                     alt="{{ $book->title }}"
                                     loading="lazy"
+                                    decoding="async"
+                                    fetchpriority="low"
                                     onerror="
                                         this.onerror = null;
                                         this.src = '{{ asset('images/readingarea.jpg') }}';
@@ -331,8 +333,8 @@
 
             <img
                 id="arrivalViewerImage"
-                src="{{ asset('images/readingarea.jpg') }}"
-                alt="Book cover">
+                alt="Book cover"
+                decoding="async">
 
         </div>
 
@@ -2609,6 +2611,9 @@ document.addEventListener(
                     )
                 );
 
+            viewerImage.hidden = false;
+            delete viewerImage.dataset.fallbackAttempted;
+
 
             viewerImage.alt =
                 book.title ||
@@ -2783,17 +2788,18 @@ document.addEventListener(
         viewerImage.addEventListener(
             'error',
             function () {
+                const fallbackImage = @json(
+                    asset('images/readingarea.jpg')
+                );
 
-                viewerImage.onerror =
-                    null;
+                if (viewerImage.dataset.fallbackAttempted === 'true') {
+                    viewerImage.removeAttribute('src');
+                    viewerImage.hidden = true;
+                    return;
+                }
 
-
-                viewerImage.src =
-                    @json(
-                        asset(
-                            'images/readingarea.jpg'
-                        )
-                    );
+                viewerImage.dataset.fallbackAttempted = 'true';
+                viewerImage.src = fallbackImage;
 
             }
         );

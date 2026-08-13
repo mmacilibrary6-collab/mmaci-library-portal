@@ -455,7 +455,7 @@
         <div class="gallery-grid">
             <figure class="gallery-card gallery-card-large" data-aos="fade-up">
                 <img
-                    src="{{ asset('images/Readingarea.jpg') }}"
+                    src="{{ asset('images/readingarea.jpg') }}"
                     alt="MMACI Library reading area"
                     loading="lazy">
                 <figcaption>Reading Area</figcaption>
