@@ -27,6 +27,25 @@
             <h2>Find periodicals for your needs</h2>
             <p>Select a category below to view its available folder links.</p>
         </header>
+
+        @if($programs->isNotEmpty())
+            <div class="periodical-program-search">
+                <i class="bi bi-search" aria-hidden="true"></i>
+                <input
+                    type="search"
+                    id="periodicalProgramSearch"
+                    placeholder="Search periodical programs..."
+                    autocomplete="off"
+                    aria-label="Search periodical programs">
+                <button
+                    type="button"
+                    id="clearPeriodicalProgramSearch"
+                    aria-label="Clear program search">
+                    <i class="bi bi-x-lg" aria-hidden="true"></i>
+                </button>
+            </div>
+        @endif
+
         <form method="GET" action="{{ route('collection.periodicals') }}" class="periodical-filter">
             <div class="filter-chip-group" role="tablist" aria-label="Periodical categories">
                 <button type="submit" name="category" value="" class="filter-chip {{ blank($selectedCategory ?? null) ? 'active' : '' }}">All Categories</button>
@@ -39,7 +58,7 @@
 
 <section class="programs-section">
     <div class="container">
-        <div class="row g-4">
+        <div class="row g-4" id="periodicalProgramGrid">
             @forelse($programs as $program)
                 @php
                     $modalId = 'periodical-folders-modal-' . $program->id;
@@ -47,7 +66,9 @@
                     $folderCount = $program->folders->count();
                 @endphp
 
-                <div class="col-xl-4 col-lg-4 col-md-6 program-item">
+                <div class="col-xl-4 col-lg-4 col-md-6 program-item"
+                    data-program-title="{{ strtolower($program->title) }}"
+                    data-program-description="{{ strtolower($program->description ?? '') }}">
                     <article class="program-card">
                         <button type="button" class="program-card-button" data-bs-toggle="modal" data-bs-target="#{{ $modalId }}">
                             <div class="program-image">
@@ -78,12 +99,24 @@
                                     </button>
                                 </div>
                                 <div class="modal-body">
+                                    <div class="collection-folder-search {{ $program->folders->isEmpty() ? 'is-disabled' : '' }}">
+                                        <i class="bi bi-search" aria-hidden="true"></i>
+                                        <input
+                                            type="search"
+                                            class="collection-folder-search-input"
+                                            placeholder="{{ $program->folders->isNotEmpty() ? 'Search periodical folder titles...' : 'No folder titles available to search' }}"
+                                            aria-label="Search periodical folder titles in {{ $program->title }}"
+                                            @disabled($program->folders->isEmpty())>
+                                        <button
+                                            type="button"
+                                            class="collection-folder-search-clear"
+                                            aria-label="Clear folder title search"
+                                            @disabled($program->folders->isEmpty())>
+                                            <i class="bi bi-x-lg" aria-hidden="true"></i>
+                                        </button>
+                                    </div>
+
                                     @if($program->folders->isNotEmpty())
-                                        <div class="collection-folder-search">
-                                            <i class="bi bi-search" aria-hidden="true"></i>
-                                            <input type="search" class="collection-folder-search-input" placeholder="Search folder titles..." aria-label="Search periodical folder titles">
-                                            <button type="button" class="collection-folder-search-clear" aria-label="Clear title search"><i class="bi bi-x-lg" aria-hidden="true"></i></button>
-                                        </div>
                                         @php
                                             $groupedFolders = $program->folders->groupBy('category');
                                         @endphp
@@ -132,6 +165,12 @@
                     </div>
                 </div>
             @endforelse
+        </div>
+
+        <div id="periodicalProgramSearchEmpty" class="program-search-empty" hidden>
+            <i class="bi bi-search" aria-hidden="true"></i>
+            <h3>No matching periodical program</h3>
+            <p>Try another program name or clear the search.</p>
         </div>
     </div>
 </section>
@@ -364,6 +403,44 @@
 <script>
 document.addEventListener('DOMContentLoaded', function () {
 
+    const programSearch = document.getElementById('periodicalProgramSearch');
+    const programSearchClear = document.getElementById('clearPeriodicalProgramSearch');
+    const programItems = document.querySelectorAll('#periodicalProgramGrid .program-item');
+    const programSearchEmpty = document.getElementById('periodicalProgramSearchEmpty');
+
+    const filterPrograms = function () {
+        if (!programSearch) return;
+
+        const query = programSearch.value.trim().toLowerCase();
+        let visible = 0;
+
+        programItems.forEach(function (item) {
+            const searchableText = [
+                item.dataset.programTitle || '',
+                item.dataset.programDescription || ''
+            ].join(' ');
+            const matches = searchableText.includes(query);
+
+            item.hidden = !matches;
+            if (matches) visible++;
+        });
+
+        if (programSearchEmpty) {
+            programSearchEmpty.hidden = visible !== 0 || query === '';
+        }
+
+        if (programSearchClear) {
+            programSearchClear.classList.toggle('is-visible', query !== '');
+        }
+    };
+
+    programSearch?.addEventListener('input', filterPrograms);
+    programSearchClear?.addEventListener('click', function () {
+        programSearch.value = '';
+        programSearch.focus();
+        filterPrograms();
+    });
+
     document.querySelectorAll('.folder-modal').forEach(function (modal) {
         const input = modal.querySelector('.collection-folder-search-input');
         const clear = modal.querySelector('.collection-folder-search-clear');
@@ -381,6 +458,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 if (matches) visible++;
             });
             if (empty) empty.hidden = visible !== 0;
+            clear?.classList.toggle('is-visible', query !== '');
         };
 
         input.addEventListener('input', filter);
@@ -572,6 +650,109 @@ document.addEventListener('DOMContentLoaded', function () {
 
 .periodical-filter {
     margin-top: 26px;
+}
+
+.periodical-program-search {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: min(700px, 100%);
+    margin: 28px auto 0;
+    background: var(--thesis-white);
+    border: 1px solid var(--thesis-line);
+    border-radius: 18px;
+    box-shadow: 0 12px 30px rgba(11, 46, 89, .07);
+}
+
+.periodical-program-search > i {
+    position: absolute;
+    left: 20px;
+    color: var(--thesis-blue);
+    font-size: 20px;
+    pointer-events: none;
+}
+
+.periodical-program-search input {
+    width: 100%;
+    min-width: 0;
+    padding: 18px 60px 18px 54px;
+    color: var(--thesis-ink);
+    background: transparent;
+    border: 0;
+    outline: 0;
+    font-size: 16px;
+}
+
+.periodical-program-search:focus-within {
+    border-color: rgba(24, 75, 140, .55);
+    box-shadow: 0 0 0 4px rgba(24, 75, 140, .1), 0 14px 34px rgba(11, 46, 89, .09);
+}
+
+.periodical-program-search button {
+    position: absolute;
+    right: 12px;
+    display: grid;
+    width: 38px;
+    height: 38px;
+    padding: 0;
+    place-items: center;
+    color: var(--thesis-blue);
+    background: #edf3fa;
+    border: 0;
+    border-radius: 11px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .2s ease, background .2s ease;
+}
+
+.periodical-program-search button.is-visible {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.periodical-program-search button:hover {
+    background: #dfeaf6;
+}
+
+.program-item[hidden] {
+    display: none !important;
+}
+
+.program-search-empty {
+    margin-top: 24px;
+    padding: 54px 20px;
+    text-align: center;
+    background: var(--thesis-white);
+    border: 1px dashed #bfd0e3;
+    border-radius: 20px;
+}
+
+.program-search-empty[hidden] {
+    display: none !important;
+}
+
+.program-search-empty > i {
+    display: inline-grid;
+    width: 48px;
+    height: 48px;
+    margin-bottom: 16px;
+    place-items: center;
+    color: var(--thesis-blue);
+    background: #edf3fa;
+    border-radius: 50%;
+    font-size: 20px;
+}
+
+.program-search-empty h3 {
+    margin: 0 0 8px;
+    color: var(--thesis-navy);
+    font-size: 24px;
+    font-weight: 800;
+}
+
+.program-search-empty p {
+    margin: 0;
+    color: var(--thesis-muted);
 }
 
 .filter-chip-group {
@@ -802,6 +983,7 @@ document.addEventListener('DOMContentLoaded', function () {
 @media (max-width: 767.98px) {
     .theses-hero { min-height: 320px; }
     .theses-hero-content { padding: 85px 0 70px; }
+    .periodical-program-search input { padding-block: 15px; font-size: 15px; }
 }
 
 
@@ -1042,7 +1224,11 @@ document.addEventListener('DOMContentLoaded', function () {
 .collection-folder-search > i { position: absolute; left: 16px; color: var(--thesis-blue); }
 .collection-folder-search-input { width: 100%; padding: 13px 44px; color: var(--thesis-ink); background: var(--thesis-bg); border: 1px solid var(--thesis-line); border-radius: 12px; outline: 0; }
 .collection-folder-search-input:focus { border-color: var(--thesis-blue); box-shadow: 0 0 0 3px rgba(24, 75, 140, .12); }
-.collection-folder-search-clear { position: absolute; right: 10px; display: grid; width: 30px; height: 30px; place-items: center; color: var(--thesis-muted); background: transparent; border: 0; }
+.collection-folder-search-clear { position: absolute; right: 10px; display: grid; width: 30px; height: 30px; place-items: center; color: var(--thesis-muted); background: transparent; border: 0; opacity: 0; pointer-events: none; }
+.collection-folder-search-clear.is-visible { opacity: 1; pointer-events: auto; }
+.collection-folder-search.is-disabled { opacity: .7; }
+.collection-folder-search.is-disabled > i { color: var(--thesis-muted); }
+.collection-folder-search-input:disabled { cursor: not-allowed; background: #f1f4f8; }
 .collection-folder-search-empty { padding: 36px 20px; text-align: center; background: var(--thesis-bg); border: 1px dashed var(--thesis-line); border-radius: 14px; }
 .collection-folder-search-empty h5 { margin: 0 0 8px; color: var(--thesis-navy); font-weight: 800; }
 .collection-folder-search-empty p { margin: 0; color: var(--thesis-muted); }
