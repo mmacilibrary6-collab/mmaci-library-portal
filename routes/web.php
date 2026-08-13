@@ -329,11 +329,24 @@ Route::prefix('more')
 
 Route::get('/collection/new-arrivals', function () {
 
-    $arrivals = NewArrival::orderByDesc('arrival_date')
-        ->orderByDesc('id')
-        ->get();
+    $search = trim((string) request()->query('search', ''));
 
-    return view('collection.new-arrivals', compact('arrivals'));
+    $arrivals = NewArrival::query()
+        ->when($search !== '', function ($query) use ($search) {
+            $query->where(function ($builder) use ($search) {
+                $builder
+                    ->where('title', 'like', "%{$search}%")
+                    ->orWhere('author', 'like', "%{$search}%")
+                    ->orWhere('accession_number', 'like', "%{$search}%")
+                    ->orWhere('category', 'like', "%{$search}%");
+            });
+        })
+        ->orderByDesc('arrival_date')
+        ->orderByDesc('id')
+        ->paginate(12)
+        ->withQueryString();
+
+    return view('collection.new-arrivals', compact('arrivals', 'search'));
 
 })->name('collection.new-arrivals');
 

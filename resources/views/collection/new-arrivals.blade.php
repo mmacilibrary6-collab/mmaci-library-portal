@@ -41,7 +41,7 @@
         <div class="container">
 
             {{-- SEARCH --}}
-            @if(($arrivals ?? collect())->isNotEmpty())
+            @if(($arrivals ?? collect())->isNotEmpty() || filled($search ?? null))
 
                 <div class="arrival-toolbar">
 
@@ -58,18 +58,25 @@
                     </div>
 
 
-                    <div class="arrival-search-field">
+                    <form
+                        class="arrival-search-field"
+                        method="GET"
+                        action="{{ route('collection.new-arrivals') }}">
 
                         <i class="bi bi-search"></i>
 
                         <input
                             type="search"
                             id="arrivalSearch"
+                            name="search"
+                            value="{{ $search ?? '' }}"
                             placeholder="Search title, author, accession number..."
                             autocomplete="off"
                             aria-label="Search new arrivals">
 
-                    </div>
+                        <button type="submit" class="visually-hidden">Search</button>
+
+                    </form>
 
                 </div>
 
@@ -243,11 +250,11 @@
                         </div>
 
                         <h3>
-                            No new arrivals available
+                            {{ filled($search ?? null) ? 'No matching books found' : 'No new arrivals available' }}
                         </h3>
 
                         <p>
-                            Newly added library resources will appear here.
+                            {{ filled($search ?? null) ? 'Try another title, author, category, or accession number.' : 'Newly added library resources will appear here.' }}
                         </p>
 
                     </div>
@@ -256,11 +263,17 @@
 
             </div>
 
+            @if(method_exists($arrivals, 'hasPages') && $arrivals->hasPages())
+                <nav class="arrival-pagination" aria-label="New arrivals pages">
+                    {{ $arrivals->links() }}
+                </nav>
+            @endif
+
 
             {{-- =================================================
                 NO SEARCH RESULTS
             ================================================== --}}
-            @if(($arrivals ?? collect())->isNotEmpty())
+            @if(false)
 
                 <div
                     class="arrival-no-results d-none"
@@ -815,6 +828,16 @@
 
     min-width: 0;
 
+}
+
+.arrival-pagination {
+    display: flex;
+    justify-content: center;
+    margin-top: 32px;
+}
+
+.arrival-pagination nav {
+    max-width: 100%;
 }
 
 
@@ -2409,17 +2432,6 @@ document.addEventListener(
         }
 
 
-        if (searchInput) {
-
-            searchInput.addEventListener(
-                'input',
-                filterArrivals
-            );
-
-        }
-
-
-
         /* =====================================================
            STOP IF NO BOOKS
         ====================================================== */
@@ -2809,8 +2821,6 @@ document.addEventListener(
         /* =====================================================
            INITIAL SEARCH
         ====================================================== */
-
-        filterArrivals();
 
     }
 );
