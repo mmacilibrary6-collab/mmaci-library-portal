@@ -26,7 +26,15 @@
 
         <div class="lisa-body">
             <div id="lisa-chat-messages" aria-live="polite"></div>
-            <div id="lisa-chat-chips" role="region" aria-label="Suggested questions"></div>
+            <div id="lisa-chat-suggestions">
+                <button type="button" id="lisa-chips-previous" class="lisa-chips-nav" aria-label="Previous suggestions">
+                    <i class="bi bi-chevron-left" aria-hidden="true"></i>
+                </button>
+                <div id="lisa-chat-chips" role="region" aria-label="Suggested questions"></div>
+                <button type="button" id="lisa-chips-next" class="lisa-chips-nav" aria-label="Next suggestions">
+                    <i class="bi bi-chevron-right" aria-hidden="true"></i>
+                </button>
+            </div>
         </div>
 
         <form id="lisa-chat-form" autocomplete="off">
@@ -283,27 +291,56 @@
                 opacity: 0.96;
             }
 
+            #lisa-chatbot-widget #lisa-chat-suggestions {
+                position: relative;
+                flex: 0 0 auto;
+                display: grid;
+                grid-template-columns: 28px minmax(0, 1fr) 28px;
+                align-items: center;
+                gap: 4px;
+                padding: 7px 8px 9px;
+            }
+
             #lisa-chatbot-widget #lisa-chat-chips {
                 flex: 0 0 auto;
                 display: flex;
                 flex-wrap: nowrap;
-                gap: 8px;
-                padding: 8px 14px 12px;
+                gap: 6px;
+                padding: 0 2px;
                 overflow-x: auto;
                 overflow-y: hidden;
+                scrollbar-width: none;
                 scroll-snap-type: x proximity;
-                scrollbar-width: thin;
-                scrollbar-color: #c5d2e2 transparent;
+                overscroll-behavior-x: contain;
                 -webkit-overflow-scrolling: touch;
+                cursor: grab;
+            }
+
+            #lisa-chatbot-widget #lisa-chat-chips:active {
+                cursor: grabbing;
+            }
+
+            #lisa-chatbot-widget .lisa-chips-nav {
+                display: grid;
+                width: 28px;
+                height: 34px;
+                padding: 0;
+                place-items: center;
+                color: #184b8c;
+                background: #edf3fa;
+                border: 1px solid #d9e3ef;
+                border-radius: 9px;
+                font-size: 12px;
+                cursor: pointer;
+            }
+
+            #lisa-chatbot-widget .lisa-chips-nav:disabled {
+                opacity: .3;
+                cursor: default;
             }
 
             #lisa-chatbot-widget #lisa-chat-chips::-webkit-scrollbar {
-                height: 5px;
-            }
-
-            #lisa-chatbot-widget #lisa-chat-chips::-webkit-scrollbar-thumb {
-                border-radius: 999px;
-                background: #c5d2e2;
+                display: none;
             }
 
             #lisa-chatbot-widget .lisa-chip {
@@ -312,14 +349,23 @@
                 border: 1px solid #d9e3ef;
                 background: #f4f7fb;
                 color: #184b8c;
-                border-radius: 999px;
-                padding: 8px 12px;
-                font-size: 12px;
+                min-height: 34px;
+                max-height: 48px;
+                border-radius: 12px;
+                padding: 6px 9px;
+                font-size: 11px;
                 font-weight: 600;
-                line-height: 1.35;
-                white-space: nowrap;
-                scroll-snap-align: start;
+                line-height: 1.25;
+                min-width: 132px;
+                max-width: 190px;
                 flex: 0 0 auto;
+                display: -webkit-box;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                -webkit-box-orient: vertical;
+                -webkit-line-clamp: 2;
+                overflow-wrap: anywhere;
+                scroll-snap-align: start;
                 cursor: pointer;
             }
 
@@ -396,6 +442,15 @@
             }
 
             @media (max-width: 576px) {
+                #lisa-chatbot-widget #lisa-chat-suggestions {
+                    display: block;
+                    padding-inline: 14px;
+                }
+
+                #lisa-chatbot-widget .lisa-chips-nav {
+                    display: none;
+                }
+
                 #lisa-chatbot-widget {
                     right: 12px !important;
                     bottom: calc(12px + env(safe-area-inset-bottom)) !important;
@@ -442,11 +497,13 @@
                     const closeButton = document.getElementById('lisa-chat-close');
                     const messages = document.getElementById('lisa-chat-messages');
                     const chips = document.getElementById('lisa-chat-chips');
+                    const previousChipsButton = document.getElementById('lisa-chips-previous');
+                    const nextChipsButton = document.getElementById('lisa-chips-next');
                     const form = document.getElementById('lisa-chat-form');
                     const input = document.getElementById('lisa-chat-input');
                     const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
 
-                    if (!widget || !launcher || !panel || !minimizeButton || !closeButton || !messages || !chips || !form || !input || !csrfToken) {
+                    if (!widget || !launcher || !panel || !minimizeButton || !closeButton || !messages || !chips || !previousChipsButton || !nextChipsButton || !form || !input || !csrfToken) {
                         return;
                     }
 
@@ -532,7 +589,33 @@
                             });
                             chips.appendChild(chip);
                         });
+
+                        chips.scrollLeft = 0;
+                        requestAnimationFrame(updateSuggestionControls);
                     }
+
+                    function updateSuggestionControls() {
+                        const maxScroll = Math.max(0, chips.scrollWidth - chips.clientWidth);
+                        previousChipsButton.disabled = chips.scrollLeft <= 2;
+                        nextChipsButton.disabled = chips.scrollLeft >= maxScroll - 2;
+                    }
+
+                    function scrollSuggestions(direction) {
+                        chips.scrollBy({
+                            left: direction * Math.max(150, chips.clientWidth * .75),
+                            behavior: 'smooth'
+                        });
+                    }
+
+                    previousChipsButton.addEventListener('click', () => scrollSuggestions(-1));
+                    nextChipsButton.addEventListener('click', () => scrollSuggestions(1));
+                    chips.addEventListener('scroll', updateSuggestionControls, { passive: true });
+                    chips.addEventListener('wheel', (event) => {
+                        if (Math.abs(event.deltaY) <= Math.abs(event.deltaX)) return;
+                        event.preventDefault();
+                        chips.scrollLeft += event.deltaY;
+                    }, { passive: false });
+                    window.addEventListener('resize', updateSuggestionControls);
 
                     function openChat() {
                         widget.classList.add('is-open');

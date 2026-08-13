@@ -29,6 +29,17 @@ class LisaAssistant
             ];
         }
 
+        $directResponse = $this->directIntentResponse($normalized);
+
+        if ($directResponse !== null) {
+            $directResponse['suggestions'] = $this->sanitizeSuggestions(
+                $directResponse['suggestions'] ?? [],
+                $original
+            );
+
+            return $directResponse;
+        }
+
         $searchText = $this->buildContextMessage($normalized, $history);
         $entries = $this->knowledgeEntries();
 
@@ -55,22 +66,19 @@ class LisaAssistant
         return [
             'answer' => $answer,
             'title' => $best['title'] ?? 'MMACI Library',
-            'suggestions' => collect($best['suggestions'] ?? [])
-                ->merge($this->relatedSuggestions($ranked->slice(1, 3)->all()))
-                ->filter()
-                ->unique(fn ($item) => Str::lower((string) $item))
-                ->take(4)
-                ->values()
-                ->all(),
+            'suggestions' => $this->sanitizeSuggestions(
+                collect($best['suggestions'] ?? [])
+                    ->merge($this->relatedSuggestions($ranked->slice(1, 3)->all()))
+                    ->all(),
+                $original
+            ),
             'pageUrl' => $best['pageUrl'] ?? null,
         ];
     }
 
     protected function buildContextMessage(string $message, array $history): string
     {
-        $words = $this->words($message);
-
-        if (count($words) > 5 || empty($history)) {
+        if (empty($history) || ! $this->isFollowUpMessage($message)) {
             return $message;
         }
 
@@ -88,6 +96,25 @@ class LisaAssistant
         return trim(
             $this->normalizeText((string) $previousUserMessage['text']).' '.$message
         );
+    }
+
+    protected function isFollowUpMessage(string $message): bool
+    {
+        $message = $this->normalizeText($message);
+        $words = $this->words($message);
+
+        if (count($words) > 5) {
+            return false;
+        }
+
+        $followUpPhrases = [
+            'what about', 'how about', 'and the', 'and what', 'also',
+            'that one', 'this one', 'it', 'them', 'there', 'those',
+            'yes', 'no', 'why', 'when',
+        ];
+
+        return Str::startsWith($message, $followUpPhrases)
+            || in_array($message, $followUpPhrases, true);
     }
 
     protected function score(string $message, array $entry): int
@@ -139,7 +166,7 @@ class LisaAssistant
 
     protected function knowledgeEntries(): array
     {
-        return Cache::remember('lisa.knowledge.entries.v5', now()->addMinutes(10), function () {
+        return Cache::remember('lisa.knowledge.entries.v6', now()->addMinutes(10), function () {
             return array_merge(
                 $this->manualEntries(),
                 $this->databaseEntries(),
@@ -244,10 +271,10 @@ class LisaAssistant
             ],
             [
                 'title' => 'Ask the Librarian',
-                'keywords' => ['ask librarian', 'contact librarian', 'contact', 'email', 'facebook', 'help desk', 'support'],
-                'answer' => 'The Ask the Librarian page provides the available contact and support channels for questions that require assistance from library staff.',
+                'keywords' => ['ask librarian', 'contact librarian', 'contact library', 'contact mmaci', 'email', 'email address', 'gmail', 'facebook', 'phone', 'telephone', 'help desk', 'support'],
+                'answer' => 'You can email the MMACI Library Services Office at mmacilibrary@mmacibutuan.edu.ph. The website footer also publishes mmacilibrary@gmail.com. You may call +63 948 553 2601 or message MMACI Library on Facebook.',
                 'pageUrl' => url('/more/ask-librarian'),
-                'suggestions' => ['How do I contact the library?', 'Open Ask the Librarian'],
+                'suggestions' => ['What is the library email?', 'What is the contact number?', 'Where is the library located?', 'Open Ask the Librarian'],
             ],
             [
                 'title' => 'Visiting users',
@@ -455,7 +482,7 @@ class LisaAssistant
             'keywords' => array_slice(array_unique($keywords), 0, 12),
             'suggestions' => collect($keywords)
                 ->take(3)
-                ->map(fn ($item) => "Tell me about {$item}")
+                ->map(fn ($item) => $this->suggestionForTitle((string) $item))
                 ->all(),
             'answer' => $paragraphs[0] ?? null,
         ];
@@ -496,9 +523,61 @@ class LisaAssistant
     protected function relatedSuggestions(array $entries): array
     {
         return collect($entries)
-            ->map(fn ($entry) => isset($entry['title']) ? "Tell me about {$entry['title']}" : null)
+            ->map(fn ($entry) => isset($entry['title'])
+                ? $this->suggestionForTitle((string) $entry['title'])
+                : null)
             ->filter()
             ->all();
+    }
+
+    protected function suggestionForTitle(string $title): string
+    {
+        $title = trim(Str::before($title, '|'));
+        $title = preg_replace('/\s+/', ' ', $title) ?? $title;
+
+        return 'View '.Str::limit($title, 42, '...');
+    }
+
+    protected function isUsefulSuggestion(string $suggestion, string $question = ''): bool
+    {
+        if (
+            $suggestion === ''
+            || mb_strlen($suggestion) > 55
+            || Str::contains(Str::lower($suggestion), ['http://', 'https://', 'drive.google.com'])
+        ) {
+            return false;
+        }
+
+        $suggestionWords = $this->words($suggestion);
+        $questionWords = $this->words($question);
+        $sharedWords = count(array_intersect($suggestionWords, $questionWords));
+        $shortestLength = min(count($suggestionWords), count($questionWords));
+
+        if ($shortestLength === 0) {
+            return true;
+        }
+
+        return ($sharedWords / $shortestLength) < 0.6;
+    }
+
+    protected function sanitizeSuggestions(array $suggestions, string $question = ''): array
+    {
+        return collect($suggestions)
+            ->map(fn ($suggestion) => trim((string) $suggestion))
+            ->filter(fn ($suggestion) => $this->isUsefulSuggestion($suggestion, $question))
+            ->unique(fn ($item) => $this->suggestionTopic((string) $item))
+            ->take(4)
+            ->values()
+            ->all();
+    }
+
+    protected function suggestionTopic(string $suggestion): string
+    {
+        $normalized = $this->normalizeText($suggestion);
+        $normalized = preg_replace('/^(?:view|open|tell me about|what is|what are|how do i|where can i)\s+/', '', $normalized) ?? $normalized;
+        $words = $this->words($normalized);
+
+        return implode(' ', array_slice($words, 0, 4));
     }
 
     protected function fallbackResponse(?string $question = null): array
@@ -520,6 +599,178 @@ class LisaAssistant
             'What services and facilities are available?',
             'How do I contact the librarian?',
             'How do I reserve the AVR?',
+        ];
+    }
+
+    protected function directIntentResponse(string $message): ?array
+    {
+        $libraryResponse = $this->libraryInformationResponse($message);
+
+        if ($libraryResponse !== null) {
+            return $libraryResponse;
+        }
+
+        $contactTerms = [
+            'contact', 'email', 'gmail', 'mail', 'message', 'facebook',
+            'phone', 'telephone', 'call', 'number', 'address', 'located',
+            'location', 'reach', 'help desk',
+        ];
+        $libraryTerms = ['library', 'librarian', 'mmaci'];
+
+        $isContactQuestion = Str::contains($message, $contactTerms)
+            && Str::contains($message, $libraryTerms);
+
+        if (! $isContactQuestion) {
+            return null;
+        }
+
+        if (Str::contains($message, ['email', 'gmail', 'mail'])) {
+            $answer = 'You can email the MMACI Library Services Office at mmacilibrary@mmacibutuan.edu.ph. You may also use the published Gmail address mmacilibrary@gmail.com.';
+            $title = 'Contact MMACI Library';
+        } elseif (Str::contains($message, ['phone', 'telephone', 'call', 'number'])) {
+            $answer = 'You can contact the MMACI Library Services Office by phone at +63 948 553 2601. You may also email mmacilibrary@mmacibutuan.edu.ph.';
+            $title = 'MMACI Library Contact Number';
+        } elseif (Str::contains($message, ['address', 'located', 'location'])) {
+            $answer = 'The MMACI Library Services Office is located at North Montilla Boulevard, Butuan City, Philippines. Open Ask the Librarian for the other contact channels.';
+            $title = 'MMACI Library Location';
+        } elseif (Str::contains($message, 'facebook')) {
+            $answer = 'You can message MMACI Library on Facebook through the official MMACI Library page. You may also email mmacilibrary@mmacibutuan.edu.ph.';
+            $title = 'MMACI Library Facebook';
+        } else {
+            $answer = 'You can reach the MMACI Library Services Office by email at mmacilibrary@mmacibutuan.edu.ph, by phone at +63 948 553 2601, or through the official MMACI Library Facebook page.';
+            $title = 'Contact MMACI Library';
+        }
+
+        return [
+            'answer' => $answer,
+            'title' => $title,
+            'pageUrl' => url('/more/ask-librarian'),
+            'suggestions' => [
+                'What is the library contact number?',
+                'Where is the library located?',
+                'How do I contact the library on Facebook?',
+                'Open Ask the Librarian',
+            ],
+        ];
+    }
+
+    protected function libraryInformationResponse(string $message): ?array
+    {
+        $message = $this->normalizeText($message);
+
+        if (Str::contains($message, ['what facilities', 'available facilities', 'facility available', 'library facilities', 'learning spaces'])) {
+            return $this->informationResponse(
+                'Available Library Facilities',
+                'The MMACI Library facilities are: Discussion Room (up to 8 persons), Reading Area (54 persons), four Reading Cubicles (up to 8 persons per cubicle), Faculty Lounge (faculty only), and the Audio Visual Room or AVR (at least 100 people).',
+                '/services/facilities',
+                ['Discussion Room capacity', 'Reading Area capacity', 'Tell me about the AVR', 'View Library Facilities']
+            );
+        }
+
+        if (Str::contains($message, ['what services', 'available services', 'service available', 'library services', 'services offer'])) {
+            return $this->informationResponse(
+                'Available Library Services',
+                'The library offers the Online Public Access Catalog (OPAC) for finding materials, educational games such as chess and Scrabble, electronic laptop service for one-hour academic use, book borrowing, research assistance, and access to printed and digital collections.',
+                '/services',
+                ['How do I use OPAC?', 'How can I borrow a laptop?', 'What are the borrowing limits?', 'View Library Services']
+            );
+        }
+
+        if (Str::contains($message, ['library hours', 'opening hours', 'open today', 'what time', 'closing time', 'schedule'])) {
+            return $this->informationResponse(
+                'Library Hours',
+                'The library is open Monday to Friday from 8:00 AM to 9:00 PM and Saturday from 8:00 AM to 5:00 PM. It is closed on Sunday.',
+                '/services',
+                ['What services are available?', 'What facilities are available?', 'View Library Services']
+            );
+        }
+
+        if (Str::contains($message, ['discussion room'])) {
+            return $this->informationResponse(
+                'Discussion Room',
+                'The Discussion Room is a private space for brainstorming, collaborative learning, meetings, and group discussions. It accommodates up to 8 persons.',
+                '/services/facilities',
+                ['What facilities are available?', 'Tell me about the AVR', 'View Library Facilities']
+            );
+        }
+
+        if (Str::contains($message, ['reading cubicle', 'reading cubicles'])) {
+            return $this->informationResponse(
+                'Reading Cubicles',
+                'The library has four Reading Cubicles with electrical outlets for laptops and electronic devices. Each cubicle can accommodate up to 8 persons.',
+                '/services/facilities',
+                ['Reading Area capacity', 'What facilities are available?', 'View Library Facilities']
+            );
+        }
+
+        if (Str::contains($message, ['reading area'])) {
+            return $this->informationResponse(
+                'Reading Area',
+                'The Reading Area is a spacious, quiet place for reading, independent study, research, and academic work. It accommodates up to 54 library users.',
+                '/services/facilities',
+                ['Tell me about reading cubicles', 'What facilities are available?', 'View Library Facilities']
+            );
+        }
+
+        if (Str::contains($message, ['faculty lounge'])) {
+            return $this->informationResponse(
+                'Faculty Lounge',
+                'The Faculty Lounge is reserved for faculty members to read, prepare instructional materials, conduct consultations, and perform academic work.',
+                '/services/facilities',
+                ['What facilities are available?', 'View Library Facilities']
+            );
+        }
+
+        if (Str::contains($message, ['avr', 'audio visual room']) && ! Str::contains($message, ['reserve', 'reservation', 'book'])) {
+            return $this->informationResponse(
+                'Audio Visual Room (AVR)',
+                'The Audio Visual Room provides a larger space for classes and meetings and can accommodate at least 100 people. Use the Reserve AVR page to request it.',
+                '/services/facilities',
+                ['How do I reserve the AVR?', 'What facilities are available?', 'View Library Facilities']
+            );
+        }
+
+        if (Str::contains($message, ['borrowing limit', 'borrow books', 'how many books', 'loan period', 'renew books'])) {
+            return $this->informationResponse(
+                'Book Borrowing',
+                'Students may borrow up to 3 books for 2 days. Faculty members may borrow up to 10 books for 1 month. Both groups may renew borrowed books up to 2 times, subject to library policies.',
+                '/services',
+                ['What are the library hours?', 'What services are available?', 'View Library Services']
+            );
+        }
+
+        if (Str::contains($message, ['opac', 'catalog search', 'find a book'])) {
+            return $this->informationResponse(
+                'Online Public Access Catalog (OPAC)',
+                'Use OPAC to search library materials by title, author, subject, or keyword and check which resources are available.',
+                '/services',
+                ['What services are available?', 'How many books can I borrow?', 'View Library Services']
+            );
+        }
+
+        if (Str::contains($message, ['borrow laptop', 'borrow a laptop', 'library laptop', 'laptop service', 'use laptop', 'use a laptop', 'electronic service'])) {
+            return $this->informationResponse(
+                'Electronic Laptop Service',
+                'Library patrons may borrow a Library Services Office laptop for one hour for research and school-related work, subject to approval and availability.',
+                '/services',
+                ['What services are available?', 'What are the library hours?', 'View Library Services']
+            );
+        }
+
+        return null;
+    }
+
+    protected function informationResponse(
+        string $title,
+        string $answer,
+        string $path,
+        array $suggestions
+    ): array {
+        return [
+            'answer' => $answer,
+            'title' => $title,
+            'pageUrl' => url($path),
+            'suggestions' => $suggestions,
         ];
     }
 
