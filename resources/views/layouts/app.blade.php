@@ -1042,7 +1042,7 @@
 
             if (!loader) return;
 
-            const minimumDisplayMs = 8000;
+            const minimumDisplayMs = 5000;
             let loaderShownAt = Date.now();
             let hideTimer = null;
 
