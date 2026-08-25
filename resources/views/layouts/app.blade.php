@@ -136,10 +136,10 @@
             content: "";
             position: absolute;
             inset: -12px;
-            border: 3px solid transparent;
-            border-top-color: #f4b400;
-            border-right-color: rgba(244, 180, 0, 0.36);
+            border: 3px solid #f4b400;
             border-radius: 50%;
+            border-left-color: rgba(244, 180, 0, 0.18);
+            border-bottom-color: rgba(244, 180, 0, 0.18);
             animation: site-loader-spin 1.15s linear infinite;
         }
 
