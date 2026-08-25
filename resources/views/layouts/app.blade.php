@@ -143,21 +143,6 @@
             animation: site-loader-spin 1.15s linear infinite;
         }
 
-        .site-loader-mark::after {
-            content: "";
-            position: absolute;
-            top: -16px;
-            left: calc(50% - 6px);
-            width: 12px;
-            height: 12px;
-            background: #f4b400;
-            border: 3px solid #ffffff;
-            border-radius: 50%;
-            box-shadow: 0 0 18px rgba(244, 180, 0, 0.9);
-            transform-origin: 6px 72px;
-            animation: site-loader-orbit 1.15s linear infinite;
-        }
-
         .site-loader-logo {
             display: block;
             width: 100%;
@@ -201,10 +186,6 @@
         }
 
         @keyframes site-loader-spin {
-            to { transform: rotate(360deg); }
-        }
-
-        @keyframes site-loader-orbit {
             to { transform: rotate(360deg); }
         }
 
