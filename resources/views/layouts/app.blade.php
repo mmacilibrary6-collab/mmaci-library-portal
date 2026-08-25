@@ -1050,6 +1050,10 @@
 
             if (!loader) return;
 
+            const minimumDisplayMs = 8000;
+            let loaderShownAt = Date.now();
+            let hideTimer = null;
+
             const hideLoader = function () {
                 loader.classList.add('is-hidden');
                 window.setTimeout(function () {
@@ -1057,16 +1061,26 @@
                 }, 400);
             };
 
+            const scheduleLoaderHide = function () {
+                const elapsed = Date.now() - loaderShownAt;
+                const remaining = Math.max(0, minimumDisplayMs - elapsed);
+
+                window.clearTimeout(hideTimer);
+                hideTimer = window.setTimeout(hideLoader, remaining);
+            };
+
             const showLoader = function () {
+                loaderShownAt = Date.now();
+                window.clearTimeout(hideTimer);
                 loader.removeAttribute('hidden');
                 requestAnimationFrame(function () {
                     loader.classList.remove('is-hidden');
                 });
             };
 
-            document.addEventListener('DOMContentLoaded', hideLoader, { once: true });
-            window.addEventListener('pageshow', hideLoader);
-            window.setTimeout(hideLoader, 5000);
+            document.addEventListener('DOMContentLoaded', scheduleLoaderHide, { once: true });
+            window.addEventListener('pageshow', scheduleLoaderHide);
+            scheduleLoaderHide();
 
             document.addEventListener('click', function (event) {
                 const link = event.target.closest('a[href]');
