@@ -129,7 +129,6 @@
             box-shadow:
                 0 20px 55px rgba(0, 0, 0, 0.3),
                 0 0 0 8px rgba(244, 180, 0, 0.12);
-            animation: site-loader-pulse 1.25s ease-in-out infinite;
         }
 
         .site-loader-mark::before {
@@ -179,10 +178,6 @@
             background: #f4b400;
             border-radius: inherit;
             animation: site-loader-slide 1.1s ease-in-out infinite;
-        }
-
-        @keyframes site-loader-pulse {
-            50% { transform: translateY(-4px) scale(1.025); }
         }
 
         @keyframes site-loader-spin {
