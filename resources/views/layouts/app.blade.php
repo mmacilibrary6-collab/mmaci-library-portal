@@ -117,18 +117,38 @@
         }
 
         .site-loader-mark {
+            position: relative;
             display: grid;
-            width: 72px;
-            height: 72px;
+            width: 112px;
+            height: 112px;
             place-items: center;
-            color: #0b2e59;
-            background: #f4b400;
-            border-radius: 22px;
-            box-shadow: 0 18px 45px rgba(0, 0, 0, 0.24);
-            font-size: 22px;
-            font-weight: 800;
-            letter-spacing: -0.04em;
+            padding: 7px;
+            background: #ffffff;
+            border: 3px solid rgba(255, 255, 255, 0.9);
+            border-radius: 50%;
+            box-shadow:
+                0 20px 55px rgba(0, 0, 0, 0.3),
+                0 0 0 8px rgba(244, 180, 0, 0.12);
             animation: site-loader-pulse 1.25s ease-in-out infinite;
+        }
+
+        .site-loader-mark::before {
+            content: "";
+            position: absolute;
+            inset: -12px;
+            border: 3px solid transparent;
+            border-top-color: #f4b400;
+            border-right-color: rgba(244, 180, 0, 0.36);
+            border-radius: 50%;
+            animation: site-loader-spin 1.15s linear infinite;
+        }
+
+        .site-loader-logo {
+            display: block;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
         }
 
         .site-loader-title {
@@ -162,7 +182,11 @@
         }
 
         @keyframes site-loader-pulse {
-            50% { transform: translateY(-4px); }
+            50% { transform: translateY(-4px) scale(1.025); }
+        }
+
+        @keyframes site-loader-spin {
+            to { transform: rotate(360deg); }
         }
 
         @keyframes site-loader-slide {
@@ -172,6 +196,7 @@
 
         @media (prefers-reduced-motion: reduce) {
             .site-loader-mark,
+            .site-loader-mark::before,
             .site-loader-progress::after {
                 animation: none;
             }
@@ -1001,7 +1026,14 @@
 
     <div class="site-loader" id="siteLoader" role="status" aria-live="polite" aria-label="Loading page">
         <div class="site-loader-card">
-            <span class="site-loader-mark" aria-hidden="true">M</span>
+            <span class="site-loader-mark" aria-hidden="true">
+                <img
+                    class="site-loader-logo"
+                    src="{{ asset('images/mmaci-loader-logo.jpg') }}"
+                    alt=""
+                    width="112"
+                    height="112">
+            </span>
             <p class="site-loader-title">MMACI Library</p>
             <p class="site-loader-status">Preparing your page...</p>
             <span class="site-loader-progress" aria-hidden="true"></span>
