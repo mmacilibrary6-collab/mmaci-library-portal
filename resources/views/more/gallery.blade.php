@@ -476,7 +476,7 @@
 }
 
 .gallery-preview-modal {
-    z-index: 2000 !important;
+    z-index: 2050 !important;
 }
 
 .gallery-preview-modal .modal-dialog,
@@ -486,12 +486,11 @@
 
 .gallery-preview-modal .modal-dialog {
     position: relative;
-    z-index: 2001;
+    z-index: 2051;
 }
 
 .modal-backdrop.show {
-    z-index: 1990 !important;
-    pointer-events: none !important;
+    z-index: 2040 !important;
 }
 
 .gallery-modal-close {
@@ -696,6 +695,10 @@ document.addEventListener('DOMContentLoaded', function () {
         typeof bootstrap === 'undefined'
     ) {
         return;
+    }
+
+    if (modalElement.parentElement !== document.body) {
+        document.body.appendChild(modalElement);
     }
 
     const modal = bootstrap.Modal.getOrCreateInstance(modalElement);
