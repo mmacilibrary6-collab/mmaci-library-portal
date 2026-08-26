@@ -261,3 +261,46 @@
 </style>
 @endpush
 
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
+
+    document.querySelectorAll('.current-photo-delete').forEach(function (button) {
+        button.addEventListener('click', function () {
+            const deleteUrl = button.dataset.deleteUrl;
+            const photoLabel = button.dataset.photoLabel || 'this photo';
+
+            if (!deleteUrl || !csrfToken) {
+                return;
+            }
+
+            if (!window.confirm(`Delete ${photoLabel}? This cannot be undone.`)) {
+                return;
+            }
+
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = deleteUrl;
+            form.style.display = 'none';
+
+            const csrfInput = document.createElement('input');
+            csrfInput.type = 'hidden';
+            csrfInput.name = '_token';
+            csrfInput.value = csrfToken;
+            form.appendChild(csrfInput);
+
+            const methodInput = document.createElement('input');
+            methodInput.type = 'hidden';
+            methodInput.name = '_method';
+            methodInput.value = 'DELETE';
+            form.appendChild(methodInput);
+
+            document.body.appendChild(form);
+            form.submit();
+        });
+    });
+});
+</script>
+@endpush
+

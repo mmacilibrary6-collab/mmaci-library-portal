@@ -285,6 +285,17 @@
                                     loading="lazy"
                                     onerror="this.onerror=null; this.src='{{ asset('images/image-fallback.svg') }}';">
 
+                                <button
+                                    type="button"
+                                    class="current-photo-delete"
+                                    data-delete-url="{{ route('admin.gallery.images.destroy', [$galleryItem, $galleryImage]) }}"
+                                    data-photo-label="Photo from {{ $galleryItem->title }}"
+                                    aria-label="Delete photo from {{ $galleryItem->title }}">
+
+                                    <i class="bi bi-trash3"></i>
+
+                                </button>
+
                             </div>
 
                         @empty
@@ -738,6 +749,7 @@
     }
 
     .current-photo-item {
+        position: relative;
         min-width: 0;
         aspect-ratio: 4 / 3;
         overflow: hidden;
@@ -756,6 +768,35 @@
 
     .current-photo-item:hover img {
         transform: scale(1.05);
+    }
+
+    .current-photo-delete {
+        position: absolute;
+        top: 7px;
+        right: 7px;
+        width: 30px;
+        height: 30px;
+        display: grid;
+        place-items: center;
+        color: #fff;
+        background: rgba(216, 75, 75, .92);
+        border: 0;
+        border-radius: 999px;
+        box-shadow: 0 8px 18px rgba(133, 35, 35, .24);
+        opacity: 0;
+        transform: translateY(-4px) scale(.96);
+        transition: opacity .2s ease, transform .2s ease, background .2s ease;
+        z-index: 2;
+    }
+
+    .current-photo-item:hover .current-photo-delete,
+    .current-photo-item:focus-within .current-photo-delete {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+
+    .current-photo-delete:hover {
+        background: #c93d3d;
     }
 
     .current-photos-empty {

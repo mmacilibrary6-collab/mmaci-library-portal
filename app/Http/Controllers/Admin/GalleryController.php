@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Gallery;
+use App\Models\GalleryImage;
 use App\Support\DatabaseMedia;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -188,6 +189,22 @@ class GalleryController extends Controller
         return redirect()
             ->route('admin.gallery.edit', $gallery)
             ->with('success', 'Gallery images added successfully.');
+    }
+
+    /**
+     * Delete a single gallery photo.
+     */
+    public function destroyImage(
+        Gallery $gallery,
+        GalleryImage $galleryImage
+    ): RedirectResponse {
+        abort_unless($galleryImage->gallery_id === $gallery->id, 404);
+
+        $galleryImage->delete();
+
+        return redirect()
+            ->route('admin.gallery.edit', $gallery)
+            ->with('success', 'Gallery photo deleted successfully.');
     }
 
     /**

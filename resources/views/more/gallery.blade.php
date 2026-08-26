@@ -71,7 +71,7 @@
                             src="{{ $gallery->cover_image_url }}"
                             alt="{{ $gallery->title }}"
                             loading="lazy"
-                            onerror="this.onerror=null;this.src='{{ asset('images/image-fallback.svg') }}';">
+                            onerror="this.onerror=null;this.src='{{ asset('images/readingarea.jpg') }}';">
                         <div class="gallery-overlay">
                             <span>{{ $gallery->images->count() }} photos</span>
                             <h3>{{ $gallery->title }}</h3>
@@ -96,11 +96,13 @@
 </section>
 
 <div
-    class="modal fade"
+    class="modal fade gallery-preview-modal"
     id="galleryPreviewModal"
     tabindex="-1"
     aria-labelledby="galleryPreviewModalLabel"
-    aria-hidden="true">
+    aria-hidden="true"
+    data-bs-backdrop="true"
+    data-bs-focus="true">
 
     <div class="modal-dialog modal-xl modal-dialog-centered">
         <div class="modal-content gallery-modal">
@@ -112,7 +114,7 @@
             </button>
 
             <div class="gallery-modal-image">
-                <img src="{{ asset('images/image-fallback.svg') }}" id="galleryModalImage" alt="Gallery preview">
+                <img src="{{ asset('images/readingarea.jpg') }}" id="galleryModalImage" alt="Gallery preview">
                 <button type="button" class="gallery-modal-nav gallery-modal-prev" id="galleryModalPrev" aria-label="Previous image">
                     <i class="bi bi-chevron-left"></i>
                 </button>
@@ -473,6 +475,25 @@
     box-shadow: 0 25px 80px rgba(3, 18, 38, .4);
 }
 
+.gallery-preview-modal {
+    z-index: 1060;
+}
+
+.gallery-preview-modal .modal-dialog,
+.gallery-preview-modal .modal-content {
+    pointer-events: auto;
+}
+
+.gallery-preview-modal .modal-dialog {
+    position: relative;
+    z-index: 1;
+}
+
+.gallery-preview-modal .modal-backdrop,
+.modal-backdrop.show {
+    z-index: 1050;
+}
+
 .gallery-modal-close {
     position: absolute;
     z-index: 3;
@@ -512,6 +533,8 @@
     background: rgba(7, 31, 62, .55);
     border: 0;
     border-radius: 999px;
+    z-index: 4;
+    pointer-events: auto;
 }
 
 .gallery-modal-prev { left: 14px; }
@@ -692,7 +715,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const title = card.dataset.galleryTitle;
 
         if (!currentImages.length) {
-            currentImages = ['{{ asset('images/image-fallback.svg') }}'];
+            currentImages = ['{{ asset('images/readingarea.jpg') }}'];
         }
 
         modalImage.alt = title;
