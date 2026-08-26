@@ -799,6 +799,13 @@
         background: #c93d3d;
     }
 
+    @media (hover: none), (pointer: coarse) {
+        .current-photo-delete {
+            opacity: 1;
+            transform: none;
+        }
+    }
+
     .current-photos-empty {
         grid-column: 1 / -1;
         min-height: 175px;

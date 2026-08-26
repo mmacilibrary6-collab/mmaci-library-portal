@@ -521,11 +521,11 @@
     object-fit: contain;
 }
 
-.gallery-modal-nav {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 42px;
+    .gallery-modal-nav {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 42px;
     height: 42px;
     display: grid;
     place-items: center;
@@ -761,6 +761,19 @@ document.addEventListener('DOMContentLoaded', function () {
 
     modalNext?.addEventListener('click', function () {
         moveSlide(1);
+    });
+
+    modalElement.querySelectorAll('.gallery-modal-close, .gallery-modal-nav').forEach(function (control) {
+        control.addEventListener('click', function (event) {
+            event.preventDefault();
+            event.stopPropagation();
+        });
+    });
+
+    modalElement.querySelector('.gallery-modal-close')?.addEventListener('click', function (event) {
+        event.preventDefault();
+        event.stopPropagation();
+        modal.hide();
     });
 });
 </script>
