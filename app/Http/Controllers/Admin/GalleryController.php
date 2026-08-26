@@ -208,6 +208,52 @@ class GalleryController extends Controller
     }
 
     /**
+     * Delete multiple gallery photos.
+     */
+    public function destroyImages(
+        Request $request,
+        Gallery $gallery
+    ): RedirectResponse {
+        $validated = $request->validate([
+            'ids' => ['required', 'array', 'min:1'],
+            'ids.*' => ['integer', 'min:1'],
+        ], [
+            'ids.required' => 'Please select at least one photo.',
+            'ids.array' => 'Please select at least one photo.',
+            'ids.min' => 'Please select at least one photo.',
+            'ids.*.integer' => 'Invalid photo selection detected.',
+            'ids.*.min' => 'Invalid photo selection detected.',
+        ]);
+
+        $ids = collect($validated['ids'])
+            ->map(fn ($id) => (int) $id)
+            ->filter()
+            ->unique()
+            ->values()
+            ->all();
+
+        $photos = GalleryImage::query()
+            ->where('gallery_id', $gallery->id)
+            ->whereIn('id', $ids)
+            ->get();
+
+        $deletedCount = 0;
+
+        foreach ($photos as $photo) {
+            $photo->delete();
+            $deletedCount++;
+        }
+
+        $message = $deletedCount === 1
+            ? '1 photo deleted successfully.'
+            : "{$deletedCount} photos deleted successfully.";
+
+        return redirect()
+            ->route('admin.gallery.edit', $gallery)
+            ->with('success', $message);
+    }
+
+    /**
      * Delete a gallery image.
      */
     public function destroy(

@@ -69,6 +69,33 @@
 
 </div>
 
+<div class="modal fade" id="galleryDeleteConfirmModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" style="border:0;border-radius:18px;overflow:hidden;">
+            <div class="modal-header" style="border-bottom:1px solid #e5edf5;">
+                <div>
+                    <div style="color:#184b8c;font-size:10px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;">
+                        Confirm Deletion
+                    </div>
+                    <h5 class="modal-title" id="galleryDeleteConfirmTitle" style="margin:4px 0 0;color:#0b2e59;font-weight:800;">
+                        Delete selected photos?
+                    </h5>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="galleryDeleteConfirmBody" style="color:#647187;">
+                This action cannot be undone.
+            </div>
+            <div class="modal-footer" style="border-top:1px solid #e5edf5;">
+                <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn" id="galleryDeleteConfirmButton" style="background:#d84b4b;color:#fff;font-weight:700;">
+                    Delete
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
 @endsection
 
 @push('styles')
@@ -265,41 +292,388 @@
 <script>
 document.addEventListener('DOMContentLoaded', function () {
     const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
+    const gallery = document.querySelector('.gallery-folder-form');
+    const photoItems = Array.from(document.querySelectorAll('[data-gallery-photo-item]'));
+    const selectionTrigger = document.querySelector('[data-gallery-select-trigger]');
+    const selectionToolbar = document.querySelector('[data-gallery-selection-toolbar]');
+    const selectionCount = document.querySelector('[data-gallery-selection-count]');
+    const cancelSelectionButton = document.querySelector('[data-gallery-selection-cancel]');
+    const selectAllButton = document.querySelector('[data-gallery-select-all]');
+    const deleteSelectedButton = document.querySelector('[data-gallery-delete-selected]');
+    const deleteModalElement = document.getElementById('galleryDeleteConfirmModal');
+    const deleteModalTitle = document.getElementById('galleryDeleteConfirmTitle');
+    const deleteModalBody = document.getElementById('galleryDeleteConfirmBody');
+    const deleteModalButton = document.getElementById('galleryDeleteConfirmButton');
+    const deleteFormsTarget = document.body;
 
-    document.querySelectorAll('.current-photo-delete').forEach(function (button) {
-        button.addEventListener('click', function () {
-            const deleteUrl = button.dataset.deleteUrl;
-            const photoLabel = button.dataset.photoLabel || 'this photo';
+    if (!gallery || !photoItems.length || typeof bootstrap === 'undefined') {
+        return;
+    }
 
-            if (!deleteUrl || !csrfToken) {
+    const deleteModal = deleteModalElement
+        ? bootstrap.Modal.getOrCreateInstance(deleteModalElement)
+        : null;
+
+    const state = {
+        active: false,
+        selectedIds: new Set(),
+        lastIndex: null,
+        pendingDeleteIds: [],
+        pendingDeleteLabel: 'photos',
+        pointer: {
+            timer: null,
+            item: null,
+            startX: 0,
+            startY: 0,
+            pointerId: null,
+            moved: false,
+            suppressClick: false
+        }
+    };
+
+    function getPhotoId(item) {
+        return String(item.dataset.photoId || '');
+    }
+
+    function getPhotoLabel(item) {
+        return item.dataset.photoLabel || 'this photo';
+    }
+
+    function updateToolbar() {
+        photoItems.forEach(function (item) {
+            item.classList.toggle('is-selectable', state.active);
+        });
+
+        if (selectionTrigger) {
+            selectionTrigger.classList.toggle('d-none', state.active);
+        }
+
+        if (selectionToolbar) {
+            selectionToolbar.classList.toggle('d-none', !state.active);
+        }
+
+        if (selectionCount) {
+            selectionCount.textContent = `${state.selectedIds.size} Selected`;
+        }
+
+        if (deleteSelectedButton) {
+            deleteSelectedButton.disabled = state.selectedIds.size === 0;
+        }
+
+        if (selectAllButton) {
+            const allSelected = state.selectedIds.size === photoItems.length && photoItems.length > 0;
+            selectAllButton.querySelector('span').textContent = allSelected ? 'Deselect All' : 'Select All';
+        }
+    }
+
+    function setSelected(item, selected) {
+        const id = getPhotoId(item);
+        if (!id) {
+            return;
+        }
+
+        if (selected) {
+            state.selectedIds.add(id);
+            item.classList.add('is-selected');
+        } else {
+            state.selectedIds.delete(id);
+            item.classList.remove('is-selected');
+        }
+    }
+
+    function clearSelection(keepMode = false) {
+        state.selectedIds.clear();
+        photoItems.forEach(function (item) {
+            item.classList.remove('is-selected');
+        });
+        state.lastIndex = null;
+        if (!keepMode) {
+            state.active = false;
+        }
+        updateToolbar();
+    }
+
+    function enterSelectionMode(selectItem = null) {
+        state.active = true;
+        if (selectItem) {
+            setSelected(selectItem, true);
+            state.lastIndex = photoItems.indexOf(selectItem);
+        }
+        updateToolbar();
+    }
+
+    function toggleSelection(item, index, forceState = null) {
+        if (!item) {
+            return;
+        }
+
+        const id = getPhotoId(item);
+        const isSelected = state.selectedIds.has(id);
+        const nextState = forceState === null ? !isSelected : forceState;
+
+        setSelected(item, nextState);
+        state.lastIndex = index;
+        updateToolbar();
+    }
+
+    function selectRange(startIndex, endIndex) {
+        const [from, to] = startIndex < endIndex
+            ? [startIndex, endIndex]
+            : [endIndex, startIndex];
+
+        for (let i = from; i <= to; i++) {
+            setSelected(photoItems[i], true);
+        }
+        state.lastIndex = endIndex;
+        updateToolbar();
+    }
+
+    function selectAllDisplayed() {
+        const allSelected = state.selectedIds.size === photoItems.length && photoItems.length > 0;
+
+        if (allSelected) {
+            clearSelection(true);
+            updateToolbar();
+            return;
+        }
+
+        photoItems.forEach(function (item, index) {
+            setSelected(item, true);
+            state.lastIndex = index;
+        });
+
+        state.active = true;
+        updateToolbar();
+    }
+
+    function openDeleteConfirmation(ids, label) {
+        if (!ids.length) {
+            return;
+        }
+
+        state.pendingDeleteIds = ids.map(function (id) {
+            return String(id);
+        });
+        state.pendingDeleteLabel = label || 'selected photos';
+
+        if (deleteModalTitle) {
+            deleteModalTitle.textContent = ids.length === 1
+                ? 'Delete this photo?'
+                : `Delete ${ids.length} photos?`;
+        }
+
+        if (deleteModalBody) {
+            deleteModalBody.textContent = 'This action cannot be undone.';
+        }
+
+        deleteModal?.show();
+    }
+
+    function submitDelete(ids) {
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = @json(route('admin.gallery.images.bulk-destroy', $gallery));
+        form.style.display = 'none';
+
+        const csrfInput = document.createElement('input');
+        csrfInput.type = 'hidden';
+        csrfInput.name = '_token';
+        csrfInput.value = csrfToken || '';
+        form.appendChild(csrfInput);
+
+        const methodInput = document.createElement('input');
+        methodInput.type = 'hidden';
+        methodInput.name = '_method';
+        methodInput.value = 'DELETE';
+        form.appendChild(methodInput);
+
+        ids.forEach(function (id) {
+            const input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = 'ids[]';
+            input.value = id;
+            form.appendChild(input);
+        });
+
+        deleteFormsTarget.appendChild(form);
+        form.submit();
+    }
+
+    photoItems.forEach(function (item, index) {
+        item.addEventListener('click', function (event) {
+        if (!state.active && !event.ctrlKey && !event.metaKey && !event.shiftKey) {
+            if (state.pointer.suppressClick) {
+                state.pointer.suppressClick = false;
                 return;
             }
 
-            if (!window.confirm(`Delete ${photoLabel}? This cannot be undone.`)) {
+            return;
+        }
+
+        if (state.pointer.suppressClick) {
+            state.pointer.suppressClick = false;
+            event.preventDefault();
+            event.stopPropagation();
+            return;
+        }
+
+        event.preventDefault();
+        event.stopPropagation();
+
+            if (!state.active) {
+                enterSelectionMode(item);
                 return;
             }
 
-            const form = document.createElement('form');
-            form.method = 'POST';
-            form.action = deleteUrl;
-            form.style.display = 'none';
+            if (event.shiftKey && state.lastIndex !== null) {
+                selectRange(state.lastIndex, index);
+                return;
+            }
 
-            const csrfInput = document.createElement('input');
-            csrfInput.type = 'hidden';
-            csrfInput.name = '_token';
-            csrfInput.value = csrfToken;
-            form.appendChild(csrfInput);
+            if (event.ctrlKey || event.metaKey) {
+                toggleSelection(item, index);
+                return;
+            }
 
-            const methodInput = document.createElement('input');
-            methodInput.type = 'hidden';
-            methodInput.name = '_method';
-            methodInput.value = 'DELETE';
-            form.appendChild(methodInput);
+            toggleSelection(item, index);
+        });
 
-            document.body.appendChild(form);
-            form.submit();
+        item.addEventListener('keydown', function (event) {
+            if (event.key === 'Enter' || event.key === ' ') {
+                event.preventDefault();
+                if (!state.active) {
+                    enterSelectionMode(item);
+                } else {
+                    toggleSelection(item, index);
+                }
+            }
+        });
+
+        item.addEventListener('pointerdown', function (event) {
+            if (event.pointerType !== 'touch') {
+                return;
+            }
+
+            state.pointer.timer = window.setTimeout(function () {
+                state.pointer.suppressClick = true;
+                enterSelectionMode(item);
+                toggleSelection(item, index, true);
+            }, 500);
+
+            state.pointer.item = item;
+            state.pointer.startX = event.clientX;
+            state.pointer.startY = event.clientY;
+            state.pointer.pointerId = event.pointerId;
+            state.pointer.moved = false;
+            state.pointer.suppressClick = false;
+        });
+
+        item.addEventListener('pointermove', function (event) {
+            if (state.pointer.pointerId !== event.pointerId || state.pointer.timer === null) {
+                return;
+            }
+
+            const deltaX = Math.abs(event.clientX - state.pointer.startX);
+            const deltaY = Math.abs(event.clientY - state.pointer.startY);
+
+            if (deltaX > 8 || deltaY > 8) {
+                state.pointer.moved = true;
+                window.clearTimeout(state.pointer.timer);
+                state.pointer.timer = null;
+            }
+        });
+
+        const clearLongPress = function (event) {
+            if (state.pointer.pointerId !== event.pointerId) {
+                return;
+            }
+
+            window.clearTimeout(state.pointer.timer);
+            state.pointer.timer = null;
+            state.pointer.pointerId = null;
+            state.pointer.item = null;
+            state.pointer.moved = false;
+        };
+
+        item.addEventListener('pointerup', clearLongPress);
+        item.addEventListener('pointercancel', clearLongPress);
+        item.addEventListener('pointerleave', function (event) {
+            if (event.pointerType === 'touch') {
+                clearLongPress(event);
+            }
+        });
+
+        const deleteButton = item.querySelector('.current-photo-delete');
+        deleteButton?.addEventListener('click', function (event) {
+            event.preventDefault();
+            event.stopPropagation();
+            const photoId = getPhotoId(item);
+            openDeleteConfirmation([photoId], getPhotoLabel(item));
         });
     });
+
+    selectionTrigger?.addEventListener('click', function () {
+        enterSelectionMode();
+    });
+
+    cancelSelectionButton?.addEventListener('click', function () {
+        clearSelection(false);
+    });
+
+    selectAllButton?.addEventListener('click', function () {
+        selectAllDisplayed();
+    });
+
+    deleteSelectedButton?.addEventListener('click', function () {
+        if (!state.selectedIds.size) {
+            return;
+        }
+
+        openDeleteConfirmation(Array.from(state.selectedIds), 'selected photos');
+    });
+
+    deleteModalButton?.addEventListener('click', function () {
+        if (!state.pendingDeleteIds.length) {
+            return;
+        }
+
+        deleteModalButton.disabled = true;
+        deleteModalButton.textContent = 'Deleting...';
+        submitDelete(state.pendingDeleteIds);
+    });
+
+    deleteModalElement?.addEventListener('hidden.bs.modal', function () {
+        deleteModalButton.disabled = false;
+        deleteModalButton.textContent = 'Delete';
+        state.pendingDeleteIds = [];
+        state.pendingDeleteLabel = 'selected photos';
+    });
+
+    window.addEventListener('keydown', function (event) {
+        if (!state.active) {
+            return;
+        }
+
+        if (event.key === 'Escape') {
+            clearSelection(false);
+            return;
+        }
+
+        const targetTag = (event.target && event.target.tagName)
+            ? event.target.tagName.toUpperCase()
+            : '';
+
+        if (['INPUT', 'TEXTAREA', 'SELECT'].includes(targetTag) || event.target?.isContentEditable) {
+            return;
+        }
+
+        if ((event.key === 'Delete' || event.key === 'Backspace') && state.selectedIds.size > 0) {
+            event.preventDefault();
+            openDeleteConfirmation(Array.from(state.selectedIds), 'selected photos');
+        }
+    });
+
+    updateToolbar();
 });
 </script>
 @endpush

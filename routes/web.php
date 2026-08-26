@@ -524,6 +524,11 @@ Route::prefix('admin')
             [GalleryController::class, 'destroyImage']
         )->name('gallery.images.destroy');
 
+        Route::delete(
+            'gallery/{gallery}/images',
+            [GalleryController::class, 'destroyImages']
+        )->name('gallery.images.bulk-destroy');
+
         /*
         |--------------------------------------------------------------------------
         | E-Book Programs

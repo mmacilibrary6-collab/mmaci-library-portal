@@ -271,13 +271,80 @@
                             ) }}
                         </span>
 
+                        <button
+                            type="button"
+                            class="gallery-select-trigger"
+                            data-gallery-select-trigger>
+
+                            <i class="bi bi-check2-square"></i>
+                            <span>Select</span>
+
+                        </button>
+
+                    </div>
+
+                    <div class="gallery-selection-toolbar d-none" data-gallery-selection-toolbar>
+
+                        <button
+                            type="button"
+                            class="gallery-selection-action is-ghost"
+                            data-gallery-selection-cancel>
+
+                            <i class="bi bi-x-lg"></i>
+                            <span>Cancel</span>
+
+                        </button>
+
+                        <span class="gallery-selection-count" data-gallery-selection-count>
+                            0 Selected
+                        </span>
+
+                        <button
+                            type="button"
+                            class="gallery-selection-action is-ghost"
+                            data-gallery-select-all>
+
+                            <i class="bi bi-check2-all"></i>
+                            <span>Select All</span>
+
+                        </button>
+
+                        <button
+                            type="button"
+                            class="gallery-selection-action is-danger"
+                            data-gallery-delete-selected
+                            disabled>
+
+                            <i class="bi bi-trash3"></i>
+                            <span>Delete</span>
+
+                        </button>
+
                     </div>
 
                     <div class="current-photos-grid">
 
                         @forelse ($folderImages as $galleryImage)
 
-                            <div class="current-photo-item">
+                            <div
+                                class="current-photo-item"
+                                data-gallery-photo-item
+                                data-photo-id="{{ $galleryImage->id }}"
+                                tabindex="0"
+                                role="button"
+                                aria-label="Photo from {{ $galleryItem->title }}">
+
+                                <button
+                                    type="button"
+                                    class="current-photo-select"
+                                    data-gallery-photo-select
+                                    data-photo-id="{{ $galleryImage->id }}"
+                                    data-photo-label="Photo from {{ $galleryItem->title }}"
+                                    aria-label="Select photo from {{ $galleryItem->title }}">
+                                    <span class="current-photo-badge">
+                                        <i class="bi bi-check2"></i>
+                                    </span>
+                                </button>
 
                                 <img
                                     src="{{ $galleryImage->image_url }}"
@@ -289,6 +356,7 @@
                                     type="button"
                                     class="current-photo-delete"
                                     data-delete-url="{{ route('admin.gallery.images.destroy', [$galleryItem, $galleryImage]) }}"
+                                    data-delete-ids='[{{ $galleryImage->id }}]'
                                     data-photo-label="Photo from {{ $galleryItem->title }}"
                                     aria-label="Delete photo from {{ $galleryItem->title }}">
 
@@ -742,6 +810,79 @@
         white-space: nowrap;
     }
 
+    .current-photos-heading {
+        gap: 10px;
+    }
+
+    .gallery-select-trigger {
+        min-height: 36px;
+        padding: 0 12px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 7px;
+        color: #184b8c;
+        background: #eef4fb;
+        border: 1px solid #d6e3f2;
+        border-radius: 10px;
+        font-size: 10px;
+        font-weight: 700;
+    }
+
+    .gallery-select-trigger:hover {
+        background: #e3edf9;
+        border-color: #c7d8eb;
+    }
+
+    .gallery-selection-toolbar {
+        margin-bottom: 12px;
+        padding: 10px;
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 8px;
+        background: #f7fbff;
+        border: 1px solid #d7e2ee;
+        border-radius: 12px;
+    }
+
+    .gallery-selection-count {
+        margin-right: auto;
+        color: var(--gallery-navy);
+        font-size: 11px;
+        font-weight: 800;
+        white-space: nowrap;
+    }
+
+    .gallery-selection-action {
+        min-height: 36px;
+        padding: 0 12px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 7px;
+        border: 0;
+        border-radius: 10px;
+        font-size: 10px;
+        font-weight: 700;
+        transition: transform .18s ease, background .18s ease, color .18s ease, opacity .18s ease;
+    }
+
+    .gallery-selection-action.is-ghost {
+        color: #184b8c;
+        background: #eef4fb;
+    }
+
+    .gallery-selection-action.is-danger {
+        color: #fff;
+        background: #d84b4b;
+    }
+
+    .gallery-selection-action:disabled {
+        opacity: .45;
+        cursor: not-allowed;
+    }
+
     .current-photos-grid {
         display: grid;
         grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -756,6 +897,7 @@
         background: #e8edf3;
         border: 1px solid #d9e1ea;
         border-radius: 9px;
+        cursor: default;
     }
 
     .current-photo-item img {
@@ -768,6 +910,62 @@
 
     .current-photo-item:hover img {
         transform: scale(1.05);
+    }
+
+    .current-photo-select {
+        position: absolute;
+        inset: 0;
+        z-index: 2;
+        display: grid;
+        place-items: start end;
+        padding: 8px;
+        background: transparent;
+        border: 0;
+        opacity: 0;
+        pointer-events: none;
+    }
+
+    .current-photo-badge {
+        width: 28px;
+        height: 28px;
+        display: grid;
+        place-items: center;
+        color: #fff;
+        background: rgba(11, 46, 89, .92);
+        border-radius: 999px;
+        box-shadow: 0 10px 22px rgba(11, 46, 89, .2);
+        transform: scale(.92);
+        transition: transform .2s ease, background .2s ease;
+        opacity: 0;
+    }
+
+    .current-photo-item.is-selectable .current-photo-select {
+        opacity: 1;
+        pointer-events: auto;
+    }
+
+    .current-photo-item.is-selectable .current-photo-badge {
+        opacity: 1;
+    }
+
+    .current-photo-item.is-selected {
+        border-color: rgba(24, 75, 140, .42);
+        box-shadow: 0 0 0 2px rgba(24, 75, 140, .12), 0 12px 22px rgba(11, 46, 89, .08);
+    }
+
+    .current-photo-item.is-selected::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: rgba(24, 75, 140, .12);
+        pointer-events: none;
+        z-index: 1;
+    }
+
+    .current-photo-item.is-selected .current-photo-badge {
+        opacity: 1;
+        background: var(--gallery-blue);
+        transform: scale(1);
     }
 
     .current-photo-delete {
@@ -793,6 +991,10 @@
     .current-photo-item:focus-within .current-photo-delete {
         opacity: 1;
         transform: translateY(0) scale(1);
+    }
+
+    .current-photo-item.is-selectable .current-photo-delete {
+        opacity: 1;
     }
 
     .current-photo-delete:hover {
@@ -836,6 +1038,34 @@
         margin: 0;
         color: #7b8798;
         font-size: 10px;
+    }
+
+    @media (max-width: 767.98px) {
+        .gallery-current-photos {
+            padding: 14px;
+        }
+
+        .current-photos-heading {
+            align-items: flex-start;
+            flex-direction: column;
+        }
+
+        .gallery-select-trigger {
+            width: 100%;
+        }
+
+        .gallery-selection-toolbar {
+            align-items: stretch;
+        }
+
+        .gallery-selection-count {
+            width: 100%;
+            margin-right: 0;
+        }
+
+        .gallery-selection-action {
+            flex: 1 1 calc(50% - 8px);
+        }
     }
 
     /* Create Information */
