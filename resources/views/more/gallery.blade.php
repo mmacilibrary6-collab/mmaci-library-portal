@@ -476,7 +476,7 @@
 }
 
 .gallery-preview-modal {
-    z-index: 1060;
+    z-index: 2000 !important;
 }
 
 .gallery-preview-modal .modal-dialog,
@@ -486,12 +486,11 @@
 
 .gallery-preview-modal .modal-dialog {
     position: relative;
-    z-index: 1;
+    z-index: 2001;
 }
 
-.gallery-preview-modal .modal-backdrop,
 .modal-backdrop.show {
-    z-index: 1050;
+    z-index: 1990 !important;
 }
 
 .gallery-modal-close {
@@ -526,16 +525,16 @@
         top: 50%;
         transform: translateY(-50%);
         width: 42px;
-    height: 42px;
-    display: grid;
-    place-items: center;
-    color: #fff;
-    background: rgba(7, 31, 62, .55);
-    border: 0;
-    border-radius: 999px;
-    z-index: 4;
-    pointer-events: auto;
-}
+        height: 42px;
+        display: grid;
+        place-items: center;
+        color: #fff;
+        background: rgba(7, 31, 62, .55);
+        border: 0;
+        border-radius: 999px;
+        z-index: 4;
+        pointer-events: auto;
+    }
 
 .gallery-modal-prev { left: 14px; }
 .gallery-modal-next { right: 14px; }
