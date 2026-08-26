@@ -142,7 +142,7 @@
                                     loading="lazy"
                                     onerror="
                                         this.onerror = null;
-                                        this.src = '{{ asset('images/readingarea.jpg') }}';
+                                        this.src = '{{ asset('images/image-fallback.svg') }}';
                                     ">
 
                                 <div class="arrival-cover-overlay">
@@ -333,7 +333,7 @@
 
             <img
                 id="arrivalViewerImage"
-                src="{{ asset('images/readingarea.jpg') }}"
+                src="{{ asset('images/image-fallback.svg') }}"
                 alt="Book cover">
 
         </div>
@@ -483,7 +483,7 @@
                     <img
                         src="{{ asset('images/logomml.webp') }}"
                         alt="MMACI Logo"
-                        onerror="this.style.display='none';">
+                        onerror="this.src='{{ asset('images/image-fallback.svg') }}';">
 
                     <div>
 
@@ -2592,7 +2592,7 @@ document.addEventListener(
                 book.image ||
                 @json(
                     asset(
-                        'images/readingarea.jpg'
+                        'images/image-fallback.svg'
                     )
                 );
 
@@ -2776,7 +2776,7 @@ document.addEventListener(
                 viewerImage.src =
                     @json(
                         asset(
-                            'images/readingarea.jpg'
+                            'images/image-fallback.svg'
                         )
                     );
 

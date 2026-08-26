@@ -71,7 +71,7 @@
                             src="{{ $gallery->cover_image_url }}"
                             alt="{{ $gallery->title }}"
                             loading="lazy"
-                            onerror="this.onerror=null;this.src='{{ asset('images/readingarea.jpg') }}';">
+                            onerror="this.onerror=null;this.src='{{ asset('images/image-fallback.svg') }}';">
                         <div class="gallery-overlay">
                             <span>{{ $gallery->images->count() }} photos</span>
                             <h3>{{ $gallery->title }}</h3>
@@ -112,7 +112,7 @@
             </button>
 
             <div class="gallery-modal-image">
-                <img src="{{ asset('images/readingarea.jpg') }}" id="galleryModalImage" alt="Gallery preview" onerror="this.onerror=null;this.src='{{ asset('images/readingarea.jpg') }}';">
+                <img src="{{ asset('images/image-fallback.svg') }}" id="galleryModalImage" alt="Gallery preview">
                 <button type="button" class="gallery-modal-nav gallery-modal-prev" id="galleryModalPrev" aria-label="Previous image">
                     <i class="bi bi-chevron-left"></i>
                 </button>
@@ -692,7 +692,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const title = card.dataset.galleryTitle;
 
         if (!currentImages.length) {
-            currentImages = ['{{ asset('images/readingarea.jpg') }}'];
+            currentImages = ['{{ asset('images/image-fallback.svg') }}'];
         }
 
         modalImage.alt = title;

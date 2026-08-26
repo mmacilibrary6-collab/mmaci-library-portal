@@ -103,7 +103,7 @@
             @foreach($services as $service)
                 @php
                     $serviceImage = $serviceImages[$loop->index]
-                        ?? asset('images/readingarea.jpg');
+                        ?? asset('images/image-fallback.svg');
                 @endphp
 
                 <div class="col-lg-4 col-md-6">
@@ -113,7 +113,7 @@
                                 src="{{ $serviceImage }}"
                                 alt="{{ $service['title'] }}"
                                 loading="lazy"
-                                onerror="this.onerror=null;this.src='{{ asset('images/readingarea.jpg') }}';">
+                                onerror="this.onerror=null;this.src='{{ asset('images/image-fallback.svg') }}';">
                         </div>
 
                         <div class="service-card-body">
@@ -274,7 +274,7 @@
                             src="{{ asset('images/laptops.jpg') }}"
                             alt="Library laptop service"
                             loading="lazy"
-                            onerror="this.onerror=null;this.src='{{ asset('images/readingarea.jpg') }}';">
+                            onerror="this.onerror=null;this.src='{{ asset('images/image-fallback.svg') }}';">
                     </div>
                 </div>
 
@@ -361,7 +361,7 @@ html {
             rgba(11, 46, 89, .68) 55%,
             rgba(24, 75, 140, .52) 100%
         ),
-        url("{{ asset('images/readingarea.jpg') }}") center center / cover no-repeat;
+        url("{{ asset('images/image-fallback.svg') }}") center center / cover no-repeat;
 }
 
 .services-hero::after {

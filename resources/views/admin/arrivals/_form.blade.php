@@ -4,7 +4,7 @@
     $arrival = $newArrival ?? null;
     $isEditing = $arrival !== null;
 
-    $fallbackImage = asset('images/readingarea.jpg');
+    $fallbackImage = asset('images/image-fallback.svg');
     $currentImage = $arrival?->image_url ?? $fallbackImage;
     $storedImage = $arrival?->image;
 

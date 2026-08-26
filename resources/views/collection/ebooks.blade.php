@@ -70,7 +70,7 @@
                 @forelse($programs as $program)
                     @php
                         $offcanvasId = 'ebook-folders-offcanvas-' . $program->id;
-                        $programImage = $program->image_url ?: asset('images/readingarea.jpg');
+                        $programImage = $program->image_url;
                         $folderCount = $program->folders->count();
                     @endphp
 
@@ -86,8 +86,7 @@
                                 <div class="ebook-image">
                                     <img src="{{ $programImage }}"
                                         alt="{{ $program->title }}"
-                                        loading="lazy"
-                                        onerror="this.onerror=null;this.src='{{ asset('images/readingarea.jpg') }}';">
+                                        loading="lazy">
 
                                     <span class="ebook-count">
                                         {{ $folderCount }}

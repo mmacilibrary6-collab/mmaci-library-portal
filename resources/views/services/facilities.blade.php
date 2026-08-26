@@ -50,7 +50,7 @@
         @forelse (($facilities ?? []) as $facility)
             @php
                 $facilityTitle = $facility['title'] ?? 'Library Facility';
-                $facilityImage = $facility['image'] ?? asset('images/readingarea.jpg');
+                $facilityImage = $facility['image'] ?? asset('images/image-fallback.svg');
                 $facilityCapacity = $facility['capacity'] ?? 'Contact the Library';
                 $facilityDescription = $facility['description']
                     ?? 'Facility information is currently unavailable.';
@@ -64,7 +64,7 @@
                                 src="{{ $facilityImage }}"
                                 alt="{{ $facilityTitle }}"
                                 loading="lazy"
-                                onerror="this.onerror=null;this.src='{{ asset('images/readingarea.jpg') }}';">
+                                onerror="this.onerror=null;this.src='{{ asset('images/image-fallback.svg') }}';">
                         </div>
                     </div>
 

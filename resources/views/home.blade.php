@@ -138,7 +138,7 @@
                                 src="{{ $update->image_url }}"
                                 alt="{{ $update->title }}"
                                 loading="{{ $loop->first ? 'eager' : 'lazy' }}"
-                                onerror="this.onerror=null;this.src='{{ asset('images/readingarea.jpg') }}';">
+                                onerror="this.onerror=null;this.src='{{ asset('images/image-fallback.svg') }}';">
                         </div>
 
                         <div class="library-update-content">
@@ -455,7 +455,7 @@
         <div class="gallery-grid">
             <figure class="gallery-card gallery-card-large" data-aos="fade-up">
                 <img
-                    src="{{ asset('images/readingarea.jpg') }}"
+                                src="{{ asset('images/image-fallback.svg') }}"
                     alt="MMACI Library reading area"
                     loading="lazy">
                 <figcaption>Reading Area</figcaption>
@@ -2535,7 +2535,7 @@ body.update-viewer-open {
         <div class="viewer-image-panel">
             <img
                 id="libraryUpdateViewerImage"
-                src="{{ asset('images/readingarea.jpg') }}"
+                    src="{{ asset('images/image-fallback.svg') }}"
                 alt="Library update">
         </div>
 
@@ -2602,7 +2602,7 @@ body.update-viewer-open {
         <div class="viewer-image-panel">
             <img
                 id="arrivalViewerImage"
-                src="{{ asset('images/readingarea.jpg') }}"
+                src="{{ asset('images/image-fallback.svg') }}"
                 alt="New arrival">
         </div>
 
@@ -2776,7 +2776,7 @@ document.addEventListener('DOMContentLoaded', function () {
     nextButton.addEventListener('click', showNext);
 
     image.addEventListener('error', function () {
-        image.src = @json(asset('images/readingarea.jpg'));
+        image.src = @json(asset('images/image-fallback.svg'));
     });
 
     document.addEventListener('keydown', function (event) {
@@ -2964,7 +2964,7 @@ document.addEventListener('DOMContentLoaded', function () {
     searchInput?.addEventListener('input', filterArrivals);
 
     image.addEventListener('error', function () {
-        image.src = @json(asset('images/readingarea.jpg'));
+        image.src = @json(asset('images/image-fallback.svg'));
     });
 
     document.addEventListener('keydown', function (event) {

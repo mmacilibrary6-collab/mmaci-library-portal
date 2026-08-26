@@ -1,7 +1,7 @@
 @php
     $program = $periodicalProgram ?? null;
     $isEditing = $program !== null;
-    $currentImage = $program?->image_url ?? asset('images/readingarea.jpg');
+    $currentImage = $program?->image_url ?? asset('images/image-fallback.svg');
 @endphp
 <div class="program-form">
     <div class="form-section"><div class="section-heading"><span class="section-icon"><i class="bi bi-book-half"></i></span><div><h5>Program Information</h5><p>Enter the periodical program details and display settings.</p></div></div>

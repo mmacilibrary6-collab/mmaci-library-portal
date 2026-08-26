@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Support\ImageUrl;
 use App\Support\DatabaseMedia;
 use App\Support\MediaStorage;
 
@@ -38,16 +39,24 @@ class OpenAccessResource extends Model
     public function getImageUrlAttribute(): string
     {
         if (blank($this->image)) {
-            return asset('images/default-resource.png');
+            return ImageUrl::fallback('images/image-fallback.svg');
         }
 
-        if ($this->exists && !str_starts_with((string) $this->image, 'http')) {
+        if (
+            str_starts_with((string) $this->image, 'http://') ||
+            str_starts_with((string) $this->image, 'https://') ||
+            str_starts_with((string) $this->image, 'data:')
+        ) {
+            return (string) $this->image;
+        }
+
+        if ($this->exists) {
             return route('database.media', ['type' => 'open-access-resource', 'id' => $this->getKey(), 'v' => $this->updated_at?->timestamp]);
         }
 
         return DatabaseMedia::toDataUri(
             $this->image,
-            MediaStorage::url($this->image, asset('images/default-resource.png'))
+            ImageUrl::resolve($this->image, 'images/image-fallback.svg')
         );
     }
 }

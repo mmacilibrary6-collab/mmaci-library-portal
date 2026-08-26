@@ -409,7 +409,7 @@
                 rgba(11, 46, 89, 0.70),
                 rgba(11, 46, 89, 0.70)
             ),
-            url("{{ asset('images/readingarea.jpg') }}")
+            url("{{ asset('images/image-fallback.svg') }}")
             center / cover no-repeat;
         opacity: 0.16;
     }

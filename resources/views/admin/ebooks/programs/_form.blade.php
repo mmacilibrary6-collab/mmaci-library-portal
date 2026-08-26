@@ -3,7 +3,7 @@
     $isEditing = $program !== null;
     $status = (int) old('status', $program?->status ?? 1);
     $storedImage = $program?->image;
-    $fallbackImage = asset('images/readingarea.jpg');
+    $fallbackImage = asset('images/image-fallback.svg');
     $currentImage = $program?->image_url ?? $fallbackImage;
 
     $externalImageUrl = old(

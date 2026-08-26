@@ -68,8 +68,7 @@
             @forelse($programs as $program)
                 @php
                     $modalId = 'program-folders-modal-' . $program->id;
-                    $programImage = $program->image_url
-                        ?: asset('images/readingarea.jpg');
+                    $programImage = $program->image_url;
                     $folderCount = $program->folders->count();
                 @endphp
 
@@ -87,11 +86,10 @@
                             aria-label="View folders for {{ $program->title }}">
 
                             <div class="program-image">
-                                <img
+                                    <img
                                     src="{{ $programImage }}"
                                     alt="{{ $program->title }}"
-                                    loading="lazy"
-                                    onerror="this.onerror=null;this.src='{{ asset('images/readingarea.jpg') }}';">
+                                    loading="lazy">
 
                                 <span class="folder-count">
                                     {{ $folderCount }}

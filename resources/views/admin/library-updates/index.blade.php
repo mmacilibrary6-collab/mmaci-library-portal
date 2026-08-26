@@ -60,7 +60,7 @@
                             <td class="row-number">{{ ($updates->firstItem() ?? 1) + $loop->index }}</td>
                             <td>
                                 <div class="update-identity">
-                                    <img src="{{ $update->image_url }}" alt="{{ $update->title }}" onerror="this.onerror=null;this.src='{{ asset('images/readingarea.jpg') }}';">
+                                    <img src="{{ $update->image_url }}" alt="{{ $update->title }}" onerror="this.onerror=null;this.src='{{ asset('images/image-fallback.svg') }}';">
                                     <div>
                                         <strong>{{ $update->title }}</strong>
                                         <span>{{ \Illuminate\Support\Str::limit($update->description ?? 'No description provided.', 72) }}</span>

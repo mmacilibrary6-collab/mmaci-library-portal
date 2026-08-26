@@ -62,7 +62,7 @@
             @forelse($programs as $program)
                 @php
                     $modalId = 'periodical-folders-modal-' . $program->id;
-                    $programImage = $program->image_url ?: asset('images/readingarea.jpg');
+                    $programImage = $program->image_url;
                     $folderCount = $program->folders->count();
                 @endphp
 
@@ -72,7 +72,7 @@
                     <article class="program-card">
                         <button type="button" class="program-card-button" data-bs-toggle="modal" data-bs-target="#{{ $modalId }}">
                             <div class="program-image">
-                                <img src="{{ $programImage }}" alt="{{ $program->title }}" loading="lazy" onerror="this.onerror=null;this.src='{{ asset('images/readingarea.jpg') }}';">
+                                <img src="{{ $programImage }}" alt="{{ $program->title }}" loading="lazy">
                                 <span class="folder-count">{{ $folderCount }} {{ \Illuminate\Support\Str::plural('Folder', $folderCount) }}</span>
                             </div>
                             <div class="program-content">

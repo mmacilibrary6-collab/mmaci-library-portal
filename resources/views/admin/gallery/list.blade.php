@@ -139,7 +139,7 @@
                             src="{{ $gallery->image_url }}"
                             alt="{{ $gallery->title }}"
                             loading="lazy"
-                            onerror="this.onerror=null; this.src='{{ asset('images/readingarea.jpg') }}';">
+                            onerror="this.onerror=null; this.src='{{ asset('images/image-fallback.svg') }}';">
 
                         <div class="gallery-image-shade"></div>
 

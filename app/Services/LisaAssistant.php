@@ -20,6 +20,15 @@ class LisaAssistant
             return $this->fallbackResponse();
         }
 
+        if ($this->isAdministrativeRequest($normalized)) {
+            return [
+                'answer' => 'I’m designed to help with public MMACI Library pages, collections, services, and contact information only. Please use the admin dashboard directly for management tasks.',
+                'title' => 'Public pages only',
+                'pageUrl' => null,
+                'suggestions' => $this->defaultSuggestions(),
+            ];
+        }
+
         if ($this->isGreeting($normalized)) {
             return [
                 'answer' => 'Hello! I’m Lisa, the MMACI Library Guide. I can help you find collections, academic-program resources, services, facilities, forms, events, contact details, and website pages.',
@@ -589,11 +598,38 @@ class LisaAssistant
     protected function defaultSuggestions(): array
     {
         return [
-            'Where can I find E-books for my program?',
-            'What services and facilities are available?',
-            'How do I contact the librarian?',
-            'How do I reserve the AVR?',
+            'How can I access ebooks?',
+            'Browse new arrivals',
+            'What services are available?',
+            'Where is the library located?',
         ];
+    }
+
+    protected function isAdministrativeRequest(string $message): bool
+    {
+        return Str::contains($message, [
+            'admin',
+            'administrator',
+            'dashboard',
+            'manage',
+            'management',
+            'create user',
+            'delete user',
+            'user role',
+            'permissions',
+            'database',
+            'sql',
+            'migrate',
+            'backup',
+            'credentials',
+            'password',
+            'token',
+            'api key',
+            'edit content',
+            'publish content',
+            'protected content',
+            'internal',
+        ]);
     }
 
     protected function directIntentResponse(string $message): ?array

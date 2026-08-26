@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use App\Support\ImageUrl;
 use App\Support\DatabaseMedia;
 use App\Support\MediaStorage;
 
@@ -51,16 +52,24 @@ class Gallery extends Model
     public function getImageUrlAttribute(): string
     {
         if (blank($this->image)) {
-            return asset('images/readingarea.jpg');
+            return ImageUrl::fallback('images/image-fallback.svg');
         }
 
-        if ($this->exists && !str_starts_with((string) $this->image, 'http')) {
+        if (
+            str_starts_with((string) $this->image, 'http://') ||
+            str_starts_with((string) $this->image, 'https://') ||
+            str_starts_with((string) $this->image, 'data:')
+        ) {
+            return (string) $this->image;
+        }
+
+        if ($this->exists) {
             return route('database.media', ['type' => 'gallery', 'id' => $this->getKey(), 'v' => $this->updated_at?->timestamp]);
         }
 
         return DatabaseMedia::toDataUri(
             $this->image,
-            MediaStorage::url($this->image, asset('images/readingarea.jpg'))
+            ImageUrl::resolve($this->image, 'images/image-fallback.svg')
         );
     }
 

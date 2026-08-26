@@ -149,7 +149,7 @@
                                     fetchpriority="low"
                                     onerror="
                                         this.onerror = null;
-                                        this.src = '{{ asset('images/readingarea.jpg') }}';
+                                        this.src = '{{ asset('images/image-fallback.svg') }}';
                                     ">
 
                                 <div class="arrival-cover-overlay">
@@ -496,7 +496,7 @@
                     <img
                         src="{{ asset('images/logomml.webp') }}"
                         alt="MMACI Logo"
-                        onerror="this.style.display='none';">
+                        onerror="this.src='{{ asset('images/image-fallback.svg') }}';">
 
                     <div>
 
@@ -2619,7 +2619,7 @@ document.addEventListener(
                 book.image ||
                 @json(
                     asset(
-                        'images/readingarea.jpg'
+                        'images/image-fallback.svg'
                     )
                 );
 
@@ -2801,7 +2801,7 @@ document.addEventListener(
             'error',
             function () {
                 const fallbackImage = @json(
-                    asset('images/readingarea.jpg')
+                    asset('images/image-fallback.svg')
                 );
 
                 if (viewerImage.dataset.fallbackAttempted === 'true') {

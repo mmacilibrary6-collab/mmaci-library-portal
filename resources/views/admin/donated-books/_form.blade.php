@@ -3,7 +3,7 @@
     $isEditing = $book !== null;
 
     $currentImage = $book?->image_url
-        ?? asset('images/readingarea.jpg');
+        ?? asset('images/image-fallback.svg');
 
     /*
     |--------------------------------------------------------------------------
@@ -232,7 +232,7 @@
                             id="programImagePreview"
                             src="{{ $currentImage }}"
                             data-original="{{ $currentImage }}"
-                            data-fallback="{{ asset('images/readingarea.jpg') }}"
+                            data-fallback="{{ asset('images/image-fallback.svg') }}"
                             alt="Donated book preview">
 
                         <span class="preview-overlay">

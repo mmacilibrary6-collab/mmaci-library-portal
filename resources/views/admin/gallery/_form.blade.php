@@ -7,7 +7,7 @@
 
     $currentImage = $isEditing
         ? $galleryItem->image_url
-        : asset('images/readingarea.jpg');
+        : asset('images/image-fallback.svg');
 
     $isActive = (int) old(
         'is_active',
@@ -151,7 +151,7 @@
                         src="{{ $currentImage }}"
                         id="galleryCoverPreview"
                         alt="{{ $galleryItem?->title ?? 'Gallery folder image' }}"
-                        onerror="this.onerror=null; this.src='{{ asset('images/readingarea.jpg') }}';">
+                        onerror="this.onerror=null; this.src='{{ asset('images/image-fallback.svg') }}';">
 
                 </div>
 
@@ -283,7 +283,7 @@
                                     src="{{ $galleryImage->image_url }}"
                                     alt="Photo from {{ $galleryItem->title }}"
                                     loading="lazy"
-                                    onerror="this.onerror=null; this.src='{{ asset('images/readingarea.jpg') }}';">
+                                    onerror="this.onerror=null; this.src='{{ asset('images/image-fallback.svg') }}';">
 
                             </div>
 

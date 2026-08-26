@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Support\DatabaseMedia;
+use App\Support\ImageUrl;
 use App\Support\MediaStorage;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -27,10 +28,18 @@ class LibraryUpdate extends Model
     public function getImageUrlAttribute(): string
     {
         if (blank($this->image)) {
-            return asset('images/readingarea.jpg');
+            return ImageUrl::fallback('images/image-fallback.svg');
         }
 
-        if ($this->exists && !str_starts_with((string) $this->image, 'http')) {
+        if (
+            str_starts_with((string) $this->image, 'http://') ||
+            str_starts_with((string) $this->image, 'https://') ||
+            str_starts_with((string) $this->image, 'data:')
+        ) {
+            return (string) $this->image;
+        }
+
+        if ($this->exists) {
             return route('database.media', [
                 'type' => 'library-update',
                 'id' => $this->getKey(),
@@ -40,7 +49,7 @@ class LibraryUpdate extends Model
 
         return DatabaseMedia::toDataUri(
             $this->image,
-            MediaStorage::url($this->image, asset('images/readingarea.jpg'))
+            ImageUrl::resolve($this->image, 'images/image-fallback.svg')
         );
     }
 }

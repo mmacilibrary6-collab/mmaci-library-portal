@@ -1,7 +1,7 @@
 @php
     $update = $libraryUpdate ?? null;
     $isEditing = $update !== null;
-    $currentImage = $update?->image_url ?? asset('images/readingarea.jpg');
+    $currentImage = $update?->image_url ?? asset('images/image-fallback.svg');
 @endphp
 
 <div class="library-update-form-card">
@@ -130,7 +130,7 @@
                         id="libraryUpdatePreview"
                         src="{{ $currentImage }}"
                         alt="Library update preview"
-                        onerror="this.onerror=null;this.src='{{ asset('images/readingarea.jpg') }}';">
+                        onerror="this.onerror=null;this.src='{{ asset('images/image-fallback.svg') }}';">
 
                     <div class="preview-label">
                         Homepage Preview
