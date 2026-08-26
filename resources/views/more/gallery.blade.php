@@ -491,6 +491,7 @@
 
 .modal-backdrop.show {
     z-index: 1990 !important;
+    pointer-events: none !important;
 }
 
 .gallery-modal-close {
