@@ -107,13 +107,6 @@
                                             placeholder="{{ $program->folders->isNotEmpty() ? 'Search folder titles or accession numbers...' : 'No folder titles available to search' }}"
                                             aria-label="Search periodical folder titles and accession numbers in {{ $program->title }}"
                                             @disabled($program->folders->isEmpty())>
-                                        <button
-                                            type="button"
-                                            class="collection-folder-search-clear"
-                                            aria-label="Clear folder search"
-                                            @disabled($program->folders->isEmpty())>
-                                            <i class="bi bi-x-lg" aria-hidden="true"></i>
-                                        </button>
                                     </div>
 
                                     @if($program->folders->isNotEmpty())
@@ -126,7 +119,7 @@
                                                     <h5>{{ $categoryFolders->first()?->categoryLabel() ?? 'Periodical' }}</h5>
                                                     <div class="folder-list">
                                                         @foreach($categoryFolders->sortBy('title', SORT_NATURAL | SORT_FLAG_CASE) as $folder)
-                                                            <a href="{{ $folder->folder_link }}" target="_blank" rel="noopener noreferrer" class="folder-link"
+                                                            <a href="{{ $folder->folder_link }}" target="_blank" rel="noopener noreferrer" class="folder-link folder-search-item"
                                                                 data-folder-title="{{ strtolower($folder->title) }}"
                                                                 data-folder-description="{{ strtolower($folder->description ?? '') }}"
                                                                 data-folder-accession="{{ strtolower($folder->accession_number ?? '') }}">
@@ -469,15 +462,18 @@ document.addEventListener('DOMContentLoaded', function () {
                 if (matches) visible++;
             });
             if (empty) empty.hidden = visible !== 0;
-            clear?.classList.toggle('is-visible', query !== '');
+
+            modal.querySelectorAll('.folder-category-group').forEach(function (group) {
+                const hasVisibleItems = Array.from(group.querySelectorAll('.folder-search-item'))
+                    .some(function (link) {
+                        return !link.hidden;
+                    });
+                group.hidden = !hasVisibleItems;
+            });
         };
 
         input.addEventListener('input', filter);
-        clear?.addEventListener('click', function () {
-            input.value = '';
-            input.focus();
-            filter();
-        });
+        input.addEventListener('search', filter);
     });
 
     const revealGroups = [
