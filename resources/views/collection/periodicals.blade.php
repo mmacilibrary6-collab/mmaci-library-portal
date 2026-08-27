@@ -102,20 +102,31 @@
                                     <div class="collection-folder-search {{ $program->folders->isEmpty() ? 'is-disabled' : '' }}">
                                         <i class="bi bi-search" aria-hidden="true"></i>
                                         <input
-                                            type="search"
+                                            type="text"
                                             class="collection-folder-search-input"
                                             placeholder="{{ $program->folders->isNotEmpty() ? 'Search folder titles or accession numbers...' : 'No folder titles available to search' }}"
                                             aria-label="Search periodical folder titles and accession numbers in {{ $program->title }}"
+                                            autocomplete="off"
+                                            autocapitalize="off"
+                                            spellcheck="false"
                                             @disabled($program->folders->isEmpty())>
+                                        <button
+                                            type="button"
+                                            class="collection-folder-search-clear"
+                                            aria-label="Clear search"
+                                            hidden
+                                            @disabled($program->folders->isEmpty())>
+                                            <i class="bi bi-x-lg" aria-hidden="true"></i>
+                                        </button>
                                     </div>
 
                                     @if($program->folders->isNotEmpty())
                                         @php
                                             $groupedFolders = $program->folders->groupBy('category');
                                         @endphp
-                                        <div class="folder-list">
+                                        <div class="folder-list" data-folder-groups>
                                             @foreach($groupedFolders as $category => $categoryFolders)
-                                                <div class="folder-category-group">
+                                                <div class="folder-category-group" data-folder-category-group>
                                                     <h5>{{ $categoryFolders->first()?->categoryLabel() ?? 'Periodical' }}</h5>
                                                     <div class="folder-list">
                                                         @foreach($categoryFolders->sortBy('title', SORT_NATURAL | SORT_FLAG_CASE) as $folder)
@@ -149,8 +160,7 @@
                                     @endif
                                 </div>
                                 <div class="modal-footer">
-                                    <span>{{ $folderCount }} {{ \Illuminate\Support\Str::plural('folder', $folderCount) }} available</span>
-                                    
+                                    <span class="folder-count-label" data-folder-count="{{ $folderCount }}">{{ $folderCount }} {{ \Illuminate\Support\Str::plural('folder', $folderCount) }} available</span>
                                 </div>
                             </div>
                         </div>
@@ -445,12 +455,15 @@ document.addEventListener('DOMContentLoaded', function () {
         const clear = modal.querySelector('.collection-folder-search-clear');
         const links = modal.querySelectorAll('.folder-link');
         const empty = modal.querySelector('.collection-folder-search-empty');
+        const countLabel = modal.querySelector('.folder-count-label');
+        const groups = modal.querySelectorAll('[data-folder-category-group]');
 
         if (!input) return;
 
         const filter = function () {
             const query = input.value.trim().toLowerCase();
             let visible = 0;
+
             links.forEach(function (link) {
                 const searchableText = [
                     link.dataset.folderTitle || '',
@@ -461,19 +474,37 @@ document.addEventListener('DOMContentLoaded', function () {
                 link.hidden = !matches;
                 if (matches) visible++;
             });
-            if (empty) empty.hidden = visible !== 0;
 
-            modal.querySelectorAll('.folder-category-group').forEach(function (group) {
+            groups.forEach(function (group) {
                 const hasVisibleItems = Array.from(group.querySelectorAll('.folder-search-item'))
                     .some(function (link) {
                         return !link.hidden;
                     });
                 group.hidden = !hasVisibleItems;
             });
+
+            if (empty) {
+                empty.hidden = visible !== 0;
+            }
+
+            if (countLabel) {
+                countLabel.textContent = visible + ' ' + (visible === 1 ? 'folder' : 'folders') + ' available';
+            }
+
+            if (clear) {
+                clear.hidden = query === '';
+            }
         };
 
         input.addEventListener('input', filter);
         input.addEventListener('search', filter);
+        clear?.addEventListener('click', function () {
+            input.value = '';
+            input.focus();
+            filter();
+        });
+
+        filter();
     });
 
     const revealGroups = [
@@ -1254,13 +1285,21 @@ document.addEventListener('DOMContentLoaded', function () {
 <style>
 .collection-folder-search { position: relative; display: flex; align-items: center; margin-bottom: 16px; }
 .collection-folder-search > i { position: absolute; left: 16px; color: var(--thesis-blue); }
-.collection-folder-search-input { width: 100%; padding: 13px 44px; color: var(--thesis-ink); background: var(--thesis-bg); border: 1px solid var(--thesis-line); border-radius: 12px; outline: 0; }
+.collection-folder-search-input { width: 100%; padding: 13px 46px 13px 44px; color: var(--thesis-ink); background: var(--thesis-bg); border: 1px solid var(--thesis-line); border-radius: 12px; outline: 0; }
 .collection-folder-search-input:focus { border-color: var(--thesis-blue); box-shadow: 0 0 0 3px rgba(24, 75, 140, .12); }
-.collection-folder-search-clear { position: absolute; right: 10px; display: grid; width: 30px; height: 30px; place-items: center; color: var(--thesis-muted); background: transparent; border: 0; opacity: 0; pointer-events: none; }
-.collection-folder-search-clear.is-visible { opacity: 1; pointer-events: auto; }
+.collection-folder-search-clear { position: absolute; right: 9px; display: grid; width: 30px; height: 30px; place-items: center; color: var(--thesis-muted); background: transparent; border: 0; border-radius: 50%; opacity: 0; pointer-events: none; transition: opacity .18s ease, color .18s ease, background .18s ease; }
+.collection-folder-search-clear:not([hidden]) { opacity: 1; pointer-events: auto; }
+.collection-folder-search-clear:hover { color: var(--thesis-blue); background: rgba(24, 75, 140, .08); }
 .collection-folder-search.is-disabled { opacity: .7; }
 .collection-folder-search.is-disabled > i { color: var(--thesis-muted); }
 .collection-folder-search-input:disabled { cursor: not-allowed; background: #f1f4f8; }
+.collection-folder-search-input[type="text"]::-webkit-search-decoration,
+.collection-folder-search-input[type="text"]::-webkit-search-cancel-button,
+.collection-folder-search-input[type="text"]::-webkit-search-results-button,
+.collection-folder-search-input[type="text"]::-webkit-search-results-decoration {
+    -webkit-appearance: none;
+    appearance: none;
+}
 .collection-folder-search-empty { padding: 36px 20px; text-align: center; background: var(--thesis-bg); border: 1px dashed var(--thesis-line); border-radius: 14px; }
 .collection-folder-search-empty h5 { margin: 0 0 8px; color: var(--thesis-navy); font-weight: 800; }
 .collection-folder-search-empty p { margin: 0; color: var(--thesis-muted); }
