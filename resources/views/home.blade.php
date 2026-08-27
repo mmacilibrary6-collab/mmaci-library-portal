@@ -1122,17 +1122,17 @@ document.addEventListener('DOMContentLoaded', function () {
     padding: 20px;
     box-sizing: border-box;
     display: flex;
-    align-items: flex-start;
+    align-items: center;
     justify-content: center;
-    overflow: auto;
+    overflow: hidden;
     background: #030810;
 }
 
 .viewer-image-panel img {
     width: 100%;
-    height: auto;
+    height: 100%;
     max-width: 100%;
-    max-height: none;
+    max-height: 100%;
     display: block;
     object-fit: contain;
     object-position: center;
@@ -1295,6 +1295,7 @@ document.addEventListener('DOMContentLoaded', function () {
     height: 46px;
     border-radius: 50%;
     transform: translateY(-50%);
+    pointer-events: auto;
 }
 
 .viewer-navigation:hover:not(:disabled) {
@@ -1306,7 +1307,7 @@ document.addEventListener('DOMContentLoaded', function () {
 }
 
 .viewer-next {
-    right: calc(44.5% + 12px);
+    right: 16px;
 }
 
 .viewer-navigation:disabled {
@@ -1346,10 +1347,6 @@ body.update-viewer-open {
         width: 100%;
         height: 100%;
         padding: 22px 20px;
-    }
-
-    .viewer-next {
-        right: 14px;
     }
 
     .viewer-previous {
@@ -1426,7 +1423,6 @@ body.update-viewer-open {
     }
 
     .viewer-navigation {
-        top: 27.5%;
         width: 40px;
         height: 40px;
     }
@@ -1450,7 +1446,6 @@ body.update-viewer-open {
     }
 
     .viewer-navigation {
-        top: 26%;
     }
 
     .viewer-copy h3 {
@@ -2533,10 +2528,26 @@ body.update-viewer-open {
         </button>
 
         <div class="viewer-image-panel">
+            <button
+                type="button"
+                class="viewer-navigation viewer-previous"
+                id="libraryUpdatePrevious"
+                aria-label="Previous library update">
+                <i class="bi bi-chevron-left" aria-hidden="true"></i>
+            </button>
+
             <img
                 id="libraryUpdateViewerImage"
                     src="{{ asset('images/image-fallback.svg') }}"
                 alt="Library update">
+
+            <button
+                type="button"
+                class="viewer-navigation viewer-next"
+                id="libraryUpdateNext"
+                aria-label="Next library update">
+                <i class="bi bi-chevron-right" aria-hidden="true"></i>
+            </button>
         </div>
 
         <aside class="viewer-content-panel">
@@ -2564,13 +2575,6 @@ body.update-viewer-open {
             </div>
         </aside>
 
-        <button
-            type="button"
-            class="viewer-navigation viewer-next"
-            id="libraryUpdateNext"
-            aria-label="Next library update">
-            <i class="bi bi-chevron-right" aria-hidden="true"></i>
-        </button>
     </div>
 </div>
 
@@ -2600,10 +2604,26 @@ body.update-viewer-open {
         </button>
 
         <div class="viewer-image-panel">
+            <button
+                type="button"
+                class="viewer-navigation viewer-previous"
+                id="arrivalPrevious"
+                aria-label="Previous arrival">
+                <i class="bi bi-chevron-left" aria-hidden="true"></i>
+            </button>
+
             <img
                 id="arrivalViewerImage"
                 src="{{ asset('images/image-fallback.svg') }}"
                 alt="New arrival">
+
+            <button
+                type="button"
+                class="viewer-navigation viewer-next"
+                id="arrivalNext"
+                aria-label="Next arrival">
+                <i class="bi bi-chevron-right" aria-hidden="true"></i>
+            </button>
         </div>
 
         <aside class="viewer-content-panel">
@@ -2663,13 +2683,6 @@ body.update-viewer-open {
             </div>
         </aside>
 
-        <button
-            type="button"
-            class="viewer-navigation viewer-next"
-            id="arrivalNext"
-            aria-label="Next arrival">
-            <i class="bi bi-chevron-right" aria-hidden="true"></i>
-        </button>
     </div>
 </div>
 
@@ -4058,14 +4071,13 @@ document.addEventListener('DOMContentLoaded', function () {
             min-height: 0 !important;
         }
 
-        .viewer-navigation {
-            top: 50% !important;
-        }
-
-        .viewer-next {
-            right: calc(36% + 8px) !important;
-        }
+    .viewer-navigation {
     }
+
+    .viewer-next {
+        right: 12px !important;
+    }
+}
 </style>
 
 <script>
