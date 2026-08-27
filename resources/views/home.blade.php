@@ -1354,7 +1354,7 @@ body.update-viewer-open {
     }
 
     .viewer-navigation {
-        top: 29%;
+        top: 50%;
     }
 }
 
@@ -1446,6 +1446,7 @@ body.update-viewer-open {
     }
 
     .viewer-navigation {
+        top: 50%;
     }
 
     .viewer-copy h3 {
@@ -2519,14 +2520,6 @@ body.update-viewer-open {
             <i class="bi bi-x-lg" aria-hidden="true"></i>
         </button>
 
-        <button
-            type="button"
-            class="viewer-navigation viewer-previous"
-            id="libraryUpdatePrevious"
-            aria-label="Previous library update">
-            <i class="bi bi-chevron-left" aria-hidden="true"></i>
-        </button>
-
         <div class="viewer-image-panel">
             <button
                 type="button"
@@ -2593,14 +2586,6 @@ body.update-viewer-open {
             data-close-arrival-viewer
             aria-label="Close arrival details">
             <i class="bi bi-x-lg" aria-hidden="true"></i>
-        </button>
-
-        <button
-            type="button"
-            class="viewer-navigation viewer-previous"
-            id="arrivalPrevious"
-            aria-label="Previous arrival">
-            <i class="bi bi-chevron-left" aria-hidden="true"></i>
         </button>
 
         <div class="viewer-image-panel">
@@ -3831,7 +3816,7 @@ document.addEventListener('DOMContentLoaded', function () {
      * percentage derived from the previous oversized modal.
      */
     .viewer-next {
-        right: calc(34.8% + 12px) !important;
+        right: 12px !important;
     }
 
     /* =========================================================
@@ -3876,7 +3861,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         .viewer-next {
-            right: calc(46.5% + 10px) !important;
+            right: 12px !important;
         }
 
         #eventDetailsModal .event-modal {
@@ -3925,7 +3910,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         .viewer-navigation {
-            top: 22vh !important;
+            top: 50% !important;
         }
 
         .viewer-previous {
@@ -4026,7 +4011,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         .viewer-navigation {
-            top: 19vh !important;
+            top: 50% !important;
             width: 38px !important;
             height: 38px !important;
         }
@@ -4072,6 +4057,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
     .viewer-navigation {
+        top: 50% !important;
     }
 
     .viewer-next {

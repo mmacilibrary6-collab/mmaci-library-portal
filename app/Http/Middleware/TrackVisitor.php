@@ -4,6 +4,7 @@ namespace App\Http\Middleware;
 
 use App\Models\VisitorLog;
 use Closure;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Str;
@@ -44,6 +45,13 @@ class TrackVisitor
             return $response;
         }
 
+        $dedupeSeconds = max(5, (int) config('security.visitor_log_dedupe_seconds', 30));
+        $cacheKey = $this->cacheKey($request, $response);
+
+        if (! Cache::add($cacheKey, true, now()->addSeconds($dedupeSeconds))) {
+            return $response;
+        }
+
         try {
             VisitorLog::create([
                 'ip_address' => (string) $request->ip(),
@@ -63,11 +71,15 @@ class TrackVisitor
 
     protected function shouldTrack(Request $request, mixed $response): bool
     {
-        if ($request->isMethod('OPTIONS')) {
+        if (! $request->isMethod('GET') && ! $request->isMethod('HEAD')) {
             return false;
         }
 
         if ($response instanceof BinaryFileResponse || $response instanceof StreamedResponse) {
+            return false;
+        }
+
+        if (! $this->isHtmlLikeResponse($response)) {
             return false;
         }
 
@@ -100,5 +112,25 @@ class TrackVisitor
     protected function fullUrl(Request $request): string
     {
         return $request->fullUrl();
+    }
+
+    protected function isHtmlLikeResponse(mixed $response): bool
+    {
+        $contentType = strtolower((string) ($response->headers->get('content-type') ?? ''));
+
+        return $contentType === ''
+            || str_contains($contentType, 'text/html')
+            || str_contains($contentType, 'application/xhtml+xml');
+    }
+
+    protected function cacheKey(Request $request, mixed $response): string
+    {
+        return implode(':', [
+            'visitor-log',
+            sha1((string) $request->ip()),
+            strtoupper($request->method()),
+            sha1($this->fullUrl($request)),
+            (string) ($response->getStatusCode() ?? '0'),
+        ]);
     }
 }

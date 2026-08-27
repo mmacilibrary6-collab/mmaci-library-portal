@@ -7,6 +7,7 @@ use App\Models\VisitorLog;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 
@@ -49,10 +50,19 @@ class VisitorIpAddressController extends Controller
             return $log;
         });
 
+        $summary = Cache::remember('visitor-ip-summary', now()->addSeconds(60), function (): array {
+            return VisitorLog::query()
+                ->selectRaw('COUNT(*) as total')
+                ->selectRaw('SUM(CASE WHEN DATE(created_at) = ? THEN 1 ELSE 0 END) as today', [today()->toDateString()])
+                ->selectRaw('SUM(CASE WHEN status_code IN (401, 403, 404, 429) THEN 1 ELSE 0 END) as suspicious')
+                ->first()
+                ->toArray();
+        });
+
         $summary = [
-            'total' => VisitorLog::count(),
-            'today' => VisitorLog::whereDate('created_at', today())->count(),
-            'suspicious' => VisitorLog::whereIn('status_code', [401, 403, 404, 429])->count(),
+            'total' => (int) ($summary['total'] ?? 0),
+            'today' => (int) ($summary['today'] ?? 0),
+            'suspicious' => (int) ($summary['suspicious'] ?? 0),
         ];
 
         return view('admin.visitor-ip-address.index', compact(
@@ -69,6 +79,7 @@ class VisitorIpAddressController extends Controller
     {
         $days = max(1, (int) $request->integer('days', config('security.visitor_log_retention_days', 90)));
         $deleted = VisitorLog::where('created_at', '<', now()->subDays($days))->delete();
+        Cache::forget('visitor-ip-summary');
 
         return redirect()
             ->route('admin.visitor-ip-address.index')
