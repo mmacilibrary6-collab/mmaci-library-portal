@@ -16,7 +16,14 @@ class PeriodicalFolderController extends Controller
     {
         $search = trim((string) $request->input('search', ''));
         $programId = $request->input('program');
+        $category = $request->input('category');
         $programs = PeriodicalProgram::query()->orderBy('title')->get();
+        $categories = PeriodicalFolder::query()
+            ->whereNotNull('category')
+            ->select('category')
+            ->distinct()
+            ->orderBy('category')
+            ->pluck('category');
 
         $folders = PeriodicalFolder::query()
             ->with('program')
@@ -30,11 +37,12 @@ class PeriodicalFolderController extends Controller
                 });
             })
             ->when(filled($programId), fn ($query) => $query->where('periodical_program_id', $programId))
+            ->when(filled($category), fn ($query) => $query->where('category', $category))
             ->orderBy('title', 'asc')
             ->paginate(10)
             ->withQueryString();
 
-        return view('admin.periodicals.folders.index', compact('folders', 'programs'));
+        return view('admin.periodicals.folders.index', compact('folders', 'programs', 'categories'));
     }
 
     public function create(Request $request): View

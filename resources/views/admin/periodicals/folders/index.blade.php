@@ -48,12 +48,24 @@
                 @endforeach
             </select>
 
+            <select
+                name="category"
+                class="form-select program-filter"
+                aria-label="Filter by periodical category">
+                <option value="">All categories</option>
+                @foreach ($categories ?? [] as $folderCategory)
+                    <option value="{{ $folderCategory }}" @selected(request('category') === $folderCategory)>
+                        {{ \App\Models\PeriodicalFolder::make(['category' => $folderCategory])->categoryLabel() }}
+                    </option>
+                @endforeach
+            </select>
+
             <button type="submit" class="btn filter-button">
                 <i class="bi bi-funnel"></i>
                 Filter
             </button>
 
-            @if (request()->filled('search') || request()->filled('program'))
+            @if (request()->filled('search') || request()->filled('program') || request()->filled('category'))
                 <a href="{{ route('admin.periodical-folders.index') }}" class="btn clear-filter-button" title="Clear filters">
                     <i class="bi bi-x-lg"></i>
                 </a>
@@ -66,7 +78,7 @@
                 {{ \Illuminate\Support\Str::plural('folder', $folders->total()) }}
             </div>
 
-            @if (request()->filled('search') || request()->filled('program'))
+            @if (request()->filled('search') || request()->filled('program') || request()->filled('category'))
                 <span>Filtered results</span>
             @else
                 <span>All folders</span>
