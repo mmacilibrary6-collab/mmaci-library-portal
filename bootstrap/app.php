@@ -26,6 +26,8 @@ return Application::configure(basePath: dirname(__DIR__))
     })
     ->withSchedule(function (Schedule $schedule): void {
         $schedule->command('visitor-logs:prune --days=90')->dailyAt('01:10');
+        $schedule->command('library-updates:expire --days=' . config('security.library_update_expiry_days', 10))
+            ->dailyAt('01:20');
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //

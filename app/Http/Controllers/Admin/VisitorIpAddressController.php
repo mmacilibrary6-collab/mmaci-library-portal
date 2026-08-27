@@ -86,6 +86,16 @@ class VisitorIpAddressController extends Controller
             ->with('success', "{$deleted} old visitor logs deleted successfully.");
     }
 
+    public function clearToday(Request $request): RedirectResponse
+    {
+        $deleted = VisitorLog::whereDate('created_at', today())->delete();
+        Cache::forget('visitor-ip-summary');
+
+        return redirect()
+            ->route('admin.visitor-ip-address.index')
+            ->with('success', "{$deleted} visitor logs for today deleted successfully.");
+    }
+
     protected function recentCountsByIp(Collection $logs): array
     {
         $ips = $logs->pluck('ip_address')->filter()->unique()->values();

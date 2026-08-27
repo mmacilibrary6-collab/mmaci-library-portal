@@ -71,6 +71,10 @@ class TrackVisitor
 
     protected function shouldTrack(Request $request, mixed $response): bool
     {
+        if ($request->user() !== null) {
+            return false;
+        }
+
         if (! $request->isMethod('GET') && ! $request->isMethod('HEAD')) {
             return false;
         }

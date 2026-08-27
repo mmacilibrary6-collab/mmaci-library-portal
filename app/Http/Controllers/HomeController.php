@@ -70,9 +70,11 @@ class HomeController extends Controller
          * Library updates
          */
         $libraryUpdateTable = (new LibraryUpdate())->getTable();
+        $libraryUpdateExpiryDays = max(1, (int) config('security.library_update_expiry_days', 10));
 
         $libraryUpdates = LibraryUpdate::query()
             ->where('status', true)
+            ->where('created_at', '>=', now()->subDays($libraryUpdateExpiryDays))
             ->when(
                 Schema::hasColumn(
                     $libraryUpdateTable,
