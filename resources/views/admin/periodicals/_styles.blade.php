@@ -106,4 +106,353 @@
     .program-form .btn-cancel{border:1px solid var(--line);background:#fff;color:var(--text)}
     .program-form .btn-save{border:0;background:var(--gold);color:var(--navy)}
     .program-form .btn-save:hover,.program-form .btn-cancel:hover{transform:translateY(-1px)}
+
+    .folder-page {
+        --navy: #0b2e59;
+        --blue: #184b8c;
+        --gold: #f4b400;
+        --ink: #21344d;
+        --muted: #728096;
+        --line: #e5eaf1;
+        --surface: #ffffff;
+        padding: 24px;
+    }
+
+    .folder-page-header {
+        position: relative;
+        overflow: hidden;
+        min-height: 150px;
+        margin-bottom: 22px;
+        padding: 28px 30px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 24px;
+        border-radius: 22px;
+        background: radial-gradient(circle at 90% 10%, rgba(244,180,0,.2), transparent 28%), linear-gradient(125deg, var(--navy), var(--blue));
+        box-shadow: 0 16px 36px rgba(11,46,89,.16);
+        color: #fff;
+    }
+
+    .folder-page-header::after {
+        content: "";
+        position: absolute;
+        right: 12%;
+        bottom: -70px;
+        width: 180px;
+        height: 180px;
+        border: 28px solid rgba(255,255,255,.05);
+        border-radius: 50%;
+    }
+
+    .folder-heading {
+        position: relative;
+        z-index: 1;
+        display: flex;
+        align-items: center;
+        gap: 18px;
+    }
+
+    .folder-heading-icon {
+        width: 62px;
+        height: 62px;
+        flex: 0 0 62px;
+        display: grid;
+        place-items: center;
+        border-radius: 18px;
+        background: var(--gold);
+        color: var(--navy);
+        font-size: 27px;
+        box-shadow: 0 12px 25px rgba(0,0,0,.14);
+    }
+
+    .folder-heading span {
+        display: block;
+        margin-bottom: 4px;
+        color: #ffd96d;
+        font-size: 10px;
+        font-weight: 800;
+        letter-spacing: .14em;
+        text-transform: uppercase;
+    }
+
+    .folder-heading h2 {
+        margin: 0 0 5px;
+        font-size: clamp(24px,3vw,32px);
+        font-weight: 800;
+    }
+
+    .folder-heading p {
+        max-width: 600px;
+        margin: 0;
+        color: rgba(255,255,255,.72);
+        font-size: 13px;
+    }
+
+    .add-folder-button {
+        position: relative;
+        z-index: 1;
+        min-height: 46px;
+        padding: 0 18px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 9px;
+        border-radius: 12px;
+        background: var(--gold);
+        color: var(--navy);
+        font-size: 13px;
+        font-weight: 800;
+        text-decoration: none;
+        box-shadow: 0 10px 22px rgba(0,0,0,.15);
+        transition: .2s ease;
+    }
+
+    .add-folder-button:hover {
+        color: var(--navy);
+        background: #ffc62b;
+        transform: translateY(-2px);
+    }
+
+    .folder-management-card {
+        overflow: hidden;
+        border: 1px solid #e7edf4;
+        border-radius: 22px;
+        background: var(--surface);
+        box-shadow: 0 12px 30px rgba(25,50,80,.06);
+    }
+
+    .folder-filters {
+        width: 100%;
+        padding: 20px 22px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        flex-wrap: wrap;
+        border-bottom: 1px solid var(--line);
+    }
+
+    .folder-search {
+        position: relative;
+        flex: 1 1 320px;
+    }
+
+    .folder-search > i {
+        position: absolute;
+        top: 50%;
+        left: 14px;
+        color: #93a0b2;
+        transform: translateY(-50%);
+    }
+
+    .folder-search input {
+        width: 100%;
+        height: 42px;
+        padding: 0 42px 0 40px;
+        border: 1px solid var(--line);
+        border-radius: 11px;
+        outline: none;
+        color: var(--ink);
+        font-size: 12px;
+        transition: .2s ease;
+    }
+
+    .folder-search input:focus {
+        border-color: var(--blue);
+        box-shadow: 0 0 0 3px rgba(24,75,140,.1);
+    }
+
+    .program-filter {
+        width: min(100%, 320px);
+        height: 42px;
+        border: 1px solid var(--line);
+        border-radius: 11px;
+        color: var(--ink);
+        font-size: 12px;
+        box-shadow: none;
+    }
+
+    .filter-button {
+        height: 42px;
+        padding: 0 17px;
+        border: 0;
+        border-radius: 11px;
+        background: var(--navy);
+        color: #fff;
+        font-size: 12px;
+        font-weight: 700;
+    }
+
+    .filter-button:hover {
+        background: var(--blue);
+        color: #fff;
+    }
+
+    .clear-filter-button {
+        width: 42px;
+        height: 42px;
+        padding: 0;
+        display: grid;
+        place-items: center;
+        border-radius: 11px;
+        border: 1px solid var(--line);
+        background: #fff;
+        color: #93a0b2;
+    }
+
+    .folder-results-bar {
+        padding: 14px 22px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 20px;
+        border-bottom: 1px solid #e7edf4;
+        background: #fbfcfd;
+        color: var(--muted);
+        font-size: 11px;
+    }
+
+    .folder-results-bar strong {
+        color: var(--navy);
+        font-size: 12px;
+        font-weight: 800;
+    }
+
+    .folder-table {
+        min-width: 1020px;
+    }
+
+    .folder-table thead th {
+        padding: 14px 18px;
+        border: 0;
+        border-bottom: 1px solid #e7edf4;
+        background: #f8fafc;
+        color: #7b8798;
+        font-size: 10px;
+        font-weight: 800;
+        letter-spacing: .08em;
+        text-transform: uppercase;
+        white-space: nowrap;
+    }
+
+    .folder-table tbody td {
+        padding: 18px 18px;
+        border-color: #edf0f4;
+        color: var(--ink);
+        font-size: 12px;
+        vertical-align: middle;
+    }
+
+    .folder-table tbody tr:hover {
+        background: #fbfcfe;
+    }
+
+    .accession-badge {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 28px;
+        padding: 0 11px;
+        border: 1px solid #d8e2ef;
+        border-radius: 8px;
+        background: linear-gradient(180deg, #fff, #f6f9fd);
+        color: var(--navy);
+        font-size: 10px;
+        font-weight: 800;
+        letter-spacing: .03em;
+    }
+
+    .folder-information {
+        min-width: 220px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .folder-row-icon {
+        width: 46px;
+        height: 46px;
+        flex: 0 0 46px;
+        overflow: hidden;
+        display: grid;
+        place-items: center;
+        border-radius: 12px;
+        background: linear-gradient(145deg, #fff4ca, #ffe078);
+        color: var(--navy);
+        font-size: 20px;
+    }
+
+    .folder-copy strong {
+        display: block;
+        margin-bottom: 2px;
+        color: var(--navy);
+        font-size: 13px;
+        font-weight: 750;
+    }
+
+    .folder-copy small {
+        color: #98a4b4;
+        font-size: 10px;
+    }
+
+    .program-name,
+    .program-missing,
+    .drive-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        max-width: 100%;
+        font-size: 12px;
+    }
+
+    .program-name {
+        padding: 8px 10px;
+        border-radius: 10px;
+        background: #eef5ff;
+        color: var(--navy);
+        font-weight: 700;
+    }
+
+    .program-missing {
+        color: #8f9ab0;
+        font-weight: 700;
+    }
+
+    .drive-link {
+        color: var(--blue);
+        font-weight: 700;
+        text-decoration: none;
+    }
+
+    .drive-link:hover {
+        color: var(--navy);
+    }
+
+    .folder-table tbody tr {
+        transition: background-color .18s ease;
+    }
+
+    .folder-table tbody tr:hover {
+        background: #fbfcfe;
+    }
+
+    .action-column {
+        width: 130px;
+    }
+
+    @media (max-width: 991.98px) {
+        .folder-page-header,
+        .folder-filters {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .folder-heading {
+            align-items: flex-start;
+        }
+
+        .folder-table {
+            min-width: 860px;
+        }
+    }
 </style>
