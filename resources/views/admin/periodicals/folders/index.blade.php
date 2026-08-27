@@ -14,6 +14,7 @@
                 <thead>
                     <tr>
                         <th class="number-column">#</th>
+                        <th>Accession No.</th>
                         <th>Folder</th>
                         <th>Program</th>
                         <th>Category</th>
@@ -25,6 +26,13 @@
                 @forelse($folders as $folder)
                     <tr>
                         <td class="row-number">{{ ($folders->firstItem() ?? 1) + $loop->index }}</td>
+                        <td>
+                            @if($folder->category === 'journal_newspaper' && filled($folder->accession_number))
+                                <span class="badge bg-light text-dark border">{{ $folder->accession_number }}</span>
+                            @else
+                                <span class="text-muted">—</span>
+                            @endif
+                        </td>
                         <td>
                             <div class="program-identity">
                                 <div class="program-thumbnail"><i class="bi bi-folder-fill"></i></div>
@@ -49,7 +57,7 @@
                         </td>
                     </tr>
                 @empty
-                    <tr><td colspan="6"><div class="empty-state"><span><i class="bi bi-folder2-open"></i></span><h5>No folders found</h5><p>Add a folder to begin linking periodical resources.</p><a href="{{ route('admin.periodical-folders.create') }}">Add Folder</a></div></td></tr>
+                    <tr><td colspan="7"><div class="empty-state"><span><i class="bi bi-folder2-open"></i></span><h5>No folders found</h5><p>Add a folder to begin linking periodical resources.</p><a href="{{ route('admin.periodical-folders.create') }}">Add Folder</a></div></td></tr>
                 @endforelse
                 </tbody>
             </table>

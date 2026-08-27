@@ -13,6 +13,7 @@ class PeriodicalFolder extends Model
     protected $fillable = [
         'periodical_program_id',
         'category',
+        'accession_number',
         'title',
         'description',
         'folder_link',

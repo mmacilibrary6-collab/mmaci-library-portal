@@ -23,6 +23,7 @@ class PeriodicalFolderController extends Controller
             ->when($search !== '', function ($query) use ($search) {
                 $query->where(function ($subQuery) use ($search) {
                     $subQuery->where('title', 'like', "%{$search}%")
+                        ->orWhere('accession_number', 'like', "%{$search}%")
                         ->orWhere('description', 'like', "%{$search}%")
                         ->orWhere('folder_link', 'like', "%{$search}%")
                         ->orWhereHas('program', fn ($programQuery) => $programQuery->where('title', 'like', "%{$search}%"));
@@ -72,9 +73,23 @@ class PeriodicalFolderController extends Controller
     private function validateAndPrepareFolder(Request $request, ?PeriodicalFolder $periodicalFolder = null): array
     {
         $request->merge(['status' => (string) $request->input('status', '1')]);
+        $category = (string) $request->input('category');
+
+        $accessionRules = ['nullable', 'string', 'max:100'];
+
+        if ($category === 'journal_newspaper') {
+            $accessionRules = [
+                'required',
+                'string',
+                'max:100',
+                Rule::unique('periodical_folders', 'accession_number')->ignore($periodicalFolder?->id),
+            ];
+        }
+
         $validated = $request->validate([
             'periodical_program_id' => ['required', 'integer', Rule::exists('periodical_programs', 'id')],
             'category' => ['required', Rule::in(['journal_newspaper', 'magazine'])],
+            'accession_number' => $accessionRules,
             'title' => [
                 'required',
                 'string',
@@ -91,6 +106,8 @@ class PeriodicalFolderController extends Controller
         ], [
             'periodical_program_id.required' => 'Please select a program.',
             'category.required' => 'Please select a category.',
+            'accession_number.required' => 'Please enter an accession number for journal and newspaper clippings.',
+            'accession_number.unique' => 'This accession number already exists.',
             'title.unique' => 'This folder name already exists for the selected program and category.',
             'folder_link.required' => 'Please enter the folder link.',
             'folder_link.url' => 'Please enter a valid folder URL.',
@@ -99,6 +116,9 @@ class PeriodicalFolderController extends Controller
         return [
             'periodical_program_id' => (int) $validated['periodical_program_id'],
             'category' => $validated['category'],
+            'accession_number' => $validated['category'] === 'journal_newspaper'
+                ? strtoupper(trim((string) $validated['accession_number']))
+                : null,
             'title' => trim($validated['title']),
             'description' => filled($validated['description'] ?? null) ? trim($validated['description']) : null,
             'folder_link' => trim($validated['folder_link']),

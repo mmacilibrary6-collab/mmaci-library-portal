@@ -3,6 +3,7 @@
     $programs = $programs ?? collect();
     $selectedProgramId = old('periodical_program_id', $folder?->periodical_program_id ?? ($selectedProgramId ?? ''));
     $selectedCategory = old('category', $folder?->category ?? 'journal_newspaper');
+    $selectedAccessionNumber = old('accession_number', $folder?->accession_number);
 @endphp
 <div class="program-form">
     <div class="form-section">
@@ -47,6 +48,21 @@
                 @enderror
             </div>
 
+            <div class="col-lg-4" id="accession_number_wrap">
+                <label for="accession_number" class="form-label">Accession Number <span id="accession_number_required_mark">*</span></label>
+                <input
+                    type="text"
+                    name="accession_number"
+                    id="accession_number"
+                    value="{{ $selectedAccessionNumber }}"
+                    class="form-control @error('accession_number') is-invalid @enderror"
+                    placeholder="e.g. JRN-0001">
+                <small class="text-muted d-block mt-1">Required for journal &amp; newspaper clippings only.</small>
+                @error('accession_number')
+                    <div class="invalid-feedback">{{ $message }}</div>
+                @enderror
+            </div>
+
             <div class="col-12">
                 <label for="description" class="form-label">Description <small>Optional</small></label>
                 <textarea name="description" id="description" rows="4" class="form-control @error('description') is-invalid @enderror">{{ old('description', $folder?->description) }}</textarea>
@@ -81,3 +97,32 @@
         <button type="submit" class="btn-save"><i class="bi {{ $folder ? 'bi-check-lg' : 'bi-plus-lg' }}"></i> {{ $folder ? 'Update Folder' : 'Create Folder' }}</button>
     </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const categoryInput = document.getElementById('category');
+    const accessionWrap = document.getElementById('accession_number_wrap');
+    const accessionInput = document.getElementById('accession_number');
+    const requiredMark = document.getElementById('accession_number_required_mark');
+
+    if (!categoryInput || !accessionWrap || !accessionInput || !requiredMark) {
+        return;
+    }
+
+    const syncAccessionField = function () {
+        const requiresAccession = categoryInput.value === 'journal_newspaper';
+
+        accessionWrap.hidden = !requiresAccession;
+        accessionInput.required = requiresAccession;
+        accessionInput.disabled = !requiresAccession;
+        requiredMark.hidden = !requiresAccession;
+
+        if (!requiresAccession) {
+            accessionInput.classList.remove('is-invalid');
+        }
+    };
+
+    categoryInput.addEventListener('change', syncAccessionField);
+    syncAccessionField();
+});
+</script>

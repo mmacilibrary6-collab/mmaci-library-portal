@@ -104,13 +104,13 @@
                                         <input
                                             type="search"
                                             class="collection-folder-search-input"
-                                            placeholder="{{ $program->folders->isNotEmpty() ? 'Search periodical folder titles...' : 'No folder titles available to search' }}"
-                                            aria-label="Search periodical folder titles in {{ $program->title }}"
+                                            placeholder="{{ $program->folders->isNotEmpty() ? 'Search folder titles or accession numbers...' : 'No folder titles available to search' }}"
+                                            aria-label="Search periodical folder titles and accession numbers in {{ $program->title }}"
                                             @disabled($program->folders->isEmpty())>
                                         <button
                                             type="button"
                                             class="collection-folder-search-clear"
-                                            aria-label="Clear folder title search"
+                                            aria-label="Clear folder search"
                                             @disabled($program->folders->isEmpty())>
                                             <i class="bi bi-x-lg" aria-hidden="true"></i>
                                         </button>
@@ -126,9 +126,15 @@
                                                     <h5>{{ $categoryFolders->first()?->categoryLabel() ?? 'Periodical' }}</h5>
                                                     <div class="folder-list">
                                                         @foreach($categoryFolders->sortBy('title', SORT_NATURAL | SORT_FLAG_CASE) as $folder)
-                                                            <a href="{{ $folder->folder_link }}" target="_blank" rel="noopener noreferrer" class="folder-link" data-folder-title="{{ strtolower($folder->title) }}">
+                                                            <a href="{{ $folder->folder_link }}" target="_blank" rel="noopener noreferrer" class="folder-link"
+                                                                data-folder-title="{{ strtolower($folder->title) }}"
+                                                                data-folder-description="{{ strtolower($folder->description ?? '') }}"
+                                                                data-folder-accession="{{ strtolower($folder->accession_number ?? '') }}">
                                                                 <span class="folder-link-copy">
                                                                     <strong>{{ $folder->title }}</strong>
+                                                                    @if($folder->category === 'journal_newspaper' && filled($folder->accession_number))
+                                                                        <small class="folder-accession">Accession No. {{ $folder->accession_number }}</small>
+                                                                    @endif
                                                                     <small>{{ $folder->description ?: 'Open this folder link' }}</small>
                                                                 </span>
                                                                 <i class="bi bi-box-arrow-up-right"></i>
@@ -139,8 +145,8 @@
                                             @endforeach
                                         </div>
                                         <div class="collection-folder-search-empty" hidden>
-                                            <h5>No matching titles</h5>
-                                            <p>Try a different title or clear the search.</p>
+                                            <h5>No matching folders</h5>
+                                            <p>Try a different title, accession number, or clear the search.</p>
                                         </div>
                                     @else
                                         <div class="folder-empty">
@@ -453,7 +459,12 @@ document.addEventListener('DOMContentLoaded', function () {
             const query = input.value.trim().toLowerCase();
             let visible = 0;
             links.forEach(function (link) {
-                const matches = (link.dataset.folderTitle || '').includes(query);
+                const searchableText = [
+                    link.dataset.folderTitle || '',
+                    link.dataset.folderDescription || '',
+                    link.dataset.folderAccession || ''
+                ].join(' ');
+                const matches = searchableText.includes(query);
                 link.hidden = !matches;
                 if (matches) visible++;
             });
@@ -1152,6 +1163,14 @@ document.addEventListener('DOMContentLoaded', function () {
     line-height: 1.45 !important;
     white-space: normal !important;
     overflow-wrap: anywhere !important;
+}
+
+.folder-modal .folder-accession {
+    color: var(--thesis-blue) !important;
+    font-size: 11px !important;
+    font-weight: 700 !important;
+    letter-spacing: .03em !important;
+    text-transform: uppercase !important;
 }
 
 .folder-modal .modal-footer {
