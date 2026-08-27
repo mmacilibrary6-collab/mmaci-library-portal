@@ -471,16 +471,16 @@ document.addEventListener('DOMContentLoaded', function () {
                     link.dataset.folderAccession || ''
                 ].join(' ');
                 const matches = searchableText.includes(query);
-                link.hidden = !matches;
+                link.style.display = matches ? '' : 'none';
                 if (matches) visible++;
             });
 
             groups.forEach(function (group) {
                 const hasVisibleItems = Array.from(group.querySelectorAll('.folder-search-item'))
                     .some(function (link) {
-                        return !link.hidden;
+                        return link.style.display !== 'none';
                     });
-                group.hidden = !hasVisibleItems;
+                group.style.display = hasVisibleItems ? '' : 'none';
             });
 
             if (empty) {
