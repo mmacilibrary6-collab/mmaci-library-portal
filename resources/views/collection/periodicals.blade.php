@@ -471,16 +471,28 @@ document.addEventListener('DOMContentLoaded', function () {
                     link.dataset.folderAccession || ''
                 ].join(' ');
                 const matches = searchableText.includes(query);
-                link.style.display = matches ? '' : 'none';
+                if (matches) {
+                    link.style.removeProperty('display');
+                    link.hidden = false;
+                } else {
+                    link.style.setProperty('display', 'none', 'important');
+                    link.hidden = true;
+                }
                 if (matches) visible++;
             });
 
             groups.forEach(function (group) {
                 const hasVisibleItems = Array.from(group.querySelectorAll('.folder-search-item'))
                     .some(function (link) {
-                        return link.style.display !== 'none';
+                        return !link.hidden;
                     });
-                group.style.display = hasVisibleItems ? '' : 'none';
+                if (hasVisibleItems) {
+                    group.style.removeProperty('display');
+                    group.hidden = false;
+                } else {
+                    group.style.setProperty('display', 'none', 'important');
+                    group.hidden = true;
+                }
             });
 
             if (empty) {
