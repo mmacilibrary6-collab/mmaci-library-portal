@@ -259,6 +259,22 @@
 
         </a>
 
+        <a
+            href="{{ route('admin.visitor-ip-address.index') }}"
+            class="sidebar-link
+                {{ request()->routeIs('admin.visitor-ip-address.*')
+                    ? 'active'
+                    : ''
+                }}">
+
+            <i class="bi bi-shield-lock-fill"></i>
+
+            <span>
+                Visitors IP Address
+            </span>
+
+        </a>
+
         {{-- Website --}}
         <span class="sidebar-label sidebar-section-label">
             Website

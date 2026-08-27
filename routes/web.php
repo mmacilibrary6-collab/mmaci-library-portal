@@ -54,6 +54,7 @@ use App\Http\Controllers\Admin\PeriodicalProgramController;
 use App\Http\Controllers\Admin\LibraryUpdateController;
 use App\Http\Controllers\Admin\NewArrivalController;
 use App\Http\Controllers\Admin\OpenAccessResourceController;
+use App\Http\Controllers\Admin\VisitorIpAddressController;
 use App\Http\Controllers\Admin\VisitingUserController;
 
 /*
@@ -447,6 +448,16 @@ Route::prefix('admin')
             '/visiting-users',
             [VisitingUserController::class, 'index']
         )->name('visiting-users.index');
+
+        Route::get(
+            '/visitor-ip-address',
+            [VisitorIpAddressController::class, 'index']
+        )->name('visitor-ip-address.index');
+
+        Route::post(
+            '/visitor-ip-address/prune',
+            [VisitorIpAddressController::class, 'prune']
+        )->name('visitor-ip-address.prune');
 
         /*
         |--------------------------------------------------------------------------

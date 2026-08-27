@@ -15,9 +15,9 @@ class AuthController extends Controller
 {
     private const LOGIN_MAX_ATTEMPTS = 5;
 
-    private const LOGIN_DECAY_SECONDS = 60;
+    private const LOGIN_DECAY_SECONDS = 300;
 
-    private const LOGIN_IP_MAX_ATTEMPTS = 20;
+    private const LOGIN_IP_MAX_ATTEMPTS = 5;
 
     private const LOGIN_IP_DECAY_SECONDS = 300;
 
@@ -95,7 +95,7 @@ class AuthController extends Controller
 
         return back()
             ->withInput($request->only('email'))
-            ->with('error', 'The account does not exist, or the email and password are invalid.');
+            ->with('error', 'Unable to sign in with the provided credentials.');
     }
 
     /**
@@ -180,7 +180,7 @@ class AuthController extends Controller
             $seconds = RateLimiter::availableIn($key);
 
             throw ValidationException::withMessages([
-                'email' => "Too many attempts. Please try again in {$seconds} seconds.",
+                'email' => "Too many login attempts. Please try again in {$seconds} seconds.",
             ]);
         }
     }
