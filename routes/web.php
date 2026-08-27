@@ -459,6 +459,11 @@ Route::prefix('admin')
             [VisitorIpAddressController::class, 'prune']
         )->name('visitor-ip-address.prune');
 
+        Route::post(
+            '/visitor-ip-address/clear-today',
+            [VisitorIpAddressController::class, 'clearToday']
+        )->name('visitor-ip-address.clear-today');
+
         /*
         |--------------------------------------------------------------------------
         | Calendar Management

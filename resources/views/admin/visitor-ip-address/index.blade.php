@@ -40,6 +40,19 @@
                     Clear Old Logs
                 </button>
             </form>
+
+            <form
+                action="{{ route('admin.visitor-ip-address.clear-today') }}"
+                method="POST"
+                onsubmit="return confirm('Delete all visitor logs recorded today?');"
+            >
+                @csrf
+
+                <button type="submit" class="btn visitor-btn-danger visitor-btn-today">
+                    <i class="bi bi-calendar-x"></i>
+                    Clear Today
+                </button>
+            </form>
         </div>
     </div>
 
