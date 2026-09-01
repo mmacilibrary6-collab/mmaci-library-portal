@@ -595,34 +595,58 @@
 
 @media (max-width: 767.98px) {
     .gallery-hero {
-        min-height: 350px;
+        min-height: 300px;
     }
 
     .gallery-hero-content {
-        padding: 70px 0 58px;
+        padding: 58px 0 48px;
     }
 
     .gallery-intro {
-        padding-top: 36px;
+        padding-top: 30px;
     }
 
     .gallery-grid-section {
-        padding-bottom: 44px;
+        padding-bottom: 38px;
     }
 }
 
 @media (max-width: 575.98px) {
+    .gallery-hero::after {
+        right: -170px;
+        bottom: -210px;
+        width: 300px;
+        height: 300px;
+        border-width: 40px;
+    }
+
     .gallery-hero h1 {
-        font-size: 41px;
+        font-size: clamp(30px, 10vw, 38px);
     }
 
     .gallery-hero p {
-        font-size: 15px;
+        font-size: 14px;
+        line-height: 1.65;
+    }
+
+    .gallery-hero .breadcrumb {
+        font-size: 12px;
+    }
+
+    .intro-layout {
+        gap: 18px;
+    }
+
+    .gallery-summary {
+        max-width: none;
+        padding: 16px 0 0;
+        border-left: 0;
+        border-top: 3px solid var(--gallery-gold);
     }
 
     .editorial-gallery {
         grid-template-columns: 1fr;
-        grid-auto-rows: 240px;
+        grid-auto-rows: minmax(210px, auto);
         gap: 12px;
     }
 
@@ -634,11 +658,70 @@
     }
 
     .gallery-card:first-child {
-        min-height: 310px;
+        min-height: 210px;
+    }
+
+    .gallery-card,
+    .gallery-card-featured {
+        min-height: 210px;
+    }
+
+    .gallery-overlay {
+        padding: 16px;
+    }
+
+    .gallery-overlay h3 {
+        max-width: 100%;
+        font-size: 15px;
+    }
+
+    .gallery-card-featured .gallery-overlay {
+        padding: 18px;
+    }
+
+    .gallery-card-featured .gallery-overlay h3 {
+        font-size: 18px;
+        line-height: 1.2;
+    }
+
+    .view-image {
+        opacity: 1;
+        transform: none;
+        font-size: 9px;
     }
 
     .gallery-modal .modal-dialog {
-        margin: 12px;
+        margin: 8px;
+    }
+
+    .gallery-modal-image {
+        min-height: 220px;
+        max-height: 46vh;
+    }
+
+    .gallery-modal-image img {
+        max-height: 46vh;
+    }
+
+    .gallery-modal-nav {
+        width: 38px;
+        height: 38px;
+    }
+
+    .gallery-modal-prev { left: 10px; }
+    .gallery-modal-next { right: 10px; }
+
+    .gallery-modal-caption {
+        padding: 14px 16px 16px;
+    }
+
+    .gallery-modal-caption h2 {
+        font-size: 17px;
+        line-height: 1.25;
+    }
+
+    .gallery-modal-counter {
+        font-size: 11px;
     }
 
 }
@@ -971,6 +1054,7 @@ document.addEventListener('DOMContentLoaded', function () {
         transform: rotate(4deg) scale(1.04);
     }
 
+    @media (prefers-reduced-motion: reduce) {
         .gallery-motion-reveal,
         .gallery-motion-reveal.gallery-motion-left,
         .gallery-motion-reveal.gallery-motion-right,
