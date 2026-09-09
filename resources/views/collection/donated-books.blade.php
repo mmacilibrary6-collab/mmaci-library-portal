@@ -89,6 +89,28 @@
             </div>
 
 
+            @if ($books->isNotEmpty())
+                <div class="donated-book-grid">
+                    @foreach ($books as $book)
+                        <article class="donated-book-card">
+                            <img
+                                class="donated-book-cover"
+                                src="{{ $book->image_url }}"
+                                alt="Cover of {{ $book->title }}"
+                                loading="lazy"
+                                width="400"
+                                height="500"
+                                onerror="this.onerror=null; this.src='{{ asset('images/image-fallback.svg') }}';">
+                            <div class="donated-book-details">
+                                <h3>{{ $book->title }}</h3>
+                                @if (filled($book->description))
+                                    <p>{{ $book->description }}</p>
+                                @endif
+                            </div>
+                        </article>
+                    @endforeach
+                </div>
+            @else
             <div class="donated-empty donated-motion-reveal donated-motion-scale">
 
                 <div class="donated-empty-icon">
@@ -105,6 +127,8 @@
                 </p>
 
             </div>
+
+            @endif
 
         </div>
 
@@ -370,6 +394,49 @@
 /* =============================================================
    CONTENT
 ============================================================= */
+
+.donated-book-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));
+    gap: 24px;
+}
+
+.donated-book-card {
+    min-width: 0;
+    overflow: hidden;
+    background: var(--donated-white);
+    border: 1px solid var(--donated-border);
+    border-radius: 20px;
+    box-shadow: 0 12px 32px rgba(11, 46, 89, .07);
+}
+
+.donated-book-cover {
+    display: block;
+    width: 100%;
+    height: 300px;
+    object-fit: contain;
+    background: var(--donated-bg);
+}
+
+.donated-book-details {
+    padding: 24px;
+    overflow-wrap: anywhere;
+}
+
+.donated-book-details h3 {
+    margin: 0 0 12px;
+    color: var(--donated-navy);
+    font-size: 20px;
+    font-weight: 800;
+}
+
+.donated-book-details p {
+    margin: 0;
+    color: var(--donated-muted);
+    font-size: 14px;
+    line-height: 1.75;
+    white-space: pre-line;
+}
 
 .donated-content {
 
@@ -863,8 +930,6 @@
 
     }
 
-}
-
 </style>
 
 
@@ -978,5 +1043,4 @@ document.addEventListener(
 @push('styles')
 
 @endpush
-
 
