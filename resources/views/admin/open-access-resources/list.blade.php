@@ -41,8 +41,6 @@
 
     </section>
 
-    @include('partials.flash-messages')
-
     <section class="resource-management-card">
 
         {{-- Filters --}}

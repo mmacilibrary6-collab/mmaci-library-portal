@@ -29,11 +29,6 @@
                 onsubmit="return confirm('Delete visitor logs older than the configured retention period?');"
             >
                 @csrf
-                <input
-                    type="hidden"
-                    name="days"
-                    value="{{ (int) config('security.visitor_log_retention_days', 90) }}"
-                >
 
                 <button type="submit" class="btn visitor-btn-danger">
                     <i class="bi bi-trash3"></i>

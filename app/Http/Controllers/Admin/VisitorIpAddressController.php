@@ -77,13 +77,12 @@ class VisitorIpAddressController extends Controller
 
     public function prune(Request $request): RedirectResponse
     {
-        $days = max(1, (int) $request->integer('days', config('security.visitor_log_retention_days', 90)));
-        $deleted = VisitorLog::where('created_at', '<', now()->subDays($days))->delete();
+        $deleted = VisitorLog::where('created_at', '<', today())->delete();
         Cache::forget('visitor-ip-summary');
 
         return redirect()
             ->route('admin.visitor-ip-address.index')
-            ->with('success', "{$deleted} old visitor logs deleted successfully.");
+            ->with('success', "{$deleted} visitor logs before today deleted successfully.");
     }
 
     public function clearToday(Request $request): RedirectResponse

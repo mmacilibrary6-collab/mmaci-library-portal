@@ -86,18 +86,26 @@ class ServiceController extends Controller
             ],
             [
                 'title' => 'Circulation',
+                'image' => 'images/facilities/circulation-area.webp',
+                'icon' => 'bi-arrow-left-right',
                 'description' => 'Assists users with borrowing, returning, and renewing library books and other materials.',
             ],
             [
                 'title' => 'Reference & Research Assistance',
+                'image' => 'images/facilities/reference-section.webp',
+                'icon' => 'bi-journal-bookmark-fill',
                 'description' => 'Helps students find reliable information and appropriate resources for their research and assignments.',
             ],
             [
                 'title' => 'E-Resources & Online Databases',
+                'image' => 'images/facilities/e-library.webp',
+                'icon' => 'bi-pc-display-horizontal',
                 'description' => 'Provides access to e-books, online journals, research articles, and other digital resources.',
             ],
             [
                 'title' => 'Periodical Services',
+                'image' => 'images/facilities/periodical-section.webp',
+                'icon' => 'bi-newspaper',
                 'description' => 'Provides access to newspapers, magazines, journals, and other regularly published materials.',
             ],
             [
@@ -118,6 +126,8 @@ class ServiceController extends Controller
             ],
             [
                 'title' => 'Thesis & Special Collections',
+                'image' => 'images/thesis.jpg',
+                'icon' => 'bi-mortarboard-fill',
                 'description' => 'Provides access to theses, research papers, and other special or unique library collections.',
             ],
             [
@@ -164,18 +174,34 @@ class ServiceController extends Controller
             ],
             [
                 'title' => 'E-Library',
+                'image' => asset(
+                    'images/facilities/e-library.webp'
+                ),
+                'icon' => 'bi-pc-display-horizontal',
                 'description' => 'A space where students can access electronic resources such as e-books, online journals, databases, and other digital learning materials.',
             ],
             [
                 'title' => 'Periodical Section',
+                'image' => asset(
+                    'images/facilities/periodical-section.webp'
+                ),
+                'icon' => 'bi-newspaper',
                 'description' => 'A section that provides newspapers, magazines, journals, and other regularly published materials.',
             ],
             [
                 'title' => 'Reference Section',
+                'image' => asset(
+                    'images/facilities/reference-section.webp'
+                ),
+                'icon' => 'bi-journal-bookmark-fill',
                 'description' => 'A section that contains books and resources used for finding specific information, such as dictionaries, encyclopedias, atlases, and other reference materials.',
             ],
             [
                 'title' => 'Thesis & Research Area',
+                'image' => asset(
+                    'images/thesis.jpg'
+                ),
+                'icon' => 'bi-mortarboard-fill',
                 'description' => 'A designated space where students can access theses, research papers, and other academic materials for their research and study.',
             ],
             [
