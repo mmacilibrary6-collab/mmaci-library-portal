@@ -448,7 +448,7 @@
 
 .donated-book-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(min(100%, 265px), 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr));
     gap: 26px;
     align-items: stretch;
 }
@@ -480,8 +480,10 @@
     z-index: 0;
     display: grid;
     place-items: center;
-    height: clamp(220px, 20vw, 285px);
-    padding: 10px;
+    aspect-ratio: 4 / 3;
+    height: auto;
+    min-height: 235px;
+    padding: 12px;
     overflow: hidden;
     background:
         linear-gradient(
@@ -492,13 +494,12 @@
 }
 
 .donated-book-cover {
-    position: absolute;
-    inset: 10px;
     display: block;
-    width: calc(100% - 20px);
-    height: calc(100% - 20px);
+    width: 100%;
+    height: 100%;
     object-fit: contain;
     border-radius: 12px;
+    filter: drop-shadow(0 14px 24px rgba(11, 46, 89, .14));
 }
 
 .donated-book-details {
@@ -519,9 +520,9 @@
     font-weight: 800;
     line-height: 1.18;
     display: -webkit-box;
-    -webkit-line-clamp: 3;
+    -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
-    max-height: 3.55em;
+    max-height: 2.4em;
     overflow: hidden;
 }
 
@@ -532,9 +533,9 @@
     line-height: 1.65;
     white-space: pre-line;
     display: -webkit-box;
-    -webkit-line-clamp: 6;
+    -webkit-line-clamp: 4;
     -webkit-box-orient: vertical;
-    max-height: 9.9em;
+    max-height: 6.6em;
     overflow: hidden;
 }
 
@@ -1165,7 +1166,7 @@
 
     .donated-book-cover-frame {
 
-        height: 240px;
+        min-height: 220px;
 
     }
 

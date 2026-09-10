@@ -635,6 +635,10 @@ html {
     list-style: none;
 }
 
+.service-card .feature-list {
+    margin-top: auto;
+}
+
 .feature-list li {
     display: flex;
     align-items: flex-start;

@@ -89,60 +89,110 @@ class ServiceController extends Controller
                 'image' => 'images/facilities/circulation-area.webp',
                 'icon' => 'bi-arrow-left-right',
                 'description' => 'Assists users with borrowing, returning, and renewing library books and other materials.',
+                'features' => [
+                    'Borrow and return library books',
+                    'Renew eligible materials',
+                    'Get help with circulation records',
+                ],
             ],
             [
                 'title' => 'Reference & Research Assistance',
                 'image' => 'images/facilities/reference-section.webp',
                 'icon' => 'bi-journal-bookmark-fill',
                 'description' => 'Helps students find reliable information and appropriate resources for their research and assignments.',
+                'features' => [
+                    'Find reliable academic sources',
+                    'Get support for assignments',
+                    'Locate reference materials',
+                ],
             ],
             [
                 'title' => 'E-Resources & Online Databases',
-                'image' => 'images/facilities/e-library.webp',
+                'image' => 'images/facilities/e-library-computer-area.webp',
                 'icon' => 'bi-pc-display-horizontal',
                 'description' => 'Provides access to e-books, online journals, research articles, and other digital resources.',
+                'features' => [
+                    'Use e-books and online journals',
+                    'Access research databases',
+                    'Explore digital learning materials',
+                ],
             ],
             [
                 'title' => 'Periodical Services',
                 'image' => 'images/facilities/periodical-section.webp',
                 'icon' => 'bi-newspaper',
                 'description' => 'Provides access to newspapers, magazines, journals, and other regularly published materials.',
+                'features' => [
+                    'Browse newspapers and magazines',
+                    'Use journals for study and research',
+                    'Discover new periodical materials',
+                ],
             ],
             [
                 'title' => 'Interlibrary Loan',
                 'image' => 'images/librarycollect.jpg',
                 'icon' => 'bi-share-fill',
                 'description' => 'Allows users to request books and other materials that are not available in the library from other libraries.',
+                'features' => [
+                    'Request unavailable materials',
+                    'Coordinate with partner libraries',
+                    'Receive referral support',
+                ],
             ],
             [
                 'title' => 'Library Orientation',
-                'image' => 'images/facilities/library-orientation.png',
+                'image' => 'images/facilities/library-orientation.webp',
                 'icon' => 'bi-compass-fill',
                 'description' => 'Introduces students to the library, its facilities, collections, rules, and available services.',
+                'features' => [
+                    'Learn library rules and services',
+                    'Tour collections and facilities',
+                    'Build confidence using resources',
+                ],
             ],
             [
                 'title' => 'Information Literacy',
                 'image' => 'images/Studentslib2.jpg',
                 'icon' => 'bi-lightbulb-fill',
                 'description' => 'Teaches students how to search, evaluate, use, and properly cite information from reliable sources.',
+                'features' => [
+                    'Search information effectively',
+                    'Evaluate source credibility',
+                    'Practice proper citation',
+                ],
             ],
             [
                 'title' => 'Scanning',
                 'image' => 'images/libraryservicess.webp',
                 'icon' => 'bi-upc-scan',
                 'description' => 'Provides scanning services for library materials and documents for academic and research purposes.',
+                'features' => [
+                    'Scan academic documents',
+                    'Digitize library materials',
+                    'Support research file preparation',
+                ],
             ],
             [
                 'title' => 'Thesis & Special Collections',
                 'image' => 'images/thesis.jpg',
                 'icon' => 'bi-mortarboard-fill',
                 'description' => 'Provides access to theses, research papers, and other special or unique library collections.',
+                'features' => [
+                    'Access thesis materials',
+                    'Use special library collections',
+                    'Support research discovery',
+                ],
             ],
             [
                 'title' => 'Referral Services',
                 'image' => 'images/Doors.webp',
                 'icon' => 'bi-signpost-split-fill',
                 'description' => 'Directs users to other libraries, institutions, or resources when the needed information or material is not available in the library.',
+                'features' => [
+                    'Find alternative resources',
+                    'Connect with other institutions',
+                    'Get guidance when materials are unavailable',
+                ],
             ],
         ];
 
@@ -185,7 +235,7 @@ class ServiceController extends Controller
             [
                 'title' => 'E-Library',
                 'image' => asset(
-                    'images/facilities/e-library.webp'
+                    'images/facilities/e-library-computer-area.webp'
                 ),
                 'icon' => 'bi-pc-display-horizontal',
                 'description' => 'A space where students can access electronic resources such as e-books, online journals, databases, and other digital learning materials.',

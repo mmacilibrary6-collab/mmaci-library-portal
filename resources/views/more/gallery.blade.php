@@ -646,7 +646,7 @@
 
     .editorial-gallery {
         grid-template-columns: 1fr;
-        grid-auto-rows: minmax(210px, auto);
+        grid-auto-rows: auto;
         gap: 12px;
     }
 
@@ -657,13 +657,10 @@
         grid-row: auto;
     }
 
-    .gallery-card:first-child {
-        min-height: 210px;
-    }
-
     .gallery-card,
     .gallery-card-featured {
-        min-height: 210px;
+        min-height: 0;
+        aspect-ratio: 16 / 10;
     }
 
     .gallery-overlay {
