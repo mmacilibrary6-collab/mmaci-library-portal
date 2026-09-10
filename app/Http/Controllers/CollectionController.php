@@ -132,6 +132,19 @@ class CollectionController extends Controller
         ]);
     }
 
+    public function referenceResearch(): View
+    {
+        $resources = \App\Models\ReferenceResource::query()->active()->ordered()->get();
+
+        return view('collection.open-access', [
+            'resources' => $resources,
+            'resourceTitle' => 'Reference & Research Assistance',
+            'resourceIntro' => 'Helps students find reliable information and appropriate resources for their research and assignments.',
+            'resourceHeading' => 'Find support for your research',
+            'resourceDetails' => 'Explore reference tools, research guides, and assistance resources selected by the library.',
+        ]);
+    }
+
     public function donatedBooks(): View
     {
         $books = DonatedBook::query()
@@ -145,8 +158,15 @@ class CollectionController extends Controller
 
     public function periodicals(Request $request): View
     {
+        $request->validate(['category' => ['nullable', 'string']]);
         $hasFolderCategory = Schema::hasColumn('periodical_folders', 'category');
         $selectedCategory = $request->input('category');
+        // Preserve bookmarked links to the former combined category.
+        if ($selectedCategory === 'journal_newspaper') {
+            $selectedCategory = 'journal';
+        }
+        $categories = \App\Models\PeriodicalFolder::CATEGORIES;
+        abort_if(filled($selectedCategory) && !array_key_exists($selectedCategory, $categories), 404);
 
         $programs = PeriodicalProgram::query()
             ->where('status', true)
@@ -183,6 +203,6 @@ class CollectionController extends Controller
                 ->values();
         }
 
-        return view('collection.periodicals', compact('programs', 'selectedCategory'));
+        return view('collection.periodicals', compact('programs', 'selectedCategory', 'categories'));
     }
 }

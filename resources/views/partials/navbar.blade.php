@@ -169,6 +169,12 @@
 
 
                         <!-- Open Access Resources -->
+                        <li>
+                            <a class="dropdown-item" href="{{ route('collection.reference-research') }}">
+                                <i class="bi bi-journal-text me-2"></i>
+                                Reference &amp; Research Assistance
+                            </a>
+                        </li>
 
                         <li>
 

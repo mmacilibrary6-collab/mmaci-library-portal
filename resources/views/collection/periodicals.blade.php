@@ -7,7 +7,7 @@
     <div class="container">
         <div class="theses-hero-content">
             <h1>Periodical Collection</h1>
-            <p>Browse journal and newspaper clipping programs, plus magazines, with their folder links.</p>
+            <p>Browse newspapers, magazines, journals, digital periodicals, and new arrivals by academic program.</p>
 
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb justify-content-center mb-0">
@@ -47,12 +47,25 @@
         @endif
 
         <form method="GET" action="{{ route('collection.periodicals') }}" class="periodical-filter">
-            <div class="filter-chip-group" role="tablist" aria-label="Periodical categories">
+            <div class="filter-chip-group" role="group" aria-label="Periodical categories">
                 <button type="submit" name="category" value="" class="filter-chip {{ blank($selectedCategory ?? null) ? 'active' : '' }}">All Categories</button>
-                <button type="submit" name="category" value="journal_newspaper" class="filter-chip {{ ($selectedCategory ?? null) === 'journal_newspaper' ? 'active' : '' }}">Journal &amp; Newspaper Clippings</button>
-                <button type="submit" name="category" value="magazine" class="filter-chip {{ ($selectedCategory ?? null) === 'magazine' ? 'active' : '' }}">Magazines</button>
+                @foreach ($categories as $key => $category)
+                    <button type="submit" name="category" value="{{ $key }}" class="filter-chip {{ ($selectedCategory ?? null) === $key ? 'active' : '' }}" aria-pressed="{{ ($selectedCategory ?? null) === $key ? 'true' : 'false' }}">{{ $category['label'] }}</button>
+                @endforeach
             </div>
         </form>
+        @if (filled($selectedCategory))
+            <p class="mt-3 text-muted">{{ $categories[$selectedCategory]['description'] }}</p>
+        @else
+            <div class="row g-3 mt-2">
+                @foreach ($categories as $category)
+                    <div class="col-md-6 col-lg-4">
+                        <h3 class="h6">{{ $category['label'] }}</h3>
+                        <p class="small text-muted mb-0">{{ $category['description'] }}</p>
+                    </div>
+                @endforeach
+            </div>
+        @endif
     </div>
 </section>
 
@@ -136,7 +149,7 @@
                                                                 data-folder-accession="{{ strtolower($folder->accession_number ?? '') }}">
                                                                 <span class="folder-link-copy">
                                                                     <strong>{{ $folder->title }}</strong>
-                                                                    @if($folder->category === 'journal_newspaper' && filled($folder->accession_number))
+                                                                    @if(\App\Models\PeriodicalFolder::requiresAccession($folder->category) && filled($folder->accession_number))
                                                                         <small class="folder-accession">Accession No. {{ $folder->accession_number }}</small>
                                                                     @endif
                                                                     <small>{{ $folder->description ?: 'Open this folder link' }}</small>

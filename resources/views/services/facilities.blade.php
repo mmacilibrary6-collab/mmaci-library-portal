@@ -50,14 +50,15 @@
         @forelse (($facilities ?? []) as $facility)
             @php
                 $facilityTitle = $facility['title'] ?? 'Library Facility';
-                $facilityImage = $facility['image'] ?? asset('images/image-fallback.svg');
-                $facilityCapacity = $facility['capacity'] ?? 'Contact the Library';
+                $facilityImage = $facility['image'] ?? null;
+                $facilityCapacity = $facility['capacity'] ?? null;
                 $facilityDescription = $facility['description']
                     ?? 'Facility information is currently unavailable.';
             @endphp
 
             <article class="facility-card" data-aos="fade-up">
                 <div class="row g-0 align-items-stretch">
+                    @if ($facilityImage)
                     <div class="col-lg-6 {{ $loop->even ? 'order-lg-2' : '' }}">
                         <div class="facility-photo">
                             <img
@@ -67,13 +68,15 @@
                                 onerror="this.onerror=null;this.src='{{ asset('images/image-fallback.svg') }}';">
                         </div>
                     </div>
+                    @endif
 
-                    <div class="col-lg-6 {{ $loop->even ? 'order-lg-1' : '' }}">
+                    <div class="{{ $facilityImage ? 'col-lg-6' : 'col-12' }} {{ $loop->even ? 'order-lg-1' : '' }}">
                         <div class="facility-details">
                             <span class="facility-kicker">MMACI Library Facility</span>
                             <h2>{{ $facilityTitle }}</h2>
                             <p>{{ $facilityDescription }}</p>
 
+                            @if ($facilityCapacity)
                             <div class="capacity-card">
                                 <span class="capacity-icon" aria-hidden="true">
                                     <i class="bi bi-people"></i>
@@ -84,6 +87,7 @@
                                     <strong>{{ $facilityCapacity }}</strong>
                                 </span>
                             </div>
+                            @endif
                         </div>
                     </div>
                 </div>

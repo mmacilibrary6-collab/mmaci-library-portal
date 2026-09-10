@@ -2,7 +2,7 @@
     $folder = $periodicalFolder ?? null;
     $programs = $programs ?? collect();
     $selectedProgramId = old('periodical_program_id', $folder?->periodical_program_id ?? ($selectedProgramId ?? ''));
-    $selectedCategory = old('category', $folder?->category ?? 'journal_newspaper');
+    $selectedCategory = old('category', $folder?->category ?? 'journal');
     $selectedAccessionNumber = old('accession_number', $folder?->accession_number);
 @endphp
 <div class="program-form">
@@ -32,8 +32,9 @@
             <div class="col-lg-4">
                 <label for="category" class="form-label">Category <span>*</span></label>
                 <select name="category" id="category" class="form-select @error('category') is-invalid @enderror" required>
-                    <option value="journal_newspaper" @selected($selectedCategory === 'journal_newspaper')>Journal &amp; Newspaper Clippings</option>
-                    <option value="magazine" @selected($selectedCategory === 'magazine')>Magazines</option>
+                    @foreach (\App\Models\PeriodicalFolder::CATEGORIES as $key => $category)
+                        <option value="{{ $key }}" @selected($selectedCategory === $key)>{{ $category['label'] }}</option>
+                    @endforeach
                 </select>
                 @error('category')
                     <div class="invalid-feedback">{{ $message }}</div>
@@ -57,7 +58,7 @@
                     value="{{ $selectedAccessionNumber }}"
                     class="form-control @error('accession_number') is-invalid @enderror"
                     placeholder="e.g. JRN-0001">
-                <small class="text-muted d-block mt-1">Required for journal &amp; newspaper clippings only.</small>
+                <small class="text-muted d-block mt-1">Required for printed journals and newspapers only.</small>
                 @error('accession_number')
                     <div class="invalid-feedback">{{ $message }}</div>
                 @enderror
@@ -110,7 +111,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     const syncAccessionField = function () {
-        const requiresAccession = categoryInput.value === 'journal_newspaper';
+        const requiresAccession = ['journal', 'newspaper'].includes(categoryInput.value);
 
         accessionWrap.hidden = !requiresAccession;
         accessionInput.required = requiresAccession;

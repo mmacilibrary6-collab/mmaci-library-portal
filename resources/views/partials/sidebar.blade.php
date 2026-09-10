@@ -210,6 +210,13 @@
         </a>
 
         <a
+            href="{{ route('admin.reference-resources.index') }}"
+            class="sidebar-link {{ request()->routeIs('admin.reference-resources.*') ? 'active' : '' }}">
+            <i class="bi bi-journal-text"></i>
+            <span>Reference &amp; Research Assistance</span>
+        </a>
+
+        <a
             href="{{ route('admin.open-access-resources.index') }}"
             class="sidebar-link
                 {{ request()->routeIs(

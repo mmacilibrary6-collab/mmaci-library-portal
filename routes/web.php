@@ -103,6 +103,7 @@ Route::get('/database-media/{type}/{id}', function (string $type, int $id) {
         'gallery' => Gallery::class,
         'gallery-image' => GalleryImage::class,
         'open-access-resource' => OpenAccessResource::class,
+        'reference-resource' => \App\Models\ReferenceResource::class,
         'periodical-program' => PeriodicalProgram::class,
         'thesis-program' => ThesisProgram::class,
     ];
@@ -198,6 +199,9 @@ Route::prefix('collection')
             '/open-access',
             [CollectionController::class, 'openAccess']
         )->name('open-access');
+
+        Route::get('/reference-research-assistance', [CollectionController::class, 'referenceResearch'])
+            ->name('reference-research');
 
         Route::get(
             '/subscribed-database',
@@ -610,6 +614,10 @@ Route::prefix('admin')
             'open-access-resources',
             OpenAccessResourceController::class
         )->except(['show']);
+
+        Route::resource('reference-resources', \App\Http\Controllers\Admin\ReferenceResourceController::class)
+            ->parameters(['reference-resources' => 'openAccessResource'])
+            ->except(['show']);
 
     });
 

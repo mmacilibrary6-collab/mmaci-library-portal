@@ -63,6 +63,7 @@ class ServiceController extends Controller
             [
                 'title' => 'Online Public Access Catalog',
                 'short_title' => 'OPAC',
+                'image' => 'images/Opacc.jpg',
                 'icon' => 'bi-search',
                 'description' => 'The Online Public Access Catalog allows library users to search for books and other library materials using the internet.',
                 'features' => [
@@ -75,6 +76,7 @@ class ServiceController extends Controller
             [
                 'title' => 'Educational Games',
                 'short_title' => 'Games',
+                'image' => 'images/chesz.jpg',
                 'icon' => 'bi-controller',
                 'description' => 'Educational and recreational board games are available for library users during approved library hours.',
                 'features' => [
@@ -83,16 +85,44 @@ class ServiceController extends Controller
                 ],
             ],
             [
-                'title' => 'Electronic Service',
-                'short_title' => 'Electronic Service',
-                'icon' => 'bi-laptop',
-                'description' => 'Library patrons may borrow a Library Services Office laptop for one hour to conduct research and complete school-related work.',
-                'features' => [
-                    'One-hour laptop use',
-                    'For research activities',
-                    'For school-related work',
-                    'Subject to laptop availability',
-                ],
+                'title' => 'Circulation',
+                'description' => 'Assists users with borrowing, returning, and renewing library books and other materials.',
+            ],
+            [
+                'title' => 'Reference & Research Assistance',
+                'description' => 'Helps students find reliable information and appropriate resources for their research and assignments.',
+            ],
+            [
+                'title' => 'E-Resources & Online Databases',
+                'description' => 'Provides access to e-books, online journals, research articles, and other digital resources.',
+            ],
+            [
+                'title' => 'Periodical Services',
+                'description' => 'Provides access to newspapers, magazines, journals, and other regularly published materials.',
+            ],
+            [
+                'title' => 'Interlibrary Loan',
+                'description' => 'Allows users to request books and other materials that are not available in the library from other libraries.',
+            ],
+            [
+                'title' => 'Library Orientation',
+                'description' => 'Introduces students to the library, its facilities, collections, rules, and available services.',
+            ],
+            [
+                'title' => 'Information Literacy',
+                'description' => 'Teaches students how to search, evaluate, use, and properly cite information from reliable sources.',
+            ],
+            [
+                'title' => 'Scanning',
+                'description' => 'Provides scanning services for library materials and documents for academic and research purposes.',
+            ],
+            [
+                'title' => 'Thesis & Special Collections',
+                'description' => 'Provides access to theses, research papers, and other special or unique library collections.',
+            ],
+            [
+                'title' => 'Referral Services',
+                'description' => 'Directs users to other libraries, institutions, or resources when the needed information or material is not available in the library.',
             ],
         ];
 
@@ -121,7 +151,7 @@ class ServiceController extends Controller
                 ),
                 'icon' => 'bi-people-fill',
                 'capacity' => 'Up to 8 Persons',
-                'description' => 'The Discussion Room is a private space intended for brainstorming sessions, collaborative learning, meetings, and group discussions. It provides a quiet and comfortable environment that can accommodate up to eight (8) persons.',
+                'description' => 'A designated room where students can work together, discuss lessons, and conduct group activities.',
             ],
             [
                 'title' => 'Reading Area',
@@ -130,7 +160,23 @@ class ServiceController extends Controller
                 ),
                 'icon' => 'bi-book-half',
                 'capacity' => '54 Persons',
-                'description' => 'The Reading Area provides a spacious and quiet environment where students can read books, study independently, conduct research, and complete academic requirements. The area accommodates up to fifty-four (54) library users.',
+                'description' => 'A quiet and comfortable space where students can read, study, and do their schoolwork.',
+            ],
+            [
+                'title' => 'E-Library',
+                'description' => 'A space where students can access electronic resources such as e-books, online journals, databases, and other digital learning materials.',
+            ],
+            [
+                'title' => 'Periodical Section',
+                'description' => 'A section that provides newspapers, magazines, journals, and other regularly published materials.',
+            ],
+            [
+                'title' => 'Reference Section',
+                'description' => 'A section that contains books and resources used for finding specific information, such as dictionaries, encyclopedias, atlases, and other reference materials.',
+            ],
+            [
+                'title' => 'Thesis & Research Area',
+                'description' => 'A designated space where students can access theses, research papers, and other academic materials for their research and study.',
             ],
             [
                 'title' => 'Reading Cubicles',

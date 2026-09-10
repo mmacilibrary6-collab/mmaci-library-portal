@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Open Access Resources | MMACI Library Services Office')
+@section('title', ($resourceTitle ?? 'Open Access Resources') . ' | MMACI Library Services Office')
 
 @section('content')
 
@@ -15,13 +15,11 @@
             
 
             <h1>
-                Open Access Resources
+                {{ $resourceTitle ?? 'Open Access Resources' }}
             </h1>
 
             <p>
-                Explore freely accessible academic databases, digital
-                libraries, e-book collections, journals, and research
-                platforms.
+                {{ $resourceIntro ?? 'Explore freely accessible academic databases, digital libraries, e-book collections, journals, and research platforms.' }}
             </p>
 
             <nav aria-label="breadcrumb">
@@ -40,7 +38,7 @@
                         class="breadcrumb-item active"
                         aria-current="page">
 
-                        Open Access Resources
+                        {{ $resourceTitle ?? 'Open Access Resources' }}
 
                     </li>
 
@@ -67,14 +65,12 @@
                 </span>
 
                 <h2 class="section-title">
-                    Access Knowledge Beyond the Library
+                    {{ $resourceHeading ?? 'Access Knowledge Beyond the Library' }}
                 </h2>
 
                 <p class="section-description">
                     Select any resource below to visit its official website.
-                    These platforms provide open educational materials,
-                    research publications, books, journals, and scholarly
-                    information.
+                    {{ $resourceDetails ?? 'These platforms provide open educational materials, research publications, books, journals, and scholarly information.' }}
                 </p>
 
             </div>
@@ -155,7 +151,7 @@
                         <div class="public-resource-body">
 
                             <span class="public-resource-category">
-                                Open Access Platform
+                                {{ isset($resourceTitle) ? 'Research Resource' : 'Open Access Platform' }}
                             </span>
 
                             <h3>
@@ -195,7 +191,7 @@
                         <i class="bi bi-globe2"></i>
 
                         <h3>
-                            No Open Access Resources Available
+                            {{ isset($resourceTitle) ? 'No Research Resources Available' : 'No Open Access Resources Available' }}
                         </h3>
 
                         <p>

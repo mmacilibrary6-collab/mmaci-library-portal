@@ -11,6 +11,18 @@ use Illuminate\View\View;
 
 class OpenAccessResourceController extends Controller
 {
+    protected string $resourceModel = OpenAccessResource::class;
+    protected string $resourceRoute = 'admin.open-access-resources';
+    protected string $resourceTitle = 'Open Access Resources';
+
+    private function resourceView(string $view, array $data = []): View
+    {
+        return view($view, array_merge($data, [
+            'resourceRoute' => $this->resourceRoute,
+            'resourceTitle' => $this->resourceTitle,
+        ]));
+    }
+
     public function index(Request $request): View
     {
         $search = trim(
@@ -19,7 +31,7 @@ class OpenAccessResourceController extends Controller
 
         $status = $request->input('status');
 
-        $resources = OpenAccessResource::query()
+        $resources = $this->resourceModel::query()
             ->when(
                 $search !== '',
                 function ($query) use ($search) {
@@ -58,7 +70,7 @@ class OpenAccessResourceController extends Controller
             ->paginate(12)
             ->withQueryString();
 
-        return view(
+        return $this->resourceView(
             'admin.open-access-resources.list',
             compact('resources')
         );
@@ -66,7 +78,7 @@ class OpenAccessResourceController extends Controller
 
     public function create(): View
     {
-        return view(
+        return $this->resourceView(
             'admin.open-access-resources.create'
         );
     }
@@ -74,7 +86,9 @@ class OpenAccessResourceController extends Controller
     public function store(
         Request $request
     ): RedirectResponse {
-        DatabaseMedia::ensureBlobColumns(['open_access_resources']);
+        if ($this->resourceModel === OpenAccessResource::class) {
+            DatabaseMedia::ensureBlobColumns(['open_access_resources']);
+        }
 
         $validated = $request->validate(
             $this->rules(true),
@@ -95,7 +109,7 @@ class OpenAccessResourceController extends Controller
             );
         }
 
-        OpenAccessResource::create([
+        $this->resourceModel::create([
             'title' => trim(
                 $validated['title']
             ),
@@ -119,18 +133,19 @@ class OpenAccessResourceController extends Controller
 
         return redirect()
             ->route(
-                'admin.open-access-resources.index'
+                $this->resourceRoute . '.index'
             )
             ->with(
                 'success',
-                'Open access resource added successfully.'
+                'Resource added successfully.'
             );
     }
 
     public function edit(
-        OpenAccessResource $openAccessResource
+        string $openAccessResource
     ): View {
-        return view(
+        $openAccessResource = $this->resourceModel::findOrFail($openAccessResource);
+        return $this->resourceView(
             'admin.open-access-resources.edit',
             compact('openAccessResource')
         );
@@ -138,9 +153,11 @@ class OpenAccessResourceController extends Controller
 
     public function update(
         Request $request,
-        OpenAccessResource $openAccessResource
+        string $openAccessResource
     ): RedirectResponse {
-        DatabaseMedia::ensureBlobColumns(['open_access_resources']);
+        if ($this->resourceModel === OpenAccessResource::class) {
+            DatabaseMedia::ensureBlobColumns(['open_access_resources']);
+        }
 
         $validated = $request->validate(
             $this->rules(false),
@@ -180,30 +197,32 @@ class OpenAccessResourceController extends Controller
             );
         }
 
+        $openAccessResource = $this->resourceModel::findOrFail($openAccessResource);
         $openAccessResource->update($data);
 
         return redirect()
             ->route(
-                'admin.open-access-resources.index'
+                $this->resourceRoute . '.index'
             )
             ->with(
                 'success',
-                'Open access resource updated successfully.'
+                'Resource updated successfully.'
             );
     }
 
     public function destroy(
-        OpenAccessResource $openAccessResource
+        string $openAccessResource
     ): RedirectResponse {
+        $openAccessResource = $this->resourceModel::findOrFail($openAccessResource);
         $openAccessResource->delete();
 
         return redirect()
             ->route(
-                'admin.open-access-resources.index'
+                $this->resourceRoute . '.index'
             )
             ->with(
                 'success',
-                'Open access resource deleted successfully.'
+                'Resource deleted successfully.'
             );
     }
 

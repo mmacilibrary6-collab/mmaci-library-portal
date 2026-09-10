@@ -91,39 +91,31 @@
             </p>
         </div>
 
-        @php
-            $serviceImages = [
-                asset('images/Opacc.jpg'),
-                asset('images/chesz.jpg'),
-                asset('images/laptops.jpg'),
-            ];
-        @endphp
-
         <div class="row g-4">
             @foreach($services as $service)
-                @php
-                    $serviceImage = $serviceImages[$loop->index]
-                        ?? asset('images/image-fallback.svg');
-                @endphp
-
                 <div class="col-lg-4 col-md-6">
                     <article class="service-card">
+                        @if (!empty($service['image']))
                         <div class="service-card-photo">
                             <img
-                                src="{{ $serviceImage }}"
+                                src="{{ asset($service['image']) }}"
                                 alt="{{ $service['title'] }}"
                                 loading="lazy"
                                 onerror="this.onerror=null;this.src='{{ asset('images/image-fallback.svg') }}';">
                         </div>
+                        @endif
 
                         <div class="service-card-body">
+                            @if (!empty($service['short_title']))
                             <span class="card-kicker">
                                 {{ $service['short_title'] }}
                             </span>
+                            @endif
 
                             <h3>{{ $service['title'] }}</h3>
                             <p>{{ $service['description'] }}</p>
 
+                            @if (!empty($service['features']))
                             <ul class="feature-list">
                                 @foreach($service['features'] as $feature)
                                     <li>
@@ -132,6 +124,7 @@
                                     </li>
                                 @endforeach
                             </ul>
+                            @endif
                         </div>
                     </article>
                 </div>

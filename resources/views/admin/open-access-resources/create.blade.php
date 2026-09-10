@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 
-@section('title', 'Add Open Access Resource')
-@section('page-title', 'Add Open Access Resource')
+@section('title', 'Add ' . ($resourceTitle ?? 'Open Access Resources'))
+@section('page-title', 'Add ' . ($resourceTitle ?? 'Open Access Resources'))
 
 @section('content')
 
@@ -22,7 +22,7 @@
                         Digital Resources
                     </span>
 
-                    <h2>Add Open Access Resource</h2>
+                    <h2>Add {{ $resourceTitle ?? 'Open Access Resources' }}</h2>
 
                     <p>
                         Add a website, database, or digital learning resource.
@@ -32,7 +32,7 @@
             </div>
 
             <a
-                href="{{ route('admin.open-access-resources.index') }}"
+                href="{{ route(($resourceRoute ?? 'admin.open-access-resources') . '.index') }}"
                 class="resource-back-button">
 
                 <i class="bi bi-arrow-left"></i>
@@ -42,7 +42,7 @@
 
         </section>
 <form
-            action="{{ route('admin.open-access-resources.store') }}"
+            action="{{ route(($resourceRoute ?? 'admin.open-access-resources') . '.store') }}"
             method="POST"
             enctype="multipart/form-data"
             novalidate>

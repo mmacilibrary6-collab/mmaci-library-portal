@@ -265,7 +265,7 @@
                     <img
                         src="{{ $previewImage }}"
                         id="resourceImagePreview"
-                        alt="Open access resource preview"
+                        alt="Resource preview"
                         onerror="this.onerror=null; this.src='{{ asset('images/default-resource.png') }}';">
 
                     <span class="preview-badge">
@@ -347,7 +347,7 @@
     <div class="resource-form-actions">
 
         <a
-            href="{{ route('admin.open-access-resources.index') }}"
+            href="{{ route(($resourceRoute ?? 'admin.open-access-resources') . '.index') }}"
             class="resource-cancel-button">
 
             <i class="bi bi-x-lg"></i>

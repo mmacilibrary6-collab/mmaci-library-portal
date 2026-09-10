@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 
-@section('title', 'Open Access Resources')
-@section('page-title', 'Open Access Resources')
+@section('title', '' . ($resourceTitle ?? 'Open Access Resources'))
+@section('page-title', '' . ($resourceTitle ?? 'Open Access Resources'))
 
 @section('content')
 
@@ -21,7 +21,7 @@
                     Digital Collection
                 </span>
 
-                <h2>Open Access Resources</h2>
+                <h2>{{ $resourceTitle ?? 'Open Access Resources' }}</h2>
 
                 <p>
                     Manage educational websites, databases, and online resources.
@@ -31,7 +31,7 @@
         </div>
 
         <a
-            href="{{ route('admin.open-access-resources.create') }}"
+            href="{{ route(($resourceRoute ?? 'admin.open-access-resources') . '.create') }}"
             class="resource-add-button">
 
             <i class="bi bi-plus-lg"></i>
@@ -47,7 +47,7 @@
 
         {{-- Filters --}}
         <form
-            action="{{ route('admin.open-access-resources.index') }}"
+            action="{{ route(($resourceRoute ?? 'admin.open-access-resources') . '.index') }}"
             method="GET"
             class="resource-filters">
 
@@ -93,7 +93,7 @@
             @if (request()->filled('search') || request()->filled('status'))
 
                 <a
-                    href="{{ route('admin.open-access-resources.index') }}"
+                    href="{{ route(($resourceRoute ?? 'admin.open-access-resources') . '.index') }}"
                     class="resource-reset-button"
                     title="Clear filters">
 
@@ -187,7 +187,7 @@
 
                             <a
                                 href="{{ route(
-                                    'admin.open-access-resources.edit',
+                                    ($resourceRoute ?? 'admin.open-access-resources') . '.edit',
                                     $resource
                                 ) }}"
                                 class="resource-edit-button">
@@ -199,7 +199,7 @@
 
                             <form
                                 action="{{ route(
-                                    'admin.open-access-resources.destroy',
+                                    ($resourceRoute ?? 'admin.open-access-resources') . '.destroy',
                                     $resource
                                 ) }}"
                                 method="POST"
@@ -239,14 +239,14 @@
                         @if (request()->filled('search') || request()->filled('status'))
                             No resources match your current filters.
                         @else
-                            Add your first open access resource to get started.
+                            Add your first resource to get started.
                         @endif
                     </p>
 
                     @if (request()->filled('search') || request()->filled('status'))
 
                         <a
-                            href="{{ route('admin.open-access-resources.index') }}"
+                            href="{{ route(($resourceRoute ?? 'admin.open-access-resources') . '.index') }}"
                             class="empty-secondary-button">
 
                             <i class="bi bi-arrow-clockwise"></i>
@@ -257,7 +257,7 @@
                     @else
 
                         <a
-                            href="{{ route('admin.open-access-resources.create') }}"
+                            href="{{ route(($resourceRoute ?? 'admin.open-access-resources') . '.create') }}"
                             class="empty-primary-button">
 
                             <i class="bi bi-plus-lg"></i>

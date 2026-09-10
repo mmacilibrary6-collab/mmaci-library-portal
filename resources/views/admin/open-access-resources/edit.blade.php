@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 
-@section('title', 'Edit Open Access Resource')
-@section('page-title', 'Edit Open Access Resource')
+@section('title', 'Edit ' . ($resourceTitle ?? 'Open Access Resources'))
+@section('page-title', 'Edit ' . ($resourceTitle ?? 'Open Access Resources'))
 
 @section('content')
 
@@ -22,7 +22,7 @@
                         Digital Resources
                     </span>
 
-                    <h2>Edit Open Access Resource</h2>
+                    <h2>Edit {{ $resourceTitle ?? 'Open Access Resources' }}</h2>
 
                     <p>
                         Update the information and access settings for
@@ -33,7 +33,7 @@
             </div>
 
             <a
-                href="{{ route('admin.open-access-resources.index') }}"
+                href="{{ route(($resourceRoute ?? 'admin.open-access-resources') . '.index') }}"
                 class="resource-back-button">
 
                 <i class="bi bi-arrow-left"></i>
@@ -44,7 +44,7 @@
         </section>
 <form
             action="{{ route(
-                'admin.open-access-resources.update',
+                ($resourceRoute ?? 'admin.open-access-resources') . '.update',
                 $openAccessResource
             ) }}"
             method="POST"

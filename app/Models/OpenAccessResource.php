@@ -13,6 +13,8 @@ class OpenAccessResource extends Model
 {
     use HasFactory;
 
+    protected const MEDIA_TYPE = 'open-access-resource';
+
     protected $fillable = [
         'title',
         'description',
@@ -51,7 +53,7 @@ class OpenAccessResource extends Model
         }
 
         if ($this->exists) {
-            return route('database.media', ['type' => 'open-access-resource', 'id' => $this->getKey(), 'v' => $this->updated_at?->timestamp]);
+            return route('database.media', ['type' => static::MEDIA_TYPE, 'id' => $this->getKey(), 'v' => $this->updated_at?->timestamp]);
         }
 
         return DatabaseMedia::toDataUri(
