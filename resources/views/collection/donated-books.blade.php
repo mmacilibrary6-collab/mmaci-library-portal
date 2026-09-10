@@ -456,8 +456,8 @@
 .donated-book-card {
     min-width: 0;
     overflow: hidden;
-    display: flex;
-    flex-direction: column;
+    display: grid;
+    grid-template-rows: auto 1fr;
     min-height: 100%;
     background: var(--donated-white);
     border: 1px solid var(--donated-border);
@@ -476,10 +476,13 @@
 }
 
 .donated-book-cover-frame {
+    position: relative;
+    z-index: 0;
     display: grid;
     place-items: center;
     height: clamp(220px, 20vw, 285px);
     padding: 10px;
+    overflow: hidden;
     background:
         linear-gradient(
             180deg,
@@ -489,18 +492,23 @@
 }
 
 .donated-book-cover {
+    position: absolute;
+    inset: 10px;
     display: block;
-    width: 100%;
-    height: 100%;
+    width: calc(100% - 20px);
+    height: calc(100% - 20px);
     object-fit: contain;
     border-radius: 12px;
 }
 
 .donated-book-details {
+    position: relative;
+    z-index: 1;
     display: flex;
     flex: 1;
     flex-direction: column;
     padding: 22px;
+    background: var(--donated-white);
     overflow-wrap: anywhere;
 }
 
