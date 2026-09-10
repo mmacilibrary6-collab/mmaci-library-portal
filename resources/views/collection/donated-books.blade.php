@@ -92,22 +92,73 @@
             @if ($books->isNotEmpty())
                 <div class="donated-book-grid">
                     @foreach ($books as $book)
-                        <article class="donated-book-card">
-                            <img
-                                class="donated-book-cover"
-                                src="{{ $book->image_url }}"
-                                alt="Cover of {{ $book->title }}"
-                                loading="lazy"
-                                width="400"
-                                height="500"
-                                onerror="this.onerror=null; this.src='{{ asset('images/image-fallback.svg') }}';">
+                        @php
+                            $dialogId = 'donated-book-dialog-' . $book->id;
+                        @endphp
+
+                        <article class="donated-book-card donated-motion-reveal">
+                            <div class="donated-book-cover-frame">
+                                <img
+                                    class="donated-book-cover"
+                                    src="{{ $book->image_url }}"
+                                    alt="Cover of {{ $book->title }}"
+                                    loading="lazy"
+                                    width="400"
+                                    height="500"
+                                    onerror="this.onerror=null; this.src='{{ asset('images/image-fallback.svg') }}';">
+                            </div>
+
                             <div class="donated-book-details">
                                 <h3>{{ $book->title }}</h3>
+
                                 @if (filled($book->description))
                                     <p>{{ $book->description }}</p>
+                                @else
+                                    <p class="donated-book-muted">No description provided yet.</p>
                                 @endif
+
+                                <button
+                                    class="donated-book-more"
+                                    type="button"
+                                    data-donated-dialog-target="{{ $dialogId }}">
+                                    View details
+                                    <i class="bi bi-arrow-up-right" aria-hidden="true"></i>
+                                </button>
                             </div>
                         </article>
+
+                        <dialog class="donated-book-dialog" id="{{ $dialogId }}" aria-labelledby="{{ $dialogId }}-title">
+                            <div class="donated-book-dialog-shell">
+                                <button
+                                    class="donated-book-dialog-close"
+                                    type="button"
+                                    data-donated-dialog-close
+                                    aria-label="Close donated book details">
+                                    <i class="bi bi-x-lg" aria-hidden="true"></i>
+                                </button>
+
+                                <div class="donated-book-dialog-media">
+                                    <img
+                                        src="{{ $book->image_url }}"
+                                        alt="Cover of {{ $book->title }}"
+                                        loading="lazy"
+                                        width="400"
+                                        height="500"
+                                        onerror="this.onerror=null; this.src='{{ asset('images/image-fallback.svg') }}';">
+                                </div>
+
+                                <div class="donated-book-dialog-content">
+                                    <span class="section-label">Donated Book</span>
+                                    <h3 id="{{ $dialogId }}-title">{{ $book->title }}</h3>
+
+                                    @if (filled($book->description))
+                                        <p>{{ $book->description }}</p>
+                                    @else
+                                        <p>No description has been added for this donated book yet.</p>
+                                    @endif
+                                </div>
+                            </div>
+                        </dialog>
                     @endforeach
                 </div>
             @else
@@ -397,44 +448,190 @@
 
 .donated-book-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));
-    gap: 24px;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 265px), 1fr));
+    gap: 26px;
+    align-items: stretch;
 }
 
 .donated-book-card {
     min-width: 0;
     overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    min-height: 100%;
     background: var(--donated-white);
     border: 1px solid var(--donated-border);
-    border-radius: 20px;
+    border-radius: 18px;
     box-shadow: 0 12px 32px rgba(11, 46, 89, .07);
+    transition:
+        transform .22s ease,
+        box-shadow .22s ease,
+        border-color .22s ease;
+}
+
+.donated-book-card:hover {
+    transform: translateY(-4px);
+    border-color: rgba(24, 75, 140, .18);
+    box-shadow: 0 18px 42px rgba(11, 46, 89, .11);
+}
+
+.donated-book-cover-frame {
+    display: grid;
+    place-items: center;
+    height: clamp(220px, 20vw, 285px);
+    padding: 10px;
+    background:
+        linear-gradient(
+            180deg,
+            rgba(244, 247, 251, .98),
+            rgba(235, 241, 248, .92)
+        );
 }
 
 .donated-book-cover {
     display: block;
     width: 100%;
-    height: 300px;
+    height: 100%;
     object-fit: contain;
-    background: var(--donated-bg);
+    border-radius: 12px;
 }
 
 .donated-book-details {
-    padding: 24px;
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    padding: 22px;
     overflow-wrap: anywhere;
 }
 
 .donated-book-details h3 {
     margin: 0 0 12px;
     color: var(--donated-navy);
-    font-size: 20px;
+    font-size: 19px;
     font-weight: 800;
+    line-height: 1.18;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    max-height: 3.55em;
+    overflow: hidden;
 }
 
 .donated-book-details p {
     margin: 0;
     color: var(--donated-muted);
     font-size: 14px;
-    line-height: 1.75;
+    line-height: 1.65;
+    white-space: pre-line;
+    display: -webkit-box;
+    -webkit-line-clamp: 6;
+    -webkit-box-orient: vertical;
+    max-height: 9.9em;
+    overflow: hidden;
+}
+
+.donated-book-muted {
+    color: #8793a6;
+    font-style: italic;
+}
+
+.donated-book-more {
+    align-self: flex-start;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: auto;
+    padding: 14px 0 0;
+    color: var(--donated-blue);
+    background: transparent;
+    border: 0;
+    font-size: 13px;
+    font-weight: 800;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.donated-book-more:hover,
+.donated-book-more:focus-visible {
+    color: var(--donated-navy);
+}
+
+.donated-book-dialog {
+    width: min(920px, calc(100vw - 30px));
+    max-height: min(760px, calc(100vh - 34px));
+    padding: 0;
+    overflow: visible;
+    color: var(--donated-text);
+    background: transparent;
+    border: 0;
+}
+
+.donated-book-dialog::backdrop {
+    background: rgba(4, 14, 29, .64);
+    backdrop-filter: blur(4px);
+}
+
+.donated-book-dialog-shell {
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(260px, .92fr) minmax(0, 1.08fr);
+    overflow: hidden;
+    background: var(--donated-white);
+    border: 1px solid rgba(223, 230, 239, .92);
+    border-radius: 20px;
+    box-shadow: 0 28px 70px rgba(4, 18, 38, .32);
+}
+
+.donated-book-dialog-close {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    z-index: 3;
+    width: 42px;
+    height: 42px;
+    display: grid;
+    place-items: center;
+    color: var(--donated-navy);
+    background: rgba(255, 255, 255, .92);
+    border: 1px solid var(--donated-border);
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.donated-book-dialog-media {
+    display: grid;
+    place-items: center;
+    min-height: 430px;
+    padding: 28px;
+    background: var(--donated-bg);
+}
+
+.donated-book-dialog-media img {
+    width: 100%;
+    max-height: 560px;
+    object-fit: contain;
+    border-radius: 14px;
+}
+
+.donated-book-dialog-content {
+    max-height: min(760px, calc(100vh - 34px));
+    overflow-y: auto;
+    padding: 48px 42px;
+}
+
+.donated-book-dialog-content h3 {
+    margin: 14px 0 18px;
+    color: var(--donated-navy);
+    font-size: clamp(28px, 4vw, 42px);
+    font-weight: 900;
+    line-height: 1.08;
+}
+
+.donated-book-dialog-content p {
+    margin: 0;
+    color: var(--donated-muted);
+    font-size: 15px;
+    line-height: 1.85;
     white-space: pre-line;
 }
 
@@ -864,6 +1061,43 @@
     }
 
 
+    .donated-book-grid {
+
+        gap: 20px;
+
+    }
+
+
+    .donated-book-dialog-shell {
+
+        grid-template-columns: 1fr;
+
+    }
+
+
+    .donated-book-dialog-media {
+
+        min-height: 300px;
+        padding: 22px;
+
+    }
+
+
+    .donated-book-dialog-media img {
+
+        max-height: 390px;
+
+    }
+
+
+    .donated-book-dialog-content {
+
+        max-height: 42vh;
+        padding: 28px 24px 32px;
+
+    }
+
+
     .donated-empty {
 
         padding:
@@ -906,6 +1140,86 @@
 
     }
 
+
+    .donated-book-grid {
+
+        grid-template-columns: 1fr;
+
+    }
+
+
+    .donated-book-card {
+
+        border-radius: 16px;
+
+    }
+
+
+    .donated-book-cover-frame {
+
+        height: 240px;
+
+    }
+
+
+    .donated-book-details {
+
+        padding: 20px;
+
+    }
+
+
+    .donated-book-details h3 {
+
+        font-size: 18px;
+
+    }
+
+
+    .donated-book-dialog {
+
+        width: calc(100vw - 20px);
+        max-height: calc(100vh - 20px);
+
+    }
+
+
+    .donated-book-dialog-shell {
+
+        border-radius: 16px;
+
+    }
+
+
+    .donated-book-dialog-close {
+
+        top: 12px;
+        right: 12px;
+
+    }
+
+
+    .donated-book-dialog-media {
+
+        min-height: 250px;
+        padding: 18px;
+
+    }
+
+
+    .donated-book-dialog-media img {
+
+        max-height: 310px;
+
+    }
+
+
+    .donated-book-dialog-content h3 {
+
+        font-size: 26px;
+
+    }
+
 }
 
     .donated-motion-reveal {
@@ -938,6 +1252,58 @@
 document.addEventListener(
     'DOMContentLoaded',
     function () {
+        document.querySelectorAll('[data-donated-dialog-target]').forEach(
+            function (trigger) {
+                const dialog =
+                    document.getElementById(
+                        trigger.dataset.donatedDialogTarget
+                    );
+
+                if (!dialog || typeof dialog.showModal !== 'function') {
+                    return;
+                }
+
+                trigger.addEventListener(
+                    'click',
+                    function () {
+                        dialog.showModal();
+                        document.body.classList.add('overflow-hidden');
+                    }
+                );
+            }
+        );
+
+        document.querySelectorAll('.donated-book-dialog').forEach(
+            function (dialog) {
+                dialog.addEventListener(
+                    'click',
+                    function (event) {
+                        if (event.target === dialog) {
+                            dialog.close();
+                        }
+                    }
+                );
+
+                dialog.addEventListener(
+                    'close',
+                    function () {
+                        document.body.classList.remove('overflow-hidden');
+                    }
+                );
+
+                dialog.querySelectorAll('[data-donated-dialog-close]').forEach(
+                    function (button) {
+                        button.addEventListener(
+                            'click',
+                            function () {
+                                dialog.close();
+                            }
+                        );
+                    }
+                );
+            }
+        );
+
         const revealElements =
             document.querySelectorAll(
                 '.donated-motion-reveal'
@@ -1043,4 +1409,3 @@ document.addEventListener(
 @push('styles')
 
 @endpush
-
