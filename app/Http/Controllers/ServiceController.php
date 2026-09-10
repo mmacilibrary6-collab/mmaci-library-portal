@@ -116,7 +116,7 @@ class ServiceController extends Controller
             ],
             [
                 'title' => 'Library Orientation',
-                'image' => 'images/Studentslib.jpg',
+                'image' => 'images/facilities/library-orientation.png',
                 'icon' => 'bi-compass-fill',
                 'description' => 'Introduces students to the library, its facilities, collections, rules, and available services.',
             ],
