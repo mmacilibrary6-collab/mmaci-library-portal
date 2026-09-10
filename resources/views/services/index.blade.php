@@ -561,6 +561,8 @@ html {
 }
 
 .service-card {
+    display: flex;
+    flex-direction: column;
     height: 100%;
     overflow: hidden;
     background: var(--service-white);
@@ -576,9 +578,10 @@ html {
 }
 
 .service-card-photo {
-    height: 220px;
+    flex: 0 0 190px;
+    height: 190px;
     overflow: hidden;
-    background: #dfe6ef;
+    background: linear-gradient(135deg, #edf3fb, #dfe6ef);
 }
 
 .service-card-photo img {
@@ -593,6 +596,9 @@ html {
 }
 
 .service-card-body {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
     padding: 27px 28px 29px;
 }
 
@@ -607,13 +613,13 @@ html {
 .service-card h3 {
     margin: 8px 0 12px;
     color: var(--service-navy);
-    font-size: 22px;
+    font-size: clamp(19px, 1.35vw, 22px);
     font-weight: 800;
     line-height: 1.3;
 }
 
 .service-card-body > p {
-    min-height: 80px;
+    min-height: 98px;
     margin: 0 0 18px;
     color: var(--service-muted);
     font-size: 14px;
@@ -970,7 +976,7 @@ html {
     }
 
     .service-card-body > p {
-        min-height: auto;
+        min-height: 0;
     }
 
     .rules-intro {
@@ -1019,6 +1025,11 @@ html {
     .rules-section,
     .electronic-service {
         padding: 75px 0;
+    }
+
+    .service-card-photo {
+        flex-basis: 210px;
+        height: 210px;
     }
 
     .borrowing-card {

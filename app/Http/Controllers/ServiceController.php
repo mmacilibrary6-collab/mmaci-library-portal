@@ -110,18 +110,26 @@ class ServiceController extends Controller
             ],
             [
                 'title' => 'Interlibrary Loan',
+                'image' => 'images/librarycollect.jpg',
+                'icon' => 'bi-share-fill',
                 'description' => 'Allows users to request books and other materials that are not available in the library from other libraries.',
             ],
             [
                 'title' => 'Library Orientation',
+                'image' => 'images/Studentslib.jpg',
+                'icon' => 'bi-compass-fill',
                 'description' => 'Introduces students to the library, its facilities, collections, rules, and available services.',
             ],
             [
                 'title' => 'Information Literacy',
+                'image' => 'images/Studentslib2.jpg',
+                'icon' => 'bi-lightbulb-fill',
                 'description' => 'Teaches students how to search, evaluate, use, and properly cite information from reliable sources.',
             ],
             [
                 'title' => 'Scanning',
+                'image' => 'images/libraryservicess.webp',
+                'icon' => 'bi-upc-scan',
                 'description' => 'Provides scanning services for library materials and documents for academic and research purposes.',
             ],
             [
@@ -132,6 +140,8 @@ class ServiceController extends Controller
             ],
             [
                 'title' => 'Referral Services',
+                'image' => 'images/Doors.webp',
+                'icon' => 'bi-signpost-split-fill',
                 'description' => 'Directs users to other libraries, institutions, or resources when the needed information or material is not available in the library.',
             ],
         ];
