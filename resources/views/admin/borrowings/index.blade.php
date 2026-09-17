@@ -15,6 +15,12 @@
         </div>
     </section>
 
+    @if(session('success'))
+        <div class="alert alert-success" role="status">{{ session('success') }}</div>
+    @endif
+    @if(session('error'))
+        <div class="alert alert-danger" role="alert">{{ session('error') }}</div>
+    @endif
     <div class="borrow-stats">
         @foreach([
             ['label' => 'Currently Borrowed', 'value' => $stats['borrowed'] ?? 0, 'icon' => 'bi-book-half', 'class' => 'blue'],
@@ -141,7 +147,7 @@
 
                             <td>{{ $borrowing->borrower?->department ?? '-' }}</td>
 
-                            <td><span class="accession-chip">{{ $borrowing->accession_number }}</span></td>
+                            <td><span class="accession-chip">{{ $borrowing->accession_number ?: 'Not assigned' }}</span></td>
 
                             <td class="material-cell">
                                 <strong>{{ \Illuminate\Support\Str::limit($borrowing->bibliographical_description, 72) }}</strong>
@@ -175,7 +181,7 @@
                                         <form method="POST" action="{{ route('admin.borrowings.approve', $borrowing) }}">
                                             @csrf
                                             @method('PATCH')
-                                            <button class="action-btn action-approve" type="submit">
+                                            <button class="action-btn action-approve" type="submit" @disabled(blank($borrowing->accession_number))>
                                                 <i class="bi bi-check-lg"></i><span>Approve</span>
                                             </button>
                                         </form>
@@ -189,24 +195,15 @@
                                         </form>
                                     @endif
 
-                                    @if(in_array($borrowing->status, ['pending', 'approved'], true))
-                                        <form method="POST" action="{{ route('admin.borrowings.borrowed', $borrowing) }}">
-                                            @csrf
-                                            @method('PATCH')
-                                            <button class="action-btn action-borrowed" type="submit">
-                                                <i class="bi bi-bookmark-check"></i><span>Borrow</span>
-                                            </button>
-                                        </form>
+                                    @if($borrowing->status === 'approved')
+                                        <a href="{{ route('admin.borrowings.show', $borrowing) }}#release" class="action-btn action-borrowed">
+                                            <i class="bi bi-bookmark-check"></i><span>Release</span>
+                                        </a>
                                     @endif
-
                                     @if(in_array($borrowing->status, ['borrowed', 'overdue'], true))
-                                        <form method="POST" action="{{ route('admin.borrowings.returned', $borrowing) }}">
-                                            @csrf
-                                            @method('PATCH')
-                                            <button class="action-btn action-approve" type="submit">
-                                                <i class="bi bi-arrow-return-left"></i><span>Return</span>
-                                            </button>
-                                        </form>
+                                        <a href="{{ route('admin.borrowings.show', $borrowing) }}#return" class="action-btn action-approve">
+                                            <i class="bi bi-arrow-return-left"></i><span>Return</span>
+                                        </a>
                                     @endif
 
                                     @if($borrowing->borrower)
@@ -260,7 +257,7 @@
         @if($borrowings->hasPages())
             <div class="panel-footer">
                 <span>
-                    Showing {{ $borrowings->firstItem() }}â€“{{ $borrowings->lastItem() }}
+                    Showing {{ $borrowings->firstItem() }}–{{ $borrowings->lastItem() }}
                     of {{ $borrowings->total() }}
                 </span>
                 {{ $borrowings->links() }}

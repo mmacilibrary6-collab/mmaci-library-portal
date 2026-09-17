@@ -25,6 +25,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->append(TrackVisitor::class);
     })
     ->withSchedule(function (Schedule $schedule): void {
+        $schedule->command('borrowings:send-updates')->hourly()->withoutOverlapping();
         $schedule->command('visitor-logs:prune --days=90')->dailyAt('01:10');
         $schedule->command('library-updates:expire --days=' . config('security.library_update_expiry_days', 10))
             ->dailyAt('01:20');

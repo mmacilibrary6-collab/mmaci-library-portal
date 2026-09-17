@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Carbon;
 
 class Borrowing extends Model
@@ -29,6 +30,7 @@ class Borrowing extends Model
         'date_returned',
         'status',
         'received_by',
+        'released_by',
         'returned_by',
         'remarks',
         'approved_by',
@@ -64,7 +66,7 @@ class Borrowing extends Model
     public function getDisplayStatusAttribute(): string
     {
         if (
-            in_array($this->status, [self::STATUS_BORROWED, self::STATUS_APPROVED], true) &&
+            $this->status === self::STATUS_BORROWED &&
             blank($this->date_returned) &&
             $this->due_date &&
             $this->due_date->isPast() &&
@@ -76,12 +78,17 @@ class Borrowing extends Model
         return $this->status;
     }
 
-    public function scopeActiveForBook(Builder $query, string $accessionNumber): Builder
+    public function emailUpdates(): HasMany
+    {
+        return $this->hasMany(BorrowingEmailUpdate::class);
+    }
+
+    public function scopeActiveForBook(Builder $query, ?string $accessionNumber): Builder
     {
         return $query
+            ->whereNotNull('accession_number')
             ->where('accession_number', $accessionNumber)
             ->whereIn('status', [
-                self::STATUS_PENDING,
                 self::STATUS_APPROVED,
                 self::STATUS_BORROWED,
                 self::STATUS_OVERDUE,
@@ -92,7 +99,7 @@ class Borrowing extends Model
     public function markOverdueIfNeeded(): bool
     {
         if (
-            in_array($this->status, [self::STATUS_APPROVED, self::STATUS_BORROWED], true) &&
+            $this->status === self::STATUS_BORROWED &&
             blank($this->date_returned) &&
             $this->due_date instanceof Carbon &&
             $this->due_date->isPast() &&

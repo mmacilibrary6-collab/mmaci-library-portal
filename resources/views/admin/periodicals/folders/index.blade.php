@@ -23,6 +23,10 @@
             </div>
         </div>
 
+        <div class="folder-header-actions">
+            <button type="button" class="folder-export-trigger" data-bs-toggle="modal" data-bs-target="#folder-export-modal">
+                <i class="bi bi-file-earmark-excel" aria-hidden="true"></i> Export to Excel
+            </button>
         <a
             href="{{ route('admin.periodical-folders.create') }}"
             class="btn add-folder-button"
@@ -30,6 +34,7 @@
             <i class="bi bi-plus-lg"></i>
             <span>Add Folder</span>
         </a>
+        </div>
 
     </div>
 
@@ -37,6 +42,8 @@
     {{-- =====================================================
         MANAGEMENT PANEL
     ====================================================== --}}
+    @include('admin.partials.folder-export', ['collection' => 'periodicals'])
+
     <div class="folder-management-card">
 
         {{-- =================================================

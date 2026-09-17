@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\Borrower;
 use App\Models\Borrowing;
-use App\Models\NewArrival;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -53,28 +52,18 @@ class BorrowBookController extends Controller
             ],
 
             'email' => [
-                'nullable',
+                'required',
                 'email',
                 'max:255',
             ],
 
-            'accession_number' => [
-                'required',
-                'string',
-                'max:100',
-            ],
-
-            'bibliographical_description' => [
-                'required',
-                'string',
-                'max:2000',
-            ],
+            'book_title' => ['required', 'string', 'max:500'],
         ]);
 
         $idNumber = trim($validated['id_number']);
         $name = trim($validated['name']);
         $borrowerType = $validated['borrower_type'];
-        $accessionNumber = trim($validated['accession_number']);
+        $bookTitle = trim($validated['book_title']);
 
         /*
         |--------------------------------------------------------------------------
@@ -143,15 +132,15 @@ class BorrowBookController extends Controller
         | Prevent Duplicate Active Request
         |--------------------------------------------------------------------------
         |
-        | The SAME borrower should not be able to request the SAME accession
-        | number again while an existing request/loan is still active.
+        | The same borrower cannot request the same title again while an
+        | existing request or loan for that title is still active.
         |
         */
 
         if ($existingBorrower) {
             $duplicateRequest = Borrowing::query()
                 ->where('borrower_id', $existingBorrower->id)
-                ->where('accession_number', $accessionNumber)
+                ->whereRaw('LOWER(TRIM(bibliographical_description)) = ?', [mb_strtolower($bookTitle)])
                 ->whereIn('status', [
                     Borrowing::STATUS_PENDING,
                     Borrowing::STATUS_APPROVED,
@@ -164,7 +153,7 @@ class BorrowBookController extends Controller
                 return back()
                     ->withInput()
                     ->withErrors([
-                        'accession_number' =>
+                        'book_title' =>
                             'You already have an active request or borrowing record for this book.',
                     ]);
             }
@@ -176,7 +165,7 @@ class BorrowBookController extends Controller
             $idNumber,
             $name,
             $borrowerType,
-            $accessionNumber
+            $bookTitle
         ): void {
 
             /*
@@ -255,7 +244,7 @@ class BorrowBookController extends Controller
 
             $duplicateRequest = Borrowing::query()
                 ->where('borrower_id', $borrower->id)
-                ->where('accession_number', $accessionNumber)
+                ->whereRaw('LOWER(TRIM(bibliographical_description)) = ?', [mb_strtolower($bookTitle)])
                 ->whereIn('status', [
                     Borrowing::STATUS_PENDING,
                     Borrowing::STATUS_APPROVED,
@@ -266,52 +255,20 @@ class BorrowBookController extends Controller
 
             if ($duplicateRequest) {
                 throw ValidationException::withMessages([
-                    'accession_number' =>
+                    'book_title' =>
                         'You already have an active request or borrowing record for this book.',
                 ]);
             }
 
-            /*
-            |--------------------------------------------------------------------------
-            | Find Book From New Arrivals
-            |--------------------------------------------------------------------------
-            |
-            | Your old code always stored:
-            |
-            | new_arrival_id => null
-            |
-            | This meant the borrowing record was not connected to the actual
-            | NewArrival book, so availability updates from the admin controller
-            | could fail.
-            |
-            */
-
-            $book = NewArrival::query()
-                ->where('accession_number', $accessionNumber)
-                ->first();
-
-            /*
-            |--------------------------------------------------------------------------
-            | Create NEW Borrowing Transaction
-            |--------------------------------------------------------------------------
-            |
-            | We do NOT create another borrower.
-            |
-            | We create another borrowing history record belonging to the same
-            | borrower.
-            |
-            */
-
             Borrowing::create([
                 'borrower_id' => $borrower->id,
 
-                'new_arrival_id' => $book?->id,
+                'new_arrival_id' => null,
 
-                'accession_number' =>
-                    $accessionNumber,
+                'accession_number' => null,
 
                 'bibliographical_description' =>
-                    trim($validated['bibliographical_description']),
+                    $bookTitle,
 
                 'status' =>
                     Borrowing::STATUS_PENDING,
@@ -330,7 +287,7 @@ class BorrowBookController extends Controller
             ->route('more.borrow-books')
             ->with(
                 'success',
-                'Your borrowing request was submitted. Please wait for library approval.'
+                'Your borrowing request was submitted. We will email you when the library approves or rejects it.'
             );
     }
 }

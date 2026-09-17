@@ -36,36 +36,7 @@ class EbookFolderController extends Controller
         |--------------------------------------------------------------------------
         */
 
-        $folders = EbookFolder::query()
-            ->with('program')
-            ->when($search !== '', function ($query) use ($search) {
-                $query->where(function ($subQuery) use ($search) {
-                    $subQuery
-                        ->where('title', 'like', "%{$search}%")
-                        ->orWhere('description', 'like', "%{$search}%")
-                        ->orWhere('drive_link', 'like', "%{$search}%")
-                        ->orWhereHas(
-                            'program',
-                            function ($programQuery) use ($search) {
-                                $programQuery->where(
-                                    'title',
-                                    'like',
-                                    "%{$search}%"
-                                );
-                            }
-                        );
-                });
-            })
-            ->when(
-                filled($programId),
-                function ($query) use ($programId) {
-                    $query->where(
-                        'ebook_program_id',
-                        $programId
-                    );
-                }
-            )
-            ->orderBy('title', 'asc')
+        $folders = \App\Support\FolderQuery::build('ebooks', $search, filled($programId) ? [$programId] : [])
             ->paginate(10)
             ->withQueryString();
 

@@ -120,7 +120,7 @@
                     @forelse($borrower->borrowings as $borrowing)
                         <tr>
                             <td class="row-number">{{ $loop->iteration }}</td>
-                            <td><span class="accession-chip">{{ $borrowing->accession_number }}</span></td>
+                            <td><span class="accession-chip">{{ $borrowing->accession_number ?: 'Not assigned' }}</span></td>
                             <td class="material-cell">
                                 <strong>{{ $borrowing->bibliographical_description }}</strong>
                             </td>

@@ -1102,7 +1102,7 @@
 
     <main>
 
-        @unless(request()->routeIs('login', 'password.request', 'password.email', 'password.reset'))
+        @unless(request()->routeIs('login', 'password.request', 'password.email', 'password.reset', 'more.borrow-books'))
             @include('partials.flash-messages', ['containerClass' => 'container mt-4'])
         @endunless
 

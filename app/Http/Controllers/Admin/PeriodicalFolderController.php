@@ -20,20 +20,7 @@ class PeriodicalFolderController extends Controller
         $programs = PeriodicalProgram::query()->orderBy('title')->get();
         $categories = array_keys(PeriodicalFolder::CATEGORIES);
 
-        $folders = PeriodicalFolder::query()
-            ->with('program')
-            ->when($search !== '', function ($query) use ($search) {
-                $query->where(function ($subQuery) use ($search) {
-                    $subQuery->where('title', 'like', "%{$search}%")
-                        ->orWhere('accession_number', 'like', "%{$search}%")
-                        ->orWhere('description', 'like', "%{$search}%")
-                        ->orWhere('folder_link', 'like', "%{$search}%")
-                        ->orWhereHas('program', fn ($programQuery) => $programQuery->where('title', 'like', "%{$search}%"));
-                });
-            })
-            ->when(filled($programId), fn ($query) => $query->where('periodical_program_id', $programId))
-            ->when(filled($category), fn ($query) => $query->where('category', $category))
-            ->orderBy('title', 'asc')
+        $folders = \App\Support\FolderQuery::build('periodicals', $search, filled($programId) ? [$programId] : [], filled($category) ? [$category] : [])
             ->paginate(10)
             ->withQueryString();
 

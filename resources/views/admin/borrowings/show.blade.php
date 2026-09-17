@@ -28,7 +28,7 @@
                 </div>
                 <p>
                     {{ $borrowing->borrower?->name ?? 'Unknown Borrower' }}
-                    · {{ $borrowing->accession_number }}
+                    · {{ $borrowing->accession_number ?: 'Copy not assigned yet' }}
                 </p>
             </div>
         </div>
@@ -55,6 +55,15 @@
         </div>
     </section>
 
+    @if(session('success'))
+        <div class="alert alert-success" role="status">{{ session('success') }}</div>
+    @endif
+    @if(session('error'))
+        <div class="alert alert-danger" role="alert">{{ session('error') }}</div>
+    @endif
+    @if($errors->any())
+        <div class="alert alert-danger" role="alert"><strong>Please check the following:</strong><ul class="mb-0">@foreach($errors->all() as $error)<li>{{ $error }}</li>@endforeach</ul></div>
+    @endif
     <div class="record-layout">
         <section class="record-panel borrower-panel">
             <div class="panel-heading">
@@ -91,7 +100,7 @@
             <div class="transaction-grid">
                 <div class="transaction-card">
                     <span>Accession Number</span>
-                    <strong class="mono">{{ $borrowing->accession_number }}</strong>
+                    <strong class="mono">{{ $borrowing->accession_number ?: 'Not assigned — add using Edit Record' }}</strong>
                 </div>
 
                 <div class="transaction-card wide">
@@ -140,7 +149,7 @@
                     <form method="POST" action="{{ route('admin.borrowings.approve', $borrowing) }}">
                         @csrf
                         @method('PATCH')
-                        <button class="record-btn btn-success-soft">
+                        <button class="record-btn btn-success-soft" @disabled(blank($borrowing->accession_number))>
                             <i class="bi bi-check-lg"></i> Approve
                         </button>
                     </form>
@@ -154,24 +163,16 @@
                     </form>
                 @endif
 
-                @if(in_array($borrowing->status, ['pending', 'approved'], true))
-                    <form method="POST" action="{{ route('admin.borrowings.borrowed', $borrowing) }}">
-                        @csrf
-                        @method('PATCH')
-                        <button class="record-btn btn-primary-solid">
-                            <i class="bi bi-bookmark-check"></i> Mark as Borrowed
-                        </button>
-                    </form>
+                @if($borrowing->status === 'approved')
+                    <button type="button" class="record-btn btn-primary-solid" data-bs-toggle="modal" data-bs-target="#release-modal">
+                        <i class="bi bi-bookmark-check"></i> Release Book
+                    </button>
                 @endif
 
                 @if(in_array($borrowing->status, ['borrowed', 'overdue'], true))
-                    <form method="POST" action="{{ route('admin.borrowings.returned', $borrowing) }}">
-                        @csrf
-                        @method('PATCH')
-                        <button class="record-btn btn-yellow">
-                            <i class="bi bi-arrow-return-left"></i> Mark as Returned
-                        </button>
-                    </form>
+                    <button type="button" class="record-btn btn-yellow" data-bs-toggle="modal" data-bs-target="#return-modal">
+                        <i class="bi bi-arrow-return-left"></i> Record Return
+                    </button>
                 @endif
 
                 <a href="{{ route('admin.borrowings.edit', $borrowing) }}" class="record-btn btn-outline">
@@ -192,6 +193,78 @@
         </section>
     </div>
 </div>
+
+    @if($borrowing->status === 'approved')
+    <div class="modal fade" id="release-modal" tabindex="-1" aria-labelledby="release-title" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+                    <form class="modal-content" method="POST" action="{{ route('admin.borrowings.borrowed', $borrowing) }}">
+                        @csrf
+                        @method('PATCH')
+                        <div class="modal-header">
+                            <h2 class="modal-title fs-5" id="release-title">Release Book</h2>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                        @if($errors->any())
+                            <div class="alert alert-danger" role="alert"><ul class="mb-0">@foreach($errors->all() as $error)<li>{{ $error }}</li>@endforeach</ul></div>
+                        @endif
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-6">
+                                <label for="release-date" class="form-label">Date Borrowed</label>
+                                <input id="release-date" class="form-control" type="date" name="date_borrowed" value="{{ old('date_borrowed', now()->toDateString()) }}" max="{{ now()->toDateString() }}" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="release-due" class="form-label">Due Date</label>
+                                <input id="release-due" class="form-control" type="date" name="due_date" value="{{ old('due_date', optional($borrowing->due_date)->toDateString()) }}" required>
+                            </div>
+                            <div class="col-12">
+                                <label for="release-staff" class="form-label">Released By (library staff)</label>
+                                <input id="release-staff" class="form-control" name="released_by" value="{{ old('released_by', auth()->user()?->name) }}" maxlength="255" required>
+                            </div>
+                        </div>
+                        </div>
+                        <div class="modal-footer">
+                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button class="record-btn btn-primary-solid" type="submit">Confirm Book Release</button>
+                        </div>
+                    </form>
+        </div>
+    </div>
+    @endif
+    @if(in_array($borrowing->status, ['borrowed', 'overdue'], true))
+    <div class="modal fade" id="return-modal" tabindex="-1" aria-labelledby="return-title" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+                    <form class="modal-content" method="POST" action="{{ route('admin.borrowings.returned', $borrowing) }}">
+                        @csrf
+                        @method('PATCH')
+                        <div class="modal-header">
+                            <h2 class="modal-title fs-5" id="return-title">Record Return</h2>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                        @if($errors->any())
+                            <div class="alert alert-danger" role="alert"><ul class="mb-0">@foreach($errors->all() as $error)<li>{{ $error }}</li>@endforeach</ul></div>
+                        @endif
+                        <div class="row g-3 mb-3">
+                            <div class="col-12">
+                                <label for="return-person" class="form-label">Returned By (person returning the book)</label>
+                                <input id="return-person" class="form-control" name="returned_by" value="{{ old('returned_by') }}" autocomplete="off" maxlength="255" required>
+                            </div>
+
+                            <div class="col-12">
+                                <label for="return-remarks" class="form-label">Remarks (optional)</label>
+                                <textarea id="return-remarks" class="form-control" name="remarks" maxlength="2000">{{ old('remarks', $borrowing->remarks) }}</textarea>
+                            </div>
+                        </div>
+                        </div>
+                        <div class="modal-footer">
+                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button class="record-btn btn-yellow" type="submit">Confirm Book Return</button>
+                        </div>
+                    </form>
+        </div>
+    </div>
+    @endif
 @endsection
 
 @push('styles')
@@ -314,4 +387,19 @@
     .delete-record-form{margin-left:0!important}
 }
 </style>
+@endpush
+
+@push('scripts')
+@php($modalAction = $borrowing->status === 'approved' ? 'release' : (in_array($borrowing->status, ['borrowed', 'overdue'], true) ? 'return' : ''))
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const action = window.location.hash.slice(1);
+    const hasErrors = @json($errors->any());
+    const currentAction = @json($modalAction);
+    const target = document.getElementById((hasErrors ? currentAction : action) + '-modal');
+    if (target && (hasErrors || ['release', 'return'].includes(action))) {
+        bootstrap.Modal.getOrCreateInstance(target).show();
+    }
+});
+</script>
 @endpush

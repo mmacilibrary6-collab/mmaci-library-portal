@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Borrower;
 use App\Models\Borrowing;
 use App\Models\NewArrival;
+use App\Services\BorrowingEmails;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -92,7 +93,7 @@ class BorrowingController extends Controller
                 ->withErrors($dateError);
         }
 
-        if ($this->bookHasAnotherActiveLoan($validated['accession_number'], $borrowing)) {
+        if (in_array($validated['status'], ['approved', 'borrowed', 'overdue'], true) && $this->bookHasAnotherActiveLoan($validated['accession_number'], $borrowing)) {
             return back()
                 ->withInput()
                 ->withErrors([
@@ -128,19 +129,20 @@ class BorrowingController extends Controller
              * number exists there. Do not force new_arrival_id to null.
              */
             $book = NewArrival::query()
-                ->where('accession_number', trim($validated['accession_number']))
+                ->whereNotNull('accession_number')
+                ->where('accession_number', trim($validated['accession_number'] ?? ''))
                 ->first();
 
             $borrowing->update([
                 'new_arrival_id' => $book?->id,
-                'accession_number' => trim($validated['accession_number']),
+                'accession_number' => filled($validated['accession_number'] ?? null) ? trim($validated['accession_number']) : null,
                 'bibliographical_description' => trim($validated['bibliographical_description']),
                 'date_borrowed' => $validated['date_borrowed'] ?? null,
                 'due_date' => $validated['due_date'] ?? null,
                 'date_returned' => $validated['date_returned'] ?? null,
                 'status' => $validated['status'],
-                'received_by' => filled($validated['received_by'] ?? null)
-                    ? trim($validated['received_by'])
+                'received_by' => in_array($borrowing->status, ['borrowed', 'overdue', 'returned'], true)
+                    ? $borrower->name
                     : null,
                 'returned_by' => filled($validated['returned_by'] ?? null)
                     ? trim($validated['returned_by'])
@@ -154,6 +156,7 @@ class BorrowingController extends Controller
             ]);
 
             $borrowing->refresh()->load('book');
+            $borrowing->markOverdueIfNeeded();
 
             $this->syncBookAvailability($borrowing, $oldBookId);
         });
@@ -172,14 +175,21 @@ class BorrowingController extends Controller
         );
     }
 
-    public function markBorrowed(Borrowing $borrowing): RedirectResponse
+    public function markBorrowed(Request $request, Borrowing $borrowing): RedirectResponse
     {
-        if (blank($borrowing->date_borrowed) || blank($borrowing->due_date)) {
-            return back()->with(
-                'error',
-                'Add the date borrowed and due date before marking this request as borrowed.'
-            );
+        if (blank($borrowing->accession_number)) {
+            return back()->with('error', 'Assign an accession number using Edit Record before releasing the book.');
         }
+
+        if ($borrowing->status !== Borrowing::STATUS_APPROVED) {
+            return back()->with('error', 'Approve this request before releasing the book.');
+        }
+
+        $validated = $request->validate([
+            'date_borrowed' => ['required', 'date', 'before_or_equal:today'],
+            'due_date' => ['required', 'date', 'after_or_equal:date_borrowed'],
+            'released_by' => ['required', 'string', 'max:255'],
+        ]);
 
         if ($this->bookHasAnotherActiveLoan($borrowing->accession_number, $borrowing)) {
             return back()->with(
@@ -188,17 +198,26 @@ class BorrowingController extends Controller
             );
         }
 
-        return $this->setStatus(
-            $borrowing,
-            Borrowing::STATUS_BORROWED,
-            'Book marked as borrowed.'
-        );
+        DB::transaction(function () use ($borrowing, $validated): void {
+            $borrowing->update($validated + [
+                'status' => Borrowing::STATUS_BORROWED,
+                'received_by' => $borrowing->borrower?->name,
+            ]);
+            $borrowing->markOverdueIfNeeded();
+            $this->syncBookAvailability($borrowing);
+        });
+
+        return back()->with('success', 'Book released. Loan dates and releasing staff have been saved.');
     }
 
     public function markReturned(Request $request, Borrowing $borrowing): RedirectResponse
     {
+        if (! in_array($borrowing->status, [Borrowing::STATUS_BORROWED, Borrowing::STATUS_OVERDUE], true)) {
+            return back()->with('error', 'Only a released book can be returned.');
+        }
+
         $validated = $request->validate([
-            'returned_by' => ['nullable', 'string', 'max:255'],
+            'returned_by' => ['required', 'string', 'max:255'],
             'remarks' => ['nullable', 'string', 'max:2000'],
         ]);
 
@@ -206,9 +225,7 @@ class BorrowingController extends Controller
             $borrowing->update([
                 'status' => Borrowing::STATUS_RETURNED,
                 'date_returned' => now()->toDateString(),
-                'returned_by' => filled($validated['returned_by'] ?? null)
-                    ? trim($validated['returned_by'])
-                    : auth()->user()?->name,
+                'returned_by' => trim($validated['returned_by']),
                 'remarks' => filled($validated['remarks'] ?? null)
                     ? trim($validated['remarks'])
                     : $borrowing->remarks,
@@ -279,6 +296,14 @@ class BorrowingController extends Controller
         string $status,
         string $message
     ): RedirectResponse {
+        if ($borrowing->status !== Borrowing::STATUS_PENDING) {
+            return back()->with('error', 'Only pending requests can be approved or rejected.');
+        }
+
+        if ($status === Borrowing::STATUS_APPROVED && blank($borrowing->accession_number)) {
+            return back()->with('error', 'Use Edit Record to assign the book accession number before approving this request.');
+        }
+
         if (
             in_array(
                 $status,
@@ -299,7 +324,8 @@ class BorrowingController extends Controller
             );
         }
 
-        DB::transaction(function () use ($borrowing, $status): void {
+        $emails = app(BorrowingEmails::class);
+        $emailUpdate = DB::transaction(function () use ($borrowing, $status, $emails) {
             $borrowing->update([
                 'status' => $status,
                 'approved_by' => in_array(
@@ -320,14 +346,20 @@ class BorrowingController extends Controller
                 ]);
             }
 
-            if ($status === Borrowing::STATUS_REJECTED) {
+            if ($status === Borrowing::STATUS_REJECTED && filled($borrowing->accession_number) && ! Borrowing::activeForBook($borrowing->accession_number)->exists()) {
                 $borrowing->book?->update([
                     'availability_status' => 'available',
                 ]);
             }
+
+            return $emails->record($borrowing, $status);
         });
 
-        return back()->with('success', $message);
+        $sent = $emails->send($emailUpdate);
+
+        return back()->with('success', $message.' '.($sent
+            ? 'The borrower has been emailed.'
+            : 'Email is pending delivery. Check the borrower email address and SMTP settings; the scheduled check will retry.'));
     }
 
     private function validateBorrowing(
@@ -378,7 +410,8 @@ class BorrowingController extends Controller
             ],
 
             'accession_number' => [
-                'required',
+                Rule::requiredIf(! in_array($borrowing->status, ['pending', 'rejected'], true)),
+                'nullable',
                 'string',
                 'max:100',
             ],
@@ -407,12 +440,7 @@ class BorrowingController extends Controller
             'status' => [
                 'required',
                 Rule::in([
-                    Borrowing::STATUS_PENDING,
-                    Borrowing::STATUS_APPROVED,
-                    Borrowing::STATUS_BORROWED,
-                    Borrowing::STATUS_RETURNED,
-                    Borrowing::STATUS_OVERDUE,
-                    Borrowing::STATUS_REJECTED,
+                    $borrowing->status,
                 ]),
             ],
 
@@ -448,6 +476,10 @@ class BorrowingController extends Controller
         $dueDate = $validated['due_date'] ?? null;
         $dateReturned = $validated['date_returned'] ?? null;
         $status = $validated['status'];
+
+        if ($status !== Borrowing::STATUS_RETURNED && filled($dateReturned)) {
+            return ['date_returned' => 'Use Record Return on the borrowing record page to return this book.'];
+        }
 
         if (
             in_array(
@@ -552,7 +584,7 @@ class BorrowingController extends Controller
         }
 
         if (
-            in_array(
+            ! Borrowing::activeForBook($borrowing->accession_number)->exists() && in_array(
                 $borrowing->status,
                 [
                     Borrowing::STATUS_RETURNED,
@@ -571,7 +603,6 @@ class BorrowingController extends Controller
     {
         Borrowing::query()
             ->whereIn('status', [
-                Borrowing::STATUS_APPROVED,
                 Borrowing::STATUS_BORROWED,
             ])
             ->whereNull('date_returned')

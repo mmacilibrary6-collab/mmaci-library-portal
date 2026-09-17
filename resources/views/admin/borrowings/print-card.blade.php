@@ -182,7 +182,7 @@
                     <tr>
                         <td>{{ optional($borrowing->date_borrowed)->format('m/d/Y') }}</td>
                         <td>{{ optional($borrowing->due_date)->format('m/d/Y') }}</td>
-                        <td>{{ $borrowing->accession_number }}</td>
+                        <td>{{ $borrowing->accession_number ?: 'Not assigned' }}</td>
                         <td>{{ $borrowing->bibliographical_description }}</td>
                         <td>{{ $borrowing->received_by ?: '' }}</td>
                         <td>{{ $borrowing->returned_by ?: '' }}</td>

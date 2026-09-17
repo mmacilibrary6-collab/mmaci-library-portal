@@ -11,7 +11,7 @@
             <div>
                 <span class="hero-eyebrow">Circulation Management</span>
                 <h1>Edit Borrowing Record</h1>
-                <p>Update borrower information, transaction details, dates, status, and remarks.</p>
+                <p>Update borrower information, transaction details, dates, and remarks.</p>
             </div>
         </div>
 
@@ -130,16 +130,16 @@
 
             <div class="row g-3">
                 <div class="col-lg-4">
-                    <label class="form-label">Accession Number <span>*</span></label>
+                    <label class="form-label">Accession Number</label>
                     <input class="form-control @error('accession_number') is-invalid @enderror"
                            name="accession_number"
                            value="{{ old('accession_number', $borrowing->accession_number) }}"
-                           required>
+                           @required(! in_array($borrowing->status, ['pending', 'rejected'], true))>
                     @error('accession_number')<div class="invalid-feedback">{{ $message }}</div>@enderror
                 </div>
 
                 <div class="col-lg-8">
-                    <label class="form-label">Bibliographical Description of Book <span>*</span></label>
+                    <label class="form-label">Book Title / Bibliographical Details <span>*</span></label>
                     <textarea class="form-control @error('bibliographical_description') is-invalid @enderror"
                               name="bibliographical_description"
                               rows="3"
@@ -176,13 +176,8 @@
 
                 <div class="col-md-4">
                     <label class="form-label">Status <span>*</span></label>
-                    <select name="status" class="form-select @error('status') is-invalid @enderror" required>
-                        @foreach(['pending', 'approved', 'borrowed', 'returned', 'overdue', 'rejected'] as $status)
-                            <option value="{{ $status }}" @selected(old('status', $borrowing->status) === $status)>
-                                {{ ucfirst($status) }}
-                            </option>
-                        @endforeach
-                    </select>
+                    <input type="hidden" name="status" value="{{ $borrowing->status }}">
+                    <div class="form-control">{{ ucfirst($borrowing->status) }}</div>
                     @error('status')<div class="invalid-feedback">{{ $message }}</div>@enderror
                 </div>
 
@@ -190,7 +185,7 @@
                     <label class="form-label">Received By</label>
                     <input class="form-control @error('received_by') is-invalid @enderror"
                            name="received_by"
-                           value="{{ old('received_by', $borrowing->received_by) }}">
+                           value="{{ in_array($borrowing->status, ['borrowed', 'overdue', 'returned'], true) ? $borrowing->borrower?->name : '' }}" readonly>
                     @error('received_by')<div class="invalid-feedback">{{ $message }}</div>@enderror
                 </div>
 

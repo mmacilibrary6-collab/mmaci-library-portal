@@ -362,7 +362,9 @@
 
     <div class="content">
 
-        @include('partials.flash-messages', ['containerClass' => 'mb-4'])
+        @unless(request()->routeIs('admin.borrowings.index', 'admin.borrowings.show', 'admin.borrowings.edit'))
+            @include('partials.flash-messages', ['containerClass' => 'mb-4'])
+        @endunless
 
         @yield('content')
 

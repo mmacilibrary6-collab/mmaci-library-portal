@@ -24,6 +24,10 @@
 
         </div>
 
+        <div class="folder-header-actions">
+            <button type="button" class="folder-export-trigger" data-bs-toggle="modal" data-bs-target="#folder-export-modal">
+                <i class="bi bi-file-earmark-excel" aria-hidden="true"></i> Export to Excel
+            </button>
         <a
             href="{{ route('admin.thesis-folders.create') }}"
             class="btn add-folder-button">
@@ -32,8 +36,11 @@
             Add Folder
 
         </a>
+        </div>
 
     </div>
+
+    @include('admin.partials.folder-export', ['collection' => 'theses'])
 
     <div class="folder-management-card">
 

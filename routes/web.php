@@ -432,6 +432,10 @@ Route::prefix('admin')
     ->middleware('auth')
     ->group(function () {
 
+        Route::get('folder-exports/{collection}', \App\Http\Controllers\Admin\FolderExportController::class)
+            ->whereIn('collection', ['ebooks', 'theses', 'periodicals'])
+            ->name('folder-export');
+
         /*
         |--------------------------------------------------------------------------
         | Dashboard

@@ -27,9 +27,9 @@
                         <span class="intro-eyebrow">Request Guide</span>
                         <h2>Borrowing Request</h2>
                         <p>
-                            Fill in your borrower information and the book details
-                            you want to request. Library staff will review and
-                            process the borrowing dates after approval.
+                            Enter your borrower information, email address, and book title.
+                            Library staff will review your request and email you an update.
+                            Loan dates are set when you collect the book.
                         </p>
                     </div>
                 </div>
@@ -40,6 +40,12 @@
                 method="POST"
                 class="borrow-form">
                 @csrf
+                @if(session('success'))
+                    <div class="alert alert-success" role="status">{{ session('success') }}</div>
+                @endif
+                @if($errors->any())
+                    <div class="alert alert-danger" role="alert">Please check the highlighted fields below.</div>
+                @endif
 
                 <div class="form-block">
                     <h3>Borrower Information</h3>
@@ -101,7 +107,8 @@
 
                         <div class="col-12">
                             <label class="form-label">Email Address</label>
-                            <input type="email" name="email" class="form-control @error('email') is-invalid @enderror" value="{{ old('email') }}" autocomplete="email">
+                            <input type="email" name="email" class="form-control @error('email') is-invalid @enderror" value="{{ old('email') }}" autocomplete="email" required>
+                            <small class="field-hint">We will send approval, rejection, and due-date updates to this address.</small>
                             @error('email') <small class="text-danger">{{ $message }}</small> @enderror
                         </div>
                     </div>
@@ -111,27 +118,14 @@
                     <h3>Requested Book Information</h3>
 
                     <div class="row g-3">
-                        <div class="col-lg-4">
-                            <label class="form-label">Accession Number</label>
-                            <input
-                                type="text"
-                                name="accession_number"
-                                class="form-control @error('accession_number') is-invalid @enderror"
-                                value="{{ old('accession_number') }}"
-                                placeholder="e.g. 06734"
-                                required>
-                            @error('accession_number') <small class="text-danger">{{ $message }}</small> @enderror
-                        </div>
-
-                        <div class="col-lg-8">
-                            <label class="form-label">Bibliographical Description</label>
-                            <textarea
-                                name="bibliographical_description"
-                                class="form-control @error('bibliographical_description') is-invalid @enderror"
-                                rows="3"
-                                placeholder="Enter book title, author, year, or other bibliographical details"
-                                required>{{ old('bibliographical_description') }}</textarea>
-                            @error('bibliographical_description') <small class="text-danger">{{ $message }}</small> @enderror
+                        <div class="col-12">
+                            <label for="book-title" class="form-label">Book Title</label>
+                            <input id="book-title" type="text" name="book_title"
+                                   class="form-control @error('book_title') is-invalid @enderror"
+                                   value="{{ old('book_title') }}" maxlength="500"
+                                   placeholder="Enter the title of the book you want to borrow" required>
+                            @error('book_title') <small class="text-danger">{{ $message }}</small> @enderror
+                            <small class="field-hint">Library staff will identify the available copy and complete the borrowing details.</small>
                         </div>
                     </div>
                 </div>
