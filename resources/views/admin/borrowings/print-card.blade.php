@@ -46,6 +46,13 @@
         .school-logo{width:.70in;height:.70in;display:block;margin:0 auto .04in;object-fit:contain}
         .school-name{margin:0;font-size:15pt;font-weight:700;line-height:1.02;text-transform:uppercase}
         .school-address{margin:.05in 0 .08in;font-size:7.5pt;line-height:1.18}
+
+        .school-email {
+            color: #0066cc;
+            text-decoration: underline;
+            text-underline-offset: 1px;
+        }
+
         .library-title{margin:0;font-size:12.5pt;font-weight:700;line-height:1.05;text-transform:uppercase}
         .card-title{margin:.02in 0 0;font-size:13.8pt;font-weight:700;line-height:1.05;text-transform:uppercase}
         .person-info{width:100%;border-collapse:collapse;table-layout:fixed;font-size:10.8pt}
@@ -132,7 +139,7 @@
                         <div class="school-address">
                             North Montilla Boulevard, Brgy. Ong-Yiu, Butuan City, 8600<br>
                             Tel. No.: (085) 817 0476 Mobile No.: (+63) 917 105 9644 (Globe)<br>
-                            E-mail Address: mmaci2018.btuan@gmail.com
+                            E-mail Address: <span class="school-email">mmaci2018.bxu@gmail.com</span>
                         </div>
 
                         <h2 class="library-title">Library System</h2>
