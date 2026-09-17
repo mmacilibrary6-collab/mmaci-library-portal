@@ -1951,32 +1951,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
     searchInput.addEventListener('input', filterCollections);
 
-
-            const title =
-                button.getAttribute('data-collection-title');
-
-            const description =
-                button.getAttribute('data-collection-description');
-
-            const image =
-                button.getAttribute('data-collection-image');
-
-            document.getElementById('modalCollectionTitle').textContent =
-                title;
-
-            document.getElementById('modalCollectionDescription').textContent =
-                description;
-
-            document.getElementById('modalCollectionImage').src =
-                image;
-
-            document.getElementById('modalCollectionImage').alt =
-                title;
-
-        });
-
-    }
-
 });
 
 </script>
@@ -2758,5 +2732,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 }
 </style>
+
+@include('components.collection-layout-polish')
 
 @endsection

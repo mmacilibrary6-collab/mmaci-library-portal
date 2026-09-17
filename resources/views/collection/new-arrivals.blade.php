@@ -3264,5 +3264,6 @@ document.addEventListener('DOMContentLoaded', function () {
 </style>
 
 @include('components.lisa-chatbox')
+@include('components.collection-layout-polish')
 
 @endsection

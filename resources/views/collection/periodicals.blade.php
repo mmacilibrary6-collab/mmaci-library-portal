@@ -28,44 +28,50 @@
             <p>Select a category below to view its available folder links.</p>
         </header>
 
-        @if($programs->isNotEmpty())
-            <div class="periodical-program-search">
-                <i class="bi bi-search" aria-hidden="true"></i>
-                <input
-                    type="search"
-                    id="periodicalProgramSearch"
-                    placeholder="Search periodical programs..."
-                    autocomplete="off"
-                    aria-label="Search periodical programs">
-                <button
-                    type="button"
-                    id="clearPeriodicalProgramSearch"
-                    aria-label="Clear program search">
-                    <i class="bi bi-x-lg" aria-hidden="true"></i>
-                </button>
-            </div>
-        @endif
+        <div class="periodical-control-panel">
+            @if($programs->isNotEmpty())
+                <div class="periodical-program-search">
+                    <i class="bi bi-search" aria-hidden="true"></i>
+                    <input
+                        type="search"
+                        id="periodicalProgramSearch"
+                        placeholder="Search periodical programs..."
+                        autocomplete="off"
+                        aria-label="Search periodical programs">
+                    <button
+                        type="button"
+                        id="clearPeriodicalProgramSearch"
+                        aria-label="Clear program search">
+                        <i class="bi bi-x-lg" aria-hidden="true"></i>
+                    </button>
+                </div>
+            @endif
 
-        <form method="GET" action="{{ route('collection.periodicals') }}" class="periodical-filter">
-            <div class="filter-chip-group" role="group" aria-label="Periodical categories">
-                <button type="submit" name="category" value="" class="filter-chip {{ blank($selectedCategory ?? null) ? 'active' : '' }}">All Categories</button>
-                @foreach ($categories as $key => $category)
-                    <button type="submit" name="category" value="{{ $key }}" class="filter-chip {{ ($selectedCategory ?? null) === $key ? 'active' : '' }}" aria-pressed="{{ ($selectedCategory ?? null) === $key ? 'true' : 'false' }}">{{ $category['label'] }}</button>
-                @endforeach
-            </div>
-        </form>
-        @if (filled($selectedCategory))
-            <p class="mt-3 text-muted">{{ $categories[$selectedCategory]['description'] }}</p>
-        @else
-            <div class="row g-3 mt-2">
-                @foreach ($categories as $category)
-                    <div class="col-md-6 col-lg-4">
-                        <h3 class="h6">{{ $category['label'] }}</h3>
-                        <p class="small text-muted mb-0">{{ $category['description'] }}</p>
-                    </div>
-                @endforeach
-            </div>
-        @endif
+            <form method="GET" action="{{ route('collection.periodicals') }}" class="periodical-filter">
+                <div class="filter-chip-group" role="group" aria-label="Periodical categories">
+                    <button type="submit" name="category" value="" class="filter-chip {{ blank($selectedCategory ?? null) ? 'active' : '' }}">All Categories</button>
+                    @foreach ($categories as $key => $category)
+                        <button type="submit" name="category" value="{{ $key }}" class="filter-chip {{ ($selectedCategory ?? null) === $key ? 'active' : '' }}" aria-pressed="{{ ($selectedCategory ?? null) === $key ? 'true' : 'false' }}">{{ $category['label'] }}</button>
+                    @endforeach
+                </div>
+            </form>
+
+            @if (filled($selectedCategory))
+                <div class="periodical-selected-category">
+                    <span>{{ $categories[$selectedCategory]['label'] }}</span>
+                    <p>{{ $categories[$selectedCategory]['description'] }}</p>
+                </div>
+            @else
+                <div class="periodical-category-grid">
+                    @foreach ($categories as $category)
+                        <article class="periodical-category-card">
+                            <h3>{{ $category['label'] }}</h3>
+                            <p>{{ $category['description'] }}</p>
+                        </article>
+                    @endforeach
+                </div>
+            @endif
+        </div>
     </div>
 </section>
 
@@ -606,6 +612,7 @@ document.addEventListener('DOMContentLoaded', function () {
 </script>
 
 @include('components.lisa-chatbox')
+@include('components.collection-layout-polish')
 
 @endsection
 
@@ -709,20 +716,34 @@ document.addEventListener('DOMContentLoaded', function () {
 }
 
 .theses-intro {
-    padding: 68px 0 24px;
+    padding: 58px 0 34px;
     background: var(--thesis-bg);
 }
 
+.theses-intro .section-heading {
+    max-width: 760px;
+}
+
+.periodical-control-panel {
+    width: min(100%, 980px);
+    margin: 28px auto 0;
+    padding: 24px;
+    background: rgba(255, 255, 255, .86);
+    border: 1px solid var(--thesis-line);
+    border-radius: 24px;
+    box-shadow: 0 18px 46px rgba(11, 46, 89, .075);
+}
+
 .periodical-filter {
-    margin-top: 26px;
+    margin-top: 22px;
 }
 
 .periodical-program-search {
     position: relative;
     display: flex;
     align-items: center;
-    width: min(700px, 100%);
-    margin: 28px auto 0;
+    width: min(640px, 100%);
+    margin: 0 auto;
     background: var(--thesis-white);
     border: 1px solid var(--thesis-line);
     border-radius: 18px;
@@ -823,12 +844,12 @@ document.addEventListener('DOMContentLoaded', function () {
 .filter-chip-group {
     display: flex;
     flex-wrap: wrap;
-    gap: 12px;
+    gap: 10px;
     justify-content: center;
 }
 
 .filter-chip {
-    padding: 12px 18px;
+    padding: 11px 16px;
     color: var(--thesis-navy);
     background: var(--thesis-white);
     border: 1px solid var(--thesis-line);
@@ -843,6 +864,59 @@ document.addEventListener('DOMContentLoaded', function () {
     color: var(--thesis-white);
     background: var(--thesis-blue);
     border-color: var(--thesis-blue);
+}
+
+.periodical-selected-category {
+    margin-top: 22px;
+    padding: 18px 20px;
+    background: #f8fafc;
+    border: 1px solid var(--thesis-line);
+    border-radius: 18px;
+}
+
+.periodical-selected-category span {
+    display: block;
+    margin-bottom: 5px;
+    color: var(--thesis-navy);
+    font-size: 14px;
+    font-weight: 800;
+}
+
+.periodical-selected-category p {
+    margin: 0;
+    color: var(--thesis-muted);
+    font-size: 14px;
+    line-height: 1.65;
+}
+
+.periodical-category-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+    margin-top: 22px;
+}
+
+.periodical-category-card {
+    min-height: 100%;
+    padding: 17px 18px;
+    background: #f8fafc;
+    border: 1px solid var(--thesis-line);
+    border-radius: 18px;
+}
+
+.periodical-category-card h3 {
+    margin: 0 0 7px;
+    color: var(--thesis-navy);
+    font-size: 15px;
+    font-weight: 800;
+    line-height: 1.25;
+}
+
+.periodical-category-card p {
+    margin: 0;
+    color: var(--thesis-muted);
+    font-size: 13px;
+    line-height: 1.55;
 }
 
 .section-heading h2 {
@@ -863,7 +937,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 .programs-section {
     min-height: 340px;
-    padding: 24px 0 68px;
+    padding: 12px 0 74px;
     background: var(--thesis-bg);
 }
 
@@ -892,7 +966,7 @@ document.addEventListener('DOMContentLoaded', function () {
 .program-image {
     position: relative;
     width: 100%;
-    height: 230px;
+    height: 214px;
     overflow: hidden;
     background: #dfe6ef;
 }
@@ -921,7 +995,7 @@ document.addEventListener('DOMContentLoaded', function () {
     flex: 1;
     display: flex;
     flex-direction: column;
-    padding: 26px 28px 28px;
+    padding: 24px 26px 26px;
 }
 
 .program-content h3 {
@@ -930,7 +1004,7 @@ document.addEventListener('DOMContentLoaded', function () {
     margin: 0 0 12px;
     overflow: hidden;
     color: var(--thesis-navy);
-    font-size: 24px;
+    font-size: 22px;
     font-weight: 800;
     line-height: 1.17;
     -webkit-box-orient: vertical;
@@ -939,7 +1013,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 .program-content p {
     display: -webkit-box;
-    min-height: 7em;
+    min-height: 6.1em;
     margin: 0 0 18px;
     overflow: hidden;
     color: var(--thesis-muted);
@@ -1063,7 +1137,13 @@ document.addEventListener('DOMContentLoaded', function () {
 @media (max-width: 767.98px) {
     .theses-hero { min-height: 320px; }
     .theses-hero-content { padding: 85px 0 70px; }
+    .theses-intro { padding: 44px 0 26px; }
+    .periodical-control-panel { padding: 18px; border-radius: 20px; }
     .periodical-program-search input { padding-block: 15px; font-size: 15px; }
+    .filter-chip-group { justify-content: flex-start; overflow-x: auto; flex-wrap: nowrap; padding-bottom: 4px; }
+    .filter-chip { white-space: nowrap; }
+    .periodical-category-grid { grid-template-columns: 1fr; }
+    .program-image { height: 205px; }
     .program-content h3,
     .program-content p { min-height: 0; }
 }
