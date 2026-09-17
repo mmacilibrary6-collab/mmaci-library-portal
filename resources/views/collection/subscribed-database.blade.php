@@ -174,16 +174,16 @@
             </div>
 
             {{-- Access Card --}}
-            <aside class="access-card">
+            <aside class="database-access-card">
 
-                <span class="access-card-label">
+                <span class="database-access-card-label">
                     Subscribed Resource
                 </span>
 
                 <h2>EBSCO Online Access</h2>
 
 
-                <div class="access-card-notice">
+                <div class="database-access-card-notice">
 
                     <i class="bi bi-shield-check" aria-hidden="true"></i>
 
@@ -202,7 +202,7 @@
                     href="{{ $accessUrl }}"
                     target="_blank"
                     rel="noopener noreferrer"
-                    class="access-card-button">
+                    class="database-access-card-button">
 
                     Continue to EBSCO
 
@@ -349,7 +349,7 @@
 
 .database-primary-button,
 .database-secondary-button,
-.access-card-button {
+.database-access-card-button {
     min-height: 46px;
     padding: 12px 18px;
     display: inline-flex;
@@ -560,7 +560,7 @@
 
 /* Access Card */
 
-.access-card {
+.database-access-card {
     position: sticky;
     top: 100px;
     padding: 28px;
@@ -581,7 +581,7 @@
     box-shadow: 0 18px 40px rgba(11, 46, 89, 0.18);
 }
 
-.access-card-label {
+.database-access-card-label {
     color: var(--database-gold);
     font-size: 10px;
     font-weight: 800;
@@ -589,7 +589,7 @@
     text-transform: uppercase;
 }
 
-.access-card h2 {
+.database-access-card h2 {
     margin: 9px 0 12px;
     color: var(--database-white);
     font-size: 29px;
@@ -597,14 +597,14 @@
     letter-spacing: -0.035em;
 }
 
-.access-card > p {
+.database-access-card > p {
     margin: 0;
     color: rgba(255, 255, 255, 0.76);
     font-size: 14px;
     line-height: 1.7;
 }
 
-.access-card-notice {
+.database-access-card-notice {
     margin: 23px 0;
     padding: 14px;
     display: grid;
@@ -616,41 +616,41 @@
     background: rgba(255, 255, 255, 0.08);
 }
 
-.access-card-notice i {
+.database-access-card-notice i {
     color: var(--database-gold);
     font-size: 25px;
 }
 
-.access-card-notice strong,
-.access-card-notice span {
+.database-access-card-notice strong,
+.database-access-card-notice span {
     display: block;
 }
 
-.access-card-notice strong {
+.database-access-card-notice strong {
     margin-bottom: 3px;
     color: var(--database-white);
     font-size: 13px;
 }
 
-.access-card-notice span {
+.database-access-card-notice span {
     color: rgba(255, 255, 255, 0.65);
     font-size: 11px;
     line-height: 1.45;
 }
 
-.access-card-button {
+.database-access-card-button {
     width: 100%;
     color: var(--database-navy);
     background: var(--database-gold);
 }
 
-.access-card-button:hover {
+.database-access-card-button:hover {
     color: var(--database-navy);
     transform: translateY(-2px);
     box-shadow: 0 10px 24px rgba(244, 180, 0, 0.20);
 }
 
-.access-card small {
+.database-access-card small {
     display: block;
     margin-top: 13px;
     color: rgba(255, 255, 255, 0.58);
@@ -677,7 +677,7 @@
         transform: none;
     }
 
-    .access-card {
+    .database-access-card {
         position: static;
     }
 }
@@ -733,7 +733,7 @@
         height: 38px;
     }
 
-    .access-card {
+    .database-access-card {
         padding: 24px 21px;
     }
 }
@@ -846,12 +846,12 @@
 
     /* Buttons */
     .database-primary-button i,
-    .access-card-button i {
+    .database-access-card-button i {
         transition: transform .24s ease;
     }
 
     .database-primary-button:hover i,
-    .access-card-button:hover i {
+    .database-access-card-button:hover i {
         transform: translate(3px, -3px);
     }
 
@@ -904,33 +904,33 @@
     }
 
     /* Access card */
-    .access-card {
+    .database-access-card {
         transition:
             transform .34s cubic-bezier(.22, 1, .36, 1),
             box-shadow .34s ease;
     }
 
-    .access-card:hover {
+    .database-access-card:hover {
         transform: translateY(-5px);
         box-shadow: 0 24px 54px rgba(11, 46, 89, .22);
     }
 
-    .access-card-notice {
+    .database-access-card-notice {
         transition:
             transform .24s ease,
             background .24s ease;
     }
 
-    .access-card-notice:hover {
+    .database-access-card-notice:hover {
         transform: translateY(-2px);
         background: rgba(255, 255, 255, .11);
     }
 
-    .access-card-notice i {
+    .database-access-card-notice i {
         transition: transform .24s ease;
     }
 
-    .access-card-notice:hover i {
+    .database-access-card-notice:hover i {
         transform: scale(1.08);
     }
 
@@ -946,14 +946,14 @@
         .credential-notice,
         .credential-notice i,
         .database-primary-button i,
-        .access-card-button i,
+        .database-access-card-button i,
         .database-preview,
         .database-image,
         .access-step,
         .step-number,
-        .access-card,
-        .access-card-notice,
-        .access-card-notice i {
+        .database-access-card,
+        .database-access-card-notice,
+        .database-access-card-notice i {
             transition: none !important;
             animation: none !important;
         }
@@ -966,7 +966,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const revealGroups = [
         { selector: '.database-section-heading', mode: '' },
         { selector: '.access-step', mode: '' },
-        { selector: '.access-card', mode: 'database-motion-right' }
+        { selector: '.database-access-card', mode: 'database-motion-right' }
     ];
 
     const revealElements = [];

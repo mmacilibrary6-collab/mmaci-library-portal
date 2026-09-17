@@ -1,18 +1,19 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    @php
+        $cardType = strtolower(request('type', 'faculty'));
+        $cardType = in_array($cardType, ['faculty', 'student'], true) ? $cardType : 'faculty';
+        $cardTitle = $cardType === 'student'
+            ? "Student Borrower's Card"
+            : "Faculty Borrower's Card";
+    @endphp
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Faculty Borrower's Card - {{ $borrower->name }}</title>
+    <title>{{ $cardTitle }} - {{ $borrower->name }}</title>
 
     <style>
-        /*
-         * IMPORTANT:
-         * Keep @page margin at 0.
-         * The actual printable margins are created inside .sheet.
-         * This prevents Chrome/Edge from reserving the outer page-margin area
-         * normally used for date, title, URL, and page-number print headers.
-         */
         @page {
             size: Letter landscape;
             margin: 0;
@@ -34,8 +35,13 @@
             font-family: "Times New Roman", Times, serif;
         }
 
+        /* =========================
+           SCREEN TOOLBAR
+        ========================== */
+
         .print-toolbar {
-            padding: 12px;
+            min-height: 64px;
+            padding: 10px 18px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -44,7 +50,20 @@
             font-family: Arial, sans-serif;
         }
 
-        .print-toolbar button {
+        .card-type-control {
+            height: 42px;
+            padding: 0 12px;
+            color: #0b315e;
+            background: #fff;
+            border: 1px solid rgba(255,255,255,.75);
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 700;
+            outline: none;
+            cursor: pointer;
+        }
+
+        .print-button {
             min-height: 42px;
             padding: 0 20px;
             color: #0b315e;
@@ -56,16 +75,16 @@
             cursor: pointer;
         }
 
-        .print-note {
-            margin: 0;
-            color: rgba(255,255,255,.82);
-            font-size: 11px;
+        .toolbar-label {
+            color: #fff;
+            font-size: 12px;
+            font-weight: 700;
         }
 
-        /*
-         * Screen preview:
-         * Letter landscape is 11in x 8.5in.
-         */
+        /* =========================
+           PAPER
+        ========================== */
+
         .sheet {
             width: 11in;
             min-height: 8.5in;
@@ -145,7 +164,7 @@
             width: 100%;
             border-collapse: collapse;
             table-layout: fixed;
-            font-size: 10.2pt;
+            font-size: 10.8pt;
         }
 
         .person-info td {
@@ -159,6 +178,11 @@
             padding-right: 0.06in;
             font-weight: 700;
             white-space: nowrap;
+        }
+
+        /* Left side needs extra room for "Contact Number :" */
+        .header-left .person-info .label {
+            width: 1.36in;
         }
 
         .header-right .person-info .label {
@@ -201,11 +225,33 @@
 
         .borrow-table td {
             height: 0.60in;
-            padding: 0.04in 0.045in;
-            vertical-align: top;
-            font-size: 8pt;
-            line-height: 1.12;
+            padding: 0.055in 0.06in;
+            vertical-align: middle;
+            font-size: 10pt;
+            line-height: 1.18;
             overflow-wrap: anywhere;
+        }
+
+        /* Make dates/accession/handling columns easy to read */
+        .borrow-table tbody td:nth-child(1),
+        .borrow-table tbody td:nth-child(2),
+        .borrow-table tbody td:nth-child(3),
+        .borrow-table tbody td:nth-child(5),
+        .borrow-table tbody td:nth-child(6) {
+            text-align: center;
+            font-size: 9.6pt;
+        }
+
+        /* Give the actual book title/description stronger presence */
+        .borrow-table tbody td:nth-child(4) {
+            text-align: left;
+            font-size: 10.2pt;
+            line-height: 1.22;
+        }
+
+        .borrow-table tbody td:nth-child(7) {
+            font-size: 9.5pt;
+            line-height: 1.18;
         }
 
         .date-col { width: 10.5%; }
@@ -225,8 +271,8 @@
             margin-top: 0.12in;
             padding: 0.08in 0.10in;
             border: 1px solid #222;
-            font-size: 8pt;
-            line-height: 1.35;
+            font-size: 9pt;
+            line-height: 1.38;
         }
 
         .form-table {
@@ -273,13 +319,7 @@
                 width: 11in;
                 min-height: 8.5in;
                 margin: 0 !important;
-
-                /*
-                 * These are the REAL visible print margins.
-                 * They replace @page margins.
-                 */
                 padding: 0.42in 0.45in 0.38in !important;
-
                 box-shadow: none !important;
                 background: #fff !important;
             }
@@ -297,13 +337,23 @@
 <body>
 
     <div class="print-toolbar">
-        <button type="button" onclick="printBorrowerCard()">
+        <span class="toolbar-label">Card Type:</span>
+
+        <select
+            id="cardType"
+            class="card-type-control"
+            onchange="changeCardType(this.value)">
+            <option value="faculty" {{ $cardType === 'faculty' ? 'selected' : '' }}>
+                Faculty
+            </option>
+            <option value="student" {{ $cardType === 'student' ? 'selected' : '' }}>
+                Student
+            </option>
+        </select>
+
+        <button type="button" class="print-button" onclick="printBorrowerCard()">
             Print Borrower Card
         </button>
-
-        <p class="print-note">
-            Letter · Landscape
-        </p>
     </div>
 
     <main class="sheet">
@@ -350,7 +400,10 @@
                         </div>
 
                         <h2 class="library-title">Library System</h2>
-                        <h3 class="card-title">Faculty Borrower's Card</h3>
+
+                        <h3 class="card-title">
+                            {{ strtoupper($cardTitle) }}
+                        </h3>
                     </td>
 
                     <td class="header-right">
@@ -457,20 +510,20 @@
     </main>
 
     <script>
+        function changeCardType(type) {
+            const url = new URL(window.location.href);
+            url.searchParams.set('type', type);
+            window.location.href = url.toString();
+        }
+
         function printBorrowerCard() {
             const originalTitle = document.title;
 
-            /*
-             * Chrome/Edge may use document.title as the center print header.
-             * Temporarily blank it before opening the print dialog.
-             */
+            // Helps avoid the page title appearing in Chrome/Edge print headers.
             document.title = ' ';
 
             window.print();
 
-            /*
-             * Restore the normal browser-tab title after printing.
-             */
             setTimeout(function () {
                 document.title = originalTitle;
             }, 500);
@@ -478,7 +531,7 @@
 
         window.addEventListener('afterprint', function () {
             if (!document.title.trim()) {
-                document.title = "Faculty Borrower's Card - {{ addslashes($borrower->name) }}";
+                document.title = @json($cardTitle . ' - ' . $borrower->name);
             }
         });
     </script>

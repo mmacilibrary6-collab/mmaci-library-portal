@@ -127,8 +127,12 @@
                             </div>
                         </article>
 
-                        <dialog class="donated-book-dialog" id="{{ $dialogId }}" aria-labelledby="{{ $dialogId }}-title">
-                            <div class="donated-book-dialog-shell">
+                        <dialog
+                            class="donated-book-dialog"
+                            id="{{ $dialogId }}"
+                            aria-labelledby="{{ $dialogId }}-title">
+
+                            <div class="donated-book-modal">
                                 <button
                                     class="donated-book-dialog-close"
                                     type="button"
@@ -137,25 +141,45 @@
                                     <i class="bi bi-x-lg" aria-hidden="true"></i>
                                 </button>
 
-                                <div class="donated-book-dialog-media">
-                                    <img
-                                        src="{{ $book->image_url }}"
-                                        alt="Cover of {{ $book->title }}"
-                                        loading="lazy"
-                                        width="400"
-                                        height="500"
-                                        onerror="this.onerror=null; this.src='{{ asset('images/image-fallback.svg') }}';">
+                                <div class="donated-book-modal-cover">
+                                    <div class="donated-book-modal-cover-inner">
+                                        <img
+                                            src="{{ $book->image_url }}"
+                                            alt="Cover of {{ $book->title }}"
+                                            loading="lazy"
+                                            width="400"
+                                            height="500"
+                                            onerror="this.onerror=null; this.src='{{ asset('images/image-fallback.svg') }}';">
+                                    </div>
                                 </div>
 
-                                <div class="donated-book-dialog-content">
-                                    <span class="section-label">Donated Book</span>
-                                    <h3 id="{{ $dialogId }}-title">{{ $book->title }}</h3>
+                                <div class="donated-book-modal-info">
+                                    <div class="donated-book-modal-header">
+                                        <span class="donated-book-modal-label">
+                                            <i class="bi bi-book" aria-hidden="true"></i>
+                                            Donated Book
+                                        </span>
 
-                                    @if (filled($book->description))
-                                        <p>{{ $book->description }}</p>
-                                    @else
-                                        <p>No description has been added for this donated book yet.</p>
-                                    @endif
+                                        <h3 id="{{ $dialogId }}-title">
+                                            {{ $book->title }}
+                                        </h3>
+                                    </div>
+
+                                    <div class="donated-book-modal-divider" aria-hidden="true"></div>
+
+                                    <div class="donated-book-modal-description">
+                                        <span class="donated-book-description-label">
+                                            About this book
+                                        </span>
+
+                                        @if (filled($book->description))
+                                            <p>{{ $book->description }}</p>
+                                        @else
+                                            <p class="donated-book-modal-muted">
+                                                No description has been added for this donated book yet.
+                                            </p>
+                                        @endif
+                                    </div>
                                 </div>
                             </div>
                         </dialog>
@@ -565,83 +589,260 @@
     color: var(--donated-navy);
 }
 
+/* =============================================================
+   DONATED BOOK MODAL
+============================================================= */
+
 .donated-book-dialog {
-    width: min(920px, calc(100vw - 30px));
-    max-height: min(760px, calc(100vh - 34px));
+    width: min(860px, calc(100vw - 40px));
+    max-width: 860px;
+    max-height: calc(100vh - 50px);
+    margin: auto;
     padding: 0;
-    overflow: visible;
+    overflow: hidden;
     color: var(--donated-text);
     background: transparent;
     border: 0;
+    border-radius: 22px;
+    outline: none;
 }
 
 .donated-book-dialog::backdrop {
-    background: rgba(4, 14, 29, .64);
-    backdrop-filter: blur(4px);
+    background: rgba(6, 18, 35, .68);
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
 }
 
-.donated-book-dialog-shell {
+.donated-book-modal {
     position: relative;
     display: grid;
-    grid-template-columns: minmax(260px, .92fr) minmax(0, 1.08fr);
+    grid-template-columns: 320px minmax(0, 1fr);
+    width: 100%;
+    min-height: 500px;
+    max-height: calc(100vh - 50px);
     overflow: hidden;
     background: var(--donated-white);
-    border: 1px solid rgba(223, 230, 239, .92);
-    border-radius: 20px;
-    box-shadow: 0 28px 70px rgba(4, 18, 38, .32);
+    border: 1px solid rgba(223, 230, 239, .95);
+    border-radius: 22px;
+    box-shadow:
+        0 30px 80px rgba(4, 18, 38, .34),
+        0 8px 25px rgba(11, 46, 89, .10);
 }
 
 .donated-book-dialog-close {
     position: absolute;
-    top: 16px;
-    right: 16px;
-    z-index: 3;
-    width: 42px;
-    height: 42px;
+    top: 18px;
+    right: 18px;
+    z-index: 20;
+    width: 40px;
+    height: 40px;
     display: grid;
     place-items: center;
+    padding: 0;
     color: var(--donated-navy);
-    background: rgba(255, 255, 255, .92);
-    border: 1px solid var(--donated-border);
-    border-radius: 50%;
+    background: rgba(255, 255, 255, .96);
+    border: 1px solid #dfe6ef;
+    border-radius: 12px;
+    box-shadow: 0 5px 16px rgba(11, 46, 89, .08);
+    font-size: 15px;
+    line-height: 1;
     cursor: pointer;
+    transition:
+        color .2s ease,
+        background .2s ease,
+        border-color .2s ease,
+        transform .2s ease,
+        box-shadow .2s ease;
 }
 
-.donated-book-dialog-media {
+.donated-book-dialog-close:hover {
+    color: #fff;
+    background: var(--donated-navy);
+    border-color: var(--donated-navy);
+    transform: translateY(-1px);
+    box-shadow: 0 8px 18px rgba(11, 46, 89, .18);
+}
+
+.donated-book-dialog-close:focus-visible {
+    outline: 3px solid rgba(24, 75, 140, .20);
+    outline-offset: 2px;
+}
+
+.donated-book-modal-cover {
+    position: relative;
     display: grid;
     place-items: center;
-    min-height: 430px;
-    padding: 28px;
-    background: var(--donated-bg);
+    min-width: 0;
+    padding: 38px 30px;
+    overflow: hidden;
+    background:
+        radial-gradient(
+            circle at 50% 36%,
+            rgba(255, 255, 255, .98),
+            rgba(244, 247, 251, .96) 55%,
+            rgba(233, 239, 247, .98) 100%
+        );
+    border-right: 1px solid #e6ebf2;
 }
 
-.donated-book-dialog-media img {
+.donated-book-modal-cover::before {
+    content: "";
+    position: absolute;
+    width: 220px;
+    height: 220px;
+    border: 34px solid rgba(24, 75, 140, .035);
+    border-radius: 50%;
+    right: -105px;
+    top: -95px;
+    pointer-events: none;
+}
+
+.donated-book-modal-cover-inner {
+    position: relative;
+    z-index: 1;
     width: 100%;
-    max-height: 560px;
+    max-width: 245px;
+    display: grid;
+    place-items: center;
+}
+
+.donated-book-modal-cover-inner::after {
+    content: "";
+    position: absolute;
+    left: 12%;
+    right: 12%;
+    bottom: -14px;
+    height: 24px;
+    z-index: 0;
+    background: rgba(8, 27, 53, .13);
+    filter: blur(14px);
+    border-radius: 50%;
+}
+
+.donated-book-modal-cover img {
+    position: relative;
+    z-index: 1;
+    display: block;
+    width: auto;
+    max-width: 100%;
+    max-height: 390px;
     object-fit: contain;
-    border-radius: 14px;
+    border-radius: 8px;
+    box-shadow:
+        0 18px 35px rgba(8, 27, 53, .17),
+        0 4px 12px rgba(8, 27, 53, .08);
 }
 
-.donated-book-dialog-content {
-    max-height: min(760px, calc(100vh - 34px));
+.donated-book-modal-info {
+    min-width: 0;
+    max-height: calc(100vh - 50px);
+    display: flex;
+    flex-direction: column;
+    padding: 44px 42px 40px;
     overflow-y: auto;
-    padding: 48px 42px;
+    overscroll-behavior: contain;
+    scrollbar-width: thin;
+    scrollbar-color: #c7d1de transparent;
 }
 
-.donated-book-dialog-content h3 {
-    margin: 14px 0 18px;
+.donated-book-modal-header {
+    padding-right: 42px;
+}
+
+.donated-book-modal-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 14px;
+    color: var(--donated-blue);
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: .09em;
+    text-transform: uppercase;
+}
+
+.donated-book-modal-label i {
+    color: var(--donated-gold);
+    font-size: 13px;
+}
+
+.donated-book-modal-info h3 {
+    margin: 0;
     color: var(--donated-navy);
-    font-size: clamp(28px, 4vw, 42px);
-    font-weight: 900;
-    line-height: 1.08;
+    font-size: clamp(24px, 2.1vw, 30px);
+    font-weight: 850;
+    line-height: 1.19;
+    letter-spacing: -.025em;
+    overflow-wrap: anywhere;
 }
 
-.donated-book-dialog-content p {
+.donated-book-modal-divider {
+    width: 100%;
+    height: 1px;
+    flex: 0 0 auto;
+    margin: 24px 0;
+    background: #e7ebf1;
+}
+
+.donated-book-description-label {
+    display: block;
+    margin-bottom: 9px;
+    color: #263a55;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+}
+
+.donated-book-modal-description p {
     margin: 0;
     color: var(--donated-muted);
-    font-size: 15px;
-    line-height: 1.85;
+    font-size: 14px;
+    line-height: 1.8;
     white-space: pre-line;
+    overflow-wrap: anywhere;
+}
+
+.donated-book-modal-muted {
+    color: #8793a6 !important;
+    font-style: italic;
+}
+
+.donated-book-modal-info::-webkit-scrollbar {
+    width: 6px;
+}
+
+.donated-book-modal-info::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.donated-book-modal-info::-webkit-scrollbar-thumb {
+    background: #c7d1de;
+    border-radius: 20px;
+}
+
+.donated-book-modal-info::-webkit-scrollbar-thumb:hover {
+    background: #aeb9c8;
+}
+
+@keyframes donatedModalOpen {
+    from {
+        opacity: 0;
+        transform: translateY(14px) scale(.98);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.donated-book-dialog[open] .donated-book-modal {
+    animation:
+        donatedModalOpen
+        .24s
+        cubic-bezier(.22, 1, .36, 1)
+        both;
 }
 
 .donated-content {
@@ -1077,33 +1278,54 @@
     }
 
 
-    .donated-book-dialog-shell {
+    .donated-book-dialog {
+        width: min(620px, calc(100vw - 26px));
+        max-height: calc(100vh - 26px);
+        border-radius: 18px;
+    }
 
+
+    .donated-book-modal {
         grid-template-columns: 1fr;
-
+        min-height: 0;
+        max-height: calc(100vh - 26px);
+        overflow-y: auto;
+        border-radius: 18px;
     }
 
 
-    .donated-book-dialog-media {
-
+    .donated-book-modal-cover {
         min-height: 300px;
-        padding: 22px;
-
+        padding: 30px 24px 27px;
+        border-right: 0;
+        border-bottom: 1px solid #e7ebf1;
     }
 
 
-    .donated-book-dialog-media img {
-
-        max-height: 390px;
-
+    .donated-book-modal-cover-inner {
+        max-width: 205px;
     }
 
 
-    .donated-book-dialog-content {
+    .donated-book-modal-cover img {
+        max-height: 285px;
+    }
 
-        max-height: 42vh;
-        padding: 28px 24px 32px;
 
+    .donated-book-modal-info {
+        max-height: none;
+        overflow: visible;
+        padding: 29px 28px 34px;
+    }
+
+
+    .donated-book-modal-header {
+        padding-right: 34px;
+    }
+
+
+    .donated-book-modal-info h3 {
+        font-size: 25px;
     }
 
 
@@ -1186,47 +1408,68 @@
 
 
     .donated-book-dialog {
-
-        width: calc(100vw - 20px);
-        max-height: calc(100vh - 20px);
-
+        width: calc(100vw - 18px);
+        max-height: calc(100vh - 18px);
+        border-radius: 16px;
     }
 
 
-    .donated-book-dialog-shell {
-
+    .donated-book-modal {
+        max-height: calc(100vh - 18px);
         border-radius: 16px;
-
     }
 
 
     .donated-book-dialog-close {
-
         top: 12px;
         right: 12px;
-
+        width: 38px;
+        height: 38px;
+        border-radius: 11px;
     }
 
 
-    .donated-book-dialog-media {
-
+    .donated-book-modal-cover {
         min-height: 250px;
-        padding: 18px;
-
+        padding: 24px 20px 22px;
     }
 
 
-    .donated-book-dialog-media img {
-
-        max-height: 310px;
-
+    .donated-book-modal-cover-inner {
+        max-width: 175px;
     }
 
 
-    .donated-book-dialog-content h3 {
+    .donated-book-modal-cover img {
+        max-height: 235px;
+    }
 
-        font-size: 26px;
 
+    .donated-book-modal-info {
+        padding: 25px 22px 30px;
+    }
+
+
+    .donated-book-modal-label {
+        margin-bottom: 11px;
+        font-size: 10px;
+    }
+
+
+    .donated-book-modal-info h3 {
+        font-size: 21px;
+        line-height: 1.22;
+    }
+
+
+    .donated-book-modal-divider {
+        margin: 20px 0;
+    }
+
+
+    .donated-book-modal-description p {
+        font-size: 13.5px;
+        line-height: 1.72;
     }
 
 }
@@ -1251,6 +1494,11 @@
         transition:
             none !important;
 
+    }
+
+
+    .donated-book-dialog[open] .donated-book-modal {
+        animation: none !important;
     }
 
 </style>

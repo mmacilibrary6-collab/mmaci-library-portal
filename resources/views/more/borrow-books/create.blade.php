@@ -34,14 +34,6 @@
                     </div>
                 </div>
 
-                <div class="intro-note">
-                    <i class="bi bi-shield-check"></i>
-                        <span>
-                        Submit the book details you want to borrow. Library staff
-                        will verify the request and fill in borrowing dates on the
-                        admin side.
-                    </span>
-                </div>
             </div>
 
             <form
@@ -80,7 +72,11 @@
 
                         <div class="col-md-6">
                             <label class="form-label">Semester</label>
-                            <input type="text" name="semester" class="form-control" value="{{ old('semester') }}">
+                            <select name="semester" class="form-select" required>
+                                <option value="" disabled {{ old('semester') ? '' : 'selected' }}>Select Semester</option>
+                                <option value="1st" {{ old('semester') === '1st' ? 'selected' : '' }}>1st</option>
+                                <option value="2nd" {{ old('semester') === '2nd' ? 'selected' : '' }}>2nd</option>
+                            </select>
                             @error('semester') <small class="text-danger">{{ $message }}</small> @enderror
                         </div>
 
@@ -278,6 +274,23 @@
     color: #18385f;
     font-size: .85rem;
     font-weight: 700;
+}
+
+
+.form-control,
+.form-select {
+    min-height: 48px;
+    border: 1px solid #d8e2ec;
+    border-radius: 12px;
+    color: #18385f;
+    background-color: #fff;
+    box-shadow: none;
+}
+
+.form-control:focus,
+.form-select:focus {
+    border-color: #7fa2c7;
+    box-shadow: 0 0 0 .2rem rgba(24, 75, 140, .10);
 }
 
 .borrow-actions {
