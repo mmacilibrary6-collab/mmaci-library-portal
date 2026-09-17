@@ -35,7 +35,12 @@ class BorrowerCardPaginationTest extends TestCase
                 $this->assertCount($pageCount, $pages);
                 $titles = [];
                 foreach ($pages as $index => $page) {
-                    $this->assertSame('Page '.($index + 1).' of '.$pageCount, trim($xpath->query('.//p[@class="page-number"]', $page)->item(0)->textContent));
+                    $pageNumbers = $xpath->query('.//p[@class="page-number"]', $page);
+                    if ($pageCount > 1) {
+                        $this->assertSame('Page '.($index + 1).' of '.$pageCount, trim($pageNumbers->item(0)->textContent));
+                    } else {
+                        $this->assertCount(0, $pageNumbers);
+                    }
                     $this->assertCount(1, $xpath->query('.//header//img', $page));
                     $this->assertStringContainsString(strtoupper($type)." BORROWER'S CARD", $page->textContent);
                     $this->assertStringContainsString('Sample Borrower', $page->textContent);

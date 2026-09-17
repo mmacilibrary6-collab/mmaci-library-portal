@@ -221,7 +221,9 @@
                 </tbody>
             </table>
         </div>
-        <p class="page-number">Page {{ $pageIndex + 1 }} of {{ $pages->count() }}</p>
+        @if($pages->count() > 1)
+            <p class="page-number">Page {{ $pageIndex + 1 }} of {{ $pages->count() }}</p>
+        @endif
     </section>
     @endforeach
     </main>
