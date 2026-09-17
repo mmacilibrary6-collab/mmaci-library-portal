@@ -35,23 +35,6 @@
                 </div>
             </div>
 
-            @if(session('success'))
-                <div class="borrow-alert borrow-alert-success">
-                    <i class="bi bi-check-circle"></i>
-                    <span>{{ session('success') }}</span>
-                </div>
-            @endif
-
-            @if($errors->any())
-                <div class="borrow-alert borrow-alert-error">
-                    <i class="bi bi-exclamation-circle"></i>
-                    <div>
-                        <strong>Please check the highlighted fields.</strong>
-                        <span>{{ $errors->first() }}</span>
-                    </div>
-                </div>
-            @endif
-
             <form
                 action="{{ route('more.borrow-books.store') }}"
                 method="POST"
@@ -269,40 +252,6 @@
     margin: 0;
     color: #687589;
     line-height: 1.8;
-}
-
-.borrow-alert {
-    max-width: 1220px;
-    margin: 0 auto 18px;
-    padding: 14px 16px;
-    display: flex;
-    align-items: flex-start;
-    gap: 10px;
-    border-radius: 14px;
-    font-size: .88rem;
-    line-height: 1.5;
-}
-
-.borrow-alert i {
-    margin-top: 2px;
-    font-size: 1rem;
-}
-
-.borrow-alert-success {
-    color: #17603f;
-    background: #edf9f3;
-    border: 1px solid #cfeadb;
-}
-
-.borrow-alert-error {
-    color: #9a3038;
-    background: #fff3f4;
-    border: 1px solid #efcfd3;
-}
-
-.borrow-alert-error strong,
-.borrow-alert-error span {
-    display: block;
 }
 
 .field-hint {
