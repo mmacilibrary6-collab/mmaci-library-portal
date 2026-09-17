@@ -142,6 +142,60 @@
 
     </div>
 
+    <div class="row g-4 mb-4 dashboard-secondary-stats">
+        <div class="col-xl-3 col-md-6">
+            <div class="stat-card">
+                <div class="stat-icon icon-blue">
+                    <i class="bi bi-book-half"></i>
+                </div>
+                <div class="stat-content">
+                    <span class="stat-label">Currently Borrowed</span>
+                    <h2 class="stat-number">{{ $currentlyBorrowed ?? 0 }}</h2>
+                    <a href="{{ route('admin.borrowings.index', ['status' => 'borrowed']) }}" class="stat-link">View loans <i class="bi bi-arrow-right"></i></a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6">
+            <div class="stat-card">
+                <div class="stat-icon icon-yellow">
+                    <i class="bi bi-hourglass-split"></i>
+                </div>
+                <div class="stat-content">
+                    <span class="stat-label">Pending Requests</span>
+                    <h2 class="stat-number">{{ $pendingBorrowingRequests ?? 0 }}</h2>
+                    <a href="{{ route('admin.borrowings.index', ['status' => 'pending']) }}" class="stat-link">Review requests <i class="bi bi-arrow-right"></i></a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6">
+            <div class="stat-card">
+                <div class="stat-icon icon-orange">
+                    <i class="bi bi-exclamation-triangle"></i>
+                </div>
+                <div class="stat-content">
+                    <span class="stat-label">Overdue Books</span>
+                    <h2 class="stat-number">{{ $overdueBorrowings ?? 0 }}</h2>
+                    <a href="{{ route('admin.borrowings.index', ['status' => 'overdue']) }}" class="stat-link">Check overdue <i class="bi bi-arrow-right"></i></a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6">
+            <div class="stat-card">
+                <div class="stat-icon icon-green">
+                    <i class="bi bi-check2-circle"></i>
+                </div>
+                <div class="stat-content">
+                    <span class="stat-label">Returned Books</span>
+                    <h2 class="stat-number">{{ $returnedBorrowings ?? 0 }}</h2>
+                    <a href="{{ route('admin.borrowings.index', ['status' => 'returned']) }}" class="stat-link">View returns <i class="bi bi-arrow-right"></i></a>
+                </div>
+            </div>
+        </div>
+    </div>
+
     {{-- PROGRAM BREAKDOWN --}}
     <div class="row g-4 mb-4 dashboard-programs">
 

@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use App\Support\ImageUrl;
 use App\Support\DatabaseMedia;
 use App\Support\MediaStorage;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class NewArrival extends Model
 {
@@ -74,5 +75,10 @@ class NewArrival extends Model
             $this->image,
             ImageUrl::resolve($this->image, 'images/image-fallback.svg')
         );
+    }
+
+    public function borrowings(): HasMany
+    {
+        return $this->hasMany(Borrowing::class, 'new_arrival_id');
     }
 }

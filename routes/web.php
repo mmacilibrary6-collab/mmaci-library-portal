@@ -29,6 +29,7 @@ use App\Support\MediaStorage;
 use App\Http\Controllers\AboutController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CollectionController;
+use App\Http\Controllers\BorrowBookController;
 use App\Http\Controllers\LisaController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\MoreController;
@@ -56,6 +57,7 @@ use App\Http\Controllers\Admin\NewArrivalController;
 use App\Http\Controllers\Admin\OpenAccessResourceController;
 use App\Http\Controllers\Admin\VisitorIpAddressController;
 use App\Http\Controllers\Admin\VisitingUserController;
+use App\Http\Controllers\Admin\BorrowingController;
 
 /*
 |--------------------------------------------------------------------------
@@ -284,6 +286,16 @@ Route::prefix('more')
             '/visiting-users',
             [MoreController::class, 'visitingUsers']
         )->name('visiting-users');
+
+        Route::get(
+            '/borrow-books',
+            [BorrowBookController::class, 'create']
+        )->name('borrow-books');
+
+        Route::post(
+            '/borrow-books',
+            [BorrowBookController::class, 'store']
+        )->name('borrow-books.store');
 
         /*
         |--------------------------------------------------------------------------
@@ -618,6 +630,41 @@ Route::prefix('admin')
         Route::resource('reference-resources', \App\Http\Controllers\Admin\ReferenceResourceController::class)
             ->parameters(['reference-resources' => 'openAccessResource'])
             ->except(['show']);
+
+        Route::get(
+            'borrowings/borrowers/{borrower}',
+            [BorrowingController::class, 'borrower']
+        )->name('borrowings.borrower');
+
+        Route::get(
+            'borrowings/borrowers/{borrower}/print-card',
+            [BorrowingController::class, 'printCard']
+        )->name('borrowings.print-card');
+
+        Route::patch(
+            'borrowings/{borrowing}/approve',
+            [BorrowingController::class, 'approve']
+        )->name('borrowings.approve');
+
+        Route::patch(
+            'borrowings/{borrowing}/borrowed',
+            [BorrowingController::class, 'markBorrowed']
+        )->name('borrowings.borrowed');
+
+        Route::patch(
+            'borrowings/{borrowing}/returned',
+            [BorrowingController::class, 'markReturned']
+        )->name('borrowings.returned');
+
+        Route::patch(
+            'borrowings/{borrowing}/reject',
+            [BorrowingController::class, 'reject']
+        )->name('borrowings.reject');
+
+        Route::resource(
+            'borrowings',
+            BorrowingController::class
+        )->except(['create', 'store']);
 
     });
 

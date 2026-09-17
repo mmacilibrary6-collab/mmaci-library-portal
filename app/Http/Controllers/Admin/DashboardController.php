@@ -11,6 +11,7 @@ use App\Models\NewArrival;
 use App\Models\DonatedBook;
 use App\Models\LibraryUpdate;
 use App\Models\Gallery;
+use App\Models\Borrowing;
 
 class DashboardController extends Controller
 {
@@ -40,6 +41,19 @@ class DashboardController extends Controller
         $totalGallery = Gallery::count();
 
         $totalLibraryUpdates = LibraryUpdate::count();
+
+        $currentlyBorrowed = Borrowing::whereIn('status', ['borrowed', 'overdue'])
+            ->whereNull('date_returned')
+            ->count();
+
+        $pendingBorrowingRequests = Borrowing::where('status', 'pending')
+            ->count();
+
+        $overdueBorrowings = Borrowing::where('status', 'overdue')
+            ->count();
+
+        $returnedBorrowings = Borrowing::where('status', 'returned')
+            ->count();
 
         /*
         |--------------------------------------------------------------------------
@@ -96,7 +110,12 @@ class DashboardController extends Controller
             'latestBooks',
             'ebookPrograms',
             'thesisPrograms',
-            'periodicalPrograms'
+            'periodicalPrograms',
+
+            'currentlyBorrowed',
+            'pendingBorrowingRequests',
+            'overdueBorrowings',
+            'returnedBorrowings'
 
         ));
     }

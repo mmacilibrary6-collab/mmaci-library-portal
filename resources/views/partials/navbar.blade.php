@@ -404,6 +404,21 @@
 
                         </li>
 
+
+                        <!-- Borrow Books -->
+
+                        <li>
+
+                            <a
+                                class="dropdown-item {{ request()->routeIs('more.borrow-books*') ? 'active' : '' }}"
+                                href="{{ route('more.borrow-books') }}">
+
+                                Borrow Books
+
+                            </a>
+
+                        </li>
+
                     </ul>
 
                 </li>

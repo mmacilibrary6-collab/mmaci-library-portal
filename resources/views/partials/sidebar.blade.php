@@ -282,6 +282,22 @@
 
         </a>
 
+        <a
+            href="{{ route('admin.borrowings.index') }}"
+            class="sidebar-link
+                {{ request()->routeIs('admin.borrowings.*')
+                    ? 'active'
+                    : ''
+                }}">
+
+            <i class="bi bi-journal-check"></i>
+
+            <span>
+                Borrowing Management
+            </span>
+
+        </a>
+
         {{-- Website --}}
         <span class="sidebar-label sidebar-section-label">
             Website
