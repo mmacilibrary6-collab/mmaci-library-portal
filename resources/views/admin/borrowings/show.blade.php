@@ -128,6 +128,11 @@
                     <span>Remarks</span>
                     <strong>{{ $borrowing->remarks ?: '-' }}</strong>
                 </div>
+
+                <div class="transaction-card wide">
+                    <span>Released By</span>
+                    <strong>{{ $borrowing->released_by ?: '-' }}</strong>
+                </div>
             </div>
 
             <div class="record-actions">

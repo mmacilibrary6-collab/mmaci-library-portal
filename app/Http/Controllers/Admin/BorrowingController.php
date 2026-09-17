@@ -1,5 +1,3 @@
-<?php
-
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
@@ -117,6 +115,7 @@ class BorrowingController extends Controller
                 'received_by' => filled($validated['received_by'] ?? null) ? trim($validated['received_by']) : null,
                 'returned_by' => filled($validated['returned_by'] ?? null) ? trim($validated['returned_by']) : null,
                 'remarks' => filled($validated['remarks'] ?? null) ? trim($validated['remarks']) : null,
+                'released_by' => filled($validated['released_by'] ?? null) ? trim($validated['released_by']) : null,
             ]);
 
             $this->syncBookAvailability($borrowing, $oldBookId);
@@ -150,6 +149,7 @@ class BorrowingController extends Controller
         $validated = $request->validate([
             'returned_by' => ['nullable', 'string', 'max:255'],
             'remarks' => ['nullable', 'string', 'max:2000'],
+            'released_by' => ['nullable', 'string', 'max:255'],
         ]);
 
         DB::transaction(function () use ($borrowing, $validated): void {

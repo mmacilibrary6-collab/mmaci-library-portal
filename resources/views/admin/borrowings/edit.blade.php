@@ -210,6 +210,17 @@
                               placeholder="Optional notes about this borrowing transaction">{{ old('remarks', $borrowing->remarks) }}</textarea>
                     @error('remarks')<div class="invalid-feedback">{{ $message }}</div>@enderror
                 </div>
+
+                <div class="col-12">
+                    <label class="form-label">Released By</label>
+                    <input
+                        type="text"
+                        class="form-control @error('released_by') is-invalid @enderror"
+                        name="released_by"
+                        value="{{ old('released_by', $borrowing->released_by) }}"
+                        placeholder="Enter the name of the staff member who released the book">
+                    @error('released_by')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                </div>
             </div>
         </section>
 
