@@ -27,6 +27,16 @@ class BorrowingWorkflowTest extends TestCase
         $this->actingAs(User::factory()->create(['name' => 'Library Staff']));
     }
 
+    public function test_print_card_shows_latest_borrowed_first_with_stable_same_day_order(): void
+    {
+        $loan = $this->loan('borrowed');
+        $loan->update(['date_borrowed' => today()->subDays(2), 'bibliographical_description' => 'Oldest title']);
+        foreach (['Recent title', 'Newest title'] as $title) {
+            Borrowing::create(['borrower_id' => $loan->borrower_id, 'bibliographical_description' => $title, 'status' => 'borrowed', 'date_borrowed' => today()]);
+        }
+        $this->get(route('admin.borrowings.print-card', $loan->borrower))->assertOk()->assertSeeInOrder(['Newest title', 'Recent title', 'Oldest title']);
+    }
+
     private function loan(string $status = 'pending'): Borrowing
     {
         $borrower = Borrower::create(['name' => 'Test Borrower', 'id_number' => uniqid(), 'borrower_type' => 'student', 'department' => 'Education', 'semester' => '1st']);

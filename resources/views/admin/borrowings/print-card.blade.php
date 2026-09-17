@@ -29,7 +29,7 @@
         body{color:#111;background:#ececec;font-family:"Times New Roman",Times,serif}
         .print-toolbar{
             min-height:64px;padding:10px 18px;display:flex;align-items:center;justify-content:center;
-            gap:12px;background:#0b315e;font-family:Arial,sans-serif;
+            gap:12px;flex-wrap:wrap;background:#0b315e;font-family:Arial,sans-serif;
         }
         .toolbar-label{color:#fff;font-size:12px;font-weight:700}
         .card-type-control{
@@ -104,6 +104,8 @@
                 width:11in;margin:0!important;padding:0!important;background:#fff!important;
             }
             .sheet+.sheet{break-before:page;page-break-before:always}
+            .sheet.print-excluded{display:none!important}
+            .sheet.print-first{break-before:auto;page-break-before:auto}
             .print-toolbar{display:none!important}
             .sheet{
                 width:11in;min-height:8.5in;margin:0!important;padding:.42in .45in .38in!important;
@@ -122,6 +124,11 @@
             <option value="faculty" {{ $cardType === 'faculty' ? 'selected' : '' }}>Faculty</option>
         </select>
 
+        @if($pages->count() > 1)
+            <label for="printPages" class="toolbar-label">Pages to print:</label>
+            <input id="printPages" class="card-type-control" style="width:160px" placeholder="All pages" aria-describedby="print-pages-help" oninput="this.setCustomValidity('')" onchange="preparePrintPages()">
+            <span id="print-pages-help" class="toolbar-label">{{ $pages->count() }} pages · Leave blank for all, or enter 1, 3-5</span>
+        @endif
         <button type="button" class="print-button" onclick="printBorrowerCard()">
             Print Borrower Card
         </button>
@@ -236,6 +243,7 @@
         }
 
         function printBorrowerCard() {
+            if (!preparePrintPages()) return;
             const originalTitle = document.title;
             document.title = ' ';
             window.print();
@@ -244,6 +252,40 @@
                 document.title = originalTitle;
             }, 500);
         }
+
+        function preparePrintPages() {
+            const input = document.getElementById('printPages');
+            const sheets = Array.from(document.querySelectorAll('.sheet'));
+            const value = input ? input.value.trim() : '';
+            const selected = new Set();
+            let valid = true;
+            if (value) {
+                for (const part of value.split(',')) {
+                    const match = part.trim().match(/^(\d+)(?:\s*-\s*(\d+))?$/);
+                    if (!match) { valid = false; break; }
+                    const first = Number(match[1]);
+                    const last = Number(match[2] || match[1]);
+                    if (first < 1 || last < first || last > sheets.length) { valid = false; break; }
+                    for (let page = first; page <= last; page++) selected.add(page);
+                }
+            }
+            if (!valid) {
+                input.setCustomValidity('Enter pages between 1 and ' + sheets.length + ', such as 1, 3-5.');
+                input.reportValidity();
+                return false;
+            }
+            input?.setCustomValidity('');
+            let firstVisible = true;
+            sheets.forEach(function (sheet, index) {
+                const included = !value || selected.has(index + 1);
+                sheet.classList.toggle('print-excluded', !included);
+                sheet.classList.toggle('print-first', included && firstVisible);
+                if (included) firstVisible = false;
+            });
+            return true;
+        }
+
+        window.addEventListener('beforeprint', preparePrintPages);
 
         window.addEventListener('afterprint', function () {
             if (!document.title.trim()) {
