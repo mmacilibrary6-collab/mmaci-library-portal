@@ -193,4 +193,43 @@ class BorrowingWorkflowTest extends TestCase
         $this->patch(route('admin.borrowings.approve', $loan))->assertSessionHas('success');
         Mail::assertSent(BorrowingUpdateMail::class, fn ($mail) => $mail->event === 'approved');
     }
+
+    public function test_borrowing_excel_exports_filter_status_and_deduplicate_borrowers(): void
+    {
+        $loan = $this->loan('borrowed');
+        $loan->update(['date_borrowed' => today()->subWeek(), 'due_date' => today()->subDay()]);
+        foreach (range(1, 12) as $number) {
+            Borrowing::create(['borrower_id' => $loan->borrower_id, 'accession_number' => 'COPY-'.$number, 'bibliographical_description' => 'Additional Book', 'status' => 'returned']);
+        }
+        $other = $this->loan('approved');
+        $other->borrower->update(['borrower_type' => 'faculty']);
+        $read = function (array $filters): array {
+            $response = $this->get(route('admin.borrowings.export', $filters))->assertOk()
+                ->assertHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+            $path = $response->baseResponse->getFile()->getPathname();
+            $zip = new \ZipArchive;
+            $this->assertTrue($zip->open($path));
+            try {
+                $xml = simplexml_load_string($zip->getFromName('xl/worksheets/sheet1.xml'));
+                return array_map(fn ($row) => array_map(fn ($cell) => (string) $cell->is->t, iterator_to_array($row->c, false)), iterator_to_array($xml->sheetData->row, false));
+            } finally { $zip->close(); unlink($path); }
+        };
+        $this->assertCount(15, $read(['list' => 'borrowings']));
+        $this->assertCount(15, $read(['list' => 'borrowings', 'date_borrowed' => '2000-01-01', 'due_date' => '2000-01-02']));
+        $this->assertStringNotContainsString('type="date"', view('admin.borrowings.export')->render());
+        $this->assertCount(3, $read(['list' => 'borrowers']));
+        $overdue = $read(['list' => 'borrowings', 'status' => 'overdue']);
+        $this->assertCount(2, $overdue);
+        $this->assertSame('Overdue', $overdue[1][10]);
+        $this->assertSame('borrowed', $loan->refresh()->status);
+        $this->assertCount(1, $read(['list' => 'borrowings', 'status' => 'borrowed']));
+        $this->assertCount(2, $read(['list' => 'borrowers', 'status' => 'returned']));
+        $this->assertCount(2, $read(['list' => 'borrowers', 'borrower_type' => 'faculty']));
+        $this->assertCount(1, $read(['list' => 'borrowings', 'search' => 'no matching book']));
+        $this->getJson(route('admin.borrowings.export', ['list' => 'invalid']))->assertUnprocessable();
+        $this->getJson(route('admin.borrowings.export', ['list' => 'borrowers', 'status' => 'invalid']))->assertUnprocessable();
+        $this->get(route('admin.borrowings.index'))->assertOk()->assertSeeText('Export to Excel');
+        auth()->logout();
+        $this->get(route('admin.borrowings.export', ['list' => 'borrowers']))->assertRedirect(route('login'));
+    }
 }

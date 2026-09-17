@@ -24,6 +24,10 @@
             </div>
         </div>
 
+        <div class="d-flex flex-wrap gap-2">
+        <a href="{{ route('admin.book-export', ['collection' => 'new-arrivals'] + request()->only(['search', 'availability_status'])) }}" class="btn-add-arrival">
+            <i class="bi bi-file-earmark-excel" aria-hidden="true"></i> Export to Excel
+        </a>
         <a
             href="{{ route('admin.new-arrivals.create') }}"
             class="btn-add-arrival">
@@ -31,6 +35,7 @@
             <i class="bi bi-plus-lg"></i>
             Add New Arrival
         </a>
+        </div>
     </section>
 
 

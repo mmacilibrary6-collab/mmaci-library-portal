@@ -18,10 +18,15 @@
             </div>
         </div>
 
+        <div class="d-flex flex-wrap gap-2">
+        <a href="{{ route('admin.book-export', ['collection' => 'donated-books'] + request()->only(['search'])) }}" class="btn-add-program">
+            <i class="bi bi-file-earmark-excel" aria-hidden="true"></i> Export to Excel
+        </a>
         <a href="{{ route('admin.donated-books.create') }}" class="btn-add-program">
             <i class="bi bi-plus-lg"></i>
             <span>Add Book</span>
         </a>
+        </div>
     </section>
 
 

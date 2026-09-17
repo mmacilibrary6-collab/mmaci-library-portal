@@ -432,6 +432,12 @@ Route::prefix('admin')
     ->middleware('auth')
     ->group(function () {
 
+        Route::get('borrowings/export', \App\Http\Controllers\Admin\BorrowingExportController::class)->name('borrowings.export');
+
+        Route::get('book-exports/{collection}', \App\Http\Controllers\Admin\BookExportController::class)
+            ->whereIn('collection', ['new-arrivals', 'donated-books'])
+            ->name('book-export');
+
         Route::get('folder-exports/{collection}', \App\Http\Controllers\Admin\FolderExportController::class)
             ->whereIn('collection', ['ebooks', 'theses', 'periodicals'])
             ->name('folder-export');

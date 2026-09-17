@@ -13,7 +13,9 @@
                 <p>Manage student and faculty requests, active loans, due dates, returns, and history.</p>
             </div>
         </div>
+        <button type="button" class="borrowing-export-button" data-bs-toggle="modal" data-bs-target="#borrowing-export-modal"><i class="bi bi-file-earmark-excel" aria-hidden="true"></i> Export to Excel</button>
     </section>
+    @include('admin.borrowings.export')
 
     @if(session('success'))
         <div class="alert alert-success" role="status">{{ session('success') }}</div>
