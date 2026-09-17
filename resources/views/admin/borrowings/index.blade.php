@@ -216,6 +216,17 @@
                                             <i class="bi bi-printer"></i><span>Print</span>
                                         </a>
                                     @endif
+
+                                    <form
+                                        method="POST"
+                                        action="{{ route('admin.borrowings.destroy', $borrowing) }}"
+                                        onsubmit="return confirm('Delete this borrowing record? This action cannot be undone.');">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button class="action-btn action-destroy" type="submit">
+                                            <i class="bi bi-trash3"></i><span>Delete</span>
+                                        </button>
+                                    </form>
                                 </div>
                             </td>
                         </tr>
@@ -223,9 +234,21 @@
                         <tr>
                             <td colspan="9">
                                 <div class="empty-state">
-                                    <div class="empty-icon"><i class="bi bi-journal-x"></i></div>
-                                    <h3>No borrowing records found</h3>
-                                    <p>Try changing the filters or wait for a new borrowing request.</p>
+                                    <div class="empty-icon">
+                                        <i class="bi {{ request()->hasAny(['search', 'borrower_type', 'status', 'date_borrowed', 'due_date']) ? 'bi-search' : 'bi-journal-x' }}"></i>
+                                    </div>
+
+                                    @if(request()->hasAny(['search', 'borrower_type', 'status', 'date_borrowed', 'due_date']))
+                                        <h3>There are no matching results for your search.</h3>
+                                        <p>
+                                            Try changing or clearing the selected filters.
+                                        </p>
+                                    @else
+                                        <h3>No borrowing records found</h3>
+                                        <p>
+                                            Borrowing requests will appear here once records are submitted.
+                                        </p>
+                                    @endif
                                 </div>
                             </td>
                         </tr>
@@ -334,7 +357,7 @@
 .col-material{width:auto}
 .col-dates{width:145px}
 .col-status{width:95px}
-.col-actions{width:285px}
+.col-actions{width:305px}
 .borrow-record-table thead th{
     padding:13px 10px;color:#7b8ca2;background:#f6f9fc;border-bottom:1px solid var(--line);
     font-size:9px;font-weight:800;letter-spacing:.045em;text-transform:uppercase;white-space:nowrap;
@@ -393,6 +416,8 @@
 .action-approve{color:#15734e;background:#eef9f3;border:1px solid #d2ecdf}
 .action-borrowed,.action-print{color:#815f00;background:#fff8df;border:1px solid #f0dfa3}
 .action-delete{color:#bc4650;background:#fff5f5;border:1px solid #f1d0d3}
+.action-destroy{color:#b4232f;background:#fff1f2;border:1px solid #efc9cd}
+.action-destroy:hover{color:#8f1721;background:#ffe7e9;border-color:#e9b6bb}
 .empty-state{padding:62px 20px;text-align:center}
 .empty-icon{
     width:58px;height:58px;margin:0 auto 13px;display:grid;place-items:center;color:#245f94;
@@ -409,7 +434,7 @@
     .records-filters{
         grid-template-columns:minmax(220px,1fr) 120px 120px 145px 145px auto auto;
     }
-    .col-actions{width:260px}
+    .col-actions{width:280px}
     .action-btn{padding:0 7px;font-size:8.5px}
 }
 @media (max-width:1199.98px){

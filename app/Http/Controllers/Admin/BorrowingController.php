@@ -19,6 +19,7 @@ class BorrowingController extends Controller
         $this->refreshOverdueBorrowings();
 
         $search = trim((string) $request->input('search'));
+        $borrowerType = $request->input('borrower_type');
         $status = $request->input('status');
         $dateBorrowed = $request->input('date_borrowed');
         $dueDate = $request->input('due_date');
@@ -36,6 +37,11 @@ class BorrowingController extends Controller
                                 ->orWhere('id_number', 'like', "%{$search}%")
                                 ->orWhere('department', 'like', "%{$search}%");
                         });
+                });
+            })
+            ->when(filled($borrowerType), function ($query) use ($borrowerType) {
+                $query->whereHas('borrower', function ($borrowerQuery) use ($borrowerType) {
+                    $borrowerQuery->where('borrower_type', $borrowerType);
                 });
             })
             ->when(filled($status), fn ($query) => $query->where('status', $status))
@@ -91,6 +97,7 @@ class BorrowingController extends Controller
             $borrower->update([
                 'name' => trim($validated['name']),
                 'id_number' => trim($validated['id_number']),
+                'borrower_type' => $validated['borrower_type'],
                 'contact_number' => filled($validated['contact_number'] ?? null) ? trim($validated['contact_number']) : null,
                 'department' => trim($validated['department']),
                 'semester' => filled($validated['semester'] ?? null) ? trim($validated['semester']) : null,
@@ -227,9 +234,10 @@ class BorrowingController extends Controller
         return $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'id_number' => ['required', 'string', 'max:100', Rule::unique('borrowers', 'id_number')->ignore($borrowing->borrower_id)],
+            'borrower_type' => ['required', Rule::in(['student', 'faculty'])],
             'contact_number' => ['nullable', 'string', 'max:50'],
             'department' => ['required', 'string', 'max:150'],
-            'semester' => ['nullable', 'string', 'max:100'],
+            'semester' => ['required', Rule::in(['1st', '2nd'])],
             'email' => ['nullable', 'email', 'max:255'],
             'accession_number' => ['required', 'string', 'max:100'],
             'bibliographical_description' => ['required', 'string'],
