@@ -286,7 +286,7 @@ class BorrowingWorkflowTest extends TestCase
             }
             $this->patch(route('admin.borrowings.renew', $loan), ['renewal_count' => 2])->assertSessionHasErrors('renewal');
             $this->assertSame($expected->toDateString(), $loan->refresh()->due_date->toDateString());
-            $this->get(route('admin.borrowings.show', $loan))->assertOk()->assertSeeText('Renewals used: 2 / 2');
+            $this->get(route('admin.borrowings.show', $loan))->assertOk()->assertSeeText('Renewals used')->assertSeeText('2 of 2');
         }
     }
 

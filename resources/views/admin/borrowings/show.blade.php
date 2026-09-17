@@ -142,10 +142,14 @@
                     <span>Released By</span>
                     <strong>{{ $borrowing->released_by ?: '-' }}</strong>
                 </div>
-                <div class="transaction-card wide">
-                    <span>Borrowing Policy</span>
-                    <strong>{{ $borrowerType === 'faculty' ? '10 books · 1 calendar month per loan' : '3 books · 2 days per loan' }}</strong>
-                    <p class="mb-0 mt-2">Renewals used: {{ $borrowing->renewal_count ?? 0 }} / 2. Each renewal adds one loan period from the current due date, or today if overdue.</p>
+                <div class="transaction-card wide borrowing-policy">
+                    <h3 class="policy-heading">Borrowing Policy</h3>
+                    <dl class="policy-stats">
+                        <div><dt>Book limit</dt><dd>{{ $borrowerType === 'faculty' ? '10 books' : '3 books' }}</dd></div>
+                        <div><dt>Loan period</dt><dd>{{ $borrowerType === 'faculty' ? '1 month' : '2 days' }}</dd></div>
+                        <div><dt>Renewals used</dt><dd>{{ $borrowing->renewal_count ?? 0 }} of 2</dd></div>
+                    </dl>
+                    <p class="policy-note">Renewals extend the due date by one loan period. For overdue books, the new period starts today.</p>
                 </div>
             </div>
 
@@ -360,6 +364,13 @@
     background:#f7f9fc;border:1px solid #dee7f0;border-radius:15px;
 }
 .transaction-card.wide{grid-column:1/-1}
+.borrowing-policy .policy-heading{margin:0 0 16px;color:#75879d;font-size:10px;font-weight:800;letter-spacing:.05em;text-transform:uppercase}
+.policy-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin:0}
+.policy-stats>div+div{border-left:1px solid #dee7f0;padding-left:16px}
+.policy-stats dt{margin:0 0 5px;color:#718298;font-size:11px;font-weight:500;line-height:1.5}
+.policy-stats dd{margin:0;color:#0b315e;font-size:15px;font-weight:700;line-height:1.5}
+.borrowing-policy .policy-note{margin:16px 0 0;padding-top:12px;border-top:1px solid #dee7f0;color:#718298;font-size:11px;line-height:1.7}
+@media(max-width:480px){.policy-stats{gap:8px}.policy-stats>div+div{padding-left:8px}.policy-stats dd{font-size:13px}}
 .mono{font-family:ui-monospace,SFMono-Regular,Consolas,monospace}
 .record-actions{
     margin:20px 24px 0;padding-top:18px;display:flex;flex-wrap:wrap;gap:9px;border-top:1px solid var(--line);
