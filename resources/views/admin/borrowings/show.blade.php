@@ -103,8 +103,8 @@
                     <strong class="mono">{{ $borrowing->accession_number ?: 'Not assigned — add using Edit Record' }}</strong>
                 </div>
 
-                <div class="transaction-card wide">
-                    <span>Bibliographical Description</span>
+                <div class="transaction-card book-description">
+                    <span>Book Title / Details</span>
                     <strong>{{ $borrowing->bibliographical_description }}</strong>
                 </div>
 
@@ -124,6 +124,11 @@
                 </div>
 
                 <div class="transaction-card">
+                    <span>Released By</span>
+                    <strong>{{ $borrowing->released_by ?: '-' }}</strong>
+                </div>
+
+                <div class="transaction-card">
                     <span>Received By</span>
                     <strong>{{ $borrowing->received_by ?: '-' }}</strong>
                 </div>
@@ -138,10 +143,6 @@
                     <strong>{{ $borrowing->remarks ?: '-' }}</strong>
                 </div>
 
-                <div class="transaction-card wide">
-                    <span>Released By</span>
-                    <strong>{{ $borrowing->released_by ?: '-' }}</strong>
-                </div>
                 <div class="transaction-card wide borrowing-policy">
                     <h3 class="policy-heading">Borrowing Policy</h3>
                     <dl class="policy-stats">
@@ -287,7 +288,7 @@
 <style>
 .borrowing-show-page{
     --navy:#0b315e;--yellow:#ffbd00;--line:#dfe7ef;--muted:#7d8da1;
-    padding:28px 34px 40px;
+    max-width:1600px;margin:0 auto;padding:28px 34px 40px;
 }
 .record-hero{
     min-height:170px;margin-bottom:22px;padding:32px 36px;display:flex;align-items:center;
@@ -331,7 +332,7 @@
 }
 .hero-btn-light{color:#0b315e;background:#fff;border:1px solid rgba(255,255,255,.75)}
 .hero-btn-yellow{color:#0b315e;background:var(--yellow);border:1px solid #e6aa00}
-.record-layout{display:grid;grid-template-columns:minmax(320px,.78fr) minmax(0,1.42fr);gap:20px}
+.record-layout{display:grid;grid-template-columns:minmax(300px,.8fr) minmax(0,1.6fr);gap:22px;align-items:start}
 .record-panel{
     background:#fff;border:1px solid var(--line);border-radius:24px;
     box-shadow:0 10px 25px rgba(16,48,82,.05);
@@ -347,7 +348,7 @@
 .panel-heading p{margin:4px 0 0;color:var(--muted);font-size:12px}
 .detail-list{margin:0 24px 24px;overflow:hidden;border:1px solid #dce6ef;border-radius:15px}
 .detail-row{
-    min-height:65px;padding:13px 16px;display:grid;grid-template-columns:130px minmax(0,1fr);
+    min-height:58px;padding:13px 16px;display:grid;grid-template-columns:105px minmax(0,1fr);
     align-items:center;gap:16px;border-bottom:1px solid #e4eaf0;
 }
 .detail-row:last-child{border-bottom:0}
@@ -355,15 +356,19 @@
     color:#74869d;font-size:10px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;
 }
 .detail-row strong,.transaction-card strong{
-    color:#0b315e;font-size:12px;font-weight:800;overflow-wrap:anywhere;
+    color:#0b315e;font-size:13px;font-weight:600;line-height:1.6;overflow-wrap:anywhere;
 }
 .inline-type{display:inline-flex!important;padding:6px 9px;border-radius:999px;font-size:9px!important}
-.transaction-grid{padding:0 24px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.transaction-grid{padding:0 24px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
 .transaction-card{
-    min-height:93px;padding:16px 18px;display:flex;flex-direction:column;gap:7px;
+    min-height:82px;padding:15px 16px;display:flex;flex-direction:column;gap:7px;
     background:#f7f9fc;border:1px solid #dee7f0;border-radius:15px;
 }
 .transaction-card.wide{grid-column:1/-1}
+.transaction-card.book-description{grid-column:span 2}
+.transaction-card.book-description strong{font-size:15px;font-weight:700}
+.transaction-card.borrowing-policy{gap:0;background:#f4f7fb}
+.borrower-panel .detail-row:nth-child(even){background:#fafbfd}
 .borrowing-policy .policy-heading{margin:0 0 16px;color:#75879d;font-size:10px;font-weight:800;letter-spacing:.05em;text-transform:uppercase}
 .policy-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin:0}
 .policy-stats>div+div{border-left:1px solid #dee7f0;padding-left:16px}
@@ -401,7 +406,7 @@
     .hero-btn{width:100%}
     .record-panel{border-radius:18px}
     .transaction-grid{grid-template-columns:1fr;padding:0 18px}
-    .transaction-card.wide{grid-column:auto}
+    .transaction-card.wide,.transaction-card.book-description{grid-column:auto}
     .detail-list{margin:0 18px 20px}
     .panel-heading{padding:20px 18px 16px}
     .detail-row{grid-template-columns:1fr;gap:4px}
