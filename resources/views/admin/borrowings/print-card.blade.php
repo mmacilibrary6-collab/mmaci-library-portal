@@ -81,7 +81,7 @@
         .borrow-table tbody td:nth-child(3),
         .borrow-table tbody td:nth-child(5),
         .borrow-table tbody td:nth-child(6){text-align:center;font-size:9.6pt}
-        .borrow-table tbody td:nth-child(4){text-align:left;font-size:10.2pt;line-height:1.22}
+        .borrow-table tbody td:nth-child(4){text-align:center;font-size:10.2pt;line-height:1.22}
         .borrow-table tbody td:nth-child(7){font-size:9.5pt;line-height:1.18}
         .date-col{width:10.5%}.due-col{width:10%}.accession-col{width:10%}.description-col{width:38%}
         .received-col{width:9%}.returned-col{width:9%}.remarks-col{width:13.5%}
