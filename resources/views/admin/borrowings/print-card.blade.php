@@ -41,11 +41,15 @@
         }
         .header-table{width:100%;border-collapse:collapse;table-layout:fixed}
         .header-table>tbody>tr>td{padding:0}
-        .header-left,.header-right{width:29%;vertical-align:bottom;padding-bottom:.04in!important}
-        .header-center{width:42%;padding:0 .14in!important;text-align:center;vertical-align:top!important}
-        .school-logo{width:.70in;height:.70in;display:block;margin:0 auto .04in;object-fit:contain}
-        .school-name{margin:0;font-size:15pt;font-weight:700;line-height:1.02;text-transform:uppercase}
-        .school-address{margin:.05in 0 .08in;font-size:7.5pt;line-height:1.18}
+        .header-left,.header-right{width:50%;vertical-align:bottom;padding-bottom:.04in!important}
+        .header-left{padding-right:1in!important}
+        .header-right{padding-left:1in!important}
+        .institution-header{display:flex;align-items:center;gap:.18in;margin-bottom:.16in}
+        .institution-copy{flex:1;text-align:center}
+        .institution-spacer{width:1.12in;flex-shrink:0}
+        .school-logo{width:1.12in;height:1.12in;display:block;flex-shrink:0;object-fit:contain}
+        .school-name{margin:0;font-size:15pt;font-weight:700;line-height:1.12;text-transform:uppercase;text-decoration:underline;text-underline-offset:3px}
+        .school-address{margin:.05in 0 .08in;font-family:Arial,sans-serif;font-size:8pt;line-height:1.25}
 
         .school-email {
             color: #0066cc;
@@ -99,7 +103,7 @@
                 width:11in;min-height:8.5in;margin:0!important;padding:.42in .45in .38in!important;
                 box-shadow:none!important;background:#fff!important;
             }
-            .header-table,.borrow-table,.form-box{break-inside:avoid;page-break-inside:avoid}
+            .institution-header,.header-table,.borrow-table,.form-box{break-inside:avoid;page-break-inside:avoid}
         }
     </style>
 </head>
@@ -118,6 +122,22 @@
     </div>
 
     <main class="sheet">
+        <header class="institution-header">
+            <img src="{{ asset('images/mmaci-academy-logo.png') }}" alt="Merchant Marine Academy of Caraga seal" class="school-logo">
+            <div class="institution-copy">
+                        <h1 class="school-name">Merchant Marine Academy of Caraga, Inc.</h1>
+
+                        <div class="school-address">
+                            North Montilla Boulevard, Brgy. Ong-Yiu, Butuan City, 8600<br>
+                            Tel. No.: (085) 817 0476 Mobile No.: (+63) 917 105 9644 (Globe)<br>
+                            E-mail Address: <span class="school-email">mmaci2018.bxu@gmail.com</span>
+                        </div>
+
+                        <h2 class="library-title">Library System</h2>
+                        <h3 class="card-title">{{ strtoupper($cardTitle) }}</h3>
+            </div>
+            <div class="institution-spacer" aria-hidden="true"></div>
+        </header>
         <table class="header-table">
             <tbody>
                 <tr>
@@ -129,21 +149,6 @@
                                 <tr><td class="label">Contact Number :</td><td class="value">{{ $borrower->contact_number ?: '' }}</td></tr>
                             </tbody>
                         </table>
-                    </td>
-
-                    <td class="header-center">
-                        <img src="{{ asset('images/logomml.webp') }}" alt="MMACI Logo" class="school-logo">
-
-                        <h1 class="school-name">Merchant Marine Academy of Caraga, Inc.</h1>
-
-                        <div class="school-address">
-                            North Montilla Boulevard, Brgy. Ong-Yiu, Butuan City, 8600<br>
-                            Tel. No.: (085) 817 0476 Mobile No.: (+63) 917 105 9644 (Globe)<br>
-                            E-mail Address: <span class="school-email">mmaci2018.bxu@gmail.com</span>
-                        </div>
-
-                        <h2 class="library-title">Library System</h2>
-                        <h3 class="card-title">{{ strtoupper($cardTitle) }}</h3>
                     </td>
 
                     <td class="header-right">
