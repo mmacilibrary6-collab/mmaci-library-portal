@@ -532,18 +532,22 @@ html {
 
 .hours-row strong {
     color: var(--service-ink);
-    font-size: 14px;
+    font-size: 16px;
+    font-weight: 800;
 }
 
 .hours-time {
     color: var(--service-navy);
-    font-size: 14px;
+    font-size: 20px;
     font-weight: 800;
+    letter-spacing: -0.02em;
+    white-space: nowrap;
 }
 
 .hours-time span {
-    padding: 0 5px;
+    padding: 0 8px;
     color: var(--service-gold);
+    font-size: 18px;
 }
 
 .status-closed {
@@ -1068,6 +1072,18 @@ html {
         justify-content: center;
         flex-direction: column;
         gap: 6px;
+    }
+
+    .hours-row strong {
+        font-size: 15px;
+    }
+
+    .hours-time {
+        font-size: 18px;
+    }
+
+    .hours-time span {
+        font-size: 16px;
     }
 
     .borrowing-stats {

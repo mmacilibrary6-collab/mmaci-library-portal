@@ -33,7 +33,6 @@
                         </p>
                     </div>
                 </div>
-
             </div>
 
             <form
@@ -46,6 +45,22 @@
                     <h3>Borrower Information</h3>
 
                     <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Borrower Type</label>
+                            <select name="borrower_type" class="form-select" required>
+                                <option value="" disabled {{ old('borrower_type') ? '' : 'selected' }}>
+                                    Select Borrower Type
+                                </option>
+                                <option value="student" {{ old('borrower_type') === 'student' ? 'selected' : '' }}>
+                                    Student
+                                </option>
+                                <option value="faculty" {{ old('borrower_type') === 'faculty' ? 'selected' : '' }}>
+                                    Faculty
+                                </option>
+                            </select>
+                            @error('borrower_type') <small class="text-danger">{{ $message }}</small> @enderror
+                        </div>
+
                         <div class="col-md-6">
                             <label class="form-label">Name</label>
                             <input type="text" name="name" class="form-control" value="{{ old('name') }}" required>
@@ -80,7 +95,7 @@
                             @error('semester') <small class="text-danger">{{ $message }}</small> @enderror
                         </div>
 
-                        <div class="col-md-6">
+                        <div class="col-12">
                             <label class="form-label">Email Address</label>
                             <input type="email" name="email" class="form-control" value="{{ old('email') }}">
                             @error('email') <small class="text-danger">{{ $message }}</small> @enderror
@@ -164,8 +179,7 @@
 
 .borrow-section {
     padding: 82px 0;
-    background:
-        linear-gradient(180deg, #eef4fb 0%, #f7f9fc 42%, #ffffff 100%);
+    background: linear-gradient(180deg, #eef4fb 0%, #f7f9fc 42%, #ffffff 100%);
 }
 
 .borrow-shell {
@@ -188,9 +202,7 @@
 .borrow-intro {
     position: sticky;
     top: 105px;
-    align-self: start;
     overflow: hidden;
-    padding: 0;
 }
 
 .intro-main {
@@ -217,7 +229,7 @@
     background: #f4b400;
     border-radius: 16px;
     font-size: 1.5rem;
-    box-shadow: 0 12px 24px rgba(244, 180, 0, .24);
+    box-shadow: 0 12px 24px rgba(244,180,0,.24);
 }
 
 .borrow-intro h2,
@@ -236,23 +248,6 @@
     margin: 0;
     color: #687589;
     line-height: 1.8;
-}
-
-.intro-note {
-    display: flex;
-    gap: 12px;
-    padding: 18px 30px 22px;
-    color: #53657c;
-    background: #f7fafd;
-    border-top: 1px solid #e4ebf3;
-    font-size: .9rem;
-    line-height: 1.65;
-}
-
-.intro-note i {
-    margin-top: 2px;
-    color: #1f8f62;
-    font-size: 1rem;
 }
 
 .borrow-form {
@@ -276,7 +271,6 @@
     font-weight: 700;
 }
 
-
 .form-control,
 .form-select {
     min-height: 48px;
@@ -290,7 +284,11 @@
 .form-control:focus,
 .form-select:focus {
     border-color: #7fa2c7;
-    box-shadow: 0 0 0 .2rem rgba(24, 75, 140, .10);
+    box-shadow: 0 0 0 .2rem rgba(24,75,140,.10);
+}
+
+textarea.form-control {
+    min-height: 100px;
 }
 
 .borrow-actions {
@@ -300,60 +298,20 @@
 }
 
 @media (max-width: 991.98px) {
-    .borrow-shell {
-        grid-template-columns: 1fr;
-    }
-
-    .borrow-intro {
-        position: static;
-    }
-
-    .intro-main {
-        display: flex;
-        gap: 18px;
-        align-items: flex-start;
-    }
-
-    .intro-icon {
-        flex: 0 0 56px;
-        margin-bottom: 0;
-    }
+    .borrow-shell { grid-template-columns: 1fr; }
+    .borrow-intro { position: static; }
+    .intro-main { display: flex; gap: 18px; align-items: flex-start; }
+    .intro-icon { flex: 0 0 56px; margin-bottom: 0; }
 }
 
 @media (max-width: 575.98px) {
-    .borrow-hero {
-        padding: 70px 0 58px;
-    }
-
-    .borrow-section {
-        padding: 42px 0;
-    }
-
-    .borrow-intro,
-    .borrow-form {
-        border-radius: 16px;
-    }
-
-    .intro-main {
-        display: block;
-        padding: 22px;
-    }
-
-    .intro-icon {
-        margin-bottom: 16px;
-    }
-
-    .intro-note {
-        padding: 16px 22px 18px;
-    }
-
-    .borrow-form {
-        padding: 22px;
-    }
-
-    .borrow-actions .btn {
-        width: 100%;
-    }
+    .borrow-hero { padding: 70px 0 58px; }
+    .borrow-section { padding: 42px 0; }
+    .borrow-intro, .borrow-form { border-radius: 16px; }
+    .intro-main { display: block; padding: 22px; }
+    .intro-icon { margin-bottom: 16px; }
+    .borrow-form { padding: 22px; }
+    .borrow-actions .btn { width: 100%; }
 }
 </style>
 @endpush
