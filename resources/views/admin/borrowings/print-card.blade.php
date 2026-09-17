@@ -44,9 +44,9 @@
         .header-left,.header-right{width:50%;vertical-align:bottom;padding-bottom:.04in!important}
         .header-left{padding-right:1in!important}
         .header-right{padding-left:1in!important}
-        .institution-header{width:100%;margin:0 0 .16in;text-align:center}
-        .institution-copy{width:100%;text-align:center}
-        .school-logo{width:.78in;height:.78in;display:block;margin:0 auto .08in;object-fit:contain}
+        .institution-header{display:grid;grid-template-columns:1fr max-content 1fr;align-items:center;column-gap:.16in;width:100%;min-height:1.12in;margin:0 0 .16in;text-align:center}
+        .institution-copy{grid-column:2;grid-row:1;text-align:center}
+        .school-logo{grid-column:1;grid-row:1;justify-self:end;width:1.12in;height:1.12in;display:block;margin:0;object-fit:contain}
         .school-name{margin:0;font-size:15pt;font-weight:700;line-height:1.12;text-transform:uppercase;text-decoration:underline;text-underline-offset:3px}
         .school-address{margin:.05in 0 .08in;font-family:Arial,sans-serif;font-size:8pt;line-height:1.25}
 
