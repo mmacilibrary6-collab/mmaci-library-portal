@@ -11,6 +11,11 @@
         $cardTitle = $cardType === 'faculty'
             ? "Faculty Borrower's Card"
             : "Student Borrower's Card";
+
+        $pages = $borrower->borrowings->chunk(5)->values();
+        if ($pages->isEmpty()) {
+            $pages = collect([collect()]);
+        }
     @endphp
 
     <meta charset="UTF-8">
@@ -93,10 +98,12 @@
         .form-table td{padding:.012in 0;vertical-align:top}
         .form-table .form-label{width:1.05in;padding-right:.08in;white-space:nowrap}
         .form-table .form-value{font-weight:700;white-space:nowrap}
+        .page-number{margin:.10in 0 0;text-align:right;font-size:9pt;color:#444}
         @media print{
             html,body{
-                width:11in;height:8.5in;margin:0!important;padding:0!important;background:#fff!important;
+                width:11in;margin:0!important;padding:0!important;background:#fff!important;
             }
+            .sheet+.sheet{break-before:page;page-break-before:always}
             .print-toolbar{display:none!important}
             .sheet{
                 width:11in;min-height:8.5in;margin:0!important;padding:.42in .45in .38in!important;
@@ -120,7 +127,9 @@
         </button>
     </div>
 
-    <main class="sheet">
+    <main>
+    @foreach($pages as $pageIndex => $rows)
+    <section class="sheet" aria-label="Borrower card page {{ $pageIndex + 1 }} of {{ $pages->count() }}">
         <header class="institution-header">
             <img src="{{ asset('images/mmaci-academy-logo.png') }}" alt="Merchant Marine Academy of Caraga seal" class="school-logo">
             <div class="institution-copy">
@@ -177,7 +186,6 @@
 
             <tbody>
                 @php
-                    $rows = $borrower->borrowings->take(5);
                     $emptyRows = max(0, 5 - $rows->count());
                 @endphp
 
@@ -213,6 +221,9 @@
                 </tbody>
             </table>
         </div>
+        <p class="page-number">Page {{ $pageIndex + 1 }} of {{ $pages->count() }}</p>
+    </section>
+    @endforeach
     </main>
 
     <script>
