@@ -35,6 +35,23 @@
                 </div>
             </div>
 
+            @if(session('success'))
+                <div class="borrow-alert borrow-alert-success">
+                    <i class="bi bi-check-circle"></i>
+                    <span>{{ session('success') }}</span>
+                </div>
+            @endif
+
+            @if($errors->any())
+                <div class="borrow-alert borrow-alert-error">
+                    <i class="bi bi-exclamation-circle"></i>
+                    <div>
+                        <strong>Please check the highlighted fields.</strong>
+                        <span>{{ $errors->first() }}</span>
+                    </div>
+                </div>
+            @endif
+
             <form
                 action="{{ route('more.borrow-books.store') }}"
                 method="POST"
@@ -47,7 +64,7 @@
                     <div class="row g-3">
                         <div class="col-md-6">
                             <label class="form-label">Borrower Type</label>
-                            <select name="borrower_type" class="form-select" required>
+                            <select name="borrower_type" class="form-select @error('borrower_type') is-invalid @enderror" required>
                                 <option value="" disabled {{ old('borrower_type') ? '' : 'selected' }}>
                                     Select Borrower Type
                                 </option>
@@ -63,31 +80,35 @@
 
                         <div class="col-md-6">
                             <label class="form-label">Name</label>
-                            <input type="text" name="name" class="form-control" value="{{ old('name') }}" required>
+                            <input type="text" name="name" class="form-control @error('name') is-invalid @enderror" value="{{ old('name') }}" autocomplete="name" required>
                             @error('name') <small class="text-danger">{{ $message }}</small> @enderror
                         </div>
 
                         <div class="col-md-6">
                             <label class="form-label">ID Number</label>
-                            <input type="text" name="id_number" class="form-control" value="{{ old('id_number') }}" required>
-                            @error('id_number') <small class="text-danger">{{ $message }}</small> @enderror
+                            <input type="text" name="id_number" class="form-control @error('id_number') is-invalid @enderror" value="{{ old('id_number') }}" autocomplete="off" required>
+                            @error('id_number')
+                                <small class="text-danger">{{ $message }}</small>
+                            @else
+                                <small class="field-hint">Use the same ID number if you have borrowed before.</small>
+                            @enderror
                         </div>
 
                         <div class="col-md-6">
                             <label class="form-label">Contact Number</label>
-                            <input type="text" name="contact_number" class="form-control" value="{{ old('contact_number') }}">
+                            <input type="text" name="contact_number" class="form-control @error('contact_number') is-invalid @enderror" value="{{ old('contact_number') }}" inputmode="tel" autocomplete="tel">
                             @error('contact_number') <small class="text-danger">{{ $message }}</small> @enderror
                         </div>
 
                         <div class="col-md-6">
                             <label class="form-label">Department</label>
-                            <input type="text" name="department" class="form-control" value="{{ old('department') }}" required>
+                            <input type="text" name="department" class="form-control @error('department') is-invalid @enderror" value="{{ old('department') }}" required>
                             @error('department') <small class="text-danger">{{ $message }}</small> @enderror
                         </div>
 
                         <div class="col-md-6">
                             <label class="form-label">Semester</label>
-                            <select name="semester" class="form-select" required>
+                            <select name="semester" class="form-select @error('semester') is-invalid @enderror" required>
                                 <option value="" disabled {{ old('semester') ? '' : 'selected' }}>Select Semester</option>
                                 <option value="1st" {{ old('semester') === '1st' ? 'selected' : '' }}>1st</option>
                                 <option value="2nd" {{ old('semester') === '2nd' ? 'selected' : '' }}>2nd</option>
@@ -97,7 +118,7 @@
 
                         <div class="col-12">
                             <label class="form-label">Email Address</label>
-                            <input type="email" name="email" class="form-control" value="{{ old('email') }}">
+                            <input type="email" name="email" class="form-control @error('email') is-invalid @enderror" value="{{ old('email') }}" autocomplete="email">
                             @error('email') <small class="text-danger">{{ $message }}</small> @enderror
                         </div>
                     </div>
@@ -112,7 +133,7 @@
                             <input
                                 type="text"
                                 name="accession_number"
-                                class="form-control"
+                                class="form-control @error('accession_number') is-invalid @enderror"
                                 value="{{ old('accession_number') }}"
                                 placeholder="e.g. 06734"
                                 required>
@@ -123,7 +144,7 @@
                             <label class="form-label">Bibliographical Description</label>
                             <textarea
                                 name="bibliographical_description"
-                                class="form-control"
+                                class="form-control @error('bibliographical_description') is-invalid @enderror"
                                 rows="3"
                                 placeholder="Enter book title, author, year, or other bibliographical details"
                                 required>{{ old('bibliographical_description') }}</textarea>
@@ -248,6 +269,58 @@
     margin: 0;
     color: #687589;
     line-height: 1.8;
+}
+
+.borrow-alert {
+    max-width: 1220px;
+    margin: 0 auto 18px;
+    padding: 14px 16px;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    border-radius: 14px;
+    font-size: .88rem;
+    line-height: 1.5;
+}
+
+.borrow-alert i {
+    margin-top: 2px;
+    font-size: 1rem;
+}
+
+.borrow-alert-success {
+    color: #17603f;
+    background: #edf9f3;
+    border: 1px solid #cfeadb;
+}
+
+.borrow-alert-error {
+    color: #9a3038;
+    background: #fff3f4;
+    border: 1px solid #efcfd3;
+}
+
+.borrow-alert-error strong,
+.borrow-alert-error span {
+    display: block;
+}
+
+.field-hint {
+    display: block;
+    margin-top: 5px;
+    color: #8a98a9;
+    font-size: .75rem;
+}
+
+.form-control.is-invalid,
+.form-select.is-invalid {
+    border-color: #dc6973;
+}
+
+.form-control.is-invalid:focus,
+.form-select.is-invalid:focus {
+    border-color: #dc6973;
+    box-shadow: 0 0 0 .2rem rgba(220,105,115,.12);
 }
 
 .borrow-form {
