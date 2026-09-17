@@ -38,6 +38,7 @@ class Borrowing extends Model
     ];
 
     protected $casts = [
+        'renewal_count' => 'integer',
         'date_borrowed' => 'date',
         'due_date' => 'date',
         'date_returned' => 'date',

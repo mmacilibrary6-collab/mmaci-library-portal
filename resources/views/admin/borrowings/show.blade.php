@@ -142,6 +142,11 @@
                     <span>Released By</span>
                     <strong>{{ $borrowing->released_by ?: '-' }}</strong>
                 </div>
+                <div class="transaction-card wide">
+                    <span>Borrowing Policy</span>
+                    <strong>{{ $borrowerType === 'faculty' ? '10 books · 1 calendar month per loan' : '3 books · 2 days per loan' }}</strong>
+                    <p class="mb-0 mt-2">Renewals used: {{ $borrowing->renewal_count ?? 0 }} / 2. Each renewal adds one loan period from the current due date, or today if overdue.</p>
+                </div>
             </div>
 
             <div class="record-actions">
@@ -170,6 +175,12 @@
                 @endif
 
                 @if(in_array($borrowing->status, ['borrowed', 'overdue'], true))
+                    <form method="POST" action="{{ route('admin.borrowings.renew', $borrowing) }}" onsubmit="return confirm('Extend this book’s due date by one loan period?');">
+                        @csrf
+                        @method('PATCH')
+                        <input type="hidden" name="renewal_count" value="{{ $borrowing->renewal_count ?? 0 }}">
+                        <button class="record-btn btn-outline" @disabled(($borrowing->renewal_count ?? 0) >= 2 || !$borrowing->due_date || $borrowing->date_returned)>Renew Book</button>
+                    </form>
                     <button type="button" class="record-btn btn-yellow" data-bs-toggle="modal" data-bs-target="#return-modal">
                         <i class="bi bi-arrow-return-left"></i> Record Return
                     </button>
@@ -209,6 +220,7 @@
                             <div class="alert alert-danger" role="alert"><ul class="mb-0">@foreach($errors->all() as $error)<li>{{ $error }}</li>@endforeach</ul></div>
                         @endif
                         <div class="row g-3 mb-3">
+                            <p class="text-muted mb-0">{{ $borrowerType === 'faculty' ? 'Maximum 10 books at a time; due within 1 calendar month.' : 'Maximum 3 books at a time; due within 2 days.' }}</p>
                             <div class="col-md-6">
                                 <label for="release-date" class="form-label">Date Borrowed</label>
                                 <input id="release-date" class="form-control" type="date" name="date_borrowed" value="{{ old('date_borrowed', now()->toDateString()) }}" max="{{ now()->toDateString() }}" required>
@@ -393,8 +405,28 @@
 @php($modalAction = $borrowing->status === 'approved' ? 'release' : (in_array($borrowing->status, ['borrowed', 'overdue'], true) ? 'return' : ''))
 <script>
 document.addEventListener('DOMContentLoaded', function () {
+    const start = document.getElementById('release-date');
+    const due = document.getElementById('release-due');
+    function updateDueDate(reset) {
+        if (!start || !due || !start.value) return;
+        const parts = start.value.split('-').map(Number);
+        const maximum = new Date(Date.UTC(parts[0], parts[1] - 1, parts[2]));
+        if (@json($borrowerType === 'faculty')) {
+            maximum.setUTCDate(1);
+            maximum.setUTCMonth(maximum.getUTCMonth() + 1);
+            const lastDay = new Date(Date.UTC(maximum.getUTCFullYear(), maximum.getUTCMonth() + 1, 0)).getUTCDate();
+            maximum.setUTCDate(Math.min(parts[2], lastDay));
+        } else {
+            maximum.setUTCDate(maximum.getUTCDate() + 2);
+        }
+        due.min = start.value;
+        due.max = maximum.toISOString().slice(0, 10);
+        if (reset || !due.value) due.value = due.max;
+    }
+    start?.addEventListener('change', function () { updateDueDate(true); });
+    updateDueDate(false);
     const action = window.location.hash.slice(1);
-    const hasErrors = @json($errors->any());
+    const hasErrors = @json($errors->any() && !$errors->has('renewal') && !$errors->has('renewal_count'));
     const currentAction = @json($modalAction);
     const target = document.getElementById((hasErrors ? currentAction : action) + '-modal');
     if (target && (hasErrors || ['release', 'return'].includes(action))) {

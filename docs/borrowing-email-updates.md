@@ -15,6 +15,25 @@ reminder after that date. Each reminder is tracked per loan and due date.
 Returned books, unreleased requests, and obsolete reminders are skipped.
 Dates use the application's configured timezone (`config/app.php`).
 
+## Borrowing limits and renewals
+
+Students may have 3 released, unreturned books at once, for up to 2 days per loan.
+Faculty may have 10, for up to 1 calendar month per loan. Month-end dates clamp to
+the final day of the following month. Overdue loans count toward the book limit;
+pending, approved, returned, and rejected requests do not. Capacity is checked
+when submitting a request, approving it, and releasing the book. Release checks
+hold a borrower row lock so concurrent releases cannot exceed the limit.
+
+Staff can use **Renew Book** on a released record up to twice. Each renewal adds
+one loan period to the current due date, or to today if overdue. Repeated stale
+submissions cannot consume another renewal. The existing reminder process skips
+obsolete reminders and uses the new due date. Loan dates cannot be edited after
+release; use the renewal action instead. Borrower classification cannot change
+while the borrower has active loans. Fines are handled outside this system.
+
+The renewal-count migration must be deployed before using Renew Book. Existing
+records start at zero because the system previously had no renewal history.
+
 ## Deployment
 
 Run the database migrations before using the updated forms:

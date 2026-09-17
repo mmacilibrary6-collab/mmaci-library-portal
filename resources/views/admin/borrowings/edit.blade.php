@@ -152,15 +152,18 @@
                     <input type="date"
                            class="form-control @error('date_borrowed') is-invalid @enderror"
                            name="date_borrowed"
+                           @readonly(in_array($borrowing->status, ['borrowed', 'overdue'], true))
                            value="{{ old('date_borrowed', optional($borrowing->date_borrowed)->toDateString()) }}">
                     @error('date_borrowed')<div class="invalid-feedback">{{ $message }}</div>@enderror
                 </div>
 
                 <div class="col-md-4">
                     <label class="form-label">Due Date</label>
+                    @if(in_array($borrowing->status, ['borrowed', 'overdue'], true))<p class="small text-muted">Use Renew Book on the record page to extend this date (maximum 2 renewals).</p>@endif
                     <input type="date"
                            class="form-control @error('due_date') is-invalid @enderror"
                            name="due_date"
+                           @readonly(in_array($borrowing->status, ['borrowed', 'overdue'], true))
                            value="{{ old('due_date', optional($borrowing->due_date)->toDateString()) }}">
                     @error('due_date')<div class="invalid-feedback">{{ $message }}</div>@enderror
                 </div>

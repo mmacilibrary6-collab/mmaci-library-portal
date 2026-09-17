@@ -7,6 +7,8 @@ use App\Models\Borrower;
 use App\Models\Borrowing;
 use App\Models\NewArrival;
 use App\Services\BorrowingEmails;
+use App\Services\BorrowingPolicy;
+use Illuminate\Validation\ValidationException;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -102,10 +104,27 @@ class BorrowingController extends Controller
         }
 
         DB::transaction(function () use ($validated, $borrowing): void {
-            $borrower = $borrowing->borrower;
+            $borrower = Borrower::whereKey($borrowing->borrower_id)->lockForUpdate()->first();
+            $borrowing = Borrowing::whereKey($borrowing->id)->lockForUpdate()->firstOrFail();
 
             if (! $borrower) {
                 abort(422, 'This borrowing record has no borrower attached.');
+            }
+
+            if ($validated['status'] !== $borrowing->status) {
+                throw ValidationException::withMessages(['status' => 'This record changed. Reload it before editing.']);
+            }
+            if ($validated['borrower_type'] !== $borrower->borrower_type && $borrower->borrowings()->whereIn('status', ['borrowed', 'overdue'])->whereNull('date_returned')->exists()) {
+                throw ValidationException::withMessages(['borrower_type' => 'Return active loans before changing the borrower type.']);
+            }
+            if (in_array($borrowing->status, ['borrowed', 'overdue'], true)) {
+                foreach (['date_borrowed', 'due_date'] as $field) {
+                    if (\Illuminate\Support\Carbon::parse($validated[$field])->toDateString() !== $borrowing->{$field}?->toDateString()) {
+                        throw ValidationException::withMessages([$field => 'Loan dates are locked after release. Use Renew Book to extend the due date.']);
+                    }
+                }
+            } elseif (in_array($borrowing->status, ['pending', 'approved'], true) && filled($validated['date_borrowed'] ?? null) && filled($validated['due_date'] ?? null)) {
+                BorrowingPolicy::assertDates($validated['borrower_type'], $validated['date_borrowed'], $validated['due_date']);
             }
 
             $borrower->update([
@@ -199,6 +218,13 @@ class BorrowingController extends Controller
         }
 
         DB::transaction(function () use ($borrowing, $validated): void {
+            $borrower = Borrower::whereKey($borrowing->borrower_id)->lockForUpdate()->firstOrFail();
+            $borrowing = Borrowing::whereKey($borrowing->id)->lockForUpdate()->firstOrFail();
+            if ($borrowing->status !== Borrowing::STATUS_APPROVED) {
+                throw ValidationException::withMessages(['status' => 'This request is no longer awaiting release. Reload the record.']);
+            }
+            BorrowingPolicy::assertCapacity($borrower);
+            BorrowingPolicy::assertDates((string) $borrower->borrower_type, $validated['date_borrowed'], $validated['due_date']);
             $borrowing->update($validated + [
                 'status' => Borrowing::STATUS_BORROWED,
                 'received_by' => $borrowing->borrower?->name,
@@ -208,6 +234,32 @@ class BorrowingController extends Controller
         });
 
         return back()->with('success', 'Book released. Loan dates and releasing staff have been saved.');
+    }
+
+    public function renew(Request $request, Borrowing $borrowing): RedirectResponse
+    {
+        $validated = $request->validate(['renewal_count' => ['required', 'integer', 'min:0']]);
+        DB::transaction(function () use ($borrowing, $validated): void {
+            $borrower = Borrower::whereKey($borrowing->borrower_id)->lockForUpdate()->firstOrFail();
+            $borrowing = Borrowing::whereKey($borrowing->id)->lockForUpdate()->firstOrFail();
+            if (! in_array($borrowing->status, ['borrowed', 'overdue'], true) || $borrowing->date_returned || ! $borrowing->due_date) {
+                throw ValidationException::withMessages(['renewal' => 'Only an unreturned, released book can be renewed.']);
+            }
+            if ($borrowing->renewal_count >= 2) {
+                throw ValidationException::withMessages(['renewal' => 'This book has already been renewed twice. Please return it.']);
+            }
+            if ((int) $validated['renewal_count'] !== $borrowing->renewal_count) {
+                throw ValidationException::withMessages(['renewal' => 'This record has already changed. Reload before renewing again.']);
+            }
+            $renewalStart = $borrowing->due_date->lt(today()) ? today() : $borrowing->due_date;
+            $borrowing->forceFill([
+                'due_date' => BorrowingPolicy::dueDate((string) $borrower->borrower_type, $renewalStart->toDateString()),
+                'renewal_count' => $borrowing->renewal_count + 1,
+                'status' => Borrowing::STATUS_BORROWED,
+            ])->save();
+        });
+
+        return back()->with('success', 'Book renewed. The due date has been extended by one loan period.');
     }
 
     public function markReturned(Request $request, Borrowing $borrowing): RedirectResponse
@@ -326,6 +378,14 @@ class BorrowingController extends Controller
 
         $emails = app(BorrowingEmails::class);
         $emailUpdate = DB::transaction(function () use ($borrowing, $status, $emails) {
+            $borrower = Borrower::whereKey($borrowing->borrower_id)->lockForUpdate()->firstOrFail();
+            $borrowing = Borrowing::whereKey($borrowing->id)->lockForUpdate()->firstOrFail();
+            if ($borrowing->status !== Borrowing::STATUS_PENDING) {
+                throw ValidationException::withMessages(['status' => 'This request is no longer pending. Reload the record.']);
+            }
+            if ($status === Borrowing::STATUS_APPROVED) {
+                BorrowingPolicy::assertCapacity($borrower);
+            }
             $borrowing->update([
                 'status' => $status,
                 'approved_by' => in_array(

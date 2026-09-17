@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Borrower;
 use App\Models\Borrowing;
+use App\Services\BorrowingPolicy;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -176,7 +177,7 @@ class BorrowBookController extends Controller
 
             if ($existingBorrower) {
 
-                $borrower = $existingBorrower;
+                $borrower = Borrower::whereKey($existingBorrower->id)->lockForUpdate()->firstOrFail();
 
                 /*
                  * Keep the same borrower record but refresh information that
@@ -259,6 +260,8 @@ class BorrowBookController extends Controller
                         'You already have an active request or borrowing record for this book.',
                 ]);
             }
+
+            BorrowingPolicy::assertCapacity($borrower);
 
             Borrowing::create([
                 'borrower_id' => $borrower->id,

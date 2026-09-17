@@ -666,6 +666,8 @@ Route::prefix('admin')
             [BorrowingController::class, 'markReturned']
         )->name('borrowings.returned');
 
+        Route::patch('borrowings/{borrowing}/renew', [BorrowingController::class, 'renew'])->name('borrowings.renew');
+
         Route::patch(
             'borrowings/{borrowing}/reject',
             [BorrowingController::class, 'reject']
