@@ -25,8 +25,8 @@ return new class extends Migration
             $table->foreignId('new_arrival_id')->nullable()->constrained('new_arrivals')->nullOnDelete();
             $table->string('accession_number', 100);
             $table->text('bibliographical_description');
-            $table->date('date_borrowed');
-            $table->date('due_date');
+            $table->date('date_borrowed')->nullable();
+            $table->date('due_date')->nullable();
             $table->date('date_returned')->nullable();
             $table->string('status', 30)->default('pending');
             $table->string('received_by')->nullable();

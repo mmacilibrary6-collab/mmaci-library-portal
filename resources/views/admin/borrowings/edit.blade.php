@@ -32,20 +32,15 @@
             <div class="row g-3">
                 <div class="col-lg-4">
                     <label class="form-label">Accession Number</label>
-                    <select name="accession_number" id="editBorrowAccession" class="form-select" required>
-                        @foreach($books as $book)
-                            @php
-                                $description = collect([$book->title, filled($book->author) ? 'by '.$book->author : null, $book->publisher, $book->publication_year])->filter()->implode(' ');
-                            @endphp
-                            <option value="{{ $book->accession_number }}" data-description="{{ $description }}" @selected(old('accession_number', $borrowing->accession_number) === $book->accession_number)>
-                                {{ $book->accession_number }} — {{ $book->title }}
-                            </option>
-                        @endforeach
-                    </select>
+                    <input
+                        class="form-control"
+                        name="accession_number"
+                        value="{{ old('accession_number', $borrowing->accession_number) }}"
+                        required>
                 </div>
-                <div class="col-lg-8"><label class="form-label">Bibliographical Description of Book</label><input id="editBorrowDescription" class="form-control" name="bibliographical_description" value="{{ old('bibliographical_description', $borrowing->bibliographical_description) }}" required></div>
-                <div class="col-md-4"><label class="form-label">Date Borrowed</label><input type="date" class="form-control" name="date_borrowed" value="{{ old('date_borrowed', optional($borrowing->date_borrowed)->toDateString()) }}" required></div>
-                <div class="col-md-4"><label class="form-label">Due Date</label><input type="date" class="form-control" name="due_date" value="{{ old('due_date', optional($borrowing->due_date)->toDateString()) }}" required></div>
+                <div class="col-lg-8"><label class="form-label">Bibliographical Description of Book</label><textarea class="form-control" name="bibliographical_description" rows="3" required>{{ old('bibliographical_description', $borrowing->bibliographical_description) }}</textarea></div>
+                <div class="col-md-4"><label class="form-label">Date Borrowed</label><input type="date" class="form-control" name="date_borrowed" value="{{ old('date_borrowed', optional($borrowing->date_borrowed)->toDateString()) }}"></div>
+                <div class="col-md-4"><label class="form-label">Due Date</label><input type="date" class="form-control" name="due_date" value="{{ old('due_date', optional($borrowing->due_date)->toDateString()) }}"></div>
                 <div class="col-md-4"><label class="form-label">Date Returned</label><input type="date" class="form-control" name="date_returned" value="{{ old('date_returned', optional($borrowing->date_returned)->toDateString()) }}"></div>
                 <div class="col-md-4">
                     <label class="form-label">Status</label>
@@ -90,19 +85,4 @@
 .edit-actions { margin-top:26px; display:flex; justify-content:flex-end; }
 @media (max-width:767.98px){ .borrowing-edit-page{padding:16px 10px;} .edit-header{align-items:flex-start; flex-direction:column;} .edit-form{padding:22px;} .edit-actions .btn{width:100%;} }
 </style>
-@endpush
-
-@push('scripts')
-<script>
-document.addEventListener('DOMContentLoaded', function () {
-    const select = document.getElementById('editBorrowAccession');
-    const description = document.getElementById('editBorrowDescription');
-    select?.addEventListener('change', function () {
-        const selected = select.options[select.selectedIndex];
-        if (description && selected?.dataset?.description) {
-            description.value = selected.dataset.description;
-        }
-    });
-});
-</script>
 @endpush

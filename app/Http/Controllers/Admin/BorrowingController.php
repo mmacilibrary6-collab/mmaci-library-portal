@@ -65,26 +65,28 @@ class BorrowingController extends Controller
 
     public function edit(Borrowing $borrowing): View
     {
-        $books = NewArrival::query()
-            ->whereNotNull('accession_number')
-            ->orderBy('title')
-            ->get();
-
-        return view('admin.borrowings.edit', compact('borrowing', 'books'));
+        return view('admin.borrowings.edit', compact('borrowing'));
     }
 
     public function update(Request $request, Borrowing $borrowing): RedirectResponse
     {
         $validated = $this->validateBorrowing($request, $borrowing);
-        $book = NewArrival::where('accession_number', $validated['accession_number'])->firstOrFail();
 
-        if ($this->bookHasAnotherActiveLoan($book->accession_number, $borrowing)) {
+        $dateError = $this->borrowingDateError($validated);
+
+        if ($dateError !== null) {
+            return back()
+                ->withInput()
+                ->withErrors($dateError);
+        }
+
+        if ($this->bookHasAnotherActiveLoan($validated['accession_number'], $borrowing)) {
             return back()
                 ->withInput()
                 ->withErrors(['accession_number' => 'This book already has another active borrowing transaction.']);
         }
 
-        DB::transaction(function () use ($validated, $borrowing, $book): void {
+        DB::transaction(function () use ($validated, $borrowing): void {
             $borrower = $borrowing->borrower;
             $borrower->update([
                 'name' => trim($validated['name']),
@@ -98,11 +100,11 @@ class BorrowingController extends Controller
             $oldBookId = $borrowing->new_arrival_id;
 
             $borrowing->update([
-                'new_arrival_id' => $book->id,
-                'accession_number' => $book->accession_number,
+                'new_arrival_id' => null,
+                'accession_number' => trim($validated['accession_number']),
                 'bibliographical_description' => $validated['bibliographical_description'],
-                'date_borrowed' => $validated['date_borrowed'],
-                'due_date' => $validated['due_date'],
+                'date_borrowed' => $validated['date_borrowed'] ?? null,
+                'due_date' => $validated['due_date'] ?? null,
                 'date_returned' => $validated['date_returned'] ?? null,
                 'status' => $validated['status'],
                 'received_by' => filled($validated['received_by'] ?? null) ? trim($validated['received_by']) : null,
@@ -125,6 +127,10 @@ class BorrowingController extends Controller
 
     public function markBorrowed(Borrowing $borrowing): RedirectResponse
     {
+        if (blank($borrowing->date_borrowed) || blank($borrowing->due_date)) {
+            return back()->with('error', 'Add the date borrowed and due date before marking this request as borrowed.');
+        }
+
         if ($this->bookHasAnotherActiveLoan($borrowing->accession_number, $borrowing)) {
             return back()->with('error', 'This book already has another active borrowing transaction.');
         }
@@ -225,11 +231,11 @@ class BorrowingController extends Controller
             'department' => ['required', 'string', 'max:150'],
             'semester' => ['nullable', 'string', 'max:100'],
             'email' => ['nullable', 'email', 'max:255'],
-            'accession_number' => ['required', 'string', 'max:100', Rule::exists('new_arrivals', 'accession_number')],
+            'accession_number' => ['required', 'string', 'max:100'],
             'bibliographical_description' => ['required', 'string'],
-            'date_borrowed' => ['required', 'date'],
-            'due_date' => ['required', 'date', 'after_or_equal:date_borrowed'],
-            'date_returned' => ['nullable', 'date', 'after_or_equal:date_borrowed'],
+            'date_borrowed' => ['nullable', 'date'],
+            'due_date' => ['nullable', 'date'],
+            'date_returned' => ['nullable', 'date'],
             'status' => ['required', Rule::in([
                 Borrowing::STATUS_PENDING,
                 Borrowing::STATUS_APPROVED,
@@ -242,6 +248,38 @@ class BorrowingController extends Controller
             'returned_by' => ['nullable', 'string', 'max:255'],
             'remarks' => ['nullable', 'string', 'max:2000'],
         ]);
+    }
+
+    private function borrowingDateError(array $validated): ?array
+    {
+        $dateBorrowed = $validated['date_borrowed'] ?? null;
+        $dueDate = $validated['due_date'] ?? null;
+        $dateReturned = $validated['date_returned'] ?? null;
+        $status = $validated['status'];
+
+        if (
+            in_array($status, [Borrowing::STATUS_BORROWED, Borrowing::STATUS_OVERDUE], true) &&
+            (blank($dateBorrowed) || blank($dueDate))
+        ) {
+            return ['date_borrowed' => 'Date borrowed and due date are required before marking a request as borrowed or overdue.'];
+        }
+
+        if (
+            $status === Borrowing::STATUS_RETURNED &&
+            (blank($dateBorrowed) || blank($dueDate) || blank($dateReturned))
+        ) {
+            return ['date_returned' => 'Date borrowed, due date, and date returned are required before marking a request as returned.'];
+        }
+
+        if (filled($dateBorrowed) && filled($dueDate) && $dueDate < $dateBorrowed) {
+            return ['due_date' => 'The due date cannot be earlier than the date borrowed.'];
+        }
+
+        if (filled($dateBorrowed) && filled($dateReturned) && $dateReturned < $dateBorrowed) {
+            return ['date_returned' => 'The return date cannot be earlier than the date borrowed.'];
+        }
+
+        return null;
     }
 
     private function bookHasAnotherActiveLoan(string $accessionNumber, Borrowing $borrowing): bool

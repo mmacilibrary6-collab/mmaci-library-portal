@@ -4,39 +4,16 @@ namespace App\Http\Controllers;
 
 use App\Models\Borrower;
 use App\Models\Borrowing;
-use App\Models\NewArrival;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Validation\Rule;
 use Illuminate\View\View;
 
 class BorrowBookController extends Controller
 {
     public function create(): View
     {
-        $books = NewArrival::query()
-            ->whereNotNull('accession_number')
-            ->where('accession_number', '!=', '')
-            ->where(function ($query) {
-                $query
-                    ->whereNull('availability_status')
-                    ->orWhere('availability_status', 'available');
-            })
-            ->whereDoesntHave('borrowings', function ($query) {
-                $query
-                    ->whereIn('status', [
-                        Borrowing::STATUS_PENDING,
-                        Borrowing::STATUS_APPROVED,
-                        Borrowing::STATUS_BORROWED,
-                        Borrowing::STATUS_OVERDUE,
-                    ])
-                    ->whereNull('date_returned');
-            })
-            ->orderBy('title')
-            ->get();
-
-        return view('more.borrow-books.create', compact('books'));
+        return view('more.borrow-books.create');
     }
 
     public function store(Request $request): RedirectResponse
@@ -52,33 +29,11 @@ class BorrowBookController extends Controller
                 'required',
                 'string',
                 'max:100',
-                Rule::exists('new_arrivals', 'accession_number'),
             ],
-            'date_borrowed' => ['required', 'date'],
-            'due_date' => ['required', 'date', 'after_or_equal:date_borrowed'],
-            'remarks' => ['nullable', 'string', 'max:2000'],
-        ], [
-            'accession_number.exists' => 'Please select a valid book accession number from the catalog.',
-            'due_date.after_or_equal' => 'The due date cannot be earlier than the date borrowed.',
+            'bibliographical_description' => ['required', 'string', 'max:2000'],
         ]);
 
-        $book = NewArrival::query()
-            ->where('accession_number', $validated['accession_number'])
-            ->firstOrFail();
-
-        if (($book->availability_status ?? 'available') !== 'available') {
-            return back()
-                ->withInput()
-                ->withErrors(['accession_number' => 'This book is currently unavailable for borrowing.']);
-        }
-
-        if (Borrowing::activeForBook($validated['accession_number'])->exists()) {
-            return back()
-                ->withInput()
-                ->withErrors(['accession_number' => 'This book already has an active borrowing request or loan.']);
-        }
-
-        DB::transaction(function () use ($validated, $book): void {
+        DB::transaction(function () use ($validated): void {
             $borrower = Borrower::updateOrCreate(
                 ['id_number' => trim($validated['id_number'])],
                 [
@@ -92,28 +47,15 @@ class BorrowBookController extends Controller
 
             Borrowing::create([
                 'borrower_id' => $borrower->id,
-                'new_arrival_id' => $book->id,
-                'accession_number' => $book->accession_number,
-                'bibliographical_description' => $this->bibliographicalDescription($book),
-                'date_borrowed' => $validated['date_borrowed'],
-                'due_date' => $validated['due_date'],
+                'new_arrival_id' => null,
+                'accession_number' => trim($validated['accession_number']),
+                'bibliographical_description' => trim($validated['bibliographical_description']),
                 'status' => Borrowing::STATUS_PENDING,
-                'remarks' => filled($validated['remarks'] ?? null) ? trim($validated['remarks']) : null,
             ]);
         });
 
         return redirect()
             ->route('more.borrow-books')
             ->with('success', 'Your borrowing request was submitted. Please wait for library approval.');
-    }
-
-    private function bibliographicalDescription(NewArrival $book): string
-    {
-        return collect([
-            $book->title,
-            $book->author ? 'by '.$book->author : null,
-            $book->publisher,
-            $book->publication_year,
-        ])->filter()->implode(' ');
     }
 }

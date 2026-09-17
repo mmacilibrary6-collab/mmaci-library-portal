@@ -8,8 +8,8 @@
         <span class="borrow-eyebrow">Library Circulation</span>
         <h1>Borrow Books</h1>
         <p>
-            Borrow books from the MMACI Library and keep track of your borrowed
-            materials and due dates.
+            Request books from the MMACI Library. Library staff will review your
+            request and complete the official borrowing details.
         </p>
     </div>
 </section>
@@ -18,15 +18,30 @@
     <div class="container">
         <div class="borrow-shell">
             <div class="borrow-intro">
-                <span class="intro-icon">
-                    <i class="bi bi-journal-check"></i>
-                </span>
-                <h2>Borrowing Request</h2>
-                <p>
-                    Select an available accession number and complete the
-                    borrower details. Library staff will review the request
-                    before release.
-                </p>
+                <div class="intro-main">
+                    <span class="intro-icon">
+                        <i class="bi bi-journal-check"></i>
+                    </span>
+
+                    <div>
+                        <span class="intro-eyebrow">Request Guide</span>
+                        <h2>Borrowing Request</h2>
+                        <p>
+                            Fill in your borrower information and the book details
+                            you want to request. Library staff will review and
+                            process the borrowing dates after approval.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="intro-note">
+                    <i class="bi bi-shield-check"></i>
+                        <span>
+                        Submit the book details you want to borrow. Library staff
+                        will verify the request and fill in borrowing dates on the
+                        admin side.
+                    </span>
+                </div>
             </div>
 
             <form
@@ -78,65 +93,30 @@
                 </div>
 
                 <div class="form-block">
-                    <h3>Book Information</h3>
+                    <h3>Requested Book Information</h3>
 
                     <div class="row g-3">
                         <div class="col-lg-4">
                             <label class="form-label">Accession Number</label>
-                            <select
+                            <input
+                                type="text"
                                 name="accession_number"
-                                id="borrowAccession"
-                                class="form-select"
+                                class="form-control"
+                                value="{{ old('accession_number') }}"
+                                placeholder="e.g. 06734"
                                 required>
-                                <option value="">Select available book</option>
-                                @foreach($books as $book)
-                                    @php
-                                        $description = collect([
-                                            $book->title,
-                                            filled($book->author) ? 'by '.$book->author : null,
-                                            $book->publisher,
-                                            $book->publication_year,
-                                        ])->filter()->implode(' ');
-                                    @endphp
-                                    <option
-                                        value="{{ $book->accession_number }}"
-                                        data-title="{{ $book->title }}"
-                                        data-description="{{ $description }}"
-                                        @selected(old('accession_number') === $book->accession_number)>
-                                        {{ $book->accession_number }} — {{ $book->title }}
-                                    </option>
-                                @endforeach
-                            </select>
                             @error('accession_number') <small class="text-danger">{{ $message }}</small> @enderror
                         </div>
 
                         <div class="col-lg-8">
-                            <label class="form-label">Book Title / Bibliographical Description</label>
-                            <input
-                                type="text"
-                                id="borrowBookDescription"
+                            <label class="form-label">Bibliographical Description</label>
+                            <textarea
+                                name="bibliographical_description"
                                 class="form-control"
-                                value=""
-                                placeholder="Book information appears after selecting an accession number"
-                                readonly>
-                        </div>
-
-                        <div class="col-md-6">
-                            <label class="form-label">Date Borrowed</label>
-                            <input type="date" name="date_borrowed" class="form-control" value="{{ old('date_borrowed', now()->toDateString()) }}" required>
-                            @error('date_borrowed') <small class="text-danger">{{ $message }}</small> @enderror
-                        </div>
-
-                        <div class="col-md-6">
-                            <label class="form-label">Due Date</label>
-                            <input type="date" name="due_date" class="form-control" value="{{ old('due_date') }}" required>
-                            @error('due_date') <small class="text-danger">{{ $message }}</small> @enderror
-                        </div>
-
-                        <div class="col-12">
-                            <label class="form-label">Remarks</label>
-                            <textarea name="remarks" class="form-control" rows="4" placeholder="Optional notes for the librarian">{{ old('remarks') }}</textarea>
-                            @error('remarks') <small class="text-danger">{{ $message }}</small> @enderror
+                                rows="3"
+                                placeholder="Enter book title, author, year, or other bibliographical details"
+                                required>{{ old('bibliographical_description') }}</textarea>
+                            @error('bibliographical_description') <small class="text-danger">{{ $message }}</small> @enderror
                         </div>
                     </div>
                 </div>
@@ -187,39 +167,61 @@
 }
 
 .borrow-section {
-    padding: 72px 0;
-    background: #f4f7fb;
+    padding: 82px 0;
+    background:
+        linear-gradient(180deg, #eef4fb 0%, #f7f9fc 42%, #ffffff 100%);
 }
 
 .borrow-shell {
     display: grid;
-    grid-template-columns: 320px minmax(0, 1fr);
-    gap: 24px;
+    grid-template-columns: minmax(260px, 360px) minmax(0, 1fr);
+    align-items: start;
+    gap: 26px;
+    max-width: 1220px;
+    margin: 0 auto;
 }
 
 .borrow-intro,
 .borrow-form {
     background: #fff;
     border: 1px solid #dfe7f0;
-    border-radius: 20px;
-    box-shadow: 0 18px 40px rgba(11,46,89,.08);
+    border-radius: 22px;
+    box-shadow: 0 18px 44px rgba(11,46,89,.09);
 }
 
 .borrow-intro {
+    position: sticky;
+    top: 105px;
     align-self: start;
-    padding: 28px;
+    overflow: hidden;
+    padding: 0;
+}
+
+.intro-main {
+    padding: 30px;
+}
+
+.intro-eyebrow {
+    display: block;
+    margin-bottom: 8px;
+    color: #184b8c;
+    font-size: .72rem;
+    font-weight: 800;
+    letter-spacing: .11em;
+    text-transform: uppercase;
 }
 
 .intro-icon {
-    width: 58px;
-    height: 58px;
+    width: 56px;
+    height: 56px;
     display: grid;
     place-items: center;
-    margin-bottom: 18px;
+    margin-bottom: 20px;
     color: #0b2e59;
     background: #f4b400;
-    border-radius: 18px;
+    border-radius: 16px;
     font-size: 1.5rem;
+    box-shadow: 0 12px 24px rgba(244, 180, 0, .24);
 }
 
 .borrow-intro h2,
@@ -228,14 +230,37 @@
     font-weight: 800;
 }
 
+.borrow-intro h2 {
+    margin-bottom: 12px;
+    font-size: clamp(1.8rem, 3vw, 2.2rem);
+    line-height: 1.12;
+}
+
 .borrow-intro p {
     margin: 0;
     color: #687589;
     line-height: 1.8;
 }
 
+.intro-note {
+    display: flex;
+    gap: 12px;
+    padding: 18px 30px 22px;
+    color: #53657c;
+    background: #f7fafd;
+    border-top: 1px solid #e4ebf3;
+    font-size: .9rem;
+    line-height: 1.65;
+}
+
+.intro-note i {
+    margin-top: 2px;
+    color: #1f8f62;
+    font-size: 1rem;
+}
+
 .borrow-form {
-    padding: 28px;
+    padding: 30px;
 }
 
 .form-block + .form-block {
@@ -246,7 +271,7 @@
 
 .form-block h3 {
     margin-bottom: 18px;
-    font-size: 1.1rem;
+    font-size: 1.15rem;
 }
 
 .form-label {
@@ -265,6 +290,21 @@
     .borrow-shell {
         grid-template-columns: 1fr;
     }
+
+    .borrow-intro {
+        position: static;
+    }
+
+    .intro-main {
+        display: flex;
+        gap: 18px;
+        align-items: flex-start;
+    }
+
+    .intro-icon {
+        flex: 0 0 56px;
+        margin-bottom: 0;
+    }
 }
 
 @media (max-width: 575.98px) {
@@ -273,13 +313,29 @@
     }
 
     .borrow-section {
-        padding: 48px 0;
+        padding: 42px 0;
     }
 
     .borrow-intro,
     .borrow-form {
-        padding: 22px;
         border-radius: 16px;
+    }
+
+    .intro-main {
+        display: block;
+        padding: 22px;
+    }
+
+    .intro-icon {
+        margin-bottom: 16px;
+    }
+
+    .intro-note {
+        padding: 16px 22px 18px;
+    }
+
+    .borrow-form {
+        padding: 22px;
     }
 
     .borrow-actions .btn {
@@ -287,23 +343,4 @@
     }
 }
 </style>
-@endpush
-
-@push('scripts')
-<script>
-document.addEventListener('DOMContentLoaded', function () {
-    const accession = document.getElementById('borrowAccession');
-    const description = document.getElementById('borrowBookDescription');
-
-    function updateBookDescription() {
-        if (!accession || !description) return;
-
-        const selected = accession.options[accession.selectedIndex];
-        description.value = selected?.dataset?.description || '';
-    }
-
-    accession?.addEventListener('change', updateBookDescription);
-    updateBookDescription();
-});
-</script>
 @endpush
