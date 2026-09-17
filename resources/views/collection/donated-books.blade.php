@@ -1413,6 +1413,8 @@ document.addEventListener(
 
 </script>
 
+@include('components.lisa-chatbox')
+
 @endsection
 
 @push('styles')
