@@ -147,6 +147,10 @@
                     @error('bibliographical_description')<div class="invalid-feedback">{{ $message }}</div>@enderror
                 </div>
 
+                <div class="col-12">
+                    <div class="loan-dates-panel">
+                        <div class="loan-dates-heading"><i class="bi bi-calendar3" aria-hidden="true"></i> Loan dates</div>
+                        <div class="row g-3">
                 <div class="col-md-4">
                     <label class="form-label">Date Borrowed</label>
                     <input type="date"
@@ -159,7 +163,6 @@
 
                 <div class="col-md-4">
                     <label class="form-label">Due Date</label>
-                    @if(in_array($borrowing->status, ['borrowed', 'overdue'], true))<p class="small text-muted">Use Renew Book on the record page to extend this date (maximum 2 renewals).</p>@endif
                     <input type="date"
                            class="form-control @error('due_date') is-invalid @enderror"
                            name="due_date"
@@ -177,10 +180,20 @@
                     @error('date_returned')<div class="invalid-feedback">{{ $message }}</div>@enderror
                 </div>
 
+                        </div>
+                        @if(in_array($borrowing->status, ['borrowed', 'overdue'], true))
+                            <div class="loan-dates-note">
+                                <i class="bi bi-lock" aria-hidden="true"></i>
+                                <p>Loan dates are locked after release. <a href="{{ route('admin.borrowings.show', $borrowing) }}">Renew this book</a> to extend the due date, up to 2 times.</p>
+                            </div>
+                        @endif
+                    </div>
+                </div>
+
                 <div class="col-md-4">
                     <label class="form-label">Status <span>*</span></label>
                     <input type="hidden" name="status" value="{{ $borrowing->status }}">
-                    <div class="form-control">{{ ucfirst($borrowing->status) }}</div>
+                    <div class="form-control status-display"><span class="status-indicator" aria-hidden="true"></span>{{ ucfirst($borrowing->status) }}</div>
                     @error('status')<div class="invalid-feedback">{{ $message }}</div>@enderror
                 </div>
 
@@ -272,6 +285,17 @@
 }
 .form-section{padding:26px 28px 28px}
 .form-section+.form-section{border-top:1px solid var(--line)}
+.form-section .row{--bs-gutter-y:22px}
+.loan-dates-panel{padding:20px;background:#f7f9fc;border:1px solid #e2e9f1;border-radius:15px}
+.loan-dates-heading{display:flex;align-items:center;gap:8px;margin-bottom:16px;color:#183b62;font-size:12px;font-weight:700}
+.loan-dates-heading i{color:#6f89a4;font-size:14px}
+.loan-dates-note{display:flex;align-items:flex-start;gap:8px;margin-top:16px;padding-top:13px;border-top:1px solid #e0e8f0;color:#728298}
+.loan-dates-note>i{flex-shrink:0;font-size:13px;line-height:20px}
+.loan-dates-note p{margin:0;font-size:11px;line-height:20px}
+.loan-dates-note a{color:#245b8e;font-weight:600;text-underline-offset:3px}
+.borrowing-edit-page .form-control[readonly],.borrowing-edit-page .status-display{background:#f0f4f8;color:#5c7188;border-color:#dde5ee}
+.status-display{display:flex;align-items:center;gap:8px}
+.status-indicator{height:6px;width:6px;border-radius:50%;background:#748ba3}
 .section-heading{margin-bottom:22px;display:flex;align-items:flex-start;gap:12px}
 .heading-icon{
     width:44px;height:44px;flex:0 0 44px;display:grid;place-items:center;color:#205e93;
