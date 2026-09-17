@@ -44,9 +44,8 @@
         .header-left,.header-right{width:50%;vertical-align:bottom;padding-bottom:.04in!important}
         .header-left{padding-right:1in!important}
         .header-right{padding-left:1in!important}
-        .institution-header{display:flex;align-items:center;gap:.18in;margin-bottom:.16in}
-        .institution-copy{flex:1;text-align:center}
-        .institution-spacer{width:1.12in;flex-shrink:0}
+        .institution-header{display:flex;align-items:center;justify-content:center;gap:.16in;width:fit-content;max-width:100%;margin:0 auto .16in}
+        .institution-copy{flex:0 1 auto;text-align:center}
         .school-logo{width:1.12in;height:1.12in;display:block;flex-shrink:0;object-fit:contain}
         .school-name{margin:0;font-size:15pt;font-weight:700;line-height:1.12;text-transform:uppercase;text-decoration:underline;text-underline-offset:3px}
         .school-address{margin:.05in 0 .08in;font-family:Arial,sans-serif;font-size:8pt;line-height:1.25}
@@ -136,7 +135,6 @@
                         <h2 class="library-title">Library System</h2>
                         <h3 class="card-title">{{ strtoupper($cardTitle) }}</h3>
             </div>
-            <div class="institution-spacer" aria-hidden="true"></div>
         </header>
         <table class="header-table">
             <tbody>
