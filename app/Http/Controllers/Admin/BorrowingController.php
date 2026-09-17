@@ -337,7 +337,7 @@ class BorrowingController extends Controller
         $borrower->load([
             'borrowings' => fn ($query) => $query
                 ->with('book')
-                ->orderByDesc('date_borrowed')->orderByDesc('id'),
+                ->orderBy('date_borrowed')->orderBy('id'),
         ]);
 
         return view('admin.borrowings.print-card', compact('borrower'));
