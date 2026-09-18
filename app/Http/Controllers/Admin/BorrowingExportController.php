@@ -41,7 +41,10 @@ class BorrowingExportController extends Controller
         if (filled($filters['search'] ?? null)) {
             $search = '%'.trim($filters['search']).'%';
             $query->where(function ($query) use ($search) {
-                $query->where('accession_number', 'like', $search)->orWhere('bibliographical_description', 'like', $search)
+                if (preg_match('/^(?:reference\s*)?#?(\d+)$/i', trim($search, '%'), $match)) {
+                    $query->orWhere('id', $match[1]);
+                }
+                $query->orWhere('accession_number', 'like', $search)->orWhere('bibliographical_description', 'like', $search)
                     ->orWhereHas('borrower', function ($borrower) use ($search) {
                         $borrower->where('name', 'like', $search)->orWhere('id_number', 'like', $search)->orWhere('department', 'like', $search);
                     });

@@ -20,7 +20,7 @@ class BorrowingWorkflowTest extends TestCase
         config(['app.url' => 'http://localhost', 'database.default' => 'sqlite', 'database.connections.sqlite.database' => ':memory:']);
         app('url')->forceRootUrl('http://localhost');
         DB::purge('sqlite');
-        foreach (['0001_01_01_000000_create_users_table.php', '2026_07_23_064736_create_new_arrivals_table.php', '2026_08_06_051132_add_accession_number_to_new_arrivals_table.php', '2026_09_17_000001_create_book_borrowing_system_tables.php', '2026_09_17_000000_add_borrower_type_to_borrowers_table.php', '2026_09_17_000001_add_released_by_to_borrowings_table.php', '2026_09_17_000003_add_borrowing_email_updates.php', '2026_09_17_000005_add_renewal_count_to_borrowings.php', '2026_09_18_000001_add_custom_borrower_type.php'] as $file) {
+        foreach (['0001_01_01_000000_create_users_table.php', '2026_07_23_064736_create_new_arrivals_table.php', '2026_08_06_051132_add_accession_number_to_new_arrivals_table.php', '2026_09_17_000001_create_book_borrowing_system_tables.php', '2026_09_17_000000_add_borrower_type_to_borrowers_table.php', '2026_09_17_000001_add_released_by_to_borrowings_table.php', '2026_09_17_000003_add_borrowing_email_updates.php', '2026_09_17_000005_add_renewal_count_to_borrowings.php', '2026_09_18_000001_add_custom_borrower_type.php', '2026_09_18_000002_add_borrowing_deletion_log.php'] as $file) {
             (require database_path('migrations/'.$file))->up();
         }
         Mail::fake();
@@ -41,6 +41,38 @@ class BorrowingWorkflowTest extends TestCase
     {
         $borrower = Borrower::create(['name' => 'Test Borrower', 'id_number' => uniqid(), 'borrower_type' => 'student', 'department' => 'Education', 'semester' => '1st']);
         return Borrowing::create(['borrower_id' => $borrower->id, 'accession_number' => 'BOOK-1', 'bibliographical_description' => 'Test Book', 'status' => $status]);
+    }
+
+    public function test_deleted_records_can_be_restored_and_only_trash_can_be_purged(): void
+    {
+        $loan = $this->loan();
+        $id = $loan->id;
+        $this->get(route('admin.borrowings.index', ['search' => '#'.$id]))->assertSeeText('Reference #'.$id);
+        $this->delete(route('admin.borrowings.destroy', $loan))->assertSessionHas('success');
+        $this->assertNull(Borrowing::find($id));
+        $this->assertNotNull(Borrowing::onlyTrashed()->find($id)->deleted_by);
+        $this->get(route('admin.borrowings.deleted'))->assertOk()->assertSeeText('Test Book');
+        $this->patch(route('admin.borrowings.restore', $id))->assertSessionHas('success');
+        $this->assertNotNull(Borrowing::find($id));
+        $this->delete(route('admin.borrowings.purge'), ['scope' => 'selected', 'ids' => [$id]])->assertSessionHasErrors('ids');
+        $this->delete(route('admin.borrowings.destroy', $id));
+        $this->delete(route('admin.borrowings.purge'), ['scope' => 'selected', 'ids' => [$id]])->assertSessionHas('success');
+        $this->assertNull(Borrowing::withTrashed()->find($id));
+    }
+
+    public function test_spam_trap_and_pending_limit_and_contact_changes_are_blocked(): void
+    {
+        $data = ['name' => 'Spam Test', 'id_number' => 'SPAM-1', 'borrower_type' => 'student', 'department' => 'Education', 'semester' => '1st', 'email' => 'spam@example.com', 'book_title' => 'Title One'];
+        $this->post(route('more.borrow-books.store'), $data + ['website' => 'bot'])->assertSessionHasErrors('request');
+        $this->assertSame(0, Borrowing::count());
+        foreach (['Title One', 'Title Two', 'Title Three'] as $title) {
+            $this->post(route('more.borrow-books.store'), array_replace($data, ['book_title' => $title]))->assertSessionHasNoErrors();
+        }
+        $this->post(route('more.borrow-books.store'), array_replace($data, ['book_title' => 'Title Four']))->assertSessionHasErrors('book_title');
+        $this->post(route('more.borrow-books.store'), array_replace($data, ['email' => 'attacker@example.com']))->assertSessionHasErrors('id_number');
+        $this->assertSame('spam@example.com', Borrower::first()->email);
+        $this->assertSame(3, Borrowing::count());
+        $this->postJson(route('more.borrow-books.store'), $data)->assertStatus(429);
     }
 
     public function test_validation_messages_appear_once_on_record_and_edit_pages(): void
@@ -411,7 +443,7 @@ class BorrowingWorkflowTest extends TestCase
         $pending = Borrowing::create(['borrower_id' => $loan->borrower_id, 'accession_number' => 'COPY-4', 'bibliographical_description' => 'Another book', 'status' => 'pending']);
         $this->patch(route('admin.borrowings.approve', $pending))->assertSessionHasErrors('borrower_type');
         $this->assertSame('pending', $pending->refresh()->status);
-        $this->post(route('more.borrow-books.store'), ['name' => $loan->borrower->name, 'id_number' => $loan->borrower->id_number, 'borrower_type' => 'student', 'department' => 'Education', 'semester' => '1st', 'email' => 'borrower@example.com', 'book_title' => 'New request'])->assertSessionHasErrors('borrower_type');
+        $this->post(route('more.borrow-books.store'), ['name' => $loan->borrower->name, 'id_number' => $loan->borrower->id_number, 'borrower_type' => 'student', 'department' => 'Education', 'semester' => '1st', 'email' => 'borrower@example.com', 'book_title' => 'New request'])->assertSessionHasErrors('id_number');
         $this->assertSame(4, Borrowing::count());
     }
 }

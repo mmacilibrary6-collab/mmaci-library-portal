@@ -295,7 +295,7 @@ Route::prefix('more')
         Route::post(
             '/borrow-books',
             [BorrowBookController::class, 'store']
-        )->name('borrow-books.store');
+        )->middleware('throttle:borrowing-requests')->name('borrow-books.store');
 
         /*
         |--------------------------------------------------------------------------
@@ -433,6 +433,9 @@ Route::prefix('admin')
     ->group(function () {
 
         Route::get('borrowings/export', \App\Http\Controllers\Admin\BorrowingExportController::class)->name('borrowings.export');
+        Route::get('borrowings/deleted', [\App\Http\Controllers\Admin\DeletedBorrowingController::class, 'index'])->name('borrowings.deleted');
+        Route::patch('borrowings/deleted/{id}/restore', [\App\Http\Controllers\Admin\DeletedBorrowingController::class, 'restore'])->whereNumber('id')->name('borrowings.restore');
+        Route::delete('borrowings/deleted', [\App\Http\Controllers\Admin\DeletedBorrowingController::class, 'destroy'])->name('borrowings.purge');
 
         Route::get('book-exports/{collection}', \App\Http\Controllers\Admin\BookExportController::class)
             ->whereIn('collection', ['new-arrivals', 'donated-books'])

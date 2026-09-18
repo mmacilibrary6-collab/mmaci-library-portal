@@ -20,6 +20,15 @@ class BorrowBookController extends Controller
 
     public function store(Request $request): RedirectResponse
     {
+        if (filled($request->input('website'))) {
+            throw ValidationException::withMessages(['request' => 'Unable to submit this request. Please reload the form and try again.']);
+        }
+        foreach (['name', 'id_number', 'book_title', 'email'] as $field) {
+            if (is_string($request->input($field))) {
+                $value = \Illuminate\Support\Str::squish($request->input($field));
+                $request->merge([$field => $field === 'email' ? mb_strtolower($value) : $value]);
+            }
+        }
         $validated = $request->validate([
             'borrower_type' => ['required', 'in:student,faculty,other'],
             'borrower_type_other' => ['exclude_unless:borrower_type,other', 'required', 'string', 'max:80'],
@@ -79,215 +88,43 @@ class BorrowBookController extends Controller
         |
         */
 
-        $existingBorrower = Borrower::query()
-            ->where('id_number', $idNumber)
-            ->first();
-
-        if ($existingBorrower) {
-
-            /*
-             * Prevent another person from using an existing ID number.
-             *
-             * Capitalization does not matter:
-             *
-             * "Janze Salva"
-             * "JANZE SALVA"
-             *
-             * are considered the same.
-             */
-
-            $existingName = mb_strtolower(trim($existingBorrower->name));
-            $submittedName = mb_strtolower($name);
-
-            if ($existingName !== $submittedName) {
-                return back()
-                    ->withInput()
-                    ->withErrors([
-                        'id_number' =>
-                            'This ID number is already registered to another borrower. Please check the ID number and name.',
-                    ]);
+        DB::transaction(function () use ($validated, $idNumber, $name, $borrowerType, $bookTitle): void {
+            $borrower = Borrower::firstOrCreate(['id_number' => $idNumber], [
+                'name' => $name,
+                'borrower_type' => $borrowerType,
+                'borrower_type_other' => $borrowerType === 'other' ? trim($validated['borrower_type_other']) : null,
+                'contact_number' => $validated['contact_number'] ?? null,
+                'department' => $validated['department'],
+                'semester' => $validated['semester'],
+                'email' => $validated['email'],
+            ]);
+            $borrower = Borrower::whereKey($borrower->id)->lockForUpdate()->firstOrFail();
+            if (mb_strtolower(\Illuminate\Support\Str::squish($borrower->name)) !== mb_strtolower($name)
+                || (filled($borrower->borrower_type) && $borrower->borrower_type !== $borrowerType)
+                || blank($borrower->email)
+                || mb_strtolower(trim($borrower->email)) !== $validated['email']) {
+                throw ValidationException::withMessages(['id_number' => 'These details do not match the existing borrower record. Please contact library staff to verify or update your information.']);
             }
-
-            /*
-             * If an old borrower record does not yet have a borrower type,
-             * allow this submission to assign Student/Faculty.
-             *
-             * If it already has a type, prevent the public form from silently
-             * changing Student to Faculty or vice versa.
-             */
-
-            if (
-                filled($existingBorrower->borrower_type) &&
-                $existingBorrower->borrower_type !== $borrowerType
-            ) {
-                return back()
-                    ->withInput()
-                    ->withErrors([
-                        'borrower_type' =>
-                            'The selected borrower type does not match the existing borrower record.',
-                    ]);
+            // Public submissions must not overwrite an existing borrower's contact details.
+            if (blank($borrower->borrower_type)) {
+                $borrower->update(['borrower_type' => $borrowerType, 'borrower_type_other' => $borrowerType === 'other' ? trim($validated['borrower_type_other']) : null]);
             }
-        }
-
-        /*
-        |--------------------------------------------------------------------------
-        | Prevent Duplicate Active Request
-        |--------------------------------------------------------------------------
-        |
-        | The same borrower cannot request the same title again while an
-        | existing request or loan for that title is still active.
-        |
-        */
-
-        if ($existingBorrower) {
-            $duplicateRequest = Borrowing::query()
-                ->where('borrower_id', $existingBorrower->id)
-                ->whereRaw('LOWER(TRIM(bibliographical_description)) = ?', [mb_strtolower($bookTitle)])
-                ->whereIn('status', [
-                    Borrowing::STATUS_PENDING,
-                    Borrowing::STATUS_APPROVED,
-                    Borrowing::STATUS_BORROWED,
-                    Borrowing::STATUS_OVERDUE,
-                ])
-                ->exists();
-
-            if ($duplicateRequest) {
-                return back()
-                    ->withInput()
-                    ->withErrors([
-                        'book_title' =>
-                            'You already have an active request or borrowing record for this book.',
-                    ]);
+            $outstanding = $borrower->borrowings()->whereIn('status', ['pending', 'approved', 'borrowed', 'overdue'])->whereNull('date_returned')->get();
+            foreach ($outstanding as $record) {
+                if (mb_strtolower(\Illuminate\Support\Str::squish($record->bibliographical_description)) === mb_strtolower($bookTitle)) {
+                    throw ValidationException::withMessages(['book_title' => 'You already have an active request or borrowing record for this book.']);
+                }
             }
-        }
-
-        DB::transaction(function () use (
-            $validated,
-            $existingBorrower,
-            $idNumber,
-            $name,
-            $borrowerType,
-            $bookTitle
-        ): void {
-
-            /*
-            |--------------------------------------------------------------------------
-            | Create or Update Borrower
-            |--------------------------------------------------------------------------
-            */
-
-            if ($existingBorrower) {
-
-                $borrower = Borrower::whereKey($existingBorrower->id)->lockForUpdate()->firstOrFail();
-
-                /*
-                 * Keep the same borrower record but refresh information that
-                 * may legitimately change over time.
-                 */
-
-                $borrower->update([
-                    'borrower_type_other' => $borrowerType === 'other' ? ($borrower->borrower_type_other ?: trim($validated['borrower_type_other'])) : null,
-                    'borrower_type' => filled($borrower->borrower_type)
-                        ? $borrower->borrower_type
-                        : $borrowerType,
-
-                    'contact_number' =>
-                        filled($validated['contact_number'] ?? null)
-                            ? trim($validated['contact_number'])
-                            : null,
-
-                    'department' =>
-                        trim($validated['department']),
-
-                    'semester' =>
-                        $validated['semester'],
-
-                    'email' =>
-                        filled($validated['email'] ?? null)
-                            ? trim($validated['email'])
-                            : null,
-                ]);
-
-            } else {
-
-                $borrower = Borrower::create([
-                    'borrower_type_other' => $borrowerType === 'other' ? trim($validated['borrower_type_other']) : null,
-                    'name' => $name,
-
-                    'id_number' => $idNumber,
-
-                    'borrower_type' => $borrowerType,
-
-                    'contact_number' =>
-                        filled($validated['contact_number'] ?? null)
-                            ? trim($validated['contact_number'])
-                            : null,
-
-                    'department' =>
-                        trim($validated['department']),
-
-                    'semester' =>
-                        $validated['semester'],
-
-                    'email' =>
-                        filled($validated['email'] ?? null)
-                            ? trim($validated['email'])
-                            : null,
-                ]);
-            }
-
-            /*
-            |--------------------------------------------------------------------------
-            | Double Check Duplicate Request
-            |--------------------------------------------------------------------------
-            |
-            | We check again inside the transaction so new/existing borrowers
-            | follow the same rule.
-            |
-            */
-
-            $duplicateRequest = Borrowing::query()
-                ->where('borrower_id', $borrower->id)
-                ->whereRaw('LOWER(TRIM(bibliographical_description)) = ?', [mb_strtolower($bookTitle)])
-                ->whereIn('status', [
-                    Borrowing::STATUS_PENDING,
-                    Borrowing::STATUS_APPROVED,
-                    Borrowing::STATUS_BORROWED,
-                    Borrowing::STATUS_OVERDUE,
-                ])
-                ->exists();
-
-            if ($duplicateRequest) {
-                throw ValidationException::withMessages([
-                    'book_title' =>
-                        'You already have an active request or borrowing record for this book.',
-                ]);
-            }
-
             BorrowingPolicy::assertCapacity($borrower);
-
+            if ($outstanding->count() >= BorrowingPolicy::limit($borrowerType)) {
+                throw ValidationException::withMessages(['book_title' => 'You have reached your outstanding request limit. Please wait for library staff to review your requests or return a borrowed book before requesting another.']);
+            }
             Borrowing::create([
                 'borrower_id' => $borrower->id,
-
-                'new_arrival_id' => null,
-
-                'accession_number' => null,
-
-                'bibliographical_description' =>
-                    $bookTitle,
-
-                'status' =>
-                    Borrowing::STATUS_PENDING,
-
-                'date_borrowed' => null,
-                'due_date' => null,
-                'date_returned' => null,
-
-                'received_by' => null,
-                'returned_by' => null,
-                'remarks' => null,
+                'bibliographical_description' => $bookTitle,
+                'status' => Borrowing::STATUS_PENDING,
             ]);
-        });
+        }, 3);
 
         return redirect()
             ->route('more.borrow-books')

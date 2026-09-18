@@ -12,6 +12,12 @@ use Illuminate\Support\Carbon;
 class Borrowing extends Model
 {
     use HasFactory;
+    use \Illuminate\Database\Eloquent\SoftDeletes;
+
+    public function deletedBy(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'deleted_by');
+    }
 
     public const STATUS_PENDING = 'pending';
     public const STATUS_APPROVED = 'approved';

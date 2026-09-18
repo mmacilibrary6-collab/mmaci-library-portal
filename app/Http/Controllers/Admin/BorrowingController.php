@@ -31,8 +31,11 @@ class BorrowingController extends Controller
             ->with(['borrower', 'book'])
             ->when($search !== '', function ($query) use ($search) {
                 $query->where(function ($builder) use ($search) {
+                    if (preg_match('/^(?:reference\s*)?#?(\d+)$/i', $search, $match)) {
+                        $builder->orWhere('id', $match[1]);
+                    }
                     $builder
-                        ->where('accession_number', 'like', "%{$search}%")
+                        ->orWhere('accession_number', 'like', "%{$search}%")
                         ->orWhere('bibliographical_description', 'like', "%{$search}%")
                         ->orWhereHas('borrower', function ($borrowerQuery) use ($search) {
                             $borrowerQuery
@@ -304,8 +307,12 @@ class BorrowingController extends Controller
 
     public function destroy(Borrowing $borrowing): RedirectResponse
     {
+        DB::transaction(function () use ($borrowing): void {
+            Borrower::whereKey($borrowing->borrower_id)->lockForUpdate()->firstOrFail();
+            $borrowing = Borrowing::whereKey($borrowing->id)->lockForUpdate()->firstOrFail();
         $book = $borrowing->book;
 
+        $borrowing->forceFill(['deleted_by' => auth()->id()])->save();
         $borrowing->delete();
 
         if (
@@ -317,9 +324,11 @@ class BorrowingController extends Controller
             ]);
         }
 
+        }, 3);
+
         return redirect()
             ->route('admin.borrowings.index')
-            ->with('success', 'Erroneous borrowing record deleted.');
+            ->with('success', 'Borrowing record moved to Deleted Records. It can be restored there.');
     }
 
     public function borrower(Borrower $borrower): View

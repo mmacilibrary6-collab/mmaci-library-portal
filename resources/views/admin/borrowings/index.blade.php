@@ -16,6 +16,7 @@
         <button type="button" class="borrowing-export-button" data-bs-toggle="modal" data-bs-target="#borrowing-export-modal"><i class="bi bi-file-earmark-excel" aria-hidden="true"></i> Export to Excel</button>
     </section>
     @include('admin.borrowings.export')
+    <div class="mb-3 text-end"><a class="btn btn-outline-secondary btn-sm" href="{{ route('admin.borrowings.deleted') }}"><i class="bi bi-trash"></i> Deleted Records</a></div>
 
     @if(session('success'))
         <div class="alert alert-success" role="status">{{ session('success') }}</div>
@@ -53,7 +54,7 @@
                     <input type="search"
                            name="search"
                            value="{{ request('search') }}"
-                           placeholder="Search borrower, ID, accession or book...">
+                           placeholder="Search reference, borrower, ID or book...">
                 </div>
 
                 <select name="borrower_type" aria-label="Borrower Type">
@@ -220,7 +221,7 @@
                                     <form
                                         method="POST"
                                         action="{{ route('admin.borrowings.destroy', $borrowing) }}"
-                                        onsubmit="return confirm('Delete this borrowing record? This action cannot be undone.');">
+                                        onsubmit="return confirm('Move this record to Deleted Records? You can restore it later.');">
                                         @csrf
                                         @method('DELETE')
                                         <button class="action-btn action-destroy" type="submit">

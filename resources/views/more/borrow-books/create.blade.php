@@ -40,11 +40,15 @@
                 method="POST"
                 class="borrow-form">
                 @csrf
+                <div style="position:absolute;left:-10000px" aria-hidden="true">
+                    <label for="borrow-website">Leave this field empty</label>
+                    <input id="borrow-website" name="website" tabindex="-1" autocomplete="off">
+                </div>
                 @if(session('success'))
                     <div class="alert alert-success" role="status">{{ session('success') }}</div>
                 @endif
                 @if($errors->any())
-                    <div class="alert alert-danger" role="alert">Please check the highlighted fields below.</div>
+                    <div class="alert alert-danger" role="alert">{{ $errors->first('request') ?: 'Please check the highlighted fields below.' }}</div>
                 @endif
 
                 <div class="form-block">
