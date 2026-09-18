@@ -43,6 +43,24 @@ class BorrowingWorkflowTest extends TestCase
         return Borrowing::create(['borrower_id' => $borrower->id, 'accession_number' => 'BOOK-1', 'bibliographical_description' => 'Test Book', 'status' => $status]);
     }
 
+    public function test_validation_messages_appear_once_on_record_and_edit_pages(): void
+    {
+        foreach (['approved', 'borrowed'] as $status) {
+            $loan = $this->loan($status);
+            foreach (['show', 'edit'] as $page) {
+                $errors = new \Illuminate\Support\ViewErrorBag;
+                $errors->put('default', new \Illuminate\Support\MessageBag([
+                    'due_date' => ['Check the loan dates.'],
+                    'date_borrowed' => ['Check the loan dates.'],
+                    'released_by' => ['Enter the releasing staff name.'],
+                ]));
+                $html = $this->withSession(['errors' => $errors])->get(route('admin.borrowings.'.$page, $loan))->assertOk()->getContent();
+                $this->assertSame(1, substr_count($html, 'Check the loan dates.'));
+                $this->assertSame(1, substr_count($html, 'Enter the releasing staff name.'));
+            }
+        }
+    }
+
     public function test_other_type_requires_label_can_be_edited_and_prints_custom_title(): void
     {
         $data = ['name' => 'Guest Borrower', 'id_number' => 'GUEST-1', 'borrower_type' => 'other', 'department' => 'Visitors', 'semester' => '1st', 'email' => 'guest@example.com', 'book_title' => 'Guest Book'];

@@ -22,13 +22,13 @@
     </section>
 
     @if($errors->any())
-        <div class="alert alert-danger validation-box">
+        <div class="alert alert-danger validation-box" role="alert">
             <div class="validation-title">
                 <i class="bi bi-exclamation-circle"></i>
                 Please review the highlighted fields.
             </div>
             <ul class="mb-0 mt-2">
-                @foreach($errors->all() as $error)
+                @foreach(array_unique($errors->all()) as $error)
                     <li>{{ $error }}</li>
                 @endforeach
             </ul>
@@ -65,10 +65,10 @@
                         <label for="borrower-type-other" class="form-label">Specify borrower type <span class="text-danger">*</span></label>
                         <input id="borrower-type-other" name="borrower_type_other" class="form-control @error('borrower_type_other') is-invalid @enderror" maxlength="80" value="{{ old('borrower_type_other', $borrowing->borrower?->borrower_type_other) }}" placeholder="e.g. Staff, Alumni, Guest">
                         <small class="text-muted">Used as the title on your borrower card. Limits: 3 books, 2 days, 2 renewals.</small>
-                        @error('borrower_type_other')<div class="invalid-feedback">{{ $message }}</div>@enderror
+
                     </div>
 
-                    @error('borrower_type')<div class="invalid-feedback">{{ $message }}</div>@enderror
+
                 </div>
 
                 <div class="col-md-6">
@@ -77,7 +77,7 @@
                            name="name"
                            value="{{ old('name', $borrowing->borrower?->name) }}"
                            required>
-                    @error('name')<div class="invalid-feedback">{{ $message }}</div>@enderror
+
                 </div>
 
                 <div class="col-md-6">
@@ -86,7 +86,7 @@
                            name="id_number"
                            value="{{ old('id_number', $borrowing->borrower?->id_number) }}"
                            required>
-                    @error('id_number')<div class="invalid-feedback">{{ $message }}</div>@enderror
+
                 </div>
 
                 <div class="col-md-6">
@@ -95,7 +95,7 @@
                            name="department"
                            value="{{ old('department', $borrowing->borrower?->department) }}"
                            required>
-                    @error('department')<div class="invalid-feedback">{{ $message }}</div>@enderror
+
                 </div>
 
                 <div class="col-md-6">
@@ -105,7 +105,7 @@
                         <option value="1st" @selected(old('semester', $borrowing->borrower?->semester) === '1st')>1st</option>
                         <option value="2nd" @selected(old('semester', $borrowing->borrower?->semester) === '2nd')>2nd</option>
                     </select>
-                    @error('semester')<div class="invalid-feedback">{{ $message }}</div>@enderror
+
                 </div>
 
                 <div class="col-md-6">
@@ -113,7 +113,7 @@
                     <input class="form-control @error('contact_number') is-invalid @enderror"
                            name="contact_number"
                            value="{{ old('contact_number', $borrowing->borrower?->contact_number) }}">
-                    @error('contact_number')<div class="invalid-feedback">{{ $message }}</div>@enderror
+
                 </div>
 
                 <div class="col-12">
@@ -122,7 +122,7 @@
                            class="form-control @error('email') is-invalid @enderror"
                            name="email"
                            value="{{ old('email', $borrowing->borrower?->email) }}">
-                    @error('email')<div class="invalid-feedback">{{ $message }}</div>@enderror
+
                 </div>
             </div>
         </section>
@@ -143,7 +143,7 @@
                            name="accession_number"
                            value="{{ old('accession_number', $borrowing->accession_number) }}"
                            @required(! in_array($borrowing->status, ['pending', 'rejected'], true))>
-                    @error('accession_number')<div class="invalid-feedback">{{ $message }}</div>@enderror
+
                 </div>
 
                 <div class="col-lg-8">
@@ -152,7 +152,7 @@
                               name="bibliographical_description"
                               rows="3"
                               required>{{ old('bibliographical_description', $borrowing->bibliographical_description) }}</textarea>
-                    @error('bibliographical_description')<div class="invalid-feedback">{{ $message }}</div>@enderror
+
                 </div>
 
                 <div class="col-12">
@@ -166,7 +166,7 @@
                            name="date_borrowed"
                            @readonly(in_array($borrowing->status, ['borrowed', 'overdue'], true))
                            value="{{ old('date_borrowed', optional($borrowing->date_borrowed)->toDateString()) }}">
-                    @error('date_borrowed')<div class="invalid-feedback">{{ $message }}</div>@enderror
+
                 </div>
 
                 <div class="col-md-4">
@@ -176,7 +176,7 @@
                            name="due_date"
                            @readonly(in_array($borrowing->status, ['borrowed', 'overdue'], true))
                            value="{{ old('due_date', optional($borrowing->due_date)->toDateString()) }}">
-                    @error('due_date')<div class="invalid-feedback">{{ $message }}</div>@enderror
+
                 </div>
 
                 <div class="col-md-4">
@@ -185,7 +185,7 @@
                            class="form-control @error('date_returned') is-invalid @enderror"
                            name="date_returned"
                            value="{{ old('date_returned', optional($borrowing->date_returned)->toDateString()) }}">
-                    @error('date_returned')<div class="invalid-feedback">{{ $message }}</div>@enderror
+
                 </div>
 
                         </div>
@@ -202,7 +202,7 @@
                     <label class="form-label">Status <span>*</span></label>
                     <input type="hidden" name="status" value="{{ $borrowing->status }}">
                     <div class="form-control status-display"><span class="status-indicator" aria-hidden="true"></span>{{ ucfirst($borrowing->status) }}</div>
-                    @error('status')<div class="invalid-feedback">{{ $message }}</div>@enderror
+
                 </div>
 
                 <div class="col-md-4">
@@ -210,7 +210,7 @@
                     <input class="form-control @error('received_by') is-invalid @enderror"
                            name="received_by"
                            value="{{ in_array($borrowing->status, ['borrowed', 'overdue', 'returned'], true) ? $borrowing->borrower?->name : '' }}" readonly>
-                    @error('received_by')<div class="invalid-feedback">{{ $message }}</div>@enderror
+
                 </div>
 
                 <div class="col-md-4">
@@ -218,7 +218,7 @@
                     <input class="form-control @error('returned_by') is-invalid @enderror"
                            name="returned_by"
                            value="{{ old('returned_by', $borrowing->returned_by) }}">
-                    @error('returned_by')<div class="invalid-feedback">{{ $message }}</div>@enderror
+
                 </div>
 
                 <div class="col-12">
@@ -227,7 +227,7 @@
                               name="remarks"
                               rows="4"
                               placeholder="Optional notes about this borrowing transaction">{{ old('remarks', $borrowing->remarks) }}</textarea>
-                    @error('remarks')<div class="invalid-feedback">{{ $message }}</div>@enderror
+
                 </div>
 
                 @if(in_array($borrowing->status, ['borrowed', 'overdue', 'returned'], true))
@@ -239,7 +239,7 @@
                         name="released_by"
                         value="{{ old('released_by', $borrowing->released_by) }}"
                         placeholder="Enter the name of the staff member who released the book">
-                    @error('released_by')<div class="invalid-feedback">{{ $message }}</div>@enderror
+
                 </div>
                 @endif
             </div>

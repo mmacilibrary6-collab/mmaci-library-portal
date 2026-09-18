@@ -61,7 +61,7 @@
         <div class="alert alert-danger" role="alert">{{ session('error') }}</div>
     @endif
     @if($errors->any())
-        <div class="alert alert-danger" role="alert"><strong>Please check the following:</strong><ul class="mb-0">@foreach($errors->all() as $error)<li>{{ $error }}</li>@endforeach</ul></div>
+        <div class="alert alert-danger" role="alert"><strong>Please check the following:</strong><ul class="mb-0">@foreach(array_unique($errors->all()) as $error)<li>{{ $error }}</li>@endforeach</ul></div>
     @endif
     <div class="record-layout">
         <section class="record-panel borrower-panel">
@@ -220,9 +220,6 @@
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body">
-                        @if($errors->any())
-                            <div class="alert alert-danger" role="alert"><ul class="mb-0">@foreach($errors->all() as $error)<li>{{ $error }}</li>@endforeach</ul></div>
-                        @endif
                         <div class="row g-3 mb-3">
                             <p class="text-muted mb-0">{{ $borrowerType === 'faculty' ? 'Maximum 10 books at a time; due within 1 calendar month.' : 'Maximum 3 books at a time; due within 2 days.' }}</p>
                             <div class="col-md-6">
@@ -258,9 +255,6 @@
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body">
-                        @if($errors->any())
-                            <div class="alert alert-danger" role="alert"><ul class="mb-0">@foreach($errors->all() as $error)<li>{{ $error }}</li>@endforeach</ul></div>
-                        @endif
                         <div class="row g-3 mb-3">
                             <div class="col-12">
                                 <label for="return-person" class="form-label">Returned By (person returning the book)</label>
@@ -418,7 +412,6 @@
 @endpush
 
 @push('scripts')
-@php($modalAction = $borrowing->status === 'approved' ? 'release' : (in_array($borrowing->status, ['borrowed', 'overdue'], true) ? 'return' : ''))
 <script>
 document.addEventListener('DOMContentLoaded', function () {
     const start = document.getElementById('release-date');
@@ -442,10 +435,9 @@ document.addEventListener('DOMContentLoaded', function () {
     start?.addEventListener('change', function () { updateDueDate(true); });
     updateDueDate(false);
     const action = window.location.hash.slice(1);
-    const hasErrors = @json($errors->any() && !$errors->has('renewal') && !$errors->has('renewal_count'));
-    const currentAction = @json($modalAction);
-    const target = document.getElementById((hasErrors ? currentAction : action) + '-modal');
-    if (target && (hasErrors || ['release', 'return'].includes(action))) {
+    const hasErrors = @json($errors->any() || session()->has('error'));
+    const target = document.getElementById(action + '-modal');
+    if (target && !hasErrors && ['release', 'return'].includes(action)) {
         bootstrap.Modal.getOrCreateInstance(target).show();
     }
 });
