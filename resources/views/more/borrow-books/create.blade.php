@@ -65,12 +65,7 @@
                                 </option>
                             <option value="other" @selected(old('borrower_type') === 'other')>Other / Specify</option>
                     </select>
-                    <div class="mt-3" data-other-type-field>
-                        <label for="borrower-type-other" class="form-label">Specify borrower type <span class="text-danger">*</span></label>
-                        <input id="borrower-type-other" name="borrower_type_other" class="form-control @error('borrower_type_other') is-invalid @enderror" maxlength="80" value="{{ old('borrower_type_other', '') }}" placeholder="e.g. Staff, Alumni, Guest">
-                        <small class="text-muted">Used as the title on your borrower card. Limits: 3 books, 2 days, 2 renewals.</small>
-                        @error('borrower_type_other')<div class="invalid-feedback">{{ $message }}</div>@enderror
-                    </div>
+
 
                             @error('borrower_type') <small class="text-danger">{{ $message }}</small> @enderror
                         </div>
@@ -80,6 +75,18 @@
                             <input type="text" name="name" class="form-control @error('name') is-invalid @enderror" value="{{ old('name') }}" autocomplete="name" required>
                             @error('name') <small class="text-danger">{{ $message }}</small> @enderror
                         </div>
+
+                        <div class="col-12" data-other-type-field>
+                        <div class="custom-type-panel"><div class="custom-type-input">
+                        <label for="borrower-type-other" class="form-label">Specify borrower type <span class="text-danger">*</span></label>
+                        <input id="borrower-type-other" name="borrower_type_other" class="form-control @error('borrower_type_other') is-invalid @enderror" maxlength="80" value="{{ old('borrower_type_other', '') }}" placeholder="e.g. Staff, Alumni, Guest" aria-describedby="custom-type-help">
+
+                        @error('borrower_type_other')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                        </div><div class="custom-type-help" id="custom-type-help">
+                            <p>Appears on your printed borrower card.</p>
+                            <div class="custom-type-limits"><span>3 books</span><span>2-day loans</span><span>2 renewals</span></div>
+                        </div></div>
+                    </div>
 
                         <div class="col-md-6">
                             <label class="form-label">ID Number</label>
@@ -337,6 +344,13 @@ textarea.form-control {
     .borrow-form { padding: 22px; }
     .borrow-actions .btn { width: 100%; }
 }
+
+.custom-type-panel{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);align-items:center;gap:20px;padding:18px 20px;background:#f7f9fc;border:1px solid #dfe7ef;border-radius:14px}
+.custom-type-input{min-width:0}
+.custom-type-help p{margin:0 0 10px;color:#73849a;font-size:12px;line-height:1.6}
+.custom-type-limits{display:flex;flex-wrap:wrap;gap:6px}
+.custom-type-limits span{display:inline-block;padding:5px 9px;border:1px solid #dce6f0;border-radius:6px;background:#fff;color:#46617d;font-size:11px;font-weight:600;line-height:1.4}
+@media(max-width:575.98px){.custom-type-panel{grid-template-columns:1fr;gap:12px;padding:16px}.custom-type-help p{margin-bottom:8px}}
 </style>
 @endpush
 
