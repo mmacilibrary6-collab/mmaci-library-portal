@@ -266,8 +266,18 @@ class BorrowingWorkflowTest extends TestCase
         $this->assertCount(3, $read(['list' => 'borrowers']));
         $overdue = $read(['list' => 'borrowings', 'status' => 'overdue']);
         $this->assertCount(2, $overdue);
-        $this->assertSame('Overdue', $overdue[1][10]);
+        $this->assertSame('Overdue', $overdue[1][9]);
+        $personalHeaders = ['Borrower Name', 'ID Number', 'Borrower Type', 'Department', 'Semester', 'Contact Number', 'Email'];
+        $this->assertSame($personalHeaders, $read(['list' => 'borrowers'])[0]);
+        $this->assertSame([...$personalHeaders, 'Book Title / Details', 'Accession Number', 'Status', 'Date Borrowed', 'Due Date'], $overdue[0]);
+        $this->assertCount(count($overdue[0]), $overdue[1]);
+        foreach (['pending', 'approved', 'rejected'] as $status) {
+            $this->assertSame([...$personalHeaders, 'Book Title / Details', 'Accession Number', 'Status'], $read(['list' => 'borrowings', 'status' => $status])[0]);
+        }
+        $this->assertSame([...$personalHeaders, 'Book Title / Details', 'Accession Number', 'Status', 'Date Borrowed', 'Due Date', 'Date Returned'], $read(['list' => 'borrowings', 'status' => 'returned'])[0]);
         $this->assertSame('borrowed', $loan->refresh()->status);
+        $this->get(route('admin.borrowings.show', $loan))->assertSeeText('Request reference #'.$loan->id);
+        $this->get(route('admin.borrowings.index'))->assertSeeText('Reference #'.$loan->id);
         $this->assertCount(1, $read(['list' => 'borrowings', 'status' => 'borrowed']));
         $this->assertCount(2, $read(['list' => 'borrowers', 'status' => 'returned']));
         $this->assertCount(2, $read(['list' => 'borrowers', 'borrower_type' => 'faculty']));

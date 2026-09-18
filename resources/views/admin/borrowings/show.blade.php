@@ -26,6 +26,7 @@
                 </div>
                 <p>
                     {{ $borrowing->borrower?->name ?? 'Unknown Borrower' }}
+                    · Request reference #{{ $borrowing->id }}
                     · {{ $borrowing->accession_number ?: 'Copy not assigned yet' }}
                 </p>
             </div>

@@ -9,6 +9,7 @@
                 <div class="mb-3">
                     <label for="export-list" class="form-label">Master List</label>
                     <select id="export-list" name="list" class="form-select"><option value="borrowings">Borrowing records</option><option value="borrowers">Borrowers only (one row per borrower)</option></select>
+                    <p class="export-description">Borrowers: personal and contact details, once per borrower. Records: borrower and book details, status, and dates relevant to the selected status. Staff-handling fields are excluded.</p>
                 </div>
                 <div class="row g-3">
                     <div class="col-sm-6"><label for="export-status" class="form-label">Status</label><select id="export-status" name="status" class="form-select"><option value="">All statuses</option>@foreach(['pending', 'approved', 'borrowed', 'overdue', 'returned', 'rejected'] as $status)<option value="{{ $status }}" @selected(request('status') === $status)>{{ ucfirst($status) }}</option>@endforeach</select></div>
@@ -31,6 +32,7 @@
 .borrowing-export-heading h2{margin:0;color:#0b2e59;font-size:20px;font-weight:800}
 .borrowing-export-heading small{color:#728399;font-size:12px}
 .borrowing-export-modal .modal-body{padding:24px}
+.export-description{margin:10px 0 0;color:#728399;font-size:12px;line-height:1.6}
 .borrowing-export-modal .form-label{font-size:12px;font-weight:700;color:#18385f}
 .borrowing-export-modal .form-control,.borrowing-export-modal .form-select{border-color:#d8e2ec;border-radius:11px;font-size:13px;min-height:46px;color:#18385f}
 .borrowing-export-modal .modal-footer{padding:18px 24px;justify-content:space-between;background:#f7f9fc;border-top:1px solid #e6edf5}

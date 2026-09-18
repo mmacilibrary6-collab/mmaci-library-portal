@@ -138,6 +138,7 @@
                                         {{ $borrowing->borrower->name }}
                                     </a>
                                     <small class="borrower-meta">{{ $borrowing->borrower->id_number }}</small>
+                                    <small class="borrower-meta">Reference #{{ $borrowing->id }}</small>
                                 @else
                                     <span class="text-muted">Unknown Borrower</span>
                                 @endif

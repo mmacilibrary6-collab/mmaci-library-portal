@@ -50,17 +50,28 @@ class BorrowingExportController extends Controller
 
         $headers = ['Borrower Name', 'ID Number', 'Borrower Type', 'Department', 'Semester', 'Contact Number', 'Email'];
         $borrowersOnly = $filters['list'] === 'borrowers';
+        $dateColumns = match ($status) {
+            'pending', 'approved', 'rejected' => [],
+            'borrowed', 'overdue' => ['date_borrowed' => 'Date Borrowed', 'due_date' => 'Due Date'],
+            default => ['date_borrowed' => 'Date Borrowed', 'due_date' => 'Due Date', 'date_returned' => 'Date Returned'],
+        };
         if (! $borrowersOnly) {
-            $headers = [...$headers, 'Record ID', 'Book Title / Details', 'Accession Number', 'Status', 'Date Borrowed', 'Due Date', 'Date Returned', 'Received By', 'Released By', 'Returned By', 'Remarks'];
+            $headers = [...$headers, 'Book Title / Details', 'Accession Number', 'Status', ...array_values($dateColumns)];
         }
         $records = $borrowersOnly
             ? Borrower::whereIn('id', $query->select('borrower_id'))->orderBy('name')->orderBy('id')
             : $query->with('borrower')->orderByDesc('id');
-        $rows = (function () use ($records, $borrowersOnly) {
+        $rows = (function () use ($records, $borrowersOnly, $dateColumns) {
             foreach ($records->lazy(500) as $record) {
                 $borrower = $borrowersOnly ? $record : $record->borrower;
                 $row = [$borrower?->name, $borrower?->id_number, $borrower?->borrower_type_label, $borrower?->department, $borrower?->semester, $borrower?->contact_number, $borrower?->email];
-                yield $borrowersOnly ? $row : [...$row, $record->id, $record->bibliographical_description, $record->accession_number, ucfirst($record->display_status), $record->date_borrowed?->format('Y-m-d'), $record->due_date?->format('Y-m-d'), $record->date_returned?->format('Y-m-d'), $record->received_by, $record->released_by, $record->returned_by, $record->remarks];
+                if (! $borrowersOnly) {
+                    $row = [...$row, $record->bibliographical_description, $record->accession_number, ucfirst($record->display_status)];
+                    foreach ($dateColumns as $column => $label) {
+                        $row[] = $record->{$column}?->format('Y-m-d');
+                    }
+                }
+                yield $row;
             }
         })();
         $path = (new XlsxExport)->create($headers, $rows, $borrowersOnly ? 'Borrowers' : 'Borrowings');
