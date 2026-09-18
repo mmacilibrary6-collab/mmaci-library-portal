@@ -94,7 +94,7 @@
             </form>
         </div>
 
-        <div class="table-responsive records-table-wrap">
+        <div class="table-responsive records-table-wrap" role="region" aria-label="Borrowing records; scroll horizontally to view all columns" tabindex="0">
             <table class="table borrow-record-table align-middle mb-0">
                 <colgroup>
                     <col class="col-no">
@@ -259,7 +259,7 @@
         @if($borrowings->hasPages())
             <div class="panel-footer">
                 <span>
-                    Showing {{ $borrowings->firstItem() }}–{{ $borrowings->lastItem() }}
+                    Showing {{ $borrowings->firstItem() }}â€“{{ $borrowings->lastItem() }}
                     of {{ $borrowings->total() }}
                 </span>
                 {{ $borrowings->links() }}
@@ -324,10 +324,10 @@
 .records-title p{margin:3px 0 0;color:#7d8da1;font-size:12px}
 .records-filters{
     width:100%;display:grid;
-    grid-template-columns:minmax(240px,1.35fr) minmax(120px,.55fr) minmax(120px,.55fr) 150px 150px auto auto;
+    grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
     gap:9px;align-items:center;
 }
-.search-control{position:relative;min-width:0}
+.search-control{position:relative;min-width:0;grid-column:span 2}
 .search-control i{
     position:absolute;top:50%;left:14px;color:#92a0b0;transform:translateY(-50%);
 }
@@ -346,8 +346,10 @@
 }
 .filter-btn{gap:7px;padding:0 17px;color:#fff;background:#0b315e;border:1px solid #0b315e}
 .clear-btn{width:44px;color:#60748a;background:#fff;border:1px solid #dbe4ed}
-.records-table-wrap{width:100%;overflow-x:auto}
-.borrow-record-table{width:100%;table-layout:fixed;margin:0!important}
+.records-panel{min-width:0;max-width:100%}
+.records-table-wrap{width:100%;max-width:100%;overflow-x:auto;overscroll-behavior-x:contain}
+.records-table-wrap:focus-visible{outline:2px solid #8eaaca;outline-offset:-2px}
+.borrow-record-table{width:100%;min-width:1240px;table-layout:fixed;margin:0!important}
 .col-no{width:36px}
 .col-borrower{width:150px}
 .col-type{width:90px}
@@ -356,13 +358,14 @@
 .col-material{width:auto}
 .col-dates{width:145px}
 .col-status{width:95px}
-.col-actions{width:305px}
+.col-actions{width:250px}
 .borrow-record-table thead th{
     padding:13px 10px;color:#7b8ca2;background:#f6f9fc;border-bottom:1px solid var(--line);
     font-size:9px;font-weight:800;letter-spacing:.045em;text-transform:uppercase;white-space:nowrap;
 }
 .borrow-record-table tbody td{
     padding:13px 10px;color:#5a6d82;border-color:#edf1f5;font-size:11px;vertical-align:middle;
+    overflow-wrap:anywhere;
 }
 .borrow-record-table tbody tr:hover{background:#fbfdff}
 .row-number{color:#94a1b0!important}
@@ -401,9 +404,10 @@
 .status-rejected{color:#697586;background:#f0f2f5}
 .actions-cell{padding-right:12px!important}
 .table-actions{
-    display:flex;justify-content:flex-end;align-items:center;gap:5px;flex-wrap:wrap;
+    display:grid;grid-template-columns:repeat(3,minmax(0,1fr));align-items:stretch;gap:6px;width:100%;
 }
-.table-actions form{margin:0}
+.table-actions form{margin:0;min-width:0;display:flex}
+.table-actions .action-btn{width:100%;min-width:0}
 .action-btn{
     min-height:32px;padding:0 8px;display:inline-flex;align-items:center;justify-content:center;
     gap:4px;border-radius:9px;font-size:9px;font-weight:800;line-height:1;text-decoration:none;
@@ -430,11 +434,6 @@
 }
 @media (max-width:1399.98px){
     .borrowing-admin-page{padding-left:22px;padding-right:22px}
-    .records-filters{
-        grid-template-columns:minmax(220px,1fr) 120px 120px 145px 145px auto auto;
-    }
-    .col-actions{width:280px}
-    .action-btn{padding:0 7px;font-size:8.5px}
 }
 @media (max-width:1199.98px){
     .borrow-stats{grid-template-columns:repeat(2,minmax(0,1fr))}
@@ -442,7 +441,6 @@
     .search-control{grid-column:span 3}
     .filter-btn{width:100%}
     .records-table-wrap{overflow-x:auto}
-    .borrow-record-table{min-width:1120px}
 }
 @media (max-width:767.98px){
     .borrowing-admin-page{padding:18px 12px 28px}
