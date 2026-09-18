@@ -48,6 +48,9 @@ class LisaAssistant
         }
 
         $directResponse = $this->directIntentResponse($normalized);
+        if ($directResponse === null && $this->isFollowUpMessage($normalized)) {
+            $directResponse = $this->directIntentResponse($this->buildContextMessage($normalized, $history));
+        }
 
         if ($directResponse !== null) {
             $directResponse['suggestions'] = $this->sanitizeSuggestions(
@@ -184,7 +187,7 @@ class LisaAssistant
 
     protected function knowledgeEntries(): array
     {
-        return Cache::remember('lisa.knowledge.entries.v7', now()->addMinutes(10), function () {
+        return Cache::remember('lisa.knowledge.entries.v8', now()->addMinutes(10), function () {
             return array_merge(
                 $this->manualEntries(),
                 $this->databaseEntries(),
@@ -670,6 +673,10 @@ class LisaAssistant
 
     protected function directIntentResponse(string $message): ?array
     {
+        $borrowingResponse = $this->borrowingInformationResponse($message);
+        if ($borrowingResponse !== null) {
+            return $borrowingResponse;
+        }
         $libraryResponse = $this->libraryInformationResponse($message);
 
         if ($libraryResponse !== null) {
@@ -718,6 +725,46 @@ class LisaAssistant
                 'Open Ask the Librarian',
             ],
         ];
+    }
+
+    protected function borrowingInformationResponse(string $message): ?array
+    {
+        if (Str::contains($message, ['laptop', 'avr', 'room', 'recommend', 'suggest a title'])) {
+            return null;
+        }
+        if (! Str::contains($message, ['borrow', 'loan', 'renew', 'overdue', 'due date', 'return a book', 'return my book', 'return books', 'request a book', 'book request', 'accession', 'how many books']) && ! preg_match('/\b(fines?|penalty|penalties)\b/', $message)) {
+            return null;
+        }
+        $title = 'Borrowing Books';
+        $path = '/more/borrow-books';
+        if (preg_match('/\b(fines?|penalty|penalties)\b/', $message)) {
+            $title = 'Overdue Fines';
+            $answer = 'Fines are handled outside this website. Please contact library staff about any overdue charges; I cannot calculate, collect, or confirm a fine.';
+            $path = '/more/ask-librarian';
+        } elseif (Str::contains($message, ['email', 'notification', 'notify', 'gmail', 'reminder'])) {
+            $title = 'Borrowing Email Updates';
+            $answer = 'Approval and rejection updates are sent to the email address on your borrowing request. Released books also receive a due-date reminder and an overdue reminder if still unreturned. If an email is missing, check Spam and ask library staff to verify your saved email address and delivery status. I cannot check your inbox or confirm delivery.';
+        } elseif (Str::contains($message, ['card', 'print'])) {
+            $title = 'Borrower Cards';
+            $answer = 'Ask library staff for your Student or Faculty Borrower’s Card. It lists borrowing records oldest first, with 5 records per page and repeated borrower details on additional pages. Staff can print all pages or select page numbers and ranges. Page numbers appear only for cards with more than one page.';
+        } elseif (Str::contains($message, ['renew', 'extend'])) {
+            $title = 'Renewing a Book';
+            $answer = 'Ask library staff to renew your released, unreturned book. Each book can be renewed up to 2 times. Each renewal adds 2 days for students or 1 calendar month for faculty to the current due date. If overdue, the new period starts today. Returned books and unreleased requests cannot be renewed. I cannot renew a loan through this chat.';
+        } elseif (Str::contains($message, ['how many', 'limit', 'loan period', 'how long', 'how many days'])) {
+            $title = 'Borrowing Limits';
+            $answer = 'Students may borrow up to '.BorrowingPolicy::limit('student').' books for up to 2 days. Faculty may borrow up to '.BorrowingPolicy::limit('faculty').' books for up to 1 calendar month. Both may renew each book up to 2 times. Overdue, unreturned books count toward the limit; pending requests and returned books do not. Staff confirm loan dates when releasing the book.';
+        } elseif (Str::contains($message, ['overdue', 'return', 'due date'])) {
+            $title = 'Returning a Book';
+            $answer = 'Return the physical book to library staff so they can record the return. Unreturned and overdue books still count toward your borrowing limit. If you need more time, ask staff about renewal; each released book allows up to 2 renewals. I cannot change your due date or mark a book returned.';
+        } elseif (Str::contains($message, ['my status', 'my request', 'my loan', 'approved yet', 'check my'])) {
+            $title = 'Your Borrowing Request';
+            $answer = 'Contact library staff to check your request or loan status. Approval and rejection updates are emailed to the address on your request. I cannot access personal borrowing records or approve requests.';
+            $path = '/more/ask-librarian';
+        } else {
+            $answer = 'Open Borrow Books and enter your borrower type, name, ID number, department, semester, email address, and book title. Contact number is optional. You do not need an accession number or loan dates when requesting. Staff assign the book copy and approve or reject the request. After approval, visit the library; staff confirm loan dates and release the book. Approval alone does not mean the book has been released.';
+        }
+
+        return $this->informationResponse($title, $answer, $path, ['How do I borrow a book?', 'What are the borrowing limits?', 'How do I renew a book?']);
     }
 
     protected function libraryInformationResponse(string $message): ?array

@@ -7,6 +7,32 @@ use Tests\TestCase;
 
 class LisaAssistantTest extends TestCase
 {
+    public function test_current_borrowing_workflow_answers(): void
+    {
+        foreach ([
+            ['How do I borrow a book?', 'You do not need an accession number', '/more/borrow-books'],
+            ['How many books can I borrow?', '1 calendar month', '/more/borrow-books'],
+            ['How do I renew an overdue book?', 'the new period starts today', '/more/borrow-books'],
+            ['Why did I not receive a borrowing email?', 'check Spam', '/more/borrow-books'],
+            ['How does my borrower card print?', 'oldest first', '/more/borrow-books'],
+            ['How much is the overdue fine?', 'outside this website', '/more/ask-librarian'],
+            ['Check my borrowing request', 'cannot access personal borrowing records', '/more/ask-librarian'],
+        ] as [$question, $expected, $path]) {
+            $reply = app(LisaAssistant::class)->reply($question);
+            $this->assertStringContainsString($expected, $reply['answer']);
+            $this->assertStringContainsString($path, $reply['pageUrl']);
+        }
+    }
+
+    public function test_borrowing_followups_keep_context_without_overriding_new_topics(): void
+    {
+        $history = [['role' => 'user', 'text' => 'What are the borrowing limits?']];
+        $reply = app(LisaAssistant::class)->reply('what about faculty', $history);
+        $this->assertStringContainsString('10 books', $reply['answer']);
+        $reply = app(LisaAssistant::class)->reply('How can I borrow a laptop?', $history);
+        $this->assertStringContainsString('one hour', $reply['answer']);
+    }
+
     public function test_it_answers_natural_gmail_contact_questions_directly(): void
     {
         $reply = app(LisaAssistant::class)->reply(
