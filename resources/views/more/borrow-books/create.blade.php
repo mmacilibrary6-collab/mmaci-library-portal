@@ -63,7 +63,15 @@
                                 <option value="faculty" {{ old('borrower_type') === 'faculty' ? 'selected' : '' }}>
                                     Faculty
                                 </option>
-                            </select>
+                            <option value="other" @selected(old('borrower_type') === 'other')>Other / Specify</option>
+                    </select>
+                    <div class="mt-3" data-other-type-field>
+                        <label for="borrower-type-other" class="form-label">Specify borrower type <span class="text-danger">*</span></label>
+                        <input id="borrower-type-other" name="borrower_type_other" class="form-control @error('borrower_type_other') is-invalid @enderror" maxlength="80" value="{{ old('borrower_type_other', '') }}" placeholder="e.g. Staff, Alumni, Guest">
+                        <small class="text-muted">Used as the title on your borrower card. Limits: 3 books, 2 days, 2 renewals.</small>
+                        @error('borrower_type_other')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                    </div>
+
                             @error('borrower_type') <small class="text-danger">{{ $message }}</small> @enderror
                         </div>
 
@@ -330,4 +338,17 @@ textarea.form-control {
     .borrow-actions .btn { width: 100%; }
 }
 </style>
+@endpush
+
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const type = document.querySelector('select[name="borrower_type"]');
+    const field = document.querySelector('[data-other-type-field]');
+    const input = field.querySelector('input');
+    function toggleOther() { field.hidden = type.value !== 'other'; input.required = type.value === 'other'; input.disabled = type.value !== 'other'; }
+    type.addEventListener('change', toggleOther);
+    toggleOther();
+});
+</script>
 @endpush

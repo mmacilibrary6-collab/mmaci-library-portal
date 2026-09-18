@@ -18,6 +18,9 @@ Dates use the application's configured timezone (`config/app.php`).
 ## Borrowing limits and renewals
 
 Students may have 3 released, unreturned books at once, for up to 2 days per loan.
+Other / Specify borrowers use the same limits and must provide a custom label.
+Staff can edit that label; it appears in borrower details, Excel exports, and the
+printed card title. Public repeat requests do not overwrite a saved custom label.
 Faculty may have 10, for up to 1 calendar month per loan. Month-end dates clamp to
 the final day of the following month. Overdue loans count toward the book limit;
 pending, approved, returned, and rejected requests do not. Capacity is checked
@@ -33,6 +36,10 @@ while the borrower has active loans. Fines are handled outside this system.
 
 The renewal-count migration must be deployed before using Renew Book. Existing
 records start at zero because the system previously had no renewal history.
+
+The custom-borrower-type migration adds the Other option and its label column.
+Released By remains blank at approval and must be entered manually at release;
+the signed-in administrator is not filled in automatically.
 
 ## Deployment
 

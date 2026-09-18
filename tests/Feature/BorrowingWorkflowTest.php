@@ -20,7 +20,7 @@ class BorrowingWorkflowTest extends TestCase
         config(['app.url' => 'http://localhost', 'database.default' => 'sqlite', 'database.connections.sqlite.database' => ':memory:']);
         app('url')->forceRootUrl('http://localhost');
         DB::purge('sqlite');
-        foreach (['0001_01_01_000000_create_users_table.php', '2026_07_23_064736_create_new_arrivals_table.php', '2026_08_06_051132_add_accession_number_to_new_arrivals_table.php', '2026_09_17_000001_create_book_borrowing_system_tables.php', '2026_09_17_000000_add_borrower_type_to_borrowers_table.php', '2026_09_17_000001_add_released_by_to_borrowings_table.php', '2026_09_17_000003_add_borrowing_email_updates.php', '2026_09_17_000005_add_renewal_count_to_borrowings.php'] as $file) {
+        foreach (['0001_01_01_000000_create_users_table.php', '2026_07_23_064736_create_new_arrivals_table.php', '2026_08_06_051132_add_accession_number_to_new_arrivals_table.php', '2026_09_17_000001_create_book_borrowing_system_tables.php', '2026_09_17_000000_add_borrower_type_to_borrowers_table.php', '2026_09_17_000001_add_released_by_to_borrowings_table.php', '2026_09_17_000003_add_borrowing_email_updates.php', '2026_09_17_000005_add_renewal_count_to_borrowings.php', '2026_09_18_000001_add_custom_borrower_type.php'] as $file) {
             (require database_path('migrations/'.$file))->up();
         }
         Mail::fake();
@@ -41,6 +41,42 @@ class BorrowingWorkflowTest extends TestCase
     {
         $borrower = Borrower::create(['name' => 'Test Borrower', 'id_number' => uniqid(), 'borrower_type' => 'student', 'department' => 'Education', 'semester' => '1st']);
         return Borrowing::create(['borrower_id' => $borrower->id, 'accession_number' => 'BOOK-1', 'bibliographical_description' => 'Test Book', 'status' => $status]);
+    }
+
+    public function test_other_type_requires_label_can_be_edited_and_prints_custom_title(): void
+    {
+        $data = ['name' => 'Guest Borrower', 'id_number' => 'GUEST-1', 'borrower_type' => 'other', 'department' => 'Visitors', 'semester' => '1st', 'email' => 'guest@example.com', 'book_title' => 'Guest Book'];
+        $this->post(route('more.borrow-books.store'), $data)->assertSessionHasErrors('borrower_type_other');
+        $this->post(route('more.borrow-books.store'), $data + ['borrower_type_other' => 'Alumni'])->assertSessionHasNoErrors();
+        $loan = Borrowing::firstOrFail();
+        $this->assertSame('Alumni', $loan->borrower->borrower_type_label);
+        $this->get(route('admin.borrowings.print-card', $loan->borrower))->assertOk()->assertSee('ALUMNI BORROWER', false);
+        $edit = $data + ['borrower_type_other' => 'Visiting Researcher', 'accession_number' => 'GUEST-COPY', 'bibliographical_description' => 'Guest Book', 'status' => 'pending'];
+        $this->put(route('admin.borrowings.update', $loan), $edit)->assertSessionHasNoErrors();
+        $this->get(route('admin.borrowings.show', $loan))->assertSeeText('Visiting Researcher');
+        $this->get(route('admin.borrowings.print-card', $loan->borrower))->assertSee('VISITING RESEARCHER BORROWER', false);
+        $this->post(route('more.borrow-books.store'), array_replace($data, ['book_title' => 'Second Title', 'borrower_type_other' => 'Changed by public']))->assertSessionHasNoErrors();
+        $this->assertSame('Visiting Researcher', $loan->borrower->refresh()->borrower_type_other);
+        $this->patch(route('admin.borrowings.approve', $loan))->assertSessionHasNoErrors();
+        $this->assertNull($loan->refresh()->released_by);
+        $release = ['date_borrowed' => today()->toDateString(), 'due_date' => today()->addDays(3)->toDateString(), 'released_by' => 'Actual Librarian'];
+        $this->patch(route('admin.borrowings.borrowed', $loan), $release)->assertSessionHasErrors('due_date');
+        $this->patch(route('admin.borrowings.borrowed', $loan), array_replace($release, ['due_date' => today()->addDays(2)->toDateString()]))->assertSessionHasNoErrors();
+        $this->assertSame('Actual Librarian', $loan->refresh()->released_by);
+        $this->assertSame(3, \App\Services\BorrowingPolicy::limit('other'));
+    }
+
+    public function test_releasing_staff_is_blank_until_release_and_must_be_entered(): void
+    {
+        $loan = $this->loan();
+        $data = ['name' => $loan->borrower->name, 'id_number' => $loan->borrower->id_number, 'borrower_type' => 'student', 'department' => 'Education', 'semester' => '1st', 'accession_number' => 'BOOK-1', 'bibliographical_description' => 'Book', 'status' => 'pending', 'released_by' => 'Premature Staff'];
+        $this->put(route('admin.borrowings.update', $loan), $data)->assertSessionHasErrors('released_by');
+        $this->patch(route('admin.borrowings.approve', $loan))->assertSessionHasNoErrors();
+        $this->assertNull($loan->refresh()->released_by);
+        $html = $this->get(route('admin.borrowings.show', $loan))->assertOk()->getContent();
+        $this->assertMatchesRegularExpression('/id="release-staff"[^>]*value=""/', $html);
+        $this->patch(route('admin.borrowings.borrowed', $loan), ['date_borrowed' => today()->toDateString(), 'due_date' => today()->addDays(2)->toDateString()])->assertSessionHasErrors('released_by');
+        $this->assertSame('approved', $loan->refresh()->status);
     }
 
     public function test_approve_release_and_return_with_clear_staff_roles(): void

@@ -17,7 +17,7 @@ class BorrowingExportController extends Controller
         $filters = $request->validate([
             'list' => ['required', Rule::in(['borrowings', 'borrowers'])],
             'status' => ['nullable', Rule::in(['pending', 'approved', 'borrowed', 'overdue', 'returned', 'rejected'])],
-            'borrower_type' => ['nullable', Rule::in(['student', 'faculty'])],
+            'borrower_type' => ['nullable', Rule::in(['student', 'faculty', 'other'])],
             'search' => ['nullable', 'string', 'max:255'],
         ]);
         $query = Borrowing::query();
@@ -59,7 +59,7 @@ class BorrowingExportController extends Controller
         $rows = (function () use ($records, $borrowersOnly) {
             foreach ($records->lazy(500) as $record) {
                 $borrower = $borrowersOnly ? $record : $record->borrower;
-                $row = [$borrower?->name, $borrower?->id_number, ucfirst($borrower?->borrower_type ?? ''), $borrower?->department, $borrower?->semester, $borrower?->contact_number, $borrower?->email];
+                $row = [$borrower?->name, $borrower?->id_number, $borrower?->borrower_type_label, $borrower?->department, $borrower?->semester, $borrower?->contact_number, $borrower?->email];
                 yield $borrowersOnly ? $row : [...$row, $record->id, $record->bibliographical_description, $record->accession_number, ucfirst($record->display_status), $record->date_borrowed?->format('Y-m-d'), $record->due_date?->format('Y-m-d'), $record->date_returned?->format('Y-m-d'), $record->received_by, $record->released_by, $record->returned_by, $record->remarks];
             }
         })();

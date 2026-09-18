@@ -59,7 +59,7 @@
                 <select name="borrower_type" aria-label="Borrower Type">
                     <option value="">All Borrowers</option>
                     <option value="student" @selected(request('borrower_type') === 'student')>Students</option>
-                    <option value="faculty" @selected(request('borrower_type') === 'faculty')>Faculty</option>
+                    <option value="faculty" @selected(request('borrower_type') === 'faculty')>Faculty</option><option value="other" @selected(request('borrower_type') === 'other')>Other / Specify</option>
                 </select>
 
                 <select name="status" aria-label="Status">
@@ -126,7 +126,7 @@
                     @forelse($borrowings as $borrowing)
                         @php
                             $type = strtolower($borrowing->borrower?->borrower_type ?? '');
-                            $typeLabel = in_array($type, ['student', 'faculty'], true) ? ucfirst($type) : 'Not Set';
+                            $typeLabel = $borrowing->borrower?->borrower_type_label ?? 'Not Set';
                         @endphp
 
                         <tr>
@@ -378,6 +378,7 @@
 }
 .type-student{color:#175a91;background:#e6f2ff}
 .type-faculty{color:#7d5c00;background:#fff2c5}
+.type-other{color:#52607c;background:#edf0f8;white-space:normal;overflow-wrap:anywhere}
 .type-unset{color:#65717f;background:#eef1f4}
 .accession-chip{
     display:inline-flex;align-items:center;min-height:32px;padding:0 9px;color:#0b315e;

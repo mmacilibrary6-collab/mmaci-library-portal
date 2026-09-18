@@ -21,7 +21,8 @@ class BorrowBookController extends Controller
     public function store(Request $request): RedirectResponse
     {
         $validated = $request->validate([
-            'borrower_type' => ['required', 'in:student,faculty'],
+            'borrower_type' => ['required', 'in:student,faculty,other'],
+            'borrower_type_other' => ['exclude_unless:borrower_type,other', 'required', 'string', 'max:80'],
 
             'name' => [
                 'required',
@@ -185,6 +186,7 @@ class BorrowBookController extends Controller
                  */
 
                 $borrower->update([
+                    'borrower_type_other' => $borrowerType === 'other' ? ($borrower->borrower_type_other ?: trim($validated['borrower_type_other'])) : null,
                     'borrower_type' => filled($borrower->borrower_type)
                         ? $borrower->borrower_type
                         : $borrowerType,
@@ -209,6 +211,7 @@ class BorrowBookController extends Controller
             } else {
 
                 $borrower = Borrower::create([
+                    'borrower_type_other' => $borrowerType === 'other' ? trim($validated['borrower_type_other']) : null,
                     'name' => $name,
 
                     'id_number' => $idNumber,

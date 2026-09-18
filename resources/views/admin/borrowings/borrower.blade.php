@@ -6,9 +6,7 @@
 <div class="container-fluid borrower-profile-page">
     @php
         $borrowerType = strtolower($borrower->borrower_type ?? '');
-        $borrowerTypeLabel = in_array($borrowerType, ['student', 'faculty'], true)
-            ? ucfirst($borrowerType)
-            : 'Not Set';
+        $borrowerTypeLabel = $borrower->borrower_type_label ?? 'Not Set';
     @endphp
 
     <section class="profile-hero">
@@ -197,6 +195,7 @@
 }
 .type-student{color:#0b4f89;background:#dfefff}
 .type-faculty{color:#6d5100;background:#ffe69a}
+.type-other{color:#52607c;background:#edf0f8;white-space:normal;overflow-wrap:anywhere}
 .type-unset{color:#626d7a;background:#e8edf2}
 .hero-actions{display:flex;align-items:center;gap:10px;position:relative;z-index:1}
 .hero-btn{

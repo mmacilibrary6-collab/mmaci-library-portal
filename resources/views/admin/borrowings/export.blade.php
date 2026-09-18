@@ -12,7 +12,7 @@
                 </div>
                 <div class="row g-3">
                     <div class="col-sm-6"><label for="export-status" class="form-label">Status</label><select id="export-status" name="status" class="form-select"><option value="">All statuses</option>@foreach(['pending', 'approved', 'borrowed', 'overdue', 'returned', 'rejected'] as $status)<option value="{{ $status }}" @selected(request('status') === $status)>{{ ucfirst($status) }}</option>@endforeach</select></div>
-                    <div class="col-sm-6"><label for="export-type" class="form-label">Borrower Type</label><select id="export-type" name="borrower_type" class="form-select"><option value="">All borrowers</option><option value="student" @selected(request('borrower_type') === 'student')>Student</option><option value="faculty" @selected(request('borrower_type') === 'faculty')>Faculty</option></select></div>
+                    <div class="col-sm-6"><label for="export-type" class="form-label">Borrower Type</label><select id="export-type" name="borrower_type" class="form-select"><option value="">All borrowers</option><option value="student" @selected(request('borrower_type') === 'student')>Student</option><option value="faculty" @selected(request('borrower_type') === 'faculty')>Faculty</option><option value="other" @selected(request('borrower_type') === 'other')>Other / Specify</option></select></div>
                     <div class="col-12"><label for="export-search" class="form-label">Search <span class="text-muted fw-normal">(optional)</span></label><input id="export-search" name="search" class="form-control" maxlength="255" value="{{ request('search') }}" placeholder="Borrower, ID, accession or book"></div>
                 </div>
             </div>

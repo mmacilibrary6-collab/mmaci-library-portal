@@ -131,6 +131,7 @@ class BorrowingController extends Controller
                 'name' => trim($validated['name']),
                 'id_number' => trim($validated['id_number']),
                 'borrower_type' => $validated['borrower_type'],
+                'borrower_type_other' => $validated['borrower_type'] === 'other' ? trim($validated['borrower_type_other']) : null,
                 'contact_number' => filled($validated['contact_number'] ?? null)
                     ? trim($validated['contact_number'])
                     : null,
@@ -388,6 +389,7 @@ class BorrowingController extends Controller
             }
             $borrowing->update([
                 'status' => $status,
+                'released_by' => null,
                 'approved_by' => in_array(
                     $status,
                     [
@@ -443,8 +445,10 @@ class BorrowingController extends Controller
 
             'borrower_type' => [
                 'required',
-                Rule::in(['student', 'faculty']),
+                Rule::in(['student', 'faculty', 'other']),
             ],
+
+            'borrower_type_other' => ['exclude_unless:borrower_type,other', 'required', 'string', 'max:80'],
 
             'contact_number' => [
                 'nullable',
@@ -523,6 +527,7 @@ class BorrowingController extends Controller
             ],
 
             'released_by' => [
+                Rule::prohibitedIf(! in_array($borrowing->status, ['borrowed', 'overdue', 'returned'], true)),
                 'nullable',
                 'string',
                 'max:255',

@@ -746,7 +746,7 @@ class LisaAssistant
             $answer = 'Approval and rejection updates are sent to the email address on your borrowing request. Released books also receive a due-date reminder and an overdue reminder if still unreturned. If an email is missing, check Spam and ask library staff to verify your saved email address and delivery status. I cannot check your inbox or confirm delivery.';
         } elseif (Str::contains($message, ['card', 'print'])) {
             $title = 'Borrower Cards';
-            $answer = 'Ask library staff for your Student or Faculty Borrower’s Card. It lists borrowing records oldest first, with 5 records per page and repeated borrower details on additional pages. Staff can print all pages or select page numbers and ranges. Page numbers appear only for cards with more than one page.';
+            $answer = 'Ask library staff for your borrower card. Student and Faculty cards use their respective titles; Other / Specify uses your saved custom label, which staff can edit. It lists borrowing records oldest first, with 5 records per page and repeated borrower details on additional pages. Staff can print all pages or select page numbers and ranges. Page numbers appear only for cards with more than one page.';
         } elseif (Str::contains($message, ['renew', 'extend'])) {
             $title = 'Renewing a Book';
             $answer = 'Ask library staff to renew your released, unreturned book. Each book can be renewed up to 2 times. Each renewal adds 2 days for students or 1 calendar month for faculty to the current due date. If overdue, the new period starts today. Returned books and unreleased requests cannot be renewed. I cannot renew a loan through this chat.';

@@ -12,9 +12,9 @@ class BorrowingPolicy
     public static function limit(string $type): int
     {
         return match ($type) {
-            'student' => 3,
+            'student', 'other' => 3,
             'faculty' => 10,
-            default => throw ValidationException::withMessages(['borrower_type' => 'Set the borrower type to Student or Faculty before lending books.']),
+            default => throw ValidationException::withMessages(['borrower_type' => 'Set the borrower type before lending books.']),
         };
     }
 

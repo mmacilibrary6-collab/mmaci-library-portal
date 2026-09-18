@@ -4,13 +4,13 @@
     @php
         $storedType = strtolower($borrower->borrower_type ?? '');
         $requestedType = strtolower(request('type', ''));
-        $cardType = in_array($requestedType, ['student', 'faculty'], true)
+        $cardType = in_array($requestedType, $storedType === 'other' ? ['student', 'faculty', 'other'] : ['student', 'faculty'], true)
             ? $requestedType
-            : (in_array($storedType, ['student', 'faculty'], true) ? $storedType : 'student');
+            : (in_array($storedType, ['student', 'faculty', 'other'], true) ? $storedType : 'student');
 
-        $cardTitle = $cardType === 'faculty'
+        $cardTitle = $cardType === 'other' ? $borrower->borrower_type_label." Borrower's Card" : ($cardType === 'faculty'
             ? "Faculty Borrower's Card"
-            : "Student Borrower's Card";
+            : "Student Borrower's Card");
 
         $pages = $borrower->borrowings->chunk(5)->values();
         if ($pages->isEmpty()) {
@@ -50,7 +50,7 @@
         .header-left{padding-right:1in!important}
         .header-right{padding-left:1in!important}
         .institution-header{display:grid;grid-template-columns:1fr max-content 1fr;align-items:center;column-gap:.16in;width:100%;min-height:1.12in;margin:0 0 .16in;text-align:center}
-        .institution-copy{grid-column:2;grid-row:1;text-align:center}
+        .institution-copy{grid-column:2;grid-row:1;text-align:center;max-width:6.6in}
         .school-logo{grid-column:1;grid-row:1;justify-self:end;width:1.12in;height:1.12in;display:block;margin:0;object-fit:contain}
         .school-name{margin:0;font-size:15pt;font-weight:700;line-height:1.12;text-transform:uppercase;text-decoration:underline;text-underline-offset:3px}
         .school-address{margin:.05in 0 .08in;font-family:Arial,sans-serif;font-size:8pt;line-height:1.25}
@@ -62,7 +62,7 @@
         }
 
         .library-title{margin:0;font-size:12.5pt;font-weight:700;line-height:1.05;text-transform:uppercase}
-        .card-title{margin:.02in 0 0;font-size:13.8pt;font-weight:700;line-height:1.05;text-transform:uppercase}
+        .card-title{margin:.02in 0 0;font-size:13.8pt;font-weight:700;line-height:1.05;text-transform:uppercase;overflow-wrap:anywhere}
         .person-info{width:100%;border-collapse:collapse;table-layout:fixed;font-size:10.8pt}
         .person-info td{height:.29in;padding:0;vertical-align:bottom}
         .person-info .label{width:1.08in;padding-right:.06in;font-weight:700;white-space:nowrap}
@@ -122,6 +122,9 @@
         <select id="cardType" class="card-type-control" onchange="changeCardType(this.value)">
             <option value="student" {{ $cardType === 'student' ? 'selected' : '' }}>Student</option>
             <option value="faculty" {{ $cardType === 'faculty' ? 'selected' : '' }}>Faculty</option>
+            @if($storedType === 'other')
+                <option value="other" @selected($cardType === 'other')>{{ $borrower->borrower_type_label }}</option>
+            @endif
         </select>
 
         @if($pages->count() > 1)

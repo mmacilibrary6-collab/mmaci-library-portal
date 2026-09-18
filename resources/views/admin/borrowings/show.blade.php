@@ -6,9 +6,7 @@
 <div class="container-fluid borrowing-show-page">
     @php
         $borrowerType = strtolower($borrowing->borrower?->borrower_type ?? '');
-        $borrowerTypeLabel = in_array($borrowerType, ['student', 'faculty'], true)
-            ? ucfirst($borrowerType)
-            : 'Not Set';
+        $borrowerTypeLabel = $borrowing->borrower?->borrower_type_label ?? 'Not Set';
     @endphp
 
     <section class="record-hero">
@@ -236,7 +234,7 @@
                             </div>
                             <div class="col-12">
                                 <label for="release-staff" class="form-label">Released By (library staff)</label>
-                                <input id="release-staff" class="form-control" name="released_by" value="{{ old('released_by', auth()->user()?->name) }}" maxlength="255" required>
+                                <input id="release-staff" class="form-control" name="released_by" value="{{ old('released_by') }}" placeholder="Enter the releasing staff member’s name" maxlength="255" required>
                             </div>
                         </div>
                         </div>
@@ -324,6 +322,7 @@
 .borrower-type-badge{text-transform:uppercase}
 .type-student{color:#0f5b96;background:#deefff}
 .type-faculty{color:#725700;background:#ffe8a1}
+.type-other{color:#52607c;background:#edf0f8;white-space:normal;overflow-wrap:anywhere}
 .type-unset{color:#596573;background:#e9edf1}
 .hero-actions{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:9px;position:relative;z-index:1}
 .hero-btn{

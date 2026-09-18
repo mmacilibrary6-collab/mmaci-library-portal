@@ -14,6 +14,7 @@ class Borrower extends Model
         'name',
         'id_number',
         'borrower_type',
+        'borrower_type_other',
         'contact_number',
         'department',
         'semester',
@@ -23,5 +24,15 @@ class Borrower extends Model
     public function borrowings(): HasMany
     {
         return $this->hasMany(Borrowing::class);
+    }
+
+    public function getBorrowerTypeLabelAttribute(): string
+    {
+        return match ($this->borrower_type) {
+            'student' => 'Student',
+            'faculty' => 'Faculty',
+            'other' => $this->borrower_type_other ?: 'Other',
+            default => 'Not Set',
+        };
     }
 }
